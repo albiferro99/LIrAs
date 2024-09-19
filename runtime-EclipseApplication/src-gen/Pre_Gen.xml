@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>/**
+*** GLOBAL DECLARATIONS
+*/
+
+// Pigreco
+const double PI = 3.1415926535;
+
+const int Tpoll = 1;
+
+// Locations
+const double room1[2] = {400, 150};
+const double room2[2] = {1200, 750};
+const double room3[2] = {500, 400};
+
+/**
+*** STUFF TO BE GENERATED AUTOMATICALLY
+*/
+
+// Sub-sequence Stages
+// **sub-sequences**
+
+// Sequence status (one for each agent)
+// **agent_status**
+
+// Declared Locations
+// **input_location**
+
+// Quantity of agents
+// **human_number**
+// **robot_number**
+
+// **human_initialization**
+
+// **robot_initialization**
+
+
+/**
+*** GLOBAL VARIABLES
+*/
+
+// action synchronization management and variables
+
+// **h_moveTo_sync**
+// **h_moveTo_var**
+
+// **r_moveTo_sync**
+// **r_moveTo_var**
+
+// **r_follow_sync**
+// **r_follow_var**
+
+
+/**
+*** Channels
+*/
+
+// Orchestrator Channels;
+broadcast chan publish_m[int];
+
+// Human moveTo
+// **h_moveTo_chan**
+// Robot moveTo
+// **r_moveTo_chan**
+// Robot follow
+// **r_follow_chan**
+
+
+/**
+*** VARIABLES
+**/
+
+// Human starting position
+// **human_start_pos**
+
+// Robot starting position
+// **robot_start_pos**
+
+const int MAX_BUFF_SIZE = 10;
+
+// Robot Mgmt
+int currR = 1; // current robot
+// Human Mgmt
+int currH = 1; // current human
+// Pattern execution flow
+int currP = 1;
+
+
+/**
+*** FLOOR PLAN
+**/
+
+const int N_A = 10;
+
+const int N_P = 10;
+
+const int N_I = 9;
+
+
+typedef double point[2];
+typedef point area[4];
+typedef area layout[N_A];
+typedef point trajectory[N_P];
+
+const layout FLOOR = {{{0.0, 110.0},{0.0, 299.5},{1550.0, 299.5},{1550.0, 110.0}},{{0.0, 110.0},{0.0, 850.0},{185.0, 850.0},{185.0, 110.0}},{{0.0, 672.5},{0.0, 850.0},{1550.0, 850.0},{1550.0, 672.5}},{{1352.0, 110.0},{1352.0, 850.0},{1550.0, 850.0},{1550.0, 110.0}},{{2970.0, 110.0},{2970.0, 299.5},{4512.5, 299.5},{4512.5, 110.0}},{{2970.0, 110.0},{2970.0, 850.0},{3155.0, 850.0},{3155.0, 110.0}},{{2970.0, 672.5},{2970.0, 850.0},{4512.5, 850.0},{4512.5, 672.5}},{{4322.0, 110.0},{4322.0, 850.0},{4512.5, 850.0},{4512.5, 110.0}},{{1945.0, 0.0},{1945.0, 695.0},{2670.0, 695.0},{2670.0, 0.0}},{{1352.0, 110.0},{1352.0, 425.0},{3155.0, 425.0},{3155.0, 110.0}}};
+
+const point INTERSECTIONS[N_I] = {{92.5, 163.5},{92.5, 761.2},{1452.0, 761.2},{1452.0, 163.5},{3062.5, 163.5},{4417.0, 163.5},{3062.5, 761.2},{4417.0, 761.2},{2253.5, 267.5}};
+
+// used in all the actions
+bool same_area(double sx, double sy, double dx, double dy) {
+    int i;
+    bool x_s_in, y_s_in, x_d_in, y_d_in;
+    for (i = 0; i &lt; N_A; i++)
+    {
+        x_s_in = sx &gt; FLOOR[i][0][0] &amp;&amp; sx &lt; FLOOR[i][3][0];
+        y_s_in = sy &gt; FLOOR[i][0][1] &amp;&amp; sy &lt; FLOOR[i][1][1];
+        x_d_in = dx &gt; FLOOR[i][0][0] &amp;&amp; dx &lt; FLOOR[i][3][0];
+        y_d_in = dy &gt; FLOOR[i][0][1] &amp;&amp; dy &lt; FLOOR[i][1][1];
+        if ((x_s_in &amp;&amp; y_s_in) &amp;&amp; (x_d_in &amp;&amp; y_d_in)) // start and dest in same area
+            return true;
+    }
+    return false;
+}
+
+// used in all the actions
+double pt_dist(double x1, double x2, double y1, double y2) {
+    double xdifference = x2-x1;
+    double ydifference = y2-y1;
+    return sqrt((xdifference*xdifference)+(ydifference*ydifference));
+}
+
+</declaration>
+// **pattern_orchestrator**
+// **sequence_orchestrator**
+// **Human_moveTo**
+// **Robot_moveTo**
+// **Robot_follow**
+    <template>
+        <name>ROS_SensPub</name>
+        <parameter>int id, double l_avg, double l_dev</parameter>
+        <declaration>
+clock L;
+
+double latency = 0.0;
+int buff_pos = 0;
+
+double buffer[MAX_BUFF_SIZE];
+double buffer2[MAX_BUFF_SIZE];
+
+int buffer3[MAX_BUFF_SIZE];
+int cached_id;
+
+void update_lat() {
+latency = random_normal(l_avg, l_dev);
+}
+
+void add_to_buffer() {
+cached_id = currH;
+if(id==0){
+    buffer[buff_pos] = internal_charge[0];
+    buffer3[buff_pos] = 0;
+    if(N_R&gt;=2) {
+        buff_pos++;
+        buffer[buff_pos] = internal_charge[1];
+        buffer3[buff_pos] = 1;
+    }
+}
+else if(id==1) {
+    //update robot position (currR or coR)
+    buffer[buff_pos] = internalRobX[id-1];
+    buffer2[buff_pos] = internalRobY[id-1];
+}
+else if(id==2) {
+    buffer[buff_pos] = internalHumX[currH-1];
+    buffer2[buff_pos] = internalHumY[currH-1];
+    buffer3[buff_pos] = -1;
+}
+else if(id==3){
+    buffer[buff_pos] = internalFatigue[currH-1];
+    buffer3[buff_pos] = -1;
+}
+
+buff_pos += 1;
+}
+
+void shift_buffer(){
+int i;
+
+// Shift buffer
+for(i=0; i&lt;MAX_BUFF_SIZE-1 &amp;&amp; buffer[i+1] &gt; 0.0; i++) {
+    buffer[i] = buffer[i+1];
+    buffer2[i] = buffer2[i+1];
+    buffer3[i] = buffer3[i+1];
+}
+
+buffer[i+1] = -1.0;
+buffer2[i+1] = -1.0;
+buffer3[i+1] = -1;
+
+buff_pos = buff_pos-1;
+if(buff_pos &lt; 0)
+    buff_pos = 0;
+}
+
+void publish() {
+int i;
+
+// Publish
+if(id==0){
+    batteryCharge[buffer3[0]] = buffer[0];
+    shift_buffer();
+    batteryCharge[buffer3[0]] = buffer[0];
+}
+else if(id==1) {
+    robPositionX[id-1] = buffer[0];
+    robPositionY[id-1] = buffer2[0];
+}
+else if(id==2 &amp;&amp; cached_id==currH){
+    humanPositionX[currH-1] = buffer[0];
+    humanPositionY[currH-1] = buffer2[0];
+}
+else if(id==3 &amp;&amp; cached_id==currH) humanFatigue[currH-1] = buffer[0];
+
+shift_buffer();
+}
+        </declaration>
+        <location id="id143" x="-34" y="-8">
+            <name x="-42" y="8">idle</name>
+            <label kind="invariant" x="-42" y="25">L'==0</label>
+        </location>
+        <location id="id144" x="-34" y="-195">
+            <name x="-17" y="-204">sending</name>
+            <label kind="invariant" x="8" y="-187">L &lt;= latency</label>
+        </location>
+        <init ref="id143"/>
+        <transition id="id145">
+            <source ref="id144"/>
+            <target ref="id144"/>
+            <label kind="synchronisation" x="42" y="-263">publish_m[id]?</label>
+            <label kind="assignment" x="42" y="-246">add_to_buffer()</label>
+            <nail x="-34" y="-280"/>
+            <nail x="34" y="-246"/>
+        </transition>
+        <transition id="id146">
+            <source ref="id144"/>
+            <target ref="id144"/>
+            <label kind="guard" x="-246" y="-323">L&gt;=latency
+    &amp;&amp; buff_pos&gt;1</label>
+            <label kind="assignment" x="-246" y="-280">publish(),
+    update_lat(),
+    L=0</label>
+            <nail x="-34" y="-280"/>
+            <nail x="-102" y="-238"/>
+        </transition>
+        <transition id="id147">
+            <source ref="id144"/>
+            <target ref="id143"/>
+            <label kind="guard" x="-255" y="-144">L&gt;=latency
+    &amp;&amp; buff_pos&lt;=1</label>
+            <label kind="assignment" x="-255" y="-102">publish()</label>
+            <nail x="-93" y="-102"/>
+        </transition>
+        <transition id="id148">
+            <source ref="id143"/>
+            <target ref="id144"/>
+            <label kind="synchronisation" x="42" y="-127">publish_m[id]?</label>
+            <label kind="assignment" x="42" y="-110">add_to_buffer(),
+    L=0, update_lat()</label>
+            <nail x="34" y="-102"/>
+        </transition>
+    </template>
+	<system>
+r_pub_1 = ROS_SensPub(1, 0.5, 0.01);
+h_pub_pos = ROS_SensPub(2, 0.5, 0.01);
+h_pub_ftg = ROS_SensPub(3, 0.5, 0.01);
+
+// Mission Definition
+
+// **missDef_hm**
+// **missDef_rm**
+// **missDef_rf**
+
+// Pattern Definition
+
+// **pattern_definition**
+
+// ======================================================
+
+system
+
+// **missDec_hm**
+// **missDec_rm**
+// **missDec_rf**
+
+// **pattern_dichiaration**
+
+r_pub_1,
+h_pub_pos,
+h_pub_ftg
+;
+</system>
+	<queries>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+		<query>
+			<formula>simulate[&lt;=700]{humanPositionX[0], humanPositionY[0], robPositionX[0], robPositionY[0], rf_1.starting*100, exeSum.end*100}</formula>
+			<comment/>
+		</query>
+	</queries>
+</nta>
