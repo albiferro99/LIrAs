@@ -20,7 +20,7 @@ const double room3[2] = {500, 400};
 */
 
 // Sub-sequence Stages
-urgent broadcast chan s1, s2, s3, s4, s5, e;
+urgent broadcast chan s1, s2, s3, s4, s5, s6, e;
 
 // Sequence status (one for each agent)
 bool human_stat = true;
@@ -161,10 +161,70 @@ double pt_dist(double x1, double x2, double y1, double y2) {
 		<location id="id0" x="0" y="0">
 			<name x="-17" y="-34">Init</name>
 		</location>
-		<location id="id1" x="100" y="100">
-			<name x="83" y="66">prova</name>
+		<location id="id1" x="500" y="0">
+			<name x="483" y="-34">sub_seq_s1</name>
+		</location>
+		<location id="id2" x="1000" y="0">
+			<name x="983" y="-34">sub_seq_s2</name>
+		</location>
+		<location id="id3" x="1500" y="0">
+			<name x="1483" y="-34">sub_seq_s3</name>
+		</location>
+		<location id="id4" x="2000" y="0">
+			<name x="1983" y="-34">sub_seq_s4</name>
+		</location>
+		<location id="id5" x="2500" y="0">
+			<name x="2483" y="-34">sub_seq_s5</name>
+		</location>
+		<location id="id6" x="3000" y="0">
+			<name x="2983" y="-34">sub_seq_s6</name>
+		</location>
+		<location id="id7" x="3500" y="0">
+			<name x="3483" y="-34">end</name>
 		</location>
 		<init ref="id0"/>
+		<transition id="id8">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="guard" x="18" y="-34">human_stat==true and robot_stat==true and p==currP</label>
+			<label kind="synchronisation" x="18" y="-17">s1!</label>
+			<label kind="assignment" x="18" y="0">human_stat=false, robot_stat=false</label>
+		</transition>
+		<transition id="id9">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="518" y="-34">human_stat==true and robot_stat==true</label>
+			<label kind="synchronisation" x="518" y="-17">s2!</label>
+			<label kind="assignment" x="518" y="0">human_stat=false, robot_stat=false</label>
+		</transition>
+		<transition id="id10">
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="1018" y="-34">robot_stat==true</label>
+			<label kind="synchronisation" x="1018" y="-17">s3!</label>
+			<label kind="assignment" x="1018" y="0">robot_stat=false</label>
+		</transition>
+		<transition id="id11">
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<label kind="guard" x="1518" y="-34">robot_stat==true</label>
+			<label kind="synchronisation" x="1518" y="-17">s4!</label>
+			<label kind="assignment" x="1518" y="0">robot_stat=false</label>
+		</transition>
+		<transition id="id12">
+			<source ref="id4"/>
+			<target ref="id5"/>
+			<label kind="guard" x="2018" y="-34">human_stat==true and robot_stat==true</label>
+			<label kind="synchronisation" x="2018" y="-17">s5!</label>
+			<label kind="assignment" x="2018" y="0">human_stat=false, robot_stat=false</label>
+		</transition>
+		<transition id="id13">
+			<source ref="id5"/>
+			<target ref="id6"/>
+			<label kind="guard" x="2518" y="-34">human_stat==true and robot_stat==true</label>
+			<label kind="synchronisation" x="2518" y="-17">s6!</label>
+			<label kind="assignment" x="2518" y="0">human_stat=false, robot_stat=false</label>
+		</transition>
 	</template>
 
 // **sequence_orchestrator**
