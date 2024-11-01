@@ -20,28 +20,29 @@ const double room3[2] = {500, 400};
 */
 
 // Sub-sequence Stages
-urgent broadcast chan s1, s2, s3, s4, s5, s6, e;
+urgent broadcast chan s1, s2, s3, s4, s5, s6, s7, s8, e;
 
 // Sequence status (one for each agent)
 bool human_stat = true;
 bool robot_stat = true;
+bool doctor_stat = true;
 
 
 // Declared Locations
-double location_X[3]  = {room1[0], room2[0], room3[0]};
-double location_Y[3]  = {room1[1], room2[1], room3[1]};
+double location_X[2]  = {room1[0], room2[0]};
+double location_Y[2]  = {room1[1], room2[1]};
 
 // Quantity of agents
-const int N_H = 1; // Number of humans in the pattern
+const int N_H = 2; // Number of humans in the pattern
 const int N_R = 2; // Number of robots in the pattern
 
 // Human initialization
-double humanFatigue[N_H] = {0.0};
-double internalFatigue[N_H] = {0.0};
-double internalHumX[N_H] = {0.0};
-double internalHumY[N_H] = {0.0};
-double humanPositionX[N_H] = {0.0};
-double humanPositionY[N_H] = {0.0};
+double humanFatigue[N_H] = {0.0, 0.0};
+double internalFatigue[N_H] = {0.0, 0.0};
+double internalHumX[N_H] = {0.0, 0.0};
+double internalHumY[N_H] = {0.0, 0.0};
+double humanPositionX[N_H] = {0.0, 0.0};
+double humanPositionY[N_H] = {0.0, 0.0};
 
 // Robot initialization
 double batteryCharge[N_R] = {100.0, 100.0};
@@ -92,8 +93,8 @@ broadcast chan rf_still;
 **/
 
 // Human starting position
-double h_startX[N_H] = {2500.0};
-double h_startY[N_H] = {100.0};
+double h_startX[N_H] = {2500.0, 2500.0};
+double h_startY[N_H] = {100.0, 100.0};
 
 // Robot starting position
 double r_startX[N_R] = {2000.0, 2000.0};
@@ -180,54 +181,368 @@ double pt_dist(double x1, double x2, double y1, double y2) {
 			<name x="2983" y="-34">sub_seq_s6</name>
 		</location>
 		<location id="id7" x="3500" y="0">
-			<name x="3483" y="-34">end</name>
+			<name x="3483" y="-34">sub_seq_s7</name>
+		</location>
+		<location id="id8" x="4000" y="0">
+			<name x="3983" y="-34">sub_seq_s8</name>
+		</location>
+		<location id="id9" x="4500" y="0">
+			<name x="4483" y="-34">end</name>
 		</location>
 		<init ref="id0"/>
-		<transition id="id8">
+		<transition id="id10">
 			<source ref="id0"/>
 			<target ref="id1"/>
-			<label kind="guard" x="18" y="-34">human_stat==true and robot_stat==true and p==currP</label>
+			<label kind="guard" x="18" y="-34">human_stat==true and robot_stat==true and doctor_stat==true and p==currP</label>
 			<label kind="synchronisation" x="18" y="-17">s1!</label>
-			<label kind="assignment" x="18" y="0">human_stat=false, robot_stat=false</label>
-		</transition>
-		<transition id="id9">
-			<source ref="id1"/>
-			<target ref="id2"/>
-			<label kind="guard" x="518" y="-34">human_stat==true and robot_stat==true</label>
-			<label kind="synchronisation" x="518" y="-17">s2!</label>
-			<label kind="assignment" x="518" y="0">human_stat=false, robot_stat=false</label>
-		</transition>
-		<transition id="id10">
-			<source ref="id2"/>
-			<target ref="id3"/>
-			<label kind="guard" x="1018" y="-34">robot_stat==true</label>
-			<label kind="synchronisation" x="1018" y="-17">s3!</label>
-			<label kind="assignment" x="1018" y="0">robot_stat=false</label>
+			<label kind="assignment" x="18" y="0">human_stat=false, robot_stat=false, doctor_stat=false</label>
 		</transition>
 		<transition id="id11">
-			<source ref="id3"/>
-			<target ref="id4"/>
-			<label kind="guard" x="1518" y="-34">robot_stat==true</label>
-			<label kind="synchronisation" x="1518" y="-17">s4!</label>
-			<label kind="assignment" x="1518" y="0">robot_stat=false</label>
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="guard" x="518" y="-34">human_stat==true and doctor_stat==true</label>
+			<label kind="synchronisation" x="518" y="-17">s2!</label>
+			<label kind="assignment" x="518" y="0">human_stat=false, doctor_stat=false</label>
 		</transition>
 		<transition id="id12">
-			<source ref="id4"/>
-			<target ref="id5"/>
-			<label kind="guard" x="2018" y="-34">human_stat==true and robot_stat==true</label>
-			<label kind="synchronisation" x="2018" y="-17">s5!</label>
-			<label kind="assignment" x="2018" y="0">human_stat=false, robot_stat=false</label>
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="1018" y="-34">human_stat==true and robot_stat==true</label>
+			<label kind="synchronisation" x="1018" y="-17">s3!</label>
+			<label kind="assignment" x="1018" y="0">human_stat=false, robot_stat=false</label>
 		</transition>
 		<transition id="id13">
+			<source ref="id3"/>
+			<target ref="id4"/>
+			<label kind="guard" x="1518" y="-34">robot_stat==true and doctor_stat==true</label>
+			<label kind="synchronisation" x="1518" y="-17">s4!</label>
+			<label kind="assignment" x="1518" y="0">robot_stat=false, doctor_stat=false</label>
+		</transition>
+		<transition id="id14">
+			<source ref="id4"/>
+			<target ref="id5"/>
+			<label kind="guard" x="2018" y="-34">robot_stat==true</label>
+			<label kind="synchronisation" x="2018" y="-17">s5!</label>
+			<label kind="assignment" x="2018" y="0">robot_stat=false</label>
+		</transition>
+		<transition id="id15">
 			<source ref="id5"/>
 			<target ref="id6"/>
-			<label kind="guard" x="2518" y="-34">human_stat==true and robot_stat==true</label>
+			<label kind="guard" x="2518" y="-34">robot_stat==true</label>
 			<label kind="synchronisation" x="2518" y="-17">s6!</label>
-			<label kind="assignment" x="2518" y="0">human_stat=false, robot_stat=false</label>
+			<label kind="assignment" x="2518" y="0">robot_stat=false</label>
+		</transition>
+		<transition id="id16">
+			<source ref="id6"/>
+			<target ref="id7"/>
+			<label kind="guard" x="3018" y="-34">human_stat==true and robot_stat==true</label>
+			<label kind="synchronisation" x="3018" y="-17">s7!</label>
+			<label kind="assignment" x="3018" y="0">human_stat=false, robot_stat=false</label>
+		</transition>
+		<transition id="id17">
+			<source ref="id7"/>
+			<target ref="id8"/>
+			<label kind="guard" x="3518" y="-34">robot_stat==true</label>
+			<label kind="synchronisation" x="3518" y="-17">s8!</label>
+			<label kind="assignment" x="3518" y="0">robot_stat=false</label>
+		</transition>
+		<transition id="id18">
+			<source ref="id8"/>
+			<target ref="id9"/>
+			<label kind="guard" x="4018" y="-34">human_stat==true and robot_stat==true and doctor_stat==true</label>
+			<label kind="synchronisation" x="4018" y="-17">e!</label>
+			<label kind="assignment" x="4018" y="0">currP=currP+1</label>
 		</transition>
 	</template>
 
-// **sequence_orchestrator**
+	<template>
+		<name>Prova_human</name>
+		<parameter>int p, int H</parameter>
+		<declaration>// Place local declarations here.
+		</declaration>
+		<location id="id0" x="0" y="0">
+			<name x="-17" y="-34">init_human</name>
+		</location>
+		<location id="id1" x="0" y="350">
+			<name x="-17" y="316">s1_start</name>
+			<committed/>
+		</location>
+		<location id="id2" x="0" y="700">
+			<name x="-17" y="666">s2_start</name>
+			<committed/>
+		</location>
+		<location id="id3" x="0" y="1050">
+			<name x="-17" y="1016">s3_start</name>
+			<committed/>
+		</location>
+		<location id="id7" x="0" y="2450">
+			<name x="-17" y="2416">s7_start</name>
+			<committed/>
+		</location>
+		<location id="id9" x="0" y="3150">
+			<name x="-17" y="3116">end_human</name>
+		</location>
+		<location id="id10" x="200" y="350">
+			<name x="183" y="316">A1_a1_moveTo_busy</name>
+		</location>
+		<location id="id11" x="400" y="350">
+			<name x="383" y="316">A1_a1_moveTo_complete</name>
+			<committed/>
+		</location>
+		<location id="id12" x="600" y="350">
+			<name x="583" y="316">A1_a2_follow_busy</name>
+		</location>
+		<location id="id13" x="800" y="350">
+			<name x="783" y="316">A1_a2_follow_complete</name>
+			<committed/>
+		</location>
+		<location id="id14" x="600" y="175">
+			<name x="583" y="141">A1_a3_stop</name>
+			<committed/>
+		</location>
+		<location id="id15" x="1000" y="350">
+			<name x="983" y="316">A1_a4_stop_busy</name>
+		</location>
+		<location id="id16" x="1200" y="350">
+			<name x="1183" y="316">A1_a4_stop_complete</name>
+			<committed/>
+		</location>
+		<location id="id17" x="1400" y="350">
+			<name x="1383" y="316">A1_a5_fetch_busy</name>
+		</location>
+		<location id="id18" x="1600" y="350">
+			<name x="1583" y="316">A1_a5_fetch_complete</name>
+			<committed/>
+		</location>
+		<location id="id19" x="1800" y="350">
+			<name x="1783" y="316">s1_end</name>
+		</location>
+		<location id="id20" x="200" y="2450">
+			<name x="183" y="2416">A1_a6_moveTo_busy</name>
+		</location>
+		<location id="id21" x="400" y="2450">
+			<name x="383" y="2416">A1_a6_moveTo_complete</name>
+			<committed/>
+		</location>
+		<location id="id22" x="600" y="2450">
+			<name x="583" y="2416">s7_end</name>
+		</location>
+		<location id="id23" x="200" y="700">
+			<name x="183" y="666">S2_idle</name>
+		</location>
+		<location id="id24" x="200" y="1050">
+			<name x="183" y="1016">S3_idle</name>
+		</location>
+		<init ref="id0"/>
+		<transition id="id25">
+			<source ref="id1"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="18" y="333">start_h_moveTo[H-1]!</label>
+		</transition>
+		<transition id="id26">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="18" y="233">s1?</label>
+			<label kind="assignment" x="18" y="250">human_loc_target = 0</label>
+		</transition>
+		<transition id="id33">
+			<source ref="id7"/>
+			<target ref="id20"/>
+			<label kind="synchronisation" x="18" y="2433">start_h_moveTo[H-1]!</label>
+		</transition>
+		<transition id="id34">
+			<source ref="id24"/>
+			<target ref="id7"/>
+			<label kind="synchronisation" x="18" y="2333">s7?</label>
+			<label kind="assignment" x="18" y="2350">human_loc_target = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name>Prova_robot</name>
+		<parameter>int p, int R</parameter>
+		<declaration>// Place local declarations here.
+		</declaration>
+		<location id="id0" x="0" y="0">
+			<name x="-17" y="-34">init_robot</name>
+		</location>
+		<location id="id1" x="0" y="350">
+			<name x="-17" y="316">s1_start</name>
+			<committed/>
+		</location>
+		<location id="id3" x="0" y="1050">
+			<name x="-17" y="1016">s3_start</name>
+			<committed/>
+		</location>
+		<location id="id4" x="0" y="1400">
+			<name x="-17" y="1366">s4_start</name>
+			<committed/>
+		</location>
+		<location id="id5" x="0" y="1750">
+			<name x="-17" y="1716">s5_start</name>
+			<committed/>
+		</location>
+		<location id="id6" x="0" y="2100">
+			<name x="-17" y="2066">s6_start</name>
+			<committed/>
+		</location>
+		<location id="id7" x="0" y="2450">
+			<name x="-17" y="2416">s7_start</name>
+			<committed/>
+		</location>
+		<location id="id8" x="0" y="2800">
+			<name x="-17" y="2766">s8_start</name>
+			<committed/>
+		</location>
+		<location id="id9" x="0" y="3150">
+			<name x="-17" y="3116">end_robot</name>
+		</location>
+		<location id="id10" x="200" y="350">
+			<name x="183" y="316">A2_a1_moveTo_busy</name>
+		</location>
+		<location id="id11" x="400" y="350">
+			<name x="383" y="316">A2_a1_moveTo_complete</name>
+			<committed/>
+		</location>
+		<location id="id12" x="200" y="175">
+			<name x="183" y="141">A2_a2_stop</name>
+			<committed/>
+		</location>
+		<location id="id13" x="600" y="350">
+			<name x="583" y="316">s1_end</name>
+		</location>
+		<location id="id14" x="200" y="1050">
+			<name x="183" y="1016">A2_a3_fetch_busy</name>
+		</location>
+		<location id="id15" x="400" y="1050">
+			<name x="383" y="1016">A2_a3_fetch_complete</name>
+			<committed/>
+		</location>
+		<location id="id16" x="600" y="1050">
+			<name x="583" y="1016">s3_end</name>
+		</location>
+		<location id="id17" x="200" y="2100">
+			<name x="183" y="2066">A2_a4_moveTo_busy</name>
+		</location>
+		<location id="id18" x="400" y="2100">
+			<name x="383" y="2066">A2_a4_moveTo_complete</name>
+			<committed/>
+		</location>
+		<location id="id19" x="600" y="2100">
+			<name x="583" y="2066">s6_end</name>
+		</location>
+		<location id="id20" x="200" y="1400">
+			<name x="183" y="1366">S4_idle</name>
+		</location>
+		<location id="id21" x="200" y="1750">
+			<name x="183" y="1716">S5_idle</name>
+		</location>
+		<location id="id22" x="200" y="2450">
+			<name x="183" y="2416">S7_idle</name>
+		</location>
+		<location id="id23" x="200" y="2800">
+			<name x="183" y="2766">S8_idle</name>
+		</location>
+		<init ref="id0"/>
+		<transition id="id24">
+			<source ref="id1"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="18" y="333">start_r_moveTo[R-1]!</label>
+		</transition>
+		<transition id="id30">
+			<source ref="id6"/>
+			<target ref="id17"/>
+			<label kind="synchronisation" x="18" y="2083">start_r_moveTo[R-1]!</label>
+		</transition>
+	</template>
+	<template>
+		<name>Prova_doctor</name>
+		<parameter>int p, int H</parameter>
+		<declaration>// Place local declarations here.
+		</declaration>
+		<location id="id0" x="0" y="0">
+			<name x="-17" y="-34">init_doctor</name>
+		</location>
+		<location id="id1" x="0" y="350">
+			<name x="-17" y="316">s1_start</name>
+			<committed/>
+		</location>
+		<location id="id2" x="0" y="700">
+			<name x="-17" y="666">s2_start</name>
+			<committed/>
+		</location>
+		<location id="id4" x="0" y="1400">
+			<name x="-17" y="1366">s4_start</name>
+			<committed/>
+		</location>
+		<location id="id9" x="0" y="3150">
+			<name x="-17" y="3116">end_doctor</name>
+		</location>
+		<location id="id10" x="200" y="350">
+			<name x="183" y="316">A3_a1_moveTo_busy</name>
+		</location>
+		<location id="id11" x="400" y="350">
+			<name x="383" y="316">A3_a1_moveTo_complete</name>
+			<committed/>
+		</location>
+		<location id="id12" x="600" y="350">
+			<name x="583" y="316">s1_end</name>
+		</location>
+		<location id="id13" x="200" y="700">
+			<name x="183" y="666">A3_a2_moveTo_busy</name>
+		</location>
+		<location id="id14" x="400" y="700">
+			<name x="383" y="666">A3_a2_moveTo_complete</name>
+			<committed/>
+		</location>
+		<location id="id15" x="600" y="700">
+			<name x="583" y="666">s2_end</name>
+		</location>
+		<location id="id16" x="200" y="1400">
+			<name x="183" y="1366">A3_a3_moveTo_busy</name>
+		</location>
+		<location id="id17" x="400" y="1400">
+			<name x="383" y="1366">A3_a3_moveTo_complete</name>
+			<committed/>
+		</location>
+		<location id="id18" x="600" y="1400">
+			<name x="583" y="1366">s4_end</name>
+		</location>
+		<init ref="id0"/>
+		<transition id="id19">
+			<source ref="id1"/>
+			<target ref="id10"/>
+			<label kind="synchronisation" x="18" y="333">start_h_moveTo[H-1]!</label>
+		</transition>
+		<transition id="id20">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="18" y="233">s1?</label>
+			<label kind="assignment" x="18" y="250">human_loc_target = 0</label>
+		</transition>
+		<transition id="id23">
+			<source ref="id2"/>
+			<target ref="id13"/>
+			<label kind="synchronisation" x="18" y="683">start_h_moveTo[H-1]!</label>
+		</transition>
+		<transition id="id24">
+			<source ref="id12"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="18" y="583">s2?</label>
+			<label kind="assignment" x="18" y="600">human_loc_target = 1</label>
+		</transition>
+		<transition id="id27">
+			<source ref="id4"/>
+			<target ref="id16"/>
+			<label kind="synchronisation" x="18" y="1383">start_h_moveTo[H-1]!</label>
+		</transition>
+		<transition id="id28">
+			<source ref="id15"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="18" y="1283">s4?</label>
+			<label kind="assignment" x="18" y="1300">human_loc_target = 0</label>
+		</transition>
+	</template>
+
 	<template>
 		<name>Human_moveTo</name>
 		<parameter>int id, double _v</parameter>
@@ -1699,6 +2014,7 @@ h_pub_ftg = ROS_SensPub(3, 0.5, 0.01);
 // Mission Definition
 
 hm_1 = Human_moveTo(1, 26.0);
+hm_2 = Human_moveTo(2, 26.0);
 rm_1 = Robot_moveTo(1, 26.0, 26.0);
 rm_2 = Robot_moveTo(2, 26.0, 26.0);
 rf_1 = Robot_follow(1, 26.0, 26.0);
@@ -1713,6 +2029,7 @@ rf_2 = Robot_follow(2, 26.0, 26.0);
 system
 
 hm_1,
+hm_2,
 rm_1,
 rm_2,
 rf_1,
