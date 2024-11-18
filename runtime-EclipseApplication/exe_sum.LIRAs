@@ -1,30 +1,17 @@
 Prova
 
 agents:
-	humans: Human, Doctor
-	robots: Robot, pippo
+	humans: Human
+	robots: Robot
 locations: room1, room2
 resources: item
 
-Human:
-	1: moveTo room1 
-	follow Human (room2) if position(Human, room1) else stop
-	stop 
-	fetch item until position(Human, room1)
-	3-6:
-	7-8: moveTo room1
 
+Human:
+	1:  moveTo room1
+	moveTo room2
+	
 Robot:
-	1-2: moveTo room1 if position(Human, room1) else stop
-	
-	3: fetch item
-	4: 
-	6: moveTo room2
-		
-Doctor:
 	1: moveTo room1
-	2-3: moveTo room2
-	4-8: moveTo room1
-	
-	
-	
+	2: moveTo room2
+

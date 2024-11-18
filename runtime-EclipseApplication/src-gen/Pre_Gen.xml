@@ -132,15 +132,10 @@ double pt_dist(double x1, double x2, double y1, double y2) {
 }
 
 </declaration>
-// **pattern_orchestrator**
-// **sequence_orchestrator**
-// **Human_moveTo**
-// **Robot_moveTo**
-// **Robot_follow**
-    <template>
-        <name>ROS_SensPub</name>
-        <parameter>int id, double l_avg, double l_dev</parameter>
-        <declaration>
+	<template>
+		<name>ROS_SensPub</name>
+		<parameter>int id, double l_avg, double l_dev</parameter>
+		<declaration>
 clock L;
 
 double latency = 0.0;
@@ -153,7 +148,7 @@ int buffer3[MAX_BUFF_SIZE];
 int cached_id;
 
 void update_lat() {
-latency = random_normal(l_avg, l_dev);
+latency = 0;
 }
 
 void add_to_buffer() {
@@ -226,51 +221,51 @@ else if(id==3 &amp;&amp; cached_id==currH) humanFatigue[currH-1] = buffer[0];
 shift_buffer();
 }
         </declaration>
-        <location id="id143" x="-34" y="-8">
-            <name x="-42" y="8">idle</name>
-            <label kind="invariant" x="-42" y="25">L'==0</label>
-        </location>
-        <location id="id144" x="-34" y="-195">
-            <name x="-17" y="-204">sending</name>
-            <label kind="invariant" x="8" y="-187">L &lt;= latency</label>
-        </location>
-        <init ref="id143"/>
-        <transition id="id145">
-            <source ref="id144"/>
-            <target ref="id144"/>
-            <label kind="synchronisation" x="42" y="-263">publish_m[id]?</label>
-            <label kind="assignment" x="42" y="-246">add_to_buffer()</label>
-            <nail x="-34" y="-280"/>
-            <nail x="34" y="-246"/>
-        </transition>
-        <transition id="id146">
-            <source ref="id144"/>
-            <target ref="id144"/>
-            <label kind="guard" x="-246" y="-323">L&gt;=latency
+		<location id="id0" x="-34" y="-8">
+			<name x="-42" y="8">idle</name>
+			<label kind="invariant" x="-42" y="25">L'==0</label>
+		</location>
+		<location id="id1" x="-34" y="-195">
+			<name x="-17" y="-204">sending</name>
+			<label kind="invariant" x="8" y="-187">L &lt;= latency</label>
+		</location>
+		<init ref="id0"/>
+		<transition id="id2">
+			<source ref="id1"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="42" y="-263">publish_m[id]?</label>
+			<label kind="assignment" x="42" y="-246">add_to_buffer()</label>
+			<nail x="-34" y="-280"/>
+			<nail x="34" y="-246"/>
+		</transition>
+		<transition id="id3">
+			<source ref="id1"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-246" y="-323">L&gt;=latency
     &amp;&amp; buff_pos&gt;1</label>
-            <label kind="assignment" x="-246" y="-280">publish(),
+			<label kind="assignment" x="-246" y="-280">publish(),
     update_lat(),
     L=0</label>
-            <nail x="-34" y="-280"/>
-            <nail x="-102" y="-238"/>
-        </transition>
-        <transition id="id147">
-            <source ref="id144"/>
-            <target ref="id143"/>
-            <label kind="guard" x="-255" y="-144">L&gt;=latency
+			<nail x="-34" y="-280"/>
+			<nail x="-102" y="-238"/>
+		</transition>
+		<transition id="id4">
+			<source ref="id1"/>
+			<target ref="id0"/>
+			<label kind="guard" x="-255" y="-144">L&gt;=latency
     &amp;&amp; buff_pos&lt;=1</label>
-            <label kind="assignment" x="-255" y="-102">publish()</label>
-            <nail x="-93" y="-102"/>
-        </transition>
-        <transition id="id148">
-            <source ref="id143"/>
-            <target ref="id144"/>
-            <label kind="synchronisation" x="42" y="-127">publish_m[id]?</label>
-            <label kind="assignment" x="42" y="-110">add_to_buffer(),
+			<label kind="assignment" x="-255" y="-102">publish()</label>
+			<nail x="-93" y="-102"/>
+		</transition>
+		<transition id="id5">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="42" y="-127">publish_m[id]?</label>
+			<label kind="assignment" x="42" y="-110">add_to_buffer(),
     L=0, update_lat()</label>
-            <nail x="34" y="-102"/>
-        </transition>
-    </template>
+			<nail x="34" y="-102"/>
+		</transition>
+	</template>
 	<system>
 r_pub_1 = ROS_SensPub(1, 0.5, 0.01);
 h_pub_pos = ROS_SensPub(2, 0.5, 0.01);
@@ -303,11 +298,11 @@ h_pub_ftg
 </system>
 	<queries>
 		<query>
-			<formula/>
+			<formula>Pr[&lt;=400] (&lt;&gt; Prova.end)</formula>
 			<comment/>
 		</query>
 		<query>
-			<formula>simulate[&lt;=700]{humanPositionX[0], humanPositionY[0], robPositionX[0], robPositionY[0], rf_1.starting*100, exeSum.end*100}</formula>
+			<formula>simulate[&lt;=700]{humanPositionX[0], humanPositionY[0], robPositionX[0], robPositionY[0], Prova.end*100}</formula>
 			<comment/>
 		</query>
 	</queries>
