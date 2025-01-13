@@ -1,0 +1,3095 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
+<nta>
+	<declaration>/**
+*** GLOBAL DECLARATIONS
+*/
+
+// Pigreco        
+const double PI = 3.1415926535;
+
+const int Tpoll = 1;
+
+// Locations
+const double room1[2] = {400, 150};
+const double room2[2] = {1200, 750};
+const double room3[2] = {500, 400};
+
+/**
+*** STUFF TO BE GENERATED AUTOMATICALLY
+*/
+
+// Sub-sequence Stages
+urgent broadcast chan s1, s2, s3, e;
+
+// Sequence status (one for each agent)
+bool human_stat=true, robot_stat=true;
+
+// Declared Locations
+double location_X[2]  = {room1[0], room2[0]};
+double location_Y[2]  = {room1[1], room2[1]};
+
+const int N_H = 1; // Number of humans in the pattern
+const int N_R = 1; // Number of robots in the pattern
+
+// Human initialization
+double humanFatigue[N_H] = {0.0};
+double humanPositionX[N_H] = {0.0};
+double humanPositionY[N_H] = {0.0};
+
+// Robot initialization
+double batteryCharge[N_R] = {100.0};
+double robPositionX[N_R];
+double robPositionY[N_R];
+
+/**
+*** GLOBAL VARIABLES
+*/
+
+// action synchronization management
+
+urgent broadcast chan start_h_moveTo[N_H], stop_h_moveTo[N_H];
+int human_loc_target = 0;
+
+urgent broadcast chan start_r_moveTo[N_R], stop_r_moveTo[N_R];
+int robot_loc_target = 0;
+
+urgent broadcast chan start_r_follow[N_R], stop_r_follow[N_R];
+// Who I have to follow (agent id)?
+int human_to_be_followed = 0;
+int robot_to_be_followed = 0;
+int f_human_loc_target = 0;
+int f_robot_loc_target = 0;
+
+// Human starting position
+double h_startX[N_H] = {2500.0};
+double h_startY[N_H] = {100.0};
+
+// Robot starting position
+double r_startX[N_R] = {2000.0};
+double r_startY[N_R] = {500.0};
+
+
+
+/**
+*** Channels
+*/
+
+// Human moveTo
+broadcast chan hm_fail;
+// Robot moveTo
+broadcast chan rm_still;
+// Robot follow
+broadcast chan rf_still;
+
+
+/**
+*** VARIABLES
+**/
+
+bool scs = false;
+//
+const int MAX_BUFF_SIZE = 10;
+
+// Pattern execution flow
+int currP = 1;
+// Robot Mgmt
+int currR = 1; // current robot
+// Human Mgmt
+int currH = 1; // current human
+
+
+/**
+*** FLOOR PLAN
+**/
+
+const int N_A = 10;
+
+const int N_P = 10;
+
+const int N_I = 9;
+
+
+typedef double point[2];
+typedef point area[4];
+typedef area layout[N_A];
+typedef point trajectory[N_P];
+
+const layout FLOOR = {{{0.0, 110.0},{0.0, 299.5},{1550.0, 299.5},{1550.0, 110.0}},{{0.0, 110.0},{0.0, 850.0},{185.0, 850.0},{185.0, 110.0}},{{0.0, 672.5},{0.0, 850.0},{1550.0, 850.0},{1550.0, 672.5}},{{1352.0, 110.0},{1352.0, 850.0},{1550.0, 850.0},{1550.0, 110.0}},{{2970.0, 110.0},{2970.0, 299.5},{4512.5, 299.5},{4512.5, 110.0}},{{2970.0, 110.0},{2970.0, 850.0},{3155.0, 850.0},{3155.0, 110.0}},{{2970.0, 672.5},{2970.0, 850.0},{4512.5, 850.0},{4512.5, 672.5}},{{4322.0, 110.0},{4322.0, 850.0},{4512.5, 850.0},{4512.5, 110.0}},{{1945.0, 0.0},{1945.0, 695.0},{2670.0, 695.0},{2670.0, 0.0}},{{1352.0, 110.0},{1352.0, 425.0},{3155.0, 425.0},{3155.0, 110.0}}};
+
+const point INTERSECTIONS[N_I] = {{92.5, 163.5},{92.5, 761.2},{1452.0, 761.2},{1452.0, 163.5},{3062.5, 163.5},{4417.0, 163.5},{3062.5, 761.2},{4417.0, 761.2},{2253.5, 267.5}};
+
+// used in all the actions
+bool same_area(double sx, double sy, double dx, double dy) {
+    int i;
+    bool x_s_in, y_s_in, x_d_in, y_d_in;
+    for (i = 0; i &lt; N_A; i++)
+    {
+        x_s_in = sx &gt; FLOOR[i][0][0] &amp;&amp; sx &lt; FLOOR[i][3][0];
+        y_s_in = sy &gt; FLOOR[i][0][1] &amp;&amp; sy &lt; FLOOR[i][1][1];
+        x_d_in = dx &gt; FLOOR[i][0][0] &amp;&amp; dx &lt; FLOOR[i][3][0];
+        y_d_in = dy &gt; FLOOR[i][0][1] &amp;&amp; dy &lt; FLOOR[i][1][1];
+        if ((x_s_in &amp;&amp; y_s_in) &amp;&amp; (x_d_in &amp;&amp; y_d_in)) // start and dest in same area
+            return true;
+    }
+    return false;
+}
+
+// used in all the actions
+double pt_dist(double x1, double x2, double y1, double y2) {
+    double xdifference = x2-x1;
+    double ydifference = y2-y1;
+    return sqrt((xdifference*xdifference)+(ydifference*ydifference));
+}
+
+
+</declaration>
+	<template>
+		<name>exeSum_orchestrator</name>
+		<parameter>int p</parameter>
+		<location id="id0" x="246" y="-68">
+			<name x="236" y="-102">end</name>
+		</location>
+		<location id="id1" x="-289" y="-68">
+			<name x="-331" y="-110">sub_seq_s1</name>
+		</location>
+		<location id="id2" x="-578" y="-68">
+			<name x="-595" y="-102">Init</name>
+		</location>
+		<location id="id3" x="-17" y="-68">
+			<name x="-59" y="-110">sub_seq_s2</name>
+		</location>
+		<init ref="id2"/>
+		<transition id="id4">
+			<source ref="id1"/>
+			<target ref="id3"/>
+			<label kind="guard" x="-238" y="-68">human_stat==true and
+robot_stat==true</label>
+			<label kind="synchronisation" x="-85" y="-85">s2!</label>
+			<label kind="assignment" x="-238" y="-110">human_stat=false,
+robot_stat=false</label>
+			<nail x="-101" y="-68"/>
+		</transition>
+		<transition id="id5">
+			<source ref="id3"/>
+			<target ref="id0"/>
+			<label kind="guard" x="34" y="-68">human_stat==true and 
+robot_stat==true</label>
+			<label kind="synchronisation" x="178" y="-93">e!</label>
+			<label kind="assignment" x="34" y="-93">currP=currP+1</label>
+		</transition>
+		<transition id="id6">
+			<source ref="id2"/>
+			<target ref="id1"/>
+			<label kind="guard" x="-552" y="-68">human_stat==true and 
+robot_stat==true
+and p==currP</label>
+			<label kind="synchronisation" x="-365" y="-85">s1!</label>
+			<label kind="assignment" x="-552" y="-110">human_stat=false,
+robot_stat=false</label>
+		</transition>
+	</template>
+	<template>
+		<name>exeSum_human</name>
+		<parameter>int p, int H</parameter>
+		<location id="id7" x="-340" y="161">
+			<name x="-382" y="178">end_human</name>
+		</location>
+		<location id="id8" x="408" y="-68">
+			<name x="340" y="-102">moveTo_h_complete1</name>
+		</location>
+		<location id="id9" x="-374" y="-68">
+		</location>
+		<location id="id10" x="-238" y="-68">
+			<committed/>
+		</location>
+		<location id="id11" x="-17" y="-68">
+			<name x="-68" y="-102">moveTo_h_busy1</name>
+		</location>
+		<location id="id12" x="408" y="17">
+			<committed/>
+		</location>
+		<location id="id13" x="77" y="17">
+			<name x="-9" y="-17">moveTo_h_busy2</name>
+		</location>
+		<location id="id14" x="-340" y="17">
+			<name x="-408" y="-25">moveTo_h_complete2</name>
+		</location>
+		<init ref="id9"/>
+		<transition id="id15">
+			<source ref="id13"/>
+			<target ref="id14"/>
+			<label kind="guard" x="-323" y="42">humanPositionX[H-1] &lt;= location_X[human_loc_target]+30 and
+humanPositionX[H-1] &gt;= location_X[human_loc_target]-30 and
+humanPositionY[H-1] &lt;= location_Y[human_loc_target]+30 and
+humanPositionY[H-1] &gt;= location_Y[human_loc_target]-30</label>
+			<label kind="synchronisation" x="-229" y="-8">stop_h_moveTo[H-1]!</label>
+			<label kind="assignment" x="-221" y="17">human_stat = true</label>
+		</transition>
+		<transition id="id16">
+			<source ref="id12"/>
+			<target ref="id13"/>
+			<label kind="synchronisation" x="161" y="-8">start_h_moveTo[H-1]!</label>
+		</transition>
+		<transition id="id17">
+			<source ref="id8"/>
+			<target ref="id12"/>
+			<label kind="synchronisation" x="433" y="-51">s2?</label>
+			<label kind="assignment" x="433" y="-25">human_loc_target = 1</label>
+		</transition>
+		<transition id="id18">
+			<source ref="id14"/>
+			<target ref="id7"/>
+			<label kind="synchronisation" x="-408" y="77">e?</label>
+		</transition>
+		<transition id="id19">
+			<source ref="id11"/>
+			<target ref="id8"/>
+			<label kind="guard" x="-17" y="-187">humanPositionX[H-1] &lt;= location_X[human_loc_target]+30 and
+humanPositionX[H-1] &gt;= location_X[human_loc_target]-30 and
+humanPositionY[H-1] &lt;= location_Y[human_loc_target]+30 and
+humanPositionY[H-1] &gt;= location_Y[human_loc_target]-30</label>
+			<label kind="synchronisation" x="102" y="-93">stop_h_moveTo[H-1]!</label>
+			<label kind="assignment" x="102" y="-68">human_stat = true</label>
+		</transition>
+		<transition id="id20">
+			<source ref="id10"/>
+			<target ref="id11"/>
+			<label kind="synchronisation" x="-212" y="-85">start_h_moveTo[H-1]!</label>
+		</transition>
+		<transition id="id21">
+			<source ref="id9"/>
+			<target ref="id10"/>
+			<label kind="guard" x="-416" y="-153">currP==p</label>
+			<label kind="synchronisation" x="-306" y="-94">s1?</label>
+			<label kind="assignment" x="-416" y="-127">human_loc_target = 0</label>
+		</transition>
+	</template>
+	<template>
+		<name>exeSum_robot</name>
+		<parameter>int p, int R</parameter>
+		<location id="id22" x="552" y="-85">
+			<name x="578" y="-93">moveTo_r_complete</name>
+		</location>
+		<location id="id23" x="-382" y="-85">
+		</location>
+		<location id="id24" x="-255" y="-85">
+			<committed/>
+		</location>
+		<location id="id25" x="-77" y="-85">
+			<name x="-136" y="-68">moveTo_r_busy</name>
+		</location>
+		<location id="id26" x="34" y="8">
+			<name x="-26" y="-26">follow_r_busy</name>
+		</location>
+		<location id="id27" x="-383" y="8">
+			<name x="-425" y="-26">follow_r_complete</name>
+		</location>
+		<location id="id28" x="552" y="8">
+			<committed/>
+		</location>
+		<location id="id29" x="-382" y="204">
+			<name x="-365" y="195">end_robot</name>
+		</location>
+		<location id="id30" x="-76" y="-297">
+			<name x="-86" y="-331">stop</name>
+		</location>
+		<location id="id31" x="-255" y="8">
+			<committed/>
+		</location>
+		<init ref="id23"/>
+		<transition id="id32">
+			<source ref="id31"/>
+			<target ref="id27"/>
+			<nail x="-289" y="8"/>
+			<nail x="-289" y="8"/>
+			<nail x="-323" y="8"/>
+		</transition>
+		<transition id="id33">
+			<source ref="id22"/>
+			<target ref="id28"/>
+			<label kind="synchronisation" x="561" y="-51">s2?</label>
+			<label kind="assignment" x="569" y="-34">f_robot_loc_target = 1,
+robot_to_be_followed = 0,
+human_to_be_followed = 1</label>
+		</transition>
+		<transition id="id34">
+			<source ref="id25"/>
+			<target ref="id22"/>
+			<label kind="guard" x="34" y="-187">robPositionX[R-1] &lt;= location_X[robot_loc_target]+30 and
+robPositionX[R-1] &gt;= location_X[robot_loc_target]-30 and
+robPositionY[R-1] &lt;= location_Y[robot_loc_target]+30 and
+robPositionY[R-1] &gt;= location_Y[robot_loc_target]-30</label>
+			<label kind="synchronisation" x="153" y="-110">stop_r_moveTo[R-1]!</label>
+			<label kind="assignment" x="153" y="-85">robot_stat = true</label>
+		</transition>
+		<transition id="id35">
+			<source ref="id24"/>
+			<target ref="id25"/>
+			<label kind="synchronisation" x="-263" y="-119">start_r_moveTo[R-1]!</label>
+		</transition>
+		<transition id="id36">
+			<source ref="id23"/>
+			<target ref="id24"/>
+			<label kind="guard" x="-357" y="-85">currP==p</label>
+			<label kind="synchronisation" x="-349" y="-111">s1?</label>
+			<label kind="assignment" x="-416" y="-68">robot_loc_target = 0</label>
+		</transition>
+		<transition id="id37">
+			<source ref="id26"/>
+			<target ref="id31"/>
+			<label kind="guard" x="-221" y="34">humanPositionX[0] &lt;= location_X[1]+30 and
+humanPositionX[0] &gt;= location_X[1]-30 and
+humanPositionY[0] &lt;= location_Y[1]+30 and
+humanPositionY[0] &gt;= location_Y[1]-30 and
+robPositionX[R-1] &gt;= location_X[f_robot_loc_target]-30 and
+robPositionX[R-1] &lt;= location_X[f_robot_loc_target]+30 and
+robPositionY[R-1] &gt;= location_Y[f_robot_loc_target]-30 and
+robPositionY[R-1] &lt;= location_Y[f_robot_loc_target]+30</label>
+			<label kind="synchronisation" x="-212" y="-17">stop_r_follow[R-1]!</label>
+			<label kind="assignment" x="-221" y="8">robot_stat=true</label>
+		</transition>
+		<transition id="id38">
+			<source ref="id28"/>
+			<target ref="id26"/>
+			<label kind="synchronisation" x="119" y="-17">start_r_follow[R-1]!</label>
+		</transition>
+		<transition id="id39">
+			<source ref="id27"/>
+			<target ref="id29"/>
+			<label kind="synchronisation" x="-408" y="93">e?</label>
+		</transition>
+		<transition id="id40">
+			<source ref="id25"/>
+			<target ref="id30"/>
+			<label kind="guard" x="-535" y="-263">not(humanPositionX[0] &lt;= location_X[0]+30 and
+humanPositionX[0] &gt;= location_X[0]-30 and
+humanPositionY[0] &lt;= location_Y[0]+30 and
+humanPositionY[0] &gt;= location_Y[0]-30)</label>
+			<label kind="synchronisation" x="-297" y="-187">stop_r_moveTo[R-1]!</label>
+			<nail x="-136" y="-195"/>
+		</transition>
+		<transition id="id41">
+			<source ref="id30"/>
+			<target ref="id25"/>
+			<label kind="guard" x="-68" y="-297">humanPositionX[0] &lt;= location_X[0]+30 and
+humanPositionX[0] &gt;= location_X[0]-30 and
+humanPositionY[0] &lt;= location_Y[0]+30 and
+humanPositionY[0] &gt;= location_Y[0]-30</label>
+			<label kind="synchronisation" x="-68" y="-221">start_r_moveTo[R-1]!</label>
+			<nail x="-17" y="-195"/>
+		</transition>
+	</template>
+	<template>
+		<name>Human_idle</name>
+		<parameter>int id</parameter>
+		<declaration>clock t, F;
+clock tUpd;
+clock tExp;
+int FW_max = 100;
+double Fp;
+double lambda, mi;
+const double passout_th = 1.0;
+const double YOUNG_SICK[2] = {0.001865, 0.005117};
+const double YOUNG_SICK_SIGMA[2] = {0.000719, 0.000001};
+
+// Errors Model
+int obey, disobey;
+double freeWillTh;
+double fw;
+int TE;
+double lambda_crit;
+double hs, crit, non_crit;
+int FS =100;
+
+void updateHealthDangerProb() {
+    crit = hs + hs * humanFatigue[id-1];
+    non_crit = FS - crit;
+}
+
+// Fatigue Sharing Parameters
+bool ONCE_FTG = true;
+bool ONCE_POS = true;
+
+meta int v;
+
+void updateF(double coeff, bool walking) {
+    // if two human instances are the same person,
+    // residual conditions must be retrieved
+
+    if(walking) humanFatigue[id-1] = 1-(1-humanFatigue[id-1])*exp(coeff*Tpoll);
+    else humanFatigue[id-1] = humanFatigue[id-1]*exp(coeff*Tpoll);
+
+    humanFatigue[id-1] = fmax(0, humanFatigue[id-1]);
+}
+
+double calculateDistance() {
+    double xdifference = pow(robPositionX[currR-1]-humanPositionX[currH-1], 2);
+    double ydifference = pow(robPositionY[currR-1]-humanPositionY[currH-1], 2);
+    double distance = sqrt(xdifference + ydifference)/100;
+
+    if(distance&lt;0) return -distance;
+    else return distance;
+}
+
+int e_obey=100, e_disobey=0;
+int e_FW_th = 101;
+int e_delta_x100 = 9999;
+int e_lambda_inv = 9999;
+int e_crit = 0;
+
+
+void initHuman() {
+
+    t = 0;
+    tUpd = 0;
+    F = 0;
+    Fp = 0;
+    v = 0;
+
+    humanPositionX[id - 1] = h_startX[id-1];
+    humanPositionY[id - 1] = h_startY[id-1];
+
+    lambda = random_normal(YOUNG_SICK[0], YOUNG_SICK_SIGMA[0]);
+    mi = random_normal(YOUNG_SICK[1], YOUNG_SICK_SIGMA[1]);
+
+    obey = e_obey;
+    disobey = e_disobey;
+    freeWillTh = e_FW_th;
+    lambda_crit = 1/e_lambda_inv;
+    hs = e_crit;
+    crit = 1.0;
+    non_crit = 999.0;
+}
+    </declaration>
+		<location id="id42" x="-322" y="-59">
+			<name x="-382" y="-93">deactive</name>
+		</location>
+		<location id="id43" x="212" y="-59">
+			<name x="229" y="-84">idle</name>
+			<label kind="invariant" x="212" y="-127">F' == -Fp*mi*exp(-mi*t)
+&amp;&amp; tUpd&lt;=Tpoll</label>
+		</location>
+		<location id="id44" x="-535" y="-59">
+			<name x="-586" y="-76">Init</name>
+			<committed/>
+		</location>
+		<location id="id45" x="-136" y="127">
+			<name x="-128" y="93">c3</name>
+			<committed/>
+		</location>
+		<location id="id46" x="688" y="-110" color="#ff0000">
+			<name x="705" y="-187">passed_out</name>
+			<label kind="invariant" x="714" y="-161">t' == 0 &amp;&amp;
+F' == 0 &amp;&amp;
+tExp'==0</label>
+			<label kind="exponentialrate" x="680" y="-93">1</label>
+		</location>
+		<location id="id47" x="629" y="127">
+			<committed/>
+		</location>
+		<branchpoint id="id48" x="484" y="127"/>
+		<init ref="id44"/>
+		<transition id="id49">
+			<source ref="id45"/>
+			<target ref="id42"/>
+			<label kind="assignment" x="-297" y="127">t = 0, Fp=F,
+tUpd=0, tExp=0</label>
+			<nail x="-323" y="127"/>
+		</transition>
+		<transition id="id50">
+			<source ref="id43"/>
+			<target ref="id48"/>
+			<label kind="guard" x="255" y="135">tUpd &gt;= Tpoll</label>
+			<label kind="assignment" x="255" y="153">updateF(-mi, 0),
+tUpd=0,
+fw = random(FW_max),
+updateHealthDangerProb()</label>
+			<nail x="246" y="127"/>
+			<nail x="408" y="127"/>
+		</transition>
+		<transition id="id51">
+			<source ref="id43"/>
+			<target ref="id45"/>
+			<label kind="guard" x="34" y="127">currH==id</label>
+			<label kind="synchronisation" x="25" y="102">start_h_moveTo[id-1]?</label>
+			<nail x="213" y="128"/>
+		</transition>
+		<transition id="id52">
+			<source ref="id42"/>
+			<target ref="id43"/>
+			<label kind="guard" x="-289" y="-85">currH==id</label>
+			<label kind="synchronisation" x="-289" y="-59">stop_h_moveTo[id-1]?</label>
+			<label kind="assignment" x="-289" y="-42">Fp = humanFatigue[id-1],
+F = humanFatigue[id-1]</label>
+			<nail x="-187" y="-59"/>
+			<nail x="-136" y="-59"/>
+		</transition>
+		<transition id="id53">
+			<source ref="id44"/>
+			<target ref="id42"/>
+			<label kind="assignment" x="-501" y="-59">initHuman()</label>
+		</transition>
+		<transition id="id54" color="#ff0000">
+			<source ref="id48"/>
+			<target ref="id47"/>
+			<label kind="probability" x="535" y="110">crit</label>
+		</transition>
+		<transition id="id55">
+			<source ref="id47"/>
+			<target ref="id46"/>
+			<label kind="synchronisation" x="501" y="8">hm_fail!</label>
+			<nail x="629" y="-110"/>
+		</transition>
+		<transition id="id56">
+			<source ref="id48"/>
+			<target ref="id43"/>
+			<label kind="probability" x="348" y="8">non_crit</label>
+		</transition>
+		<transition id="id57">
+			<source ref="id46"/>
+			<target ref="id46"/>
+			<nail x="663" y="-59"/>
+			<nail x="705" y="-59"/>
+		</transition>
+	</template>
+	<template>
+		<name>Human_moveTo</name>
+		<parameter>int id, double _v</parameter>
+		<declaration>clock t, F;
+clock tUpd;
+clock tExp;
+int FW_max = 100;
+double Fp;
+double lambda, mi;
+const double passout_th = 1.0;
+const double YOUNG_SICK[2] = {0.001865, 0.005117};
+const double YOUNG_SICK_SIGMA[2] = {0.000719, 0.000001};
+
+// Errors Model
+int obey, disobey;
+double freeWillTh;
+double fw;
+int TE;
+double lambda_crit;
+double hs, crit, non_crit;
+int FS =100;
+
+void updateHealthDangerProb() {
+    crit = hs + hs * humanFatigue[id-1];
+    non_crit = FS - crit;
+}
+
+// Fatigue Sharing Parameters
+bool ONCE_FTG = true;
+bool ONCE_POS = true;
+
+meta int v;
+
+void updateF(double coeff, bool walking) {
+    // if two human instances are the same person,
+    // residual conditions must be retrieved
+
+    if(walking) humanFatigue[id-1] = 1-(1-humanFatigue[id-1])*exp(coeff*Tpoll);
+    else humanFatigue[id-1] = humanFatigue[id-1]*exp(coeff*Tpoll);
+
+    humanFatigue[id-1] = fmax(0, humanFatigue[id-1]);
+}
+
+trajectory traj = {{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0}};
+double ort = 0.0;
+int curr_traj = 0;
+
+void change_orientation(double sx, double sy, double dx, double dy) {
+    double cos_alpha, alpha, theta, delta;
+    double AC, AB;
+    bool turnLeft, needsTurning = false;
+
+    AC = pt_dist(sx, dx, sy, sy);
+    AB = pt_dist(sx, dx, sy, dy);
+
+    if (AB == 0)
+    {
+        return;
+    }
+
+    cos_alpha = AC / AB;
+    // angle between destination and hor. line
+    alpha = acos(cos_alpha);
+    // angle between robot axis and hor. line
+    theta = ort * 180 / PI;
+    // how much the robot should rotate [deg]
+    delta = 0.0;
+    turnLeft = false;
+
+    if (dx &gt;= sx &amp;&amp; dy &gt;= sy)
+    { // Destination in 1st quadrant
+        alpha = alpha * (180 / PI);
+        if (alpha &gt; theta)
+        {
+            delta = alpha - theta;
+            turnLeft = true;
+        }
+        else
+        {
+            delta = theta - alpha;
+            turnLeft = false;
+        }
+    }
+    else if (dx &gt;= sx &amp;&amp; dy &lt;= sy)
+    { // Destination in 2nd quadrant
+        alpha = -alpha * (180 / PI);
+        if (theta &lt; alpha)
+        {
+            delta = alpha - theta;
+            turnLeft = true;
+        }
+        else
+        {
+            delta = theta - alpha;
+            turnLeft = false;
+        }
+    }
+    else if (dx &lt;= sx &amp;&amp; dy &lt;= sy)
+    { // Destination in 3rd quadrant
+        alpha = -(180 - alpha * (180 / PI));
+        if (theta &lt; alpha)
+        {
+            delta = alpha - theta;
+            turnLeft = true;
+        }
+        else
+        {
+            delta = theta - alpha;
+            turnLeft = false;
+        }
+    }
+    else if (dx &lt;= sx &amp;&amp; dy &gt;= sy)
+    { // Destination in 4th quadrant
+        alpha = 180 - alpha * (180 / PI);
+        if (theta &lt; alpha)
+        {
+            delta = alpha - theta;
+            turnLeft = true;
+        }
+        else
+        {
+            delta = theta - alpha;
+            turnLeft = false;
+        }
+    }
+
+    needsTurning = delta &gt; 0.0;
+
+    if (needsTurning &amp;&amp; turnLeft)
+    {
+        ort = ort * 180 / PI + delta;
+    }
+    else if (needsTurning &amp;&amp; !turnLeft)
+    {
+        ort = ort * 180 / PI - delta;
+    }
+}
+
+point curr, dest;
+
+void plan_traj() {
+    int i, j, next_inters = -1;
+    int neigh[5] = {-1,-1,-1,-1,-1};
+    int k = 0;
+    double dist, min_dist;
+    bool visited[N_I] = {false,false,false,false,false,false,false,false,false};
+    curr[0] = humanPositionX[id-1]; curr[1] = humanPositionY[id-1];
+    dest[0] = location_X[human_loc_target]; dest[1] = location_Y[human_loc_target];
+    // init trajectory
+    for (i = 0; i &lt; N_P; i++)
+    {
+        traj[i][0] = 0.0;
+        traj[i][1] = 0.0;
+    }
+    i = 0;
+    curr_traj = 0;
+
+    // builds trajectory by finding a path among adjacent areas
+    // (the existence of an intersection point means two areas are adjacent to each other)
+    // until the destination area is reached
+    while (!same_area(curr[0], curr[1], dest[0], dest[1]))
+    {
+        for (j = 0; j &lt; N_I; j++)
+        {
+            // find all int. pts which are a neighbor of curr. point
+            // there are max. 3 in the long left hall
+            if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) &amp;&amp; !visited[j])
+            {
+                neigh[k] = j;
+                k++;
+            }
+        }
+        if(neigh[0]==-1) return;
+        // next int. point to add to traj. is the closest to destination
+        min_dist = pt_dist(INTERSECTIONS[neigh[0]][0], dest[0], INTERSECTIONS[neigh[0]][1], dest[1]);
+        next_inters = neigh[0];
+        for (j = 1; j &lt; 5 &amp;&amp; neigh[j] != -1; j++)
+        {
+            dist = pt_dist(INTERSECTIONS[neigh[j]][0], dest[0], INTERSECTIONS[neigh[j]][1], dest[1]);
+            if (dist &lt; min_dist)
+            {
+                min_dist = dist;
+                next_inters = neigh[j];
+            }
+        }
+        // if trajectory is full, or no next point has been found,
+        // something has gone wrong, but I cannot raise an exception
+        if (i == N_P - 1 || next_inters == -1)
+            return;
+        // next inters point is set as visited,
+        visited[next_inters] = true;
+        // added to the trajectory,
+        traj[i][0] = INTERSECTIONS[next_inters][0];
+        traj[i][1] = INTERSECTIONS[next_inters][1];
+        i++;
+        // and set as current point
+        curr[0] = INTERSECTIONS[next_inters][0];
+        curr[1] = INTERSECTIONS[next_inters][1];
+        // reset
+        next_inters = -1;
+        k = 0;
+        for(j=0; j&lt;5;j++) neigh[j] = -1;
+    }
+    // destination point is always part of the trajectory
+    traj[i][0] = dest[0];
+    traj[i][1] = dest[1];
+
+    //sets initial orientation
+    change_orientation(humanPositionX[id-1], humanPositionY[id-1], traj[0][0], traj[0][1]);
+}
+
+
+
+void updateP() {
+    double eps = 0.0;
+
+    if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0))
+    return;
+
+    if (pt_dist(humanPositionX[id-1], traj[curr_traj][0], humanPositionY[id-1], traj[curr_traj][1]) &lt; v) {
+        curr_traj++;
+        if (curr_traj &gt;= N_P)
+        return;
+        change_orientation(humanPositionX[id-1], humanPositionY[id-1], traj[curr_traj][0], traj[curr_traj][1]);
+    }
+    
+    humanPositionX[id-1] = humanPositionX[id-1] + v*Tpoll*cos(ort*PI/180);
+    humanPositionY[id-1] = humanPositionY[id-1] + v*Tpoll*sin(ort*PI/180);
+}
+
+bool is_crit = false;
+bool ignore_crit = false;
+int collisions = 0;
+
+double calculateDistance() {
+    double xdifference = pow(robPositionX[currR-1]-humanPositionX[currH-1], 2);
+    double ydifference = pow(robPositionY[currR-1]-humanPositionY[currH-1], 2);
+    double distance = sqrt(xdifference + ydifference)/100;
+
+    if(distance&lt;0) return -distance;
+    else return distance;
+}
+
+void check_crit(){
+     double humanRobotDist = calculateDistance();
+     if(currH!=id ) return;
+     if(humanRobotDist&lt;=0.5) collisions++;
+
+     if(is_crit) v = fint(_v*0.6);
+     else v = fint(_v);
+}
+
+
+double crit_prob;
+void update_crit() {
+    double dice = random(100);
+    crit_prob = 1-exp(-lambda_crit*t);
+
+    if(dice&lt;=crit_prob*100) {
+        is_crit = false;
+        v = fint(_v);
+    }
+}
+
+int e_obey=100, e_disobey=0;
+int e_FW_th = 101;
+int e_delta_x100 = 9999;
+int e_lambda_inv = 9999;
+int e_crit = 0;
+
+
+void initHuman() {
+
+    t = 0;
+    tUpd = 0;
+    F = 0;
+    Fp = 0;
+    v = fint(_v);
+
+    humanPositionX[id - 1] = h_startX[id-1];
+    humanPositionY[id - 1] = h_startY[id-1];
+
+    lambda = random_normal(YOUNG_SICK[0], YOUNG_SICK_SIGMA[0]);
+    mi = random_normal(YOUNG_SICK[1], YOUNG_SICK_SIGMA[1]);
+
+    obey = e_obey;
+    disobey = e_disobey;
+    freeWillTh = e_FW_th;
+    lambda_crit = 1/e_lambda_inv;
+    hs = e_crit;
+    crit = 1.0;
+    non_crit = 999.0;
+}
+    </declaration>
+		<location id="id58" x="-535" y="-255">
+			<name x="-595" y="-289">deactive</name>
+		</location>
+		<location id="id59" x="0" y="-255">
+			<name x="17" y="-280">busy</name>
+			<label kind="invariant" x="17" y="-340">F &lt;= passout_th
+&amp;&amp; F' == Fp*lambda*exp(-lambda*t)
+&amp;&amp; tUpd&lt;=Tpoll</label>
+		</location>
+		<location id="id60" x="-748" y="-255">
+			<name x="-799" y="-272">Init</name>
+			<committed/>
+		</location>
+		<location id="id61" x="459" y="-255" color="#ff0000">
+			<name x="374" y="-331">passed_out</name>
+			<label kind="invariant" x="374" y="-314">t' == 0 &amp;&amp;
+F' == 0 &amp;&amp;
+tExp'==0</label>
+			<label kind="exponentialrate" x="467" y="-238">1</label>
+		</location>
+		<location id="id62" x="-391" y="-255">
+			<name x="-400" y="-289">c1</name>
+			<committed/>
+		</location>
+		<location id="id63" x="-315" y="-68">
+			<name x="-307" y="-102">c3</name>
+			<committed/>
+		</location>
+		<location id="id64" x="-178" y="-255">
+			<name x="-178" y="-289">c2</name>
+			<committed/>
+		</location>
+		<location id="id65" x="85" y="-59">
+			<name x="94" y="-93">pub_4</name>
+			<committed/>
+		</location>
+		<location id="id66" x="459" y="-59">
+			<committed/>
+		</location>
+		<branchpoint id="id67" x="-272" y="-255"/>
+		<branchpoint id="id68" x="-391" y="-68"/>
+		<branchpoint id="id69" x="212" y="-59"/>
+		<init ref="id60"/>
+		<transition id="id70">
+			<source ref="id62"/>
+			<target ref="id67"/>
+		</transition>
+		<transition id="id71" color="#ff0000">
+			<source ref="id67"/>
+			<target ref="id58"/>
+			<label kind="probability" x="-434" y="-195">disobey</label>
+			<nail x="-408" y="-195"/>
+		</transition>
+		<transition id="id72">
+			<source ref="id67"/>
+			<target ref="id64"/>
+			<label kind="assignment" x="-263" y="-255">t = 0,
+tExp=0,
+tUpd=0</label>
+			<label kind="probability" x="-263" y="-272">obey</label>
+		</transition>
+		<transition id="id73">
+			<source ref="id63"/>
+			<target ref="id68"/>
+		</transition>
+		<transition id="id74" color="#ff0000">
+			<source ref="id68"/>
+			<target ref="id59"/>
+			<label kind="probability" x="-178" y="-161">disobey</label>
+		</transition>
+		<transition id="id75">
+			<source ref="id68"/>
+			<target ref="id58"/>
+			<label kind="assignment" x="-527" y="-136">t = 0, Fp=humanFatigue[id-1], 
+F=humanFatigue[id-1],
+tUpd=0, tExp=0</label>
+			<label kind="probability" x="-527" y="-60">obey</label>
+			<nail x="-535" y="-68"/>
+		</transition>
+		<transition id="id76">
+			<source ref="id64"/>
+			<target ref="id59"/>
+			<label kind="guard" x="-153" y="-314">F==0</label>
+			<label kind="assignment" x="-119" y="-297">Fp=1,
+plan_traj()</label>
+		</transition>
+		<transition id="id77">
+			<source ref="id64"/>
+			<target ref="id59"/>
+			<label kind="guard" x="-119" y="-408">F&gt;0</label>
+			<label kind="assignment" x="-119" y="-391">Fp=1-F,
+plan_traj()</label>
+			<nail x="-178" y="-348"/>
+			<nail x="0" y="-348"/>
+		</transition>
+		<transition id="id78">
+			<source ref="id59"/>
+			<target ref="id63"/>
+			<label kind="synchronisation" x="-161" y="-93">stop_h_moveTo[id-1]?</label>
+			<nail x="0" y="-68"/>
+		</transition>
+		<transition id="id79">
+			<source ref="id58"/>
+			<target ref="id62"/>
+			<label kind="guard" x="-493" y="-288">currH==id</label>
+			<label kind="synchronisation" x="-527" y="-306">start_h_moveTo[id-1]?</label>
+			<label kind="assignment" x="-517" y="-255">F=humanFatigue[id-1]</label>
+			<nail x="-450" y="-255"/>
+			<nail x="-433" y="-255"/>
+		</transition>
+		<transition id="id80">
+			<source ref="id59"/>
+			<target ref="id61"/>
+			<label kind="guard" x="229" y="-272">F &gt;= passout_th</label>
+			<label kind="synchronisation" x="263" y="-255">hm_fail!</label>
+			<label kind="assignment" x="272" y="-238">t = 0</label>
+		</transition>
+		<transition id="id81">
+			<source ref="id61"/>
+			<target ref="id61"/>
+			<nail x="501" y="-263"/>
+			<nail x="493" y="-221"/>
+		</transition>
+		<transition id="id82">
+			<source ref="id60"/>
+			<target ref="id58"/>
+			<label kind="assignment" x="-714" y="-255">initHuman()</label>
+		</transition>
+		<transition id="id83">
+			<source ref="id66"/>
+			<target ref="id61"/>
+			<label kind="synchronisation" x="467" y="-161">hm_fail!</label>
+		</transition>
+		<transition id="id84" color="#ff0000">
+			<source ref="id69"/>
+			<target ref="id66"/>
+			<label kind="probability" x="323" y="-51">crit</label>
+		</transition>
+		<transition id="id85">
+			<source ref="id69"/>
+			<target ref="id65"/>
+			<label kind="probability" x="110" y="-51">non_crit</label>
+		</transition>
+		<transition id="id86">
+			<source ref="id59"/>
+			<target ref="id69"/>
+			<label kind="guard" x="178" y="-195">tUpd &gt;= Tpoll</label>
+			<label kind="assignment" x="178" y="-178">updateF(-lambda, 1),
+updateP(), tUpd=0,
+fw = random(FW_max),
+updateHealthDangerProb()</label>
+			<nail x="8" y="-246"/>
+		</transition>
+		<transition id="id87">
+			<source ref="id65"/>
+			<target ref="id59"/>
+			<label kind="assignment" x="17" y="-144">check_crit(),
+update_crit()</label>
+		</transition>
+	</template>
+	<template>
+		<name>Robot_moveTo</name>
+		<parameter>int id, double _v_max, double _a_max</parameter>
+		<declaration>
+clock V, Th, tUpd;
+
+trajectory traj = {{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0}};
+
+double ort = 0.0;
+int curr_traj = 0;
+
+// Position Sharing parameters
+int t = 0;
+const int T_poll = 1;
+int v_max;
+int a_max;
+
+bool needsTurning = false;
+void change_orientation(double sx, double sy, double dx, double dy) {
+	double cos_alpha, alpha, theta, delta;
+	double AC, AB;
+	bool turnLeft;
+
+	AC = pt_dist(sx, dx, sy, sy);
+	AB = pt_dist(sx, dx, sy, dy);
+
+	if (AB == 0)
+	{
+		return;
+	}
+
+	cos_alpha = AC / AB;
+	// angle between destination and hor. line
+	alpha = acos(cos_alpha);
+	// angle between robot axis and hor. line
+	theta = ort * 180 / PI;
+	// how much the robot should rotate [deg]
+	delta = 0.0;
+	turnLeft = false;
+
+	if (dx &gt;= sx &amp;&amp; dy &gt;= sy)
+	{ // Destination in 1st quadrant
+		alpha = alpha * (180 / PI);
+		if (alpha &gt; theta)
+		{
+			delta = alpha - theta;
+			turnLeft = true;
+		}
+		else
+		{
+			delta = theta - alpha;
+			turnLeft = false;
+		}
+	}
+	else if (dx &gt;= sx &amp;&amp; dy &lt;= sy)
+	{ // Destination in 2nd quadrant
+		alpha = -alpha * (180 / PI);
+		if (theta &lt; alpha)
+		{
+			delta = alpha - theta;
+			turnLeft = true;
+		}
+		else
+		{
+			delta = theta - alpha;
+			turnLeft = false;
+		}
+	}
+	else if (dx &lt;= sx &amp;&amp; dy &lt;= sy)
+	{ // Destination in 3rd quadrant
+		alpha = -(180 - alpha * (180 / PI));
+		if (theta &lt; alpha)
+		{
+			delta = alpha - theta;
+			turnLeft = true;
+		}
+		else
+		{
+			delta = theta - alpha;
+			turnLeft = false;
+		}
+	}
+	else if (dx &lt;= sx &amp;&amp; dy &gt;= sy)
+	{ // Destination in 4th quadrant
+		alpha = 180 - alpha * (180 / PI);
+		if (theta &lt; alpha)
+		{
+			delta = alpha - theta;
+			turnLeft = true;
+		}
+		else
+		{
+			delta = theta - alpha;
+			turnLeft = false;
+		}
+	}
+
+	needsTurning = delta &gt; 0.0;
+
+	if (needsTurning &amp;&amp; turnLeft)
+	{
+		ort = ort * 180 / PI + delta;
+	}
+	else if (needsTurning &amp;&amp; !turnLeft)
+	{
+		ort = ort * 180 / PI - delta;
+	}
+}
+
+point curr, dest;
+void plan_traj() {
+	int i, j, next_inters = -1;
+	int neigh[5] = {-1,-1,-1,-1,-1};
+	int	k = 0;
+	double dist, min_dist;
+	bool visited[N_I] = {false,false,false,false,false,false,false,false,false};
+	bool close;
+	curr[0] = robPositionX[id-1]; curr[1] = robPositionY[id-1];
+	dest[0] = location_X[robot_loc_target]; dest[1] = location_Y[robot_loc_target];
+	// init trajectory
+	for (i = 0; i &lt; N_P; i++)
+	{
+		traj[i][0] = 0.0;
+		traj[i][1] = 0.0;
+	}
+	i = 0;
+	curr_traj = 0;
+
+	// builds trajectory by finding a path among adjacent areas
+	// (the existence of an intersection point means two areas are adjacent to each other)
+	// until the destination area is reached
+	close = same_area(curr[0], curr[1], dest[0], dest[1]);
+	while (!close)
+	{
+		for (j = 0; j &lt; N_I &amp;&amp; k&lt;3; j++)
+		{
+			// find all int. pts which are a neighbor of curr. point
+			// there are max. 3 in the long left hall
+			if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) &amp;&amp; !visited[j])
+			{
+				neigh[k] = j;
+				k++;
+			}
+		}
+		if(neigh[0]==-1) close = true;
+		else {
+		// next int. point to add to traj. is the closest to destination
+		min_dist = pt_dist(INTERSECTIONS[neigh[0]][0], dest[0], INTERSECTIONS[neigh[0]][1], dest[1]);
+		next_inters = neigh[0];
+		for (j = 1; j &lt; 5 &amp;&amp; neigh[j] != -1; j++)
+		{
+			dist = pt_dist(INTERSECTIONS[neigh[j]][0], dest[0], INTERSECTIONS[neigh[j]][1], dest[1]);
+			if (dist &lt; min_dist)
+			{
+				min_dist = dist;
+				next_inters = neigh[j];
+			}
+		}
+		// if trajectory is full, or no next point has been found,
+		// something has gone wrong, but I cannot raise an exception
+		if (i == N_P - 1 || next_inters == -1)
+			return;
+		// next inters point is set as visited,
+		visited[next_inters] = true;
+		// added to the trajectory,
+		traj[i][0] = INTERSECTIONS[next_inters][0];
+		traj[i][1] = INTERSECTIONS[next_inters][1];
+		i++;
+		// and set as current point
+		curr[0] = INTERSECTIONS[next_inters][0];
+		curr[1] = INTERSECTIONS[next_inters][1];
+		// reset
+		next_inters = -1;
+		k = 0;
+		for(j=0; j&lt;5;j++) neigh[j] = -1;
+		close = same_area(curr[0], curr[1], dest[0], dest[1]);
+		}
+	}
+	// destination point is always part of the trajectory
+	traj[i][0] = dest[0];
+	traj[i][1] = dest[1];
+
+	//sets initial orientation
+	change_orientation(robPositionX[id-1], robPositionY[id-1], traj[0][0], traj[0][1]);
+}
+
+void update_pos(double coeff) {
+	robPositionX[id-1] = robPositionX[id-1] + coeff*Tpoll*cos(ort*PI/180);
+	robPositionY[id-1] = robPositionY[id-1] + coeff*Tpoll*sin(ort*PI/180);
+}
+
+void initRobot() {
+	t = 0;
+	V = 0;
+
+	robPositionX[id-1] = r_startX[id-1];
+	robPositionY[id-1] = r_startY[id-1];
+
+	tUpd=0;
+	v_max = fint(_v_max);
+	a_max = fint(_a_max);
+}
+
+void varsUpdate(double coeff) {
+	tUpd = 0;
+
+	if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0))
+		return;
+
+	if (pt_dist(robPositionX[id-1], traj[curr_traj][0], robPositionY[id-1], traj[curr_traj][1]) &lt; v_max*1.1) {
+		curr_traj++;
+		if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0))
+			plan_traj();
+		change_orientation(robPositionX[id-1], robPositionY[id-1], traj[curr_traj][0], traj[curr_traj][1]);
+	}
+
+	update_pos(coeff);
+}
+</declaration>
+		<location id="id88" x="-629" y="-348">
+			<name x="-680" y="-374">idle</name>
+			<label kind="invariant" x="-731" y="-348">V' == 0 &amp;&amp;
+tUpd'==0</label>
+		</location>
+		<location id="id89" x="-416" y="-42">
+			<name x="-408" y="-42">stopping</name>
+			<label kind="invariant" x="-595" y="18">V' == -a_max
+&amp;&amp; tUpd&lt;=Tpoll</label>
+			<label kind="comments" x="-331" y="-33">&amp;&amp; V &gt;=0</label>
+		</location>
+		<location id="id90" x="-416" y="-348">
+			<name x="-399" y="-366">starting</name>
+			<label kind="invariant" x="-314" y="-408">V' == a_max
+&amp;&amp; V &lt;= v_max
+&amp;&amp; tUpd&lt;=Tpoll</label>
+		</location>
+		<location id="id91" x="-161" y="-246">
+			<name x="-229" y="-263">moving</name>
+			<label kind="invariant" x="-263" y="-246">V' == 0 &amp;&amp;
+tUpd&lt;=Tpoll</label>
+		</location>
+		<location id="id92" x="-833" y="-348">
+			<name x="-843" y="-382">Init</name>
+			<committed/>
+		</location>
+		<location id="id93" x="204" y="-246">
+			<name x="221" y="-272">turning</name>
+			<label kind="invariant" x="221" y="-255">V'==0 &amp;&amp;
+Th&lt;=fabs(ort*PI/180)</label>
+		</location>
+		<location id="id94" x="42" y="-246">
+			<committed/>
+		</location>
+		<location id="id95" x="-416" y="-501">
+			<committed/>
+		</location>
+		<location id="id96" x="-416" y="102">
+			<committed/>
+		</location>
+		<location id="id97" x="-59" y="-170">
+			<committed/>
+		</location>
+		<location id="id98" x="-629" y="-42">
+			<committed/>
+		</location>
+		<init ref="id92"/>
+		<transition id="id99">
+			<source ref="id89"/>
+			<target ref="id98"/>
+			<label kind="guard" x="-578" y="-68">V &lt;= 0</label>
+		</transition>
+		<transition id="id100">
+			<source ref="id97"/>
+			<target ref="id91"/>
+		</transition>
+		<transition id="id101">
+			<source ref="id94"/>
+			<target ref="id97"/>
+			<label kind="guard" x="-9" y="-204">!needsTurning</label>
+			<label kind="assignment" x="8" y="-187">tUpd=0</label>
+		</transition>
+		<transition id="id102">
+			<source ref="id96"/>
+			<target ref="id89"/>
+			<nail x="-459" y="86"/>
+			<nail x="-459" y="-16"/>
+		</transition>
+		<transition id="id103">
+			<source ref="id95"/>
+			<target ref="id90"/>
+			<nail x="-374" y="-459"/>
+			<nail x="-374" y="-391"/>
+		</transition>
+		<transition id="id104">
+			<source ref="id89"/>
+			<target ref="id96"/>
+			<label kind="guard" x="-408" y="43">tUpd&gt;=Tpoll
+&amp;&amp;V&gt;0</label>
+			<label kind="assignment" x="-408" y="1">t+=Tpoll, tUpd=0,
+varsUpdate(v_max-a_max*t)</label>
+		</transition>
+		<transition id="id105">
+			<source ref="id90"/>
+			<target ref="id95"/>
+			<label kind="guard" x="-527" y="-493">tUpd&gt;=Tpoll
+&amp;&amp;V&lt;v_max</label>
+			<label kind="assignment" x="-586" y="-450">t+=Tpoll, tUpd=0,
+varsUpdate(a_max*t)</label>
+		</transition>
+		<transition id="id106">
+			<source ref="id93"/>
+			<target ref="id89"/>
+			<label kind="synchronisation" x="-170" y="-67">stop_r_moveTo[id-1]?</label>
+			<label kind="assignment" x="-25" y="-68">tUpd=0, t=0</label>
+			<nail x="204" y="-50"/>
+		</transition>
+		<transition id="id107">
+			<source ref="id93"/>
+			<target ref="id91"/>
+			<label kind="guard" x="-42" y="-374">Th&gt;=fabs(ort*PI/180)</label>
+			<label kind="assignment" x="-42" y="-348">tUpd = 0, Th = 0,
+needsTurning = false</label>
+			<nail x="204" y="-348"/>
+			<nail x="-161" y="-348"/>
+		</transition>
+		<transition id="id108">
+			<source ref="id94"/>
+			<target ref="id93"/>
+			<label kind="guard" x="68" y="-263">needsTurning</label>
+			<label kind="assignment" x="102" y="-246">Th=0</label>
+		</transition>
+		<transition id="id109">
+			<source ref="id91"/>
+			<target ref="id94"/>
+			<label kind="guard" x="-119" y="-280">tUpd&gt;=Tpoll</label>
+			<label kind="assignment" x="-136" y="-263">varsUpdate(v_max)</label>
+		</transition>
+		<transition id="id110">
+			<source ref="id89"/>
+			<target ref="id90"/>
+			<label kind="synchronisation" x="-416" y="-204">start_r_moveTo[id-1]?</label>
+			<label kind="assignment" x="-416" y="-187">t=0, tUpd=0,
+plan_traj()</label>
+		</transition>
+		<transition id="id111">
+			<source ref="id90"/>
+			<target ref="id89"/>
+			<label kind="synchronisation" x="-595" y="-204">stop_r_moveTo[id-1]?</label>
+			<label kind="assignment" x="-578" y="-187">t=0, tUpd=0</label>
+			<nail x="-476" y="-314"/>
+			<nail x="-476" y="-92"/>
+		</transition>
+		<transition id="id112">
+			<source ref="id98"/>
+			<target ref="id88"/>
+			<label kind="synchronisation" x="-706" y="-221">rm_still!</label>
+			<label kind="assignment" x="-706" y="-204">t=0,
+tUpd = 0,
+V=0</label>
+		</transition>
+		<transition id="id113">
+			<source ref="id91"/>
+			<target ref="id89"/>
+			<label kind="synchronisation" x="-289" y="-136">stop_r_moveTo[id-1]?</label>
+			<label kind="assignment" x="-280" y="-119">tUpd=0, t=0</label>
+			<nail x="-161" y="-101"/>
+		</transition>
+		<transition id="id114">
+			<source ref="id90"/>
+			<target ref="id91"/>
+			<label kind="guard" x="-314" y="-348">V &gt;= v_max</label>
+			<label kind="assignment" x="-195" y="-408">t+=Tpoll,
+tUpd=0,
+V=v_max</label>
+			<nail x="-161" y="-348"/>
+		</transition>
+		<transition id="id115">
+			<source ref="id88"/>
+			<target ref="id90"/>
+			<label kind="synchronisation" x="-603" y="-374">start_r_moveTo[id-1]?</label>
+			<label kind="assignment" x="-586" y="-348">t=0, tUpd=0,
+plan_traj()</label>
+		</transition>
+		<transition id="id116">
+			<source ref="id92"/>
+			<target ref="id88"/>
+			<label kind="assignment" x="-807" y="-365">initRobot()</label>
+		</transition>
+	</template>
+	<template>
+		<name>Robot_follow</name>
+		<parameter>int id, double _v_max, double _a_max</parameter>
+		<declaration>
+clock V, Th, tUpd;
+
+trajectory traj = {{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0}};
+
+double ort = 0.0;
+int curr_traj = 0;
+
+// Position Sharing parameters
+int t = 0;
+const int T_poll = 1;
+int v_max;
+int a_max;
+
+bool needsTurning = false;
+void change_orientation(double sx, double sy, double dx, double dy) {
+	double cos_alpha, alpha, theta, delta;
+	double AC, AB;
+	bool turnLeft;
+
+	AC = pt_dist(sx, dx, sy, sy);
+	AB = pt_dist(sx, dx, sy, dy);
+
+	if (AB == 0)
+	{
+		return;
+	}
+
+	cos_alpha = AC / AB;
+	// angle between destination and hor. line
+	alpha = acos(cos_alpha);
+	// angle between robot axis and hor. line
+	theta = ort * 180 / PI;
+	// how much the robot should rotate [deg]
+	delta = 0.0;
+	turnLeft = false;
+
+	if (dx &gt;= sx &amp;&amp; dy &gt;= sy)
+	{ // Destination in 1st quadrant
+		alpha = alpha * (180 / PI);
+		if (alpha &gt; theta)
+		{
+			delta = alpha - theta;
+			turnLeft = true;
+		}
+		else
+		{
+			delta = theta - alpha;
+			turnLeft = false;
+		}
+	}
+	else if (dx &gt;= sx &amp;&amp; dy &lt;= sy)
+	{ // Destination in 2nd quadrant
+		alpha = -alpha * (180 / PI);
+		if (theta &lt; alpha)
+		{
+			delta = alpha - theta;
+			turnLeft = true;
+		}
+		else
+		{
+			delta = theta - alpha;
+			turnLeft = false;
+		}
+	}
+	else if (dx &lt;= sx &amp;&amp; dy &lt;= sy)
+	{ // Destination in 3rd quadrant
+		alpha = -(180 - alpha * (180 / PI));
+		if (theta &lt; alpha)
+		{
+			delta = alpha - theta;
+			turnLeft = true;
+		}
+		else
+		{
+			delta = theta - alpha;
+			turnLeft = false;
+		}
+	}
+	else if (dx &lt;= sx &amp;&amp; dy &gt;= sy)
+	{ // Destination in 4th quadrant
+		alpha = 180 - alpha * (180 / PI);
+		if (theta &lt; alpha)
+		{
+			delta = alpha - theta;
+			turnLeft = true;
+		}
+		else
+		{
+			delta = theta - alpha;
+			turnLeft = false;
+		}
+	}
+
+	needsTurning = delta &gt; 0.0;
+
+	if (needsTurning &amp;&amp; turnLeft)
+	{
+		ort = ort * 180 / PI + delta;
+	}
+	else if (needsTurning &amp;&amp; !turnLeft)
+	{
+		ort = ort * 180 / PI - delta;
+	}
+}
+
+point curr, dest;
+void plan_traj() {
+
+	int i, j, next_inters = -1;
+	int neigh[5] = {-1,-1,-1,-1,-1};
+	int	k = 0;
+	double dist, min_dist;
+	bool visited[N_I] = {false,false,false,false,false,false,false,false,false};
+	bool close;
+	curr[0] = robPositionX[id-1]; curr[1] = robPositionY[id-1];
+    // follow the robot (having the id)
+    if (human_to_be_followed==0 &amp;&amp; robot_to_be_followed!=0 &amp;&amp; robot_to_be_followed!=id){
+        dest[0] = robPositionX[robot_to_be_followed-1]; dest[1] = robPositionX[robot_to_be_followed-1];
+    }
+    // follow the human (having the id)
+	if (human_to_be_followed!=0 &amp;&amp; robot_to_be_followed==0){
+        dest[0] = humanPositionX[human_to_be_followed-1]; dest[1] = humanPositionY[human_to_be_followed-1]; } // follow a human
+    // init trajectory
+	for (i = 0; i &lt; N_P; i++)
+	{
+		traj[i][0] = 0.0;
+		traj[i][1] = 0.0;
+	}
+	i = 0;
+	curr_traj = 0;
+
+	// builds trajectory by finding a path among adjacent areas
+	// (the existence of an intersection point means two areas are adjacent to each other)
+	// until the destination area is reached
+	close = same_area(curr[0], curr[1], dest[0], dest[1]);
+	while (!close)
+	{
+		for (j = 0; j &lt; N_I &amp;&amp; k&lt;3; j++)
+		{
+			// find all int. pts which are a neighbor of curr. point
+			// there are max. 3 in the long left hall
+			if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) &amp;&amp; !visited[j])
+			{
+				neigh[k] = j;
+				k++;
+			}
+		}
+		if(neigh[0]==-1) close = true;
+		else {
+		// next int. point to add to traj. is the closest to destination
+		min_dist = pt_dist(INTERSECTIONS[neigh[0]][0], dest[0], INTERSECTIONS[neigh[0]][1], dest[1]);
+		next_inters = neigh[0];
+		for (j = 1; j &lt; 5 &amp;&amp; neigh[j] != -1; j++)
+		{
+			dist = pt_dist(INTERSECTIONS[neigh[j]][0], dest[0], INTERSECTIONS[neigh[j]][1], dest[1]);
+			if (dist &lt; min_dist)
+			{
+				min_dist = dist;
+				next_inters = neigh[j];
+			}
+		}
+		// if trajectory is full, or no next point has been found,
+		// something has gone wrong, but I cannot raise an exception
+		if (i == N_P - 1 || next_inters == -1)
+			return;
+		// next inters point is set as visited,
+		visited[next_inters] = true;
+		// added to the trajectory,
+		traj[i][0] = INTERSECTIONS[next_inters][0];
+		traj[i][1] = INTERSECTIONS[next_inters][1];
+		i++;
+		// and set as current point
+		curr[0] = INTERSECTIONS[next_inters][0];
+		curr[1] = INTERSECTIONS[next_inters][1];
+		// reset
+		next_inters = -1;
+		k = 0;
+		for(j=0; j&lt;5;j++) neigh[j] = -1;
+		close = same_area(curr[0], curr[1], dest[0], dest[1]);
+		}
+	}
+	// destination point is always part of the trajectory
+	traj[i][0] = dest[0];
+	traj[i][1] = dest[1];
+
+	//sets initial orientation
+	change_orientation(robPositionX[id-1], robPositionY[id-1], traj[0][0], traj[0][1]);
+}
+
+void update_pos(double coeff) {
+	robPositionX[id-1] = robPositionX[id-1] + coeff*Tpoll*cos(ort*PI/180);
+	robPositionY[id-1] = robPositionY[id-1] + coeff*Tpoll*sin(ort*PI/180);
+}
+
+void initRobot() {
+	t = 0;
+	V = 0;
+    
+	robPositionX[id-1] = r_startX[id-1];
+	robPositionY[id-1] = r_startY[id-1];
+
+
+    tUpd=0;
+	v_max = fint(_v_max);
+	a_max = fint(_a_max);
+}
+
+void varsUpdate(double coeff) {
+	tUpd = 0;
+
+	if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0))
+		return;
+
+	if (pt_dist(robPositionX[id-1], traj[curr_traj][0], robPositionY[id-1], traj[curr_traj][1]) &lt; v_max*1.1) {
+		curr_traj++;
+		if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0))
+			plan_traj();
+		change_orientation(robPositionX[id-1], robPositionY[id-1], traj[curr_traj][0], traj[curr_traj][1]);
+	}
+
+	update_pos(coeff);
+}
+</declaration>
+		<location id="id117" x="-620" y="-348">
+			<name x="-671" y="-374">idle</name>
+			<label kind="invariant" x="-722" y="-348">V' == 0 &amp;&amp;
+tUpd'==0</label>
+		</location>
+		<location id="id118" x="-416" y="-127">
+			<name x="-408" y="-127">stopping</name>
+			<label kind="invariant" x="-586" y="-76">V' == -a_max
+&amp;&amp; tUpd&lt;=Tpoll</label>
+			<label kind="comments" x="-331" y="-119">&amp;&amp; V &gt;=0</label>
+		</location>
+		<location id="id119" x="-416" y="-348">
+			<name x="-399" y="-366">starting</name>
+			<label kind="invariant" x="-314" y="-408">V' == a_max
+&amp;&amp; V &lt;= v_max
+&amp;&amp; tUpd&lt;=Tpoll</label>
+		</location>
+		<location id="id120" x="-161" y="-246">
+			<name x="-229" y="-263">moving</name>
+			<label kind="invariant" x="-263" y="-246">V' == 0 &amp;&amp;
+tUpd&lt;=Tpoll</label>
+		</location>
+		<location id="id121" x="-841" y="-348">
+			<name x="-851" y="-382">Init</name>
+			<committed/>
+		</location>
+		<location id="id122" x="212" y="-246">
+			<name x="229" y="-272">turning</name>
+			<label kind="invariant" x="229" y="-255">V'==0 &amp;&amp;
+Th&lt;=fabs(ort*PI/180)</label>
+		</location>
+		<location id="id123" x="51" y="-246">
+			<committed/>
+		</location>
+		<location id="id124" x="-416" y="-501">
+			<committed/>
+		</location>
+		<location id="id125" x="-416" y="25">
+			<committed/>
+		</location>
+		<location id="id126" x="-51" y="-170">
+			<committed/>
+		</location>
+		<location id="id127" x="-620" y="-127">
+			<committed/>
+		</location>
+		<init ref="id121"/>
+		<transition id="id128">
+			<source ref="id118"/>
+			<target ref="id127"/>
+			<label kind="guard" x="-552" y="-152">V &lt;= 0</label>
+		</transition>
+		<transition id="id129">
+			<source ref="id126"/>
+			<target ref="id120"/>
+		</transition>
+		<transition id="id130">
+			<source ref="id123"/>
+			<target ref="id126"/>
+			<label kind="guard" x="-9" y="-204">!needsTurning</label>
+			<label kind="assignment" x="8" y="-187">tUpd=0</label>
+		</transition>
+		<transition id="id131">
+			<source ref="id125"/>
+			<target ref="id118"/>
+			<nail x="-459" y="-34"/>
+			<nail x="-459" y="-101"/>
+		</transition>
+		<transition id="id132">
+			<source ref="id124"/>
+			<target ref="id119"/>
+			<nail x="-391" y="-467"/>
+			<nail x="-391" y="-382"/>
+		</transition>
+		<transition id="id133">
+			<source ref="id118"/>
+			<target ref="id125"/>
+			<label kind="guard" x="-408" y="-43">tUpd&gt;=Tpoll
+&amp;&amp;V&gt;0</label>
+			<label kind="assignment" x="-416" y="-85">t+=Tpoll, tUpd=0,
+varsUpdate(v_max-a_max*t)</label>
+		</transition>
+		<transition id="id134">
+			<source ref="id119"/>
+			<target ref="id124"/>
+			<label kind="guard" x="-595" y="-501">tUpd&gt;=Tpoll
+&amp;&amp;V&lt;v_max</label>
+			<label kind="assignment" x="-595" y="-459">t+=Tpoll, tUpd=0,
+varsUpdate(a_max*t),
+plan_traj()</label>
+		</transition>
+		<transition id="id135">
+			<source ref="id122"/>
+			<target ref="id118"/>
+			<label kind="synchronisation" x="-170" y="-152">stop_r_follow[id-1]?</label>
+			<label kind="assignment" x="-25" y="-153">tUpd=0, t=0</label>
+			<nail x="212" y="-135"/>
+		</transition>
+		<transition id="id136">
+			<source ref="id122"/>
+			<target ref="id120"/>
+			<label kind="guard" x="-42" y="-374">Th&gt;=fabs(ort*PI/180)</label>
+			<label kind="assignment" x="-42" y="-348">tUpd = 0, Th = 0,
+needsTurning = false,
+plan_traj()</label>
+			<nail x="212" y="-348"/>
+			<nail x="-161" y="-348"/>
+		</transition>
+		<transition id="id137">
+			<source ref="id123"/>
+			<target ref="id122"/>
+			<label kind="guard" x="85" y="-263">needsTurning</label>
+			<label kind="assignment" x="111" y="-246">Th=0</label>
+		</transition>
+		<transition id="id138">
+			<source ref="id120"/>
+			<target ref="id123"/>
+			<label kind="guard" x="-127" y="-280">tUpd&gt;=Tpoll</label>
+			<label kind="assignment" x="-127" y="-263">varsUpdate(v_max),
+plan_traj()</label>
+		</transition>
+		<transition id="id139">
+			<source ref="id118"/>
+			<target ref="id119"/>
+			<label kind="synchronisation" x="-416" y="-289">start_r_follow[id-1]?</label>
+			<label kind="assignment" x="-416" y="-272">t=0, tUpd=0,
+plan_traj()</label>
+		</transition>
+		<transition id="id140">
+			<source ref="id119"/>
+			<target ref="id118"/>
+			<label kind="synchronisation" x="-603" y="-204">stop_r_follow[id-1]?</label>
+			<label kind="assignment" x="-603" y="-187">t=0, tUpd=0</label>
+			<nail x="-476" y="-314"/>
+			<nail x="-476" y="-177"/>
+		</transition>
+		<transition id="id141">
+			<source ref="id127"/>
+			<target ref="id117"/>
+			<label kind="synchronisation" x="-697" y="-221">rf_still!</label>
+			<label kind="assignment" x="-697" y="-204">t=0,
+tUpd = 0,
+V=0</label>
+		</transition>
+		<transition id="id142">
+			<source ref="id120"/>
+			<target ref="id118"/>
+			<label kind="synchronisation" x="-374" y="-195">stop_r_follow[id-1]?</label>
+			<label kind="assignment" x="-365" y="-178">tUpd=0, t=0</label>
+			<nail x="-161" y="-186"/>
+		</transition>
+		<transition id="id143">
+			<source ref="id119"/>
+			<target ref="id120"/>
+			<label kind="guard" x="-314" y="-348">V &gt;= v_max</label>
+			<label kind="assignment" x="-195" y="-408">t+=Tpoll,
+tUpd=0,
+V=v_max,
+plan_traj()</label>
+			<nail x="-161" y="-348"/>
+		</transition>
+		<transition id="id144">
+			<source ref="id117"/>
+			<target ref="id119"/>
+			<label kind="synchronisation" x="-586" y="-374">start_r_follow[id-1]?</label>
+			<label kind="assignment" x="-586" y="-348">t=0, tUpd=0,
+plan_traj()</label>
+		</transition>
+		<transition id="id145">
+			<source ref="id121"/>
+			<target ref="id117"/>
+			<label kind="assignment" x="-824" y="-348">initRobot()</label>
+		</transition>
+	</template>
+	<system>
+
+// Mission Definition
+
+r_1 = Robot_moveTo(1, 26.0, 26.0);
+rf_1 = Robot_follow(1, 26.0, 26.0);
+h_1 = Human_moveTo(1, 26.0);
+
+
+// Pattern Definition
+
+exeSum = exeSum_orchestrator(1);  // one for each new pattern
+exeSum_human_1 = exeSum_human(1, 1); // one for each new pattern mission definition
+exeSum_robot_1 = exeSum_robot(1, 1); // one for each new pattern mission definition
+
+//
+
+system
+
+exeSum,
+exeSum_human_1,
+exeSum_robot_1,
+
+h_1,
+rf_1,
+r_1
+;
+</system>
+	<queries>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+		<query>
+			<formula/>
+			<comment/>
+		</query>
+		<query>
+			<formula>simulate[&lt;=700]{humanPositionX[0], humanPositionY[0], robPositionX[0], robPositionY[0], rf_1.starting*100, exeSum.end*100}</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2024-12-10 16:12:52 +0100">
+				<plot title="Simulations (1)" xaxis="time" yaxis="value">
+					<series title="humanPositionX[0]" type="l" color="0xff0000" encoding="csv">0.0,0.0
+0.0,2500.0
+1.0,2500.0
+1.0,2478.495044194882
+2.0,2478.495044194882
+2.0,2456.9900883897644
+3.0,2456.9900883897644
+3.0,2435.4851325846466
+4.0,2435.4851325846466
+4.0,2413.980176779529
+5.0,2413.980176779529
+5.0,2392.475220974411
+6.0,2392.475220974411
+6.0,2370.9702651692933
+7.0,2370.9702651692933
+7.0,2349.4653093641755
+8.0,2349.4653093641755
+8.0,2327.9603535590577
+9.0,2327.9603535590577
+9.0,2306.45539775394
+10.0,2306.45539775394
+10.0,2284.950441948822
+11.0,2284.950441948822
+11.0,2263.4454861437043
+12.0,2263.4454861437043
+12.0,2237.6301935973734
+13.0,2237.6301935973734
+13.0,2211.8149010510424
+14.0,2211.8149010510424
+14.0,2185.9996085047114
+15.0,2185.9996085047114
+15.0,2160.1843159583805
+16.0,2160.1843159583805
+16.0,2134.3690234120495
+17.0,2134.3690234120495
+17.0,2108.5537308657185
+18.0,2108.5537308657185
+18.0,2082.7384383193876
+19.0,2082.7384383193876
+19.0,2056.9231457730566
+20.0,2056.9231457730566
+20.0,2031.1078532267256
+21.0,2031.1078532267256
+21.0,2005.2925606803947
+22.0,2005.2925606803947
+22.0,1979.4772681340637
+23.0,1979.4772681340637
+23.0,1953.6619755877327
+24.0,1953.6619755877327
+24.0,1927.8466830414018
+25.0,1927.8466830414018
+25.0,1902.0313904950708
+26.0,1902.0313904950708
+26.0,1876.2160979487398
+27.0,1876.2160979487398
+27.0,1850.4008054024089
+28.0,1850.4008054024089
+28.0,1824.585512856078
+29.0,1824.585512856078
+29.0,1798.770220309747
+30.0,1798.770220309747
+30.0,1772.954927763416
+31.0,1772.954927763416
+31.0,1747.139635217085
+32.0,1747.139635217085
+32.0,1721.324342670754
+33.0,1721.324342670754
+33.0,1695.509050124423
+34.0,1695.509050124423
+34.0,1669.6937575780921
+35.0,1669.6937575780921
+35.0,1643.8784650317612
+36.0,1643.8784650317612
+36.0,1618.0631724854302
+37.0,1618.0631724854302
+37.0,1592.2478799390992
+38.0,1592.2478799390992
+38.0,1566.4325873927683
+39.0,1566.4325873927683
+39.0,1540.6172948464373
+40.0,1540.6172948464373
+40.0,1514.8020023001063
+41.0,1514.8020023001063
+41.0,1488.9867097537754
+42.0,1488.9867097537754
+42.0,1463.1714172074444
+43.0,1463.1714172074444
+43.0,1437.1739492353508
+44.0,1437.1739492353508
+44.0,1411.1764812632573
+45.0,1411.1764812632573
+45.0,1385.1790132911638
+46.0,1385.1790132911638
+46.0,1359.1815453190702
+47.0,1359.1815453190702
+47.0,1333.1840773469767
+48.0,1333.1840773469767
+48.0,1307.1866093748831
+49.0,1307.1866093748831
+49.0,1281.1891414027896
+50.0,1281.1891414027896
+50.0,1255.191673430696
+51.0,1255.191673430696
+51.0,1229.1942054586025
+52.0,1229.1942054586025
+52.0,1203.196737486509
+53.0,1203.196737486509
+53.0,1177.1992695144154
+54.0,1177.1992695144154
+54.0,1151.2018015423218
+55.0,1151.2018015423218
+55.0,1125.2043335702283
+56.0,1125.2043335702283
+56.0,1099.2068655981348
+57.0,1099.2068655981348
+57.0,1073.2093976260412
+58.0,1073.2093976260412
+58.0,1047.2119296539477
+59.0,1047.2119296539477
+59.0,1021.2144616818541
+60.0,1021.2144616818541
+60.0,995.2169937097606
+61.0,995.2169937097606
+61.0,969.219525737667
+62.0,969.219525737667
+62.0,943.2220577655735
+63.0,943.2220577655735
+63.0,917.2245897934799
+64.0,917.2245897934799
+64.0,891.2271218213864
+65.0,891.2271218213864
+65.0,865.2296538492928
+66.0,865.2296538492928
+66.0,839.2321858771993
+67.0,839.2321858771993
+67.0,813.2347179051058
+68.0,813.2347179051058
+68.0,787.2372499330122
+69.0,787.2372499330122
+69.0,761.2397819609187
+70.0,761.2397819609187
+70.0,735.2423139888251
+71.0,735.2423139888251
+71.0,709.2448460167316
+72.0,709.2448460167316
+72.0,683.247378044638
+73.0,683.247378044638
+73.0,657.2499100725445
+74.0,657.2499100725445
+74.0,631.2524421004509
+75.0,631.2524421004509
+75.0,605.2549741283574
+76.0,605.2549741283574
+76.0,579.2575061562638
+77.0,579.2575061562638
+77.0,553.2600381841703
+78.0,553.2600381841703
+78.0,527.2625702120768
+79.0,527.2625702120768
+79.0,501.26510223998315
+80.0,501.26510223998315
+80.0,475.26763426788955
+81.0,475.26763426788955
+81.0,449.27016629579595
+82.0,449.27016629579595
+82.0,423.27269832370234
+174.87509492502534,423.27269832370234
+174.87509492502534,449.2705662480819
+175.87509492502534,449.2705662480819
+175.87509492502534,475.2684341724614
+176.8750949250253,475.2684341724614
+176.8750949250253,501.26630209684095
+177.87509492502528,501.26630209684095
+177.87509492502528,527.2641700212205
+178.8750949250253,527.2641700212205
+178.8750949250253,553.2620379456
+179.8750949250253,553.2620379456
+179.8750949250253,579.2599058699795
+180.8750949250253,579.2599058699795
+180.8750949250253,605.2577737943591
+181.87509492502525,605.2577737943591
+181.87509492502525,631.2556417187386
+182.87509492502517,631.2556417187386
+182.87509492502517,657.2535096431182
+183.8750949250251,657.2535096431182
+183.8750949250251,683.2513775674977
+184.87509492502505,683.2513775674977
+184.87509492502505,709.2492454918772
+185.875094925025,709.2492454918772
+185.875094925025,735.2471134162568
+186.87509492502494,735.2471134162568
+186.87509492502494,761.2449813406363
+187.87509492502488,761.2449813406363
+187.87509492502488,787.2428492650158
+188.87509492502483,787.2428492650158
+188.87509492502483,813.2407171893954
+189.87509492502477,813.2407171893954
+189.87509492502477,839.2385851137749
+190.87509492502468,839.2385851137749
+190.87509492502468,865.2364530381544
+191.87509492502463,865.2364530381544
+191.87509492502463,891.234320962534
+192.87509492502457,891.234320962534
+192.87509492502457,917.2321888869135
+193.8750949250245,917.2321888869135
+193.8750949250245,943.230056811293
+194.87509492502443,943.230056811293
+194.87509492502443,969.2279247356726
+195.87509492502437,969.2279247356726
+195.87509492502437,995.2257926600521
+196.87509492502429,995.2257926600521
+196.87509492502429,1021.2236605844316
+197.87509492502423,1021.2236605844316
+197.87509492502423,1047.2215285088112
+198.87509492502417,1047.2215285088112
+198.87509492502417,1073.2193964331907
+199.87509492502411,1073.2193964331907
+199.87509492502411,1099.2172643575702
+200.87509492502403,1099.2172643575702
+200.87509492502403,1125.2151322819498
+201.87509492502394,1125.2151322819498
+201.87509492502394,1151.2130002063293
+202.87509492502386,1151.2130002063293
+202.87509492502386,1177.2108681307088
+203.8750949250238,1177.2108681307088
+203.8750949250238,1203.2087360550884
+204.87509492502375,1203.2087360550884
+204.87509492502375,1229.206603979468
+205.87509492502366,1229.206603979468
+205.87509492502366,1255.2044719038474
+206.8750949250236,1255.2044719038474
+206.8750949250236,1281.202339828227
+207.87509492502352,1281.202339828227
+207.87509492502352,1307.2002077526065
+208.87509492502343,1307.2002077526065
+208.87509492502343,1333.198075676986
+209.87509492502338,1333.198075676986
+209.87509492502338,1359.1959436013656
+210.87509492502332,1359.1959436013656
+210.87509492502332,1385.193811525745
+211.87509492502326,1385.193811525745
+211.87509492502326,1411.1916794501246
+212.87509492502318,1411.1916794501246
+212.87509492502318,1437.1895473745042
+213.8750949250231,1437.1895473745042
+213.8750949250231,1437.8334014032375
+214.87509492502303,1437.8334014032375
+214.87509492502303,1438.477255431971
+215.87509492502295,1438.477255431971
+215.87509492502295,1439.1211094607042
+216.87509492502286,1439.1211094607042
+216.87509492502286,1439.7649634894376
+217.87509492502278,1439.7649634894376
+217.87509492502278,1440.408817518171
+218.8750949250227,1440.408817518171
+218.8750949250227,1441.0526715469043
+219.87509492502264,1441.0526715469043
+219.87509492502264,1441.6965255756377
+220.87509492502258,1441.6965255756377
+220.87509492502258,1442.340379604371
+221.87509492502252,1442.340379604371
+221.87509492502252,1442.9842336331044
+222.87509492502247,1442.9842336331044
+222.87509492502247,1443.6280876618378
+223.8750949250224,1443.6280876618378
+223.8750949250224,1444.271941690571
+224.87509492502235,1444.271941690571
+224.87509492502235,1444.9157957193045
+225.8750949250223,1444.9157957193045
+225.8750949250223,1445.5596497480378
+226.87509492502224,1445.5596497480378
+226.87509492502224,1446.2035037767712
+227.87509492502218,1446.2035037767712
+227.87509492502218,1446.8473578055045
+228.8750949250221,1446.8473578055045
+228.8750949250221,1447.491211834238
+229.875094925022,1447.491211834238
+229.875094925022,1448.1350658629713
+230.87509492502195,1448.1350658629713
+230.87509492502195,1448.7789198917046
+231.8750949250219,1448.7789198917046
+231.8750949250219,1449.422773920438
+232.87509492502184,1449.422773920438
+232.87509492502184,1450.0666279491713
+233.87509492502178,1450.0666279491713
+233.87509492502178,1450.7104819779047
+234.87509492502173,1450.7104819779047
+234.87509492502173,1451.354336006638
+235.87509492502167,1451.354336006638
+235.87509492502167,1451.9981900353714
+236.8750949250216,1451.9981900353714
+236.8750949250216,1426.023498451274
+237.87509492502156,1426.023498451274
+237.87509492502156,1400.0488068671766
+238.8750949250215,1400.0488068671766
+238.8750949250215,1374.0741152830792
+239.87509492502144,1374.0741152830792
+239.87509492502144,1348.0994236989818
+240.8750949250214,1348.0994236989818
+240.8750949250214,1322.1247321148844
+241.87509492502133,1322.1247321148844
+241.87509492502133,1296.150040530787
+242.87509492502127,1296.150040530787
+242.87509492502127,1270.1753489466896
+243.8750949250212,1270.1753489466896
+243.8750949250212,1244.2006573625922
+244.8750949250211,1244.2006573625922
+244.8750949250211,1218.2259657784948
+700.0,1218.2259657784948
+					</series>
+					<series title="humanPositionY[0]" type="l" color="0xffff00" encoding="csv">0.0,0.0
+0.0,100.0
+1.0,100.0
+1.0,114.61290100630023
+2.0,114.61290100630023
+2.0,129.22580201260047
+3.0,129.22580201260047
+3.0,143.8387030189007
+4.0,143.8387030189007
+4.0,158.45160402520094
+5.0,158.45160402520094
+5.0,173.06450503150117
+6.0,173.06450503150117
+6.0,187.6774060378014
+7.0,187.6774060378014
+7.0,202.29030704410164
+8.0,202.29030704410164
+8.0,216.90320805040187
+9.0,216.90320805040187
+9.0,231.5161090567021
+10.0,231.5161090567021
+10.0,246.12901006300234
+11.0,246.12901006300234
+11.0,260.74191106930255
+12.0,260.74191106930255
+12.0,257.64826100063766
+13.0,257.64826100063766
+13.0,254.55461093197275
+14.0,254.55461093197275
+14.0,251.46096086330783
+15.0,251.46096086330783
+15.0,248.36731079464292
+16.0,248.36731079464292
+16.0,245.273660725978
+17.0,245.273660725978
+17.0,242.1800106573131
+18.0,242.1800106573131
+18.0,239.08636058864818
+19.0,239.08636058864818
+19.0,235.99271051998326
+20.0,235.99271051998326
+20.0,232.89906045131835
+21.0,232.89906045131835
+21.0,229.80541038265343
+22.0,229.80541038265343
+22.0,226.71176031398852
+23.0,226.71176031398852
+23.0,223.6181102453236
+24.0,223.6181102453236
+24.0,220.5244601766587
+25.0,220.5244601766587
+25.0,217.43081010799378
+26.0,217.43081010799378
+26.0,214.33716003932886
+27.0,214.33716003932886
+27.0,211.24350997066395
+28.0,211.24350997066395
+28.0,208.14985990199904
+29.0,208.14985990199904
+29.0,205.05620983333412
+30.0,205.05620983333412
+30.0,201.9625597646692
+31.0,201.9625597646692
+31.0,198.8689096960043
+32.0,198.8689096960043
+32.0,195.77525962733938
+33.0,195.77525962733938
+33.0,192.68160955867447
+34.0,192.68160955867447
+34.0,189.58795949000955
+35.0,189.58795949000955
+35.0,186.49430942134464
+36.0,186.49430942134464
+36.0,183.40065935267972
+37.0,183.40065935267972
+37.0,180.3070092840148
+38.0,180.3070092840148
+38.0,177.2133592153499
+39.0,177.2133592153499
+39.0,174.11970914668498
+40.0,174.11970914668498
+40.0,171.02605907802007
+41.0,171.02605907802007
+41.0,167.93240900935515
+42.0,167.93240900935515
+42.0,164.83875894069024
+43.0,164.83875894069024
+43.0,164.47591043240163
+44.0,164.47591043240163
+44.0,164.11306192411303
+45.0,164.11306192411303
+45.0,163.75021341582442
+46.0,163.75021341582442
+46.0,163.3873649075358
+47.0,163.3873649075358
+47.0,163.0245163992472
+48.0,163.0245163992472
+48.0,162.6616678909586
+49.0,162.6616678909586
+49.0,162.29881938267
+50.0,162.29881938267
+50.0,161.93597087438138
+51.0,161.93597087438138
+51.0,161.57312236609278
+52.0,161.57312236609278
+52.0,161.21027385780417
+53.0,161.21027385780417
+53.0,160.84742534951556
+54.0,160.84742534951556
+54.0,160.48457684122695
+55.0,160.48457684122695
+55.0,160.12172833293835
+56.0,160.12172833293835
+56.0,159.75887982464974
+57.0,159.75887982464974
+57.0,159.39603131636113
+58.0,159.39603131636113
+58.0,159.03318280807252
+59.0,159.03318280807252
+59.0,158.67033429978392
+60.0,158.67033429978392
+60.0,158.3074857914953
+61.0,158.3074857914953
+61.0,157.9446372832067
+62.0,157.9446372832067
+62.0,157.5817887749181
+63.0,157.5817887749181
+63.0,157.2189402666295
+64.0,157.2189402666295
+64.0,156.85609175834088
+65.0,156.85609175834088
+65.0,156.49324325005227
+66.0,156.49324325005227
+66.0,156.13039474176367
+67.0,156.13039474176367
+67.0,155.76754623347506
+68.0,155.76754623347506
+68.0,155.40469772518645
+69.0,155.40469772518645
+69.0,155.04184921689784
+70.0,155.04184921689784
+70.0,154.67900070860924
+71.0,154.67900070860924
+71.0,154.31615220032063
+72.0,154.31615220032063
+72.0,153.95330369203202
+73.0,153.95330369203202
+73.0,153.59045518374342
+74.0,153.59045518374342
+74.0,153.2276066754548
+75.0,153.2276066754548
+75.0,152.8647581671662
+76.0,152.8647581671662
+76.0,152.5019096588776
+77.0,152.5019096588776
+77.0,152.139061150589
+78.0,152.139061150589
+78.0,151.77621264230038
+79.0,151.77621264230038
+79.0,151.41336413401177
+80.0,151.41336413401177
+80.0,151.05051562572316
+81.0,151.05051562572316
+81.0,150.68766711743456
+82.0,150.68766711743456
+82.0,150.32481860914595
+174.87509492502534,150.32481860914595
+174.87509492502534,150.65778014824465
+175.87509492502534,150.65778014824465
+175.87509492502534,150.99074168734336
+176.8750949250253,150.99074168734336
+176.8750949250253,151.32370322644206
+177.87509492502528,151.32370322644206
+177.87509492502528,151.65666476554077
+178.8750949250253,151.65666476554077
+178.8750949250253,151.98962630463947
+179.8750949250253,151.98962630463947
+179.8750949250253,152.32258784373818
+180.8750949250253,152.32258784373818
+180.8750949250253,152.65554938283688
+181.87509492502525,152.65554938283688
+181.87509492502525,152.98851092193559
+182.87509492502517,152.98851092193559
+182.87509492502517,153.3214724610343
+183.8750949250251,153.3214724610343
+183.8750949250251,153.654434000133
+184.87509492502505,153.654434000133
+184.87509492502505,153.9873955392317
+185.875094925025,153.9873955392317
+185.875094925025,154.3203570783304
+186.87509492502494,154.3203570783304
+186.87509492502494,154.6533186174291
+187.87509492502488,154.6533186174291
+187.87509492502488,154.9862801565278
+188.87509492502483,154.9862801565278
+188.87509492502483,155.31924169562652
+189.87509492502477,155.31924169562652
+189.87509492502477,155.65220323472522
+190.87509492502468,155.65220323472522
+190.87509492502468,155.98516477382393
+191.87509492502463,155.98516477382393
+191.87509492502463,156.31812631292263
+192.87509492502457,156.31812631292263
+192.87509492502457,156.65108785202133
+193.8750949250245,156.65108785202133
+193.8750949250245,156.98404939112004
+194.87509492502443,156.98404939112004
+194.87509492502443,157.31701093021874
+195.87509492502437,157.31701093021874
+195.87509492502437,157.64997246931745
+196.87509492502429,157.64997246931745
+196.87509492502429,157.98293400841615
+197.87509492502423,157.98293400841615
+197.87509492502423,158.31589554751486
+198.87509492502417,158.31589554751486
+198.87509492502417,158.64885708661356
+199.87509492502411,158.64885708661356
+199.87509492502411,158.98181862571226
+200.87509492502403,158.98181862571226
+200.87509492502403,159.31478016481097
+201.87509492502394,159.31478016481097
+201.87509492502394,159.64774170390967
+202.87509492502386,159.64774170390967
+202.87509492502386,159.98070324300838
+203.8750949250238,159.98070324300838
+203.8750949250238,160.31366478210708
+204.87509492502375,160.31366478210708
+204.87509492502375,160.6466263212058
+205.87509492502366,160.6466263212058
+205.87509492502366,160.9795878603045
+206.8750949250236,160.9795878603045
+206.8750949250236,161.3125493994032
+207.87509492502352,161.3125493994032
+207.87509492502352,161.6455109385019
+208.87509492502343,161.6455109385019
+208.87509492502343,161.9784724776006
+209.87509492502338,161.9784724776006
+209.87509492502338,162.3114340166993
+210.87509492502332,162.3114340166993
+210.87509492502332,162.644395555798
+211.87509492502326,162.644395555798
+211.87509492502326,162.97735709489672
+212.87509492502318,162.97735709489672
+212.87509492502318,163.31031863399542
+213.8750949250231,163.31031863399542
+213.8750949250231,189.3023453343065
+214.87509492502303,189.3023453343065
+214.87509492502303,215.29437203461757
+215.87509492502295,215.29437203461757
+215.87509492502295,241.28639873492864
+216.87509492502286,241.28639873492864
+216.87509492502286,267.27842543523974
+217.87509492502278,267.27842543523974
+217.87509492502278,293.27045213555084
+218.8750949250227,293.27045213555084
+218.8750949250227,319.26247883586194
+219.87509492502264,319.26247883586194
+219.87509492502264,345.25450553617304
+220.87509492502258,345.25450553617304
+220.87509492502258,371.24653223648414
+221.87509492502252,371.24653223648414
+221.87509492502252,397.23855893679524
+222.87509492502247,397.23855893679524
+222.87509492502247,423.23058563710634
+223.8750949250224,423.23058563710634
+223.8750949250224,449.22261233741744
+224.87509492502235,449.22261233741744
+224.87509492502235,475.21463903772855
+225.8750949250223,475.21463903772855
+225.8750949250223,501.20666573803965
+226.87509492502224,501.20666573803965
+226.87509492502224,527.1986924383507
+227.87509492502218,527.1986924383507
+227.87509492502218,553.1907191386617
+228.8750949250221,553.1907191386617
+228.8750949250221,579.1827458389728
+229.875094925022,579.1827458389728
+229.875094925022,605.1747725392838
+230.87509492502195,605.1747725392838
+230.87509492502195,631.1667992395949
+231.8750949250219,631.1667992395949
+231.8750949250219,657.1588259399059
+232.87509492502184,657.1588259399059
+232.87509492502184,683.150852640217
+233.87509492502178,683.150852640217
+233.87509492502178,709.142879340528
+234.87509492502173,709.142879340528
+234.87509492502173,735.134906040839
+235.87509492502167,735.134906040839
+235.87509492502167,761.1269327411501
+236.8750949250216,761.1269327411501
+236.8750949250216,759.9800251114697
+237.87509492502156,759.9800251114697
+237.87509492502156,758.8331174817893
+238.8750949250215,758.8331174817893
+238.8750949250215,757.6862098521088
+239.87509492502144,757.6862098521088
+239.87509492502144,756.5393022224284
+240.8750949250214,756.5393022224284
+240.8750949250214,755.392394592748
+241.87509492502133,755.392394592748
+241.87509492502133,754.2454869630676
+242.87509492502127,754.2454869630676
+242.87509492502127,753.0985793333872
+243.8750949250212,753.0985793333872
+243.8750949250212,751.9516717037068
+244.8750949250211,751.9516717037068
+244.8750949250211,750.8047640740264
+700.0,750.8047640740264
+					</series>
+					<series title="robPositionX[0]" type="l" color="0x00ff00" encoding="csv">0.0,0.0
+0.0,2000.0
+84.0,2000.0
+84.0,2019.1613005981214
+85.74221514906029,2019.1613005981214
+85.74221514906029,2038.3226011962429
+86.74221514906029,2038.3226011962429
+86.74221514906029,2057.4839017943646
+87.74221514906029,2057.4839017943646
+87.74221514906029,2076.645202392486
+88.74221514906029,2076.645202392486
+88.74221514906029,2095.806502990608
+89.74221514906029,2095.806502990608
+89.74221514906029,2114.9678035887296
+90.74221514906029,2114.9678035887296
+90.74221514906029,2134.1291041868512
+91.74221514906029,2134.1291041868512
+91.74221514906029,2153.290404784973
+92.74221514906029,2153.290404784973
+92.74221514906029,2172.4517053830946
+93.74221514906029,2172.4517053830946
+93.74221514906029,2191.6130059812162
+94.74221514906029,2191.6130059812162
+94.74221514906029,2210.774306579338
+95.74221514906029,2210.774306579338
+95.74221514906029,2229.9356071774596
+96.74221514906029,2229.9356071774596
+96.74221514906029,2249.0969077755813
+97.74221514906029,2249.0969077755813
+97.74221514906029,2223.3324901942524
+101.74908899461579,2223.3324901942524
+101.74908899461579,2197.5680726129235
+102.74908899461579,2197.5680726129235
+102.74908899461579,2171.8036550315946
+103.74908899461579,2171.8036550315946
+103.74908899461579,2146.039237450266
+104.74908899461579,2146.039237450266
+104.74908899461579,2120.274819868937
+105.74908899461579,2120.274819868937
+105.74908899461579,2094.510402287608
+106.74908899461579,2094.510402287608
+106.74908899461579,2068.745984706279
+107.74908899461579,2068.745984706279
+107.74908899461579,2042.9815671249503
+108.74908899461579,2042.9815671249503
+108.74908899461579,2017.2171495436214
+109.74908899461579,2017.2171495436214
+109.74908899461579,1991.4527319622925
+110.74908899461579,1991.4527319622925
+110.74908899461579,1965.6883143809637
+111.74908899461579,1965.6883143809637
+111.74908899461579,1939.9238967996348
+112.74908899461579,1939.9238967996348
+112.74908899461579,1914.159479218306
+113.74908899461579,1914.159479218306
+113.74908899461579,1888.395061636977
+114.74908899461579,1888.395061636977
+114.74908899461579,1862.6306440556482
+115.74908899461579,1862.6306440556482
+115.74908899461579,1836.8662264743193
+116.74908899461579,1836.8662264743193
+116.74908899461579,1811.1018088929904
+117.74908899461579,1811.1018088929904
+117.74908899461579,1785.3373913116616
+118.74908899461579,1785.3373913116616
+118.74908899461579,1759.5729737303327
+119.74908899461579,1759.5729737303327
+119.74908899461579,1733.8085561490038
+120.74908899461579,1733.8085561490038
+120.74908899461579,1708.044138567675
+121.74908899461579,1708.044138567675
+121.74908899461579,1682.279720986346
+122.74908899461579,1682.279720986346
+122.74908899461579,1656.5153034050172
+123.74908899461579,1656.5153034050172
+123.74908899461579,1630.7508858236883
+124.74908899461579,1630.7508858236883
+124.74908899461579,1604.9864682423595
+125.74908899461579,1604.9864682423595
+125.74908899461579,1579.2220506610306
+126.74908899461579,1579.2220506610306
+126.74908899461579,1553.4576330797017
+127.74908899461579,1553.4576330797017
+127.74908899461579,1527.6932154983729
+128.7490889946158,1527.6932154983729
+128.7490889946158,1501.928797917044
+129.7490889946158,1501.928797917044
+129.7490889946158,1476.1643803357151
+130.7490889946158,1476.1643803357151
+130.7490889946158,1450.1675385689875
+134.87509492502625,1450.1675385689875
+134.87509492502625,1424.17069680226
+135.87509492502625,1424.17069680226
+135.87509492502625,1398.1738550355324
+136.87509492502625,1398.1738550355324
+136.87509492502625,1372.1770132688048
+137.87509492502625,1372.1770132688048
+137.87509492502625,1346.1801715020772
+138.87509492502625,1346.1801715020772
+138.87509492502625,1320.1833297353496
+139.87509492502625,1320.1833297353496
+139.87509492502625,1294.186487968622
+140.87509492502625,1294.186487968622
+140.87509492502625,1268.1896462018944
+141.87509492502625,1268.1896462018944
+141.87509492502625,1242.1928044351669
+142.87509492502625,1242.1928044351669
+142.87509492502625,1216.1959626684393
+143.87509492502625,1216.1959626684393
+143.87509492502625,1190.1991209017117
+144.87509492502625,1190.1991209017117
+144.87509492502625,1164.202279134984
+145.87509492502625,1164.202279134984
+145.87509492502625,1138.2054373682565
+146.87509492502625,1138.2054373682565
+146.87509492502625,1112.208595601529
+147.87509492502625,1112.208595601529
+147.87509492502625,1086.2117538348014
+148.87509492502625,1086.2117538348014
+148.87509492502625,1060.2149120680738
+149.87509492502625,1060.2149120680738
+149.87509492502625,1034.2180703013462
+150.87509492502625,1034.2180703013462
+150.87509492502625,1008.2212285346185
+151.87509492502625,1008.2212285346185
+151.87509492502625,982.2243867678908
+152.87509492502625,982.2243867678908
+152.87509492502625,956.2275450011631
+153.87509492502625,956.2275450011631
+153.87509492502625,930.2307032344354
+154.87509492502625,930.2307032344354
+154.87509492502625,904.2338614677077
+155.87509492502625,904.2338614677077
+155.87509492502625,878.23701970098
+156.87509492502625,878.23701970098
+156.87509492502625,852.2401779342523
+157.87509492502625,852.2401779342523
+157.87509492502625,826.2433361675246
+158.87509492502625,826.2433361675246
+158.87509492502625,800.2464944007969
+159.87509492502625,800.2464944007969
+159.87509492502625,774.2496526340692
+160.87509492502625,774.2496526340692
+160.87509492502625,748.2528108673415
+161.87509492502625,748.2528108673415
+161.87509492502625,722.2559691006138
+162.87509492502625,722.2559691006138
+162.87509492502625,696.2591273338861
+163.87509492502625,696.2591273338861
+163.87509492502625,670.2622855671584
+164.87509492502625,670.2622855671584
+164.87509492502625,644.2654438004307
+165.87509492502625,644.2654438004307
+165.87509492502625,618.268602033703
+166.87509492502625,618.268602033703
+166.87509492502625,592.2717602669753
+167.87509492502625,592.2717602669753
+167.87509492502625,566.2749185002476
+168.87509492502625,566.2749185002476
+168.87509492502625,540.2780767335199
+169.87509492502625,540.2780767335199
+169.87509492502625,514.2812349667922
+170.87509492502625,514.2812349667922
+170.87509492502625,488.2843932000645
+171.87509492502625,488.2843932000645
+171.87509492502625,462.28755143333683
+172.87509492502625,462.28755143333683
+172.87509492502625,436.29070966660913
+173.87509492502625,436.29070966660913
+173.87509492502625,410.29386789988143
+175.87509492502534,410.29386789988143
+175.87509492502534,436.2917517259991
+176.88785364026478,436.2917517259991
+176.88785364026478,462.28962495209356
+177.90065489791402,462.28962495209356
+177.90065489791402,488.2874946426191
+178.91345969435872,488.2874946426191
+178.91345969435872,514.2853631551872
+179.92626566918355,514.2853631551872
+179.92626566918355,540.283231275436
+180.9390720363961,540.283231275436
+180.9390720363961,566.281099265039
+181.95187853426944,566.281099265039
+181.95187853426944,592.2789672111372
+182.9646850756514,592.2789672111372
+182.9646850756514,618.2768351427488
+183.97749163152125,618.2768351427488
+183.97749163152125,644.2747030695366
+184.9902981922154,644.2747030695366
+184.9902981922154,670.2725709947181
+186.00310475451602,670.2725709947181
+186.00310475451602,696.2704389193647
+187.01591131735157,696.2704389193647
+187.01591131735157,722.2683068438331
+188.02871788036524,722.2683068438331
+188.02871788036524,748.2661747682422
+189.04152444343822,748.2661747682422
+189.04152444343822,774.2640426926316
+190.05433100653093,774.2640426926316
+190.05433100653093,800.2619106170145
+191.0671375696302,800.2619106170145
+191.0671375696302,826.259778541395
+192.0799441327317,826.259778541395
+192.0799441327317,852.2576464657749
+193.09275069583393,852.2576464657749
+193.09275069583393,878.2555143901545
+194.1055572589364,878.2555143901545
+194.1055572589364,904.2533823145341
+195.1183638220389,904.2533823145341
+195.1183638220389,930.2512502389136
+196.13117038514147,930.2512502389136
+196.13117038514147,956.2491181632931
+197.14397694824405,956.2491181632931
+197.14397694824405,982.2469860876727
+198.15678351134662,982.2469860876727
+198.15678351134662,1008.2448540120522
+199.16959007444922,1008.2448540120522
+199.16959007444922,1034.2427219364317
+200.1823966375518,1034.2427219364317
+200.1823966375518,1060.2405898608113
+201.19520320065433,1060.2405898608113
+201.19520320065433,1086.2384577851908
+202.2080097637569,1086.2384577851908
+202.2080097637569,1112.2363257095703
+203.22081632685948,1112.2363257095703
+203.22081632685948,1138.2341936339499
+204.23362288996208,1138.2341936339499
+204.23362288996208,1164.2320615583294
+205.24642945306465,1164.2320615583294
+205.24642945306465,1190.229929482709
+206.2592360161672,1190.229929482709
+206.2592360161672,1216.2277974070885
+207.2720425792698,1216.2277974070885
+207.2720425792698,1242.225665331468
+208.28484914237234,1242.225665331468
+208.28484914237234,1268.2235332558475
+209.2976557054749,1268.2235332558475
+209.2976557054749,1294.221401180227
+210.3104622685775,1294.221401180227
+210.3104622685775,1320.2192691046066
+211.32326883168008,1320.2192691046066
+211.32326883168008,1346.2171370289861
+212.33607539478268,1346.2171370289861
+212.33607539478268,1372.2150049533657
+213.34888195788523,1372.2150049533657
+213.34888195788523,1398.2128728777452
+214.3616885209878,1398.2128728777452
+214.3616885209878,1424.2107408021247
+216.45235275458023,1424.2107408021247
+216.45235275458023,1431.0713566244485
+218.8725973948862,1431.0713566244485
+218.8725973948862,1433.9133910178375
+221.36156764020296,1433.9133910178375
+221.36156764020296,1435.4532176160958
+223.87992860634603,1435.4532176160958
+223.87992860634603,1436.61219384249
+226.4089446348029,1436.61219384249
+226.4089446348029,1437.6432832676344
+228.9419236088594,1437.6432832676344
+228.9419236088594,1438.558838475519
+231.47853894649634,1438.558838475519
+231.47853894649634,1439.425237354795
+234.01678079548915,1439.425237354795
+234.01678079548915,1440.2404931880162
+236.55672123894738,1440.2404931880162
+236.55672123894738,1441.0313571896634
+239.09749753545753,1441.0313571896634
+239.09749753545753,1438.1138131108114
+241.85666719475267,1438.1138131108114
+241.85666719475267,1439.1765462217388
+244.38657778101353,1439.1765462217388
+244.38657778101353,1440.2392793326662
+246.91648836727444,1440.2392793326662
+246.91648836727444,1441.3020124435936
+249.44639895353535,1441.3020124435936
+249.44639895353535,1442.364745554521
+251.97630953979626,1442.364745554521
+251.97630953979626,1443.4274786654485
+254.50622012605717,1443.4274786654485
+254.50622012605717,1444.4902117763759
+257.03613071231814,1444.4902117763759
+257.03613071231814,1445.5529448873033
+259.56604129857953,1445.5529448873033
+259.56604129857953,1446.6156779982307
+262.09595188484093,1446.6156779982307
+262.09595188484093,1447.6784111091586
+264.6258624711023,1447.6784111091586
+264.6258624711023,1448.741144220086
+268.4755518176199,1448.741144220086
+268.4755518176199,1423.840999202474
+272.32524116414834,1423.840999202474
+272.32524116414834,1398.9408541847806
+276.17493051068914,1398.9408541847806
+276.17493051068914,1374.0407091669947
+280.0246198572443,1374.0407091669947
+280.0246198572443,1349.1405641491012
+283.87430920381655,1349.1405641491012
+283.87430920381655,1324.24041913108
+287.7239985504099,1324.24041913108
+287.7239985504099,1299.3402741129012
+291.57368789703077,1299.3402741129012
+291.57368789703077,1274.4401290945161
+295.42337724369145,1274.4401290945161
+295.42337724369145,1249.5399840758334
+299.2730665904235,1249.5399840758334
+299.2730665904235,1224.6398390566164
+700.0,1224.6398390566164
+					</series>
+					<series title="robPositionY[0]" type="l" color="0x00ffff" encoding="csv">0.0,0.0
+0.0,500.0
+84.0,500.0
+84.0,482.42602607864603
+85.74221514906029,482.42602607864603
+85.74221514906029,464.85205215729206
+86.74221514906029,464.85205215729206
+86.74221514906029,447.2780782359381
+87.74221514906029,447.2780782359381
+87.74221514906029,429.70410431458413
+88.74221514906029,429.70410431458413
+88.74221514906029,412.13013039323016
+89.74221514906029,412.13013039323016
+89.74221514906029,394.5561564718762
+90.74221514906029,394.5561564718762
+90.74221514906029,376.9821825505222
+91.74221514906029,376.9821825505222
+91.74221514906029,359.40820862916826
+92.74221514906029,359.40820862916826
+92.74221514906029,341.8342347078143
+93.74221514906029,341.8342347078143
+93.74221514906029,324.2602607864603
+94.74221514906029,324.2602607864603
+94.74221514906029,306.68628686510635
+95.74221514906029,306.68628686510635
+95.74221514906029,289.1123129437524
+96.74221514906029,289.1123129437524
+96.74221514906029,271.5383390223984
+97.74221514906029,271.5383390223984
+97.74221514906029,268.046235545279
+101.74908899461579,268.046235545279
+101.74908899461579,264.55413206815956
+102.74908899461579,264.55413206815956
+102.74908899461579,261.06202859104013
+103.74908899461579,261.06202859104013
+103.74908899461579,257.5699251139207
+104.74908899461579,257.5699251139207
+104.74908899461579,254.07782163680125
+105.74908899461579,254.07782163680125
+105.74908899461579,250.5857181596818
+106.74908899461579,250.5857181596818
+106.74908899461579,247.09361468256233
+107.74908899461579,247.09361468256233
+107.74908899461579,243.60151120544288
+108.74908899461579,243.60151120544288
+108.74908899461579,240.10940772832342
+109.74908899461579,240.10940772832342
+109.74908899461579,236.61730425120396
+110.74908899461579,236.61730425120396
+110.74908899461579,233.1252007740845
+111.74908899461579,233.1252007740845
+111.74908899461579,229.63309729696505
+112.74908899461579,229.63309729696505
+112.74908899461579,226.1409938198456
+113.74908899461579,226.1409938198456
+113.74908899461579,222.64889034272613
+114.74908899461579,222.64889034272613
+114.74908899461579,219.15678686560668
+115.74908899461579,219.15678686560668
+115.74908899461579,215.66468338848722
+116.74908899461579,215.66468338848722
+116.74908899461579,212.17257991136776
+117.74908899461579,212.17257991136776
+117.74908899461579,208.6804764342483
+118.74908899461579,208.6804764342483
+118.74908899461579,205.18837295712885
+119.74908899461579,205.18837295712885
+119.74908899461579,201.6962694800094
+120.74908899461579,201.6962694800094
+120.74908899461579,198.20416600288993
+121.74908899461579,198.20416600288993
+121.74908899461579,194.71206252577048
+122.74908899461579,194.71206252577048
+122.74908899461579,191.21995904865102
+123.74908899461579,191.21995904865102
+123.74908899461579,187.72785557153156
+124.74908899461579,187.72785557153156
+124.74908899461579,184.2357520944121
+125.74908899461579,184.2357520944121
+125.74908899461579,180.74364861729265
+126.74908899461579,180.74364861729265
+126.74908899461579,177.2515451401732
+127.74908899461579,177.2515451401732
+127.74908899461579,173.75944166305374
+128.7490889946158,173.75944166305374
+128.7490889946158,170.26733818593428
+129.7490889946158,170.26733818593428
+129.7490889946158,166.77523470881482
+130.7490889946158,166.77523470881482
+130.7490889946158,166.3699963151216
+134.87509492502625,166.3699963151216
+134.87509492502625,165.96475792142837
+135.87509492502625,165.96475792142837
+135.87509492502625,165.55951952773515
+136.87509492502625,165.55951952773515
+136.87509492502625,165.15428113404192
+137.87509492502625,165.15428113404192
+137.87509492502625,164.7490427403487
+138.87509492502625,164.7490427403487
+138.87509492502625,164.34380434665547
+139.87509492502625,164.34380434665547
+139.87509492502625,163.93856595296225
+140.87509492502625,163.93856595296225
+140.87509492502625,163.53332755926903
+141.87509492502625,163.53332755926903
+141.87509492502625,163.1280891655758
+142.87509492502625,163.1280891655758
+142.87509492502625,162.72285077188258
+143.87509492502625,162.72285077188258
+143.87509492502625,162.31761237818935
+144.87509492502625,162.31761237818935
+144.87509492502625,161.91237398449613
+145.87509492502625,161.91237398449613
+145.87509492502625,161.5071355908029
+146.87509492502625,161.5071355908029
+146.87509492502625,161.10189719710968
+147.87509492502625,161.10189719710968
+147.87509492502625,160.69665880341645
+148.87509492502625,160.69665880341645
+148.87509492502625,160.29142040972323
+149.87509492502625,160.29142040972323
+149.87509492502625,159.88618201603
+150.87509492502625,159.88618201603
+150.87509492502625,159.48094362233678
+151.87509492502625,159.48094362233678
+151.87509492502625,159.07570522864356
+152.87509492502625,159.07570522864356
+152.87509492502625,158.67046683495033
+153.87509492502625,158.67046683495033
+153.87509492502625,158.2652284412571
+154.87509492502625,158.2652284412571
+154.87509492502625,157.85999004756388
+155.87509492502625,157.85999004756388
+155.87509492502625,157.45475165387066
+156.87509492502625,157.45475165387066
+156.87509492502625,157.04951326017743
+157.87509492502625,157.04951326017743
+157.87509492502625,156.6442748664842
+158.87509492502625,156.6442748664842
+158.87509492502625,156.23903647279099
+159.87509492502625,156.23903647279099
+159.87509492502625,155.83379807909776
+160.87509492502625,155.83379807909776
+160.87509492502625,155.42855968540454
+161.87509492502625,155.42855968540454
+161.87509492502625,155.0233212917113
+162.87509492502625,155.0233212917113
+162.87509492502625,154.6180828980181
+163.87509492502625,154.6180828980181
+163.87509492502625,154.21284450432486
+164.87509492502625,154.21284450432486
+164.87509492502625,153.80760611063164
+165.87509492502625,153.80760611063164
+165.87509492502625,153.40236771693841
+166.87509492502625,153.40236771693841
+166.87509492502625,152.9971293232452
+167.87509492502625,152.9971293232452
+167.87509492502625,152.59189092955197
+168.87509492502625,152.59189092955197
+168.87509492502625,152.18665253585874
+169.87509492502625,152.18665253585874
+169.87509492502625,151.78141414216552
+170.87509492502625,151.78141414216552
+170.87509492502625,151.3761757484723
+171.87509492502625,151.3761757484723
+171.87509492502625,150.97093735477907
+172.87509492502625,150.97093735477907
+172.87509492502625,150.56569896108584
+173.87509492502625,150.56569896108584
+173.87509492502625,150.16046056739262
+175.87509492502534,150.16046056739262
+175.87509492502534,150.49217816368434
+176.88785364026478,150.49217816368434
+176.88785364026478,150.8247254835094
+177.90065489791402,150.8247254835094
+177.90065489791402,151.1575490921271
+178.91345969435872,151.1575490921271
+178.91345969435872,151.4904647018842
+179.92626566918355,151.4904647018842
+179.92626566918355,151.823410947014
+180.9390720363961,151.823410947014
+180.9390720363961,152.15636739338836
+181.95187853426944,152.15636739338836
+181.95187853426944,152.48932723666562
+182.9646850756514,152.48932723666562
+182.9646850756514,152.82228821107464
+183.97749163152125,152.82228821107464
+183.97749163152125,153.1552495621375
+184.9902981922154,153.1552495621375
+184.9902981922154,153.48821103862218
+186.00310475451602,153.48821103862218
+186.00310475451602,153.82117255687137
+187.01591131735157,153.82117255687137
+187.01591131735157,154.15413408902734
+188.02871788036524,154.15413408902734
+188.02871788036524,154.48709562581453
+189.04152444343822,154.48709562581453
+189.04152444343822,154.82005716414338
+190.05433100653093,154.82005716414338
+190.05433100653093,155.15301870298586
+191.0671375696302,155.15301870298586
+191.0671375696302,155.4859802419992
+192.0799441327317,155.4859802419992
+192.0799441327317,155.8189417810691
+193.09275069583393,155.8189417810691
+193.09275069583393,156.1519033201584
+194.1055572589364,156.1519033201584
+194.1055572589364,156.484864859254
+195.1183638220389,156.484864859254
+195.1183638220389,156.81782639835185
+196.13117038514147,156.81782639835185
+196.13117038514147,157.15078793744993
+197.14397694824405,157.15078793744993
+197.14397694824405,157.48374947654847
+198.15678351134662,157.48374947654847
+198.15678351134662,157.816711015647
+199.16959007444922,157.816711015647
+199.16959007444922,158.149672554746
+200.1823966375518,158.149672554746
+200.1823966375518,158.48263409384452
+201.19520320065433,158.48263409384452
+201.19520320065433,158.81559563294306
+202.2080097637569,158.81559563294306
+202.2080097637569,159.14855717204205
+203.22081632685948,159.14855717204205
+203.22081632685948,159.48151871114058
+204.23362288996208,159.48151871114058
+204.23362288996208,159.81448025023957
+205.24642945306465,159.81448025023957
+205.24642945306465,160.1474417893381
+206.2592360161672,160.1474417893381
+206.2592360161672,160.48040332843664
+207.2720425792698,160.48040332843664
+207.2720425792698,160.81336486753563
+208.28484914237234,160.81336486753563
+208.28484914237234,161.14632640663416
+209.2976557054749,161.14632640663416
+209.2976557054749,161.4792879457327
+210.3104622685775,161.4792879457327
+210.3104622685775,161.81224948483168
+211.32326883168008,161.81224948483168
+211.32326883168008,162.14521102393022
+212.33607539478268,162.14521102393022
+212.33607539478268,162.4781725630292
+213.34888195788523,162.4781725630292
+213.34888195788523,162.81113410212774
+214.3616885209878,162.81113410212774
+214.3616885209878,163.14409564122627
+216.45235275458023,163.14409564122627
+216.45235275458023,188.22261135764137
+218.8725973948862,188.22261135764137
+218.8725973948862,214.06681458596307
+221.36156764020296,214.06681458596307
+221.36156764020296,240.02117711034992
+223.87992860634603,240.02117711034992
+223.87992860634603,265.9953329985911
+226.4089446348029,265.9953329985911
+226.4089446348029,291.9748798498615
+228.9419236088594,291.9748798498615
+228.9419236088594,317.9587548238009
+231.47853894649634,317.9587548238009
+231.47853894649634,343.9443152946083
+234.01678079548915,343.9443152946083
+234.01678079548915,369.93153057301777
+236.55672123894738,369.93153057301777
+236.55672123894738,395.91949959968275
+239.09749753545753,395.91949959968275
+239.09749753545753,421.7552875022793
+241.85666719475267,421.7552875022793
+241.85666719475267,447.7335591602426
+244.38657778101353,447.7335591602426
+244.38657778101353,473.71183081820584
+246.91648836727444,473.71183081820584
+246.91648836727444,499.6901024761691
+249.44639895353535,499.6901024761691
+249.44639895353535,525.6683741341324
+251.97630953979626,525.6683741341324
+251.97630953979626,551.6466457920957
+254.50622012605717,551.6466457920957
+254.50622012605717,577.624917450059
+257.03613071231814,577.624917450059
+257.03613071231814,603.6031891080223
+259.56604129857953,603.6031891080223
+259.56604129857953,629.5814607659856
+262.09595188484093,629.5814607659856
+262.09595188484093,655.559732423949
+264.6258624711023,655.559732423949
+264.6258624711023,681.5380040819123
+268.4755518176199,681.5380040819123
+268.4755518176199,689.020168080509
+272.32524116414834,689.020168080509
+272.32524116414834,696.5023320788347
+276.17493051068914,696.5023320788347
+276.17493051068914,703.984496076852
+280.0246198572443,703.984496076852
+280.0246198572443,711.466660074512
+283.87430920381655,711.466660074512
+283.87430920381655,718.9488240717467
+287.7239985504099,718.9488240717467
+287.7239985504099,726.4309880684565
+291.57368789703077,726.4309880684565
+291.57368789703077,733.9131520644802
+295.42337724369145,733.9131520644802
+295.42337724369145,741.3953160595133
+299.2730665904235,741.3953160595133
+299.2730665904235,748.8774800527686
+700.0,748.8774800527686
+					</series>
+					<series title="rf_1.starting * 100" type="l" color="0x0000ff" encoding="csv">0.0,0.0
+173.87509492502625,0.0
+173.87509492502625,100.0
+174.87509492502534,100.0
+174.87509492502534,0.0
+700.0,0.0
+					</series>
+					<series title="exeSum.end * 100" type="l" color="0xff00ff" encoding="csv">0.0,0.0
+299.2730665904235,0.0
+299.2730665904235,100.0
+700.0,100.0
+					</series>
+					<comment/>
+				</plot>
+			</result>
+		</query>
+	</queries>
+</nta>

@@ -1,27 +1,27 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2761
+{\rtf1\ansi\ansicpg1252\cocoartf2821
 \cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;\f1\fnil\fcharset0 Menlo-Bold;}
 {\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red255\green255\blue255;}
-{\*\expandedcolortbl;;\cssrgb\c0\c0\c0;\cssrgb\c100000\c100000\c100000\c0;}
+{\*\expandedcolortbl;;\cssrgb\c0\c1\c1;\cssrgb\c100000\c100000\c99985\c0;}
 \paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
 \deftab593
 \pard\tx593\pardeftab593\pardirnatural\partightenfactor0
 
 \f0\fs24 \cf2 \cb3 	
-\f1\b <template>
-\f0\b0 \
+\f1\b \cf2 \cb3 <template>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <name>
-\f0\b0 Robot_moveTo
-\f1\b </name>
-\f0\b0 \
+\f1\b \cf2 \cb3 <name>
+\f0\b0 \cf2 \cb3 Robot_moveTo
+\f1\b \cf2 \cb3 </name>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <parameter>
-\f0\b0 int id, double _v_max, double _a_max
-\f1\b </parameter>
-\f0\b0 \
+\f1\b \cf2 \cb3 <parameter>
+\f0\b0 \cf2 \cb3 int id, double _v_max, double _a_max
+\f1\b \cf2 \cb3 </parameter>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <declaration>
-\f0\b0 \
+\f1\b \cf2 \cb3 <declaration>
+\f0\b0 \cf2 \cb3 \
 clock V, Th, tUpd;\
 \
 trajectory traj = \{\{0.0, 0.0\},\{0.0, 0.0\},\{0.0, 0.0\},\{0.0, 0.0\},\{0.0, 0.0\},\{0.0, 0.0\},\{0.0, 0.0\},\{0.0, 0.0\},\{0.0, 0.0\},\{0.0, 0.0\}\};\
@@ -135,8 +135,8 @@ void plan_traj() \{\
 	double dist, min_dist;\
 	bool visited[N_I] = \{false,false,false,false,false,false,false,false,false\};\
 	bool close;\
-	curr[0] = internalRobX[id-1]; curr[1] = internalRobY[id-1];\
-	dest[0] = location_X[robot_loc_target]; dest[1] = location_Y[robot_loc_target];\
+	curr[0] = robPositionX[id-1]; curr[1] = robPositionY[id-1];\
+	dest[0] = location_X[robot_loc_target[id-1]]; dest[1] = location_Y[robot_loc_target[id-1]];\
 	// init trajectory\
 	for (i = 0; i &lt; N_P; i++)\
 	\{\
@@ -201,12 +201,12 @@ void plan_traj() \{\
 	traj[i][1] = dest[1];\
 \
 	//sets initial orientation\
-	change_orientation(internalRobX[id-1], internalRobY[id-1], traj[0][0], traj[0][1]);\
+	change_orientation(robPositionX[id-1], robPositionY[id-1], traj[0][0], traj[0][1]);\
 \}\
 \
 void update_pos(double coeff) \{\
-	internalRobX[id-1] = internalRobX[id-1] + coeff*Tpoll*cos(ort*PI/180);\
-	internalRobY[id-1] = internalRobY[id-1] + coeff*Tpoll*sin(ort*PI/180);\
+	robPositionX[id-1] = robPositionX[id-1] + coeff*Tpoll*cos(ort*PI/180);\
+	robPositionY[id-1] = robPositionY[id-1] + coeff*Tpoll*sin(ort*PI/180);\
 \}\
 \
 void initRobot() \{\
@@ -216,8 +216,8 @@ void initRobot() \{\
 	robPositionX[id-1] = r_startX[id-1];\
 	robPositionY[id-1] = r_startY[id-1];\
 \
-	internalRobX[id-1] = robPositionX[id-1];\
-	internalRobY[id-1] = robPositionY[id-1];\
+	robPositionX[id-1] = robPositionX[id-1];\
+	robPositionY[id-1] = robPositionY[id-1];\
 \
 	tUpd=0;\
 	v_max = fint(_v_max);\
@@ -230,1517 +230,1467 @@ void varsUpdate(double coeff) \{\
 	if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0))\
 		return;\
 \
-	if (pt_dist(internalRobX[id-1], traj[curr_traj][0], internalRobY[id-1], traj[curr_traj][1]) &lt; v_max*1.1) \{\
+	if (pt_dist(robPositionX[id-1], traj[curr_traj][0], robPositionY[id-1], traj[curr_traj][1]) &lt; v_max*1.1) \{\
 		curr_traj++;\
 		if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0))\
 			plan_traj();\
-		change_orientation(internalRobX[id-1], internalRobY[id-1], traj[curr_traj][0], traj[curr_traj][1]);\
+		change_orientation(robPositionX[id-1], robPositionY[id-1], traj[curr_traj][0], traj[curr_traj][1]);\
 	\}\
 \
 	update_pos(coeff);\
 \}\
+\pard\tx593\pardeftab593\pardirnatural\partightenfactor0
 
-\f1\b </declaration>
-\f0\b0 \
+\f1\b \cf2 \cb3 </declaration>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <location 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id85"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-629"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-348"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <location 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id90"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-629"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-348"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <name 
-\f0\b0 x
-\f1\b =
-\f0\b0 "-680"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-374"
-\f1\b >
-\f0\b0 idle
-\f1\b </name>
-\f0\b0 \
+\f1\b \cf2 \cb3 <name 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-680"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-374"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 idle
+\f1\b \cf2 \cb3 </name>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "invariant"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-731"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-348"
-\f1\b >
-\f0\b0 V' == 0 &amp;&amp;\
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "invariant"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-731"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-348"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 V' == 0 &amp;&amp;\
 tUpd'==0
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </location>
-\f0\b0 \
+\f1\b \cf2 \cb3 </location>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <location 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id86"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-416"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-42"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <location 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id91"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-416"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-42"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <name 
-\f0\b0 x
-\f1\b =
-\f0\b0 "-408"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-42"
-\f1\b >
-\f0\b0 stopping
-\f1\b </name>
-\f0\b0 \
+\f1\b \cf2 \cb3 <name 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-408"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-42"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 stopping
+\f1\b \cf2 \cb3 </name>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "invariant"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-595"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "18"
-\f1\b >
-\f0\b0 V' == -a_max\
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "invariant"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-595"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "18"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 V' == -a_max\
 &amp;&amp; tUpd&lt;=Tpoll
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "comments"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-331"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-33"
-\f1\b >
-\f0\b0 &amp;&amp; V &gt;=0
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "comments"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-331"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-33"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 &amp;&amp; V &gt;=0
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </location>
-\f0\b0 \
+\f1\b \cf2 \cb3 </location>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <location 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id87"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-416"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-348"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <location 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id92"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-416"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-348"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <name 
-\f0\b0 x
-\f1\b =
-\f0\b0 "-399"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-366"
-\f1\b >
-\f0\b0 starting
-\f1\b </name>
-\f0\b0 \
+\f1\b \cf2 \cb3 <name 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-399"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-366"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 starting
+\f1\b \cf2 \cb3 </name>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "invariant"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-314"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-408"
-\f1\b >
-\f0\b0 V' == a_max\
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "invariant"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-314"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-408"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 V' == a_max\
 &amp;&amp; V &lt;= v_max\
 &amp;&amp; tUpd&lt;=Tpoll
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </location>
-\f0\b0 \
+\f1\b \cf2 \cb3 </location>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <location 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id88"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-161"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-246"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <location 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id93"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-161"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-246"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <name 
-\f0\b0 x
-\f1\b =
-\f0\b0 "-229"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-263"
-\f1\b >
-\f0\b0 moving
-\f1\b </name>
-\f0\b0 \
+\f1\b \cf2 \cb3 <name 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-229"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-263"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 moving
+\f1\b \cf2 \cb3 </name>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "invariant"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-263"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-246"
-\f1\b >
-\f0\b0 V' == 0 &amp;&amp;\
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "invariant"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-263"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-246"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 V' == 0 &amp;&amp;\
 tUpd&lt;=Tpoll
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </location>
-\f0\b0 \
+\f1\b \cf2 \cb3 </location>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <location 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id89"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-833"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-348"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <location 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id94"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-833"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-348"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <name 
-\f0\b0 x
-\f1\b =
-\f0\b0 "-843"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-382"
-\f1\b >
-\f0\b0 Init
-\f1\b </name>
-\f0\b0 \
+\f1\b \cf2 \cb3 <name 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-843"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-382"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 Init
+\f1\b \cf2 \cb3 </name>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <committed/>
-\f0\b0 \
+\f1\b \cf2 \cb3 <committed/>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </location>
-\f0\b0 \
+\f1\b \cf2 \cb3 </location>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <location 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id90"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "204"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-246"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <location 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id95"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "204"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-246"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <name 
-\f0\b0 x
-\f1\b =
-\f0\b0 "221"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-272"
-\f1\b >
-\f0\b0 turning
-\f1\b </name>
-\f0\b0 \
+\f1\b \cf2 \cb3 <name 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "221"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-272"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 turning
+\f1\b \cf2 \cb3 </name>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "invariant"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "221"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-255"
-\f1\b >
-\f0\b0 V'==0 &amp;&amp;\
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "invariant"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "221"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-255"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 V'==0 &amp;&amp;\
 Th&lt;=fabs(ort*PI/180)
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </location>
-\f0\b0 \
+\f1\b \cf2 \cb3 </location>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <location 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id91"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "42"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-246"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <location 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id96"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "42"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-246"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <committed/>
-\f0\b0 \
+\f1\b \cf2 \cb3 <committed/>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </location>
-\f0\b0 \
+\f1\b \cf2 \cb3 </location>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <location 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id92"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-416"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-501"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <location 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id97"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-416"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-501"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <committed/>
-\f0\b0 \
+\f1\b \cf2 \cb3 <committed/>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </location>
-\f0\b0 \
+\f1\b \cf2 \cb3 </location>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <location 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id93"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-416"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "102"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <location 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id98"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-416"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "102"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <committed/>
-\f0\b0 \
+\f1\b \cf2 \cb3 <committed/>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </location>
-\f0\b0 \
+\f1\b \cf2 \cb3 </location>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <location 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id94"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-59"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-170"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <location 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id99"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-59"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-170"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <committed/>
-\f0\b0 \
+\f1\b \cf2 \cb3 <committed/>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </location>
-\f0\b0 \
+\f1\b \cf2 \cb3 </location>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <location 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id95"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-629"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-42"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <location 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id100"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-629"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-42"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <committed/>
-\f0\b0 \
+\f1\b \cf2 \cb3 <committed/>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </location>
-\f0\b0 \
+\f1\b \cf2 \cb3 </location>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <init 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id89"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <init 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id94"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id96"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id101"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id86"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id91"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id95"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id100"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "guard"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-578"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-68"
-\f1\b >
-\f0\b0 V &lt;= 0
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "guard"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-578"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-68"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 V &lt;= 0
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id97"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id102"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id94"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id99"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id88"
-\f1\b />
-\f0\b0 \
-			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "synchronisation"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-153"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-221"
-\f1\b >
-\f0\b0 publish_m[id]!
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id93"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id98"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id103"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id91"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id96"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id94"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id99"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "guard"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-9"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-204"
-\f1\b >
-\f0\b0 !needsTurning
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "guard"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-9"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-204"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 !needsTurning
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "assignment"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "8"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-187"
-\f1\b >
-\f0\b0 tUpd=0
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "assignment"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "8"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-187"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 tUpd=0
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id99"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id104"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id93"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id98"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id86"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id91"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "synchronisation"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-595"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "1"
-\f1\b >
-\f0\b0 publish_m[id]!
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <nail 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-459"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "86"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <nail 
-\f0\b0 x
-\f1\b =
-\f0\b0 "-459"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "86"
-\f1\b />
-\f0\b0 \
-			
-\f1\b <nail 
-\f0\b0 x
-\f1\b =
-\f0\b0 "-459"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-16"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <nail 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-459"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-16"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id100"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id105"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id92"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id97"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id87"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id92"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "synchronisation"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-365"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-459"
-\f1\b >
-\f0\b0 publish_m[1]!
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <nail 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-374"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-459"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <nail 
-\f0\b0 x
-\f1\b =
-\f0\b0 "-374"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-459"
-\f1\b />
-\f0\b0 \
-			
-\f1\b <nail 
-\f0\b0 x
-\f1\b =
-\f0\b0 "-374"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-391"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <nail 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-374"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-391"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id101"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id106"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id86"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id91"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id93"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id98"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "guard"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-408"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "43"
-\f1\b >
-\f0\b0 tUpd&gt;=Tpoll\
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "guard"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-408"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "43"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 tUpd&gt;=Tpoll\
 &amp;&amp;V&gt;0
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "assignment"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-408"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "1"
-\f1\b >
-\f0\b0 t+=Tpoll, tUpd=0,\
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "assignment"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-408"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "1"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 t+=Tpoll, tUpd=0,\
 varsUpdate(v_max-a_max*t)
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id102"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id107"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id87"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id92"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id92"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id97"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "guard"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-527"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-493"
-\f1\b >
-\f0\b0 tUpd&gt;=Tpoll\
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "guard"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-527"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-493"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 tUpd&gt;=Tpoll\
 &amp;&amp;V&lt;v_max
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "assignment"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-586"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-450"
-\f1\b >
-\f0\b0 t+=Tpoll, tUpd=0,\
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "assignment"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-586"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-450"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 t+=Tpoll, tUpd=0,\
 varsUpdate(a_max*t)
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id103"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id108"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id90"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id95"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id86"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id91"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "synchronisation"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-170"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-67"
-\f1\b >
-\f0\b0 stop_r_moveTo[id-1]?
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "synchronisation"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-170"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-67"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 stop_r_moveTo[id-1]?
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "assignment"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-25"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-68"
-\f1\b >
-\f0\b0 tUpd=0, t=0
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "assignment"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-25"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-68"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 tUpd=0, t=0
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <nail 
-\f0\b0 x
-\f1\b =
-\f0\b0 "204"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-50"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <nail 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "204"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-50"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id104"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id109"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id90"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id95"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id88"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id93"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "guard"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-42"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-374"
-\f1\b >
-\f0\b0 Th&gt;=fabs(ort*PI/180)
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "guard"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-42"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-374"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 Th&gt;=fabs(ort*PI/180)
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "assignment"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-42"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-348"
-\f1\b >
-\f0\b0 tUpd = 0, Th = 0,\
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "assignment"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-42"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-348"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 tUpd = 0, Th = 0,\
 needsTurning = false
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <nail 
-\f0\b0 x
-\f1\b =
-\f0\b0 "204"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-348"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <nail 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "204"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-348"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <nail 
-\f0\b0 x
-\f1\b =
-\f0\b0 "-161"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-348"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <nail 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-161"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-348"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id105"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id110"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id91"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id96"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id90"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id95"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "guard"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "68"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-263"
-\f1\b >
-\f0\b0 needsTurning
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "guard"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "68"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-263"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 needsTurning
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "assignment"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "102"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-246"
-\f1\b >
-\f0\b0 Th=0
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "assignment"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "102"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-246"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 Th=0
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id106"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id111"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id88"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id93"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id91"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id96"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "guard"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-119"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-280"
-\f1\b >
-\f0\b0 tUpd&gt;=Tpoll
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "guard"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-119"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-280"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 tUpd&gt;=Tpoll
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "assignment"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-136"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-263"
-\f1\b >
-\f0\b0 varsUpdate(v_max)
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "assignment"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-136"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-263"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 varsUpdate(v_max)
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id107"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id112"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id86"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id91"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id87"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id92"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "synchronisation"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-416"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-204"
-\f1\b >
-\f0\b0 start_r_moveTo[id-1]?
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "synchronisation"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-416"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-204"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 start_r_moveTo[id-1]?
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "assignment"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-416"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-187"
-\f1\b >
-\f0\b0 t=0, tUpd=0,\
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "assignment"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-416"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-187"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 t=0, tUpd=0,\
 plan_traj()
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id108"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id113"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id87"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id92"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id86"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id91"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "synchronisation"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-595"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-204"
-\f1\b >
-\f0\b0 stop_r_moveTo[id-1]?
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "synchronisation"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-595"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-204"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 stop_r_moveTo[id-1]?
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "assignment"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-578"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-187"
-\f1\b >
-\f0\b0 t=0, tUpd=0
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "assignment"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-578"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-187"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 t=0, tUpd=0
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <nail 
-\f0\b0 x
-\f1\b =
-\f0\b0 "-476"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-314"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <nail 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-476"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-314"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <nail 
-\f0\b0 x
-\f1\b =
-\f0\b0 "-476"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-92"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <nail 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-476"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-92"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id109"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id114"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id95"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id100"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id85"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id90"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "synchronisation"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-706"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-221"
-\f1\b >
-\f0\b0 rm_still!
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "synchronisation"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-706"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-221"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 rm_still!
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "assignment"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-706"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-204"
-\f1\b >
-\f0\b0 t=0,\
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "assignment"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-706"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-204"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 t=0,\
 tUpd = 0,\
 V=0
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id110"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id115"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id88"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id93"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id86"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id91"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "synchronisation"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-289"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-136"
-\f1\b >
-\f0\b0 stop_r_moveTo[id-1]?
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "synchronisation"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-289"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-136"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 stop_r_moveTo[id-1]?
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "assignment"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-280"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-119"
-\f1\b >
-\f0\b0 tUpd=0, t=0
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "assignment"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-280"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-119"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 tUpd=0, t=0
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <nail 
-\f0\b0 x
-\f1\b =
-\f0\b0 "-161"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-101"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <nail 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-161"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-101"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id111"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id116"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id87"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id92"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id88"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id93"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "guard"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-314"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-348"
-\f1\b >
-\f0\b0 V &gt;= v_max
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "guard"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-314"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-348"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 V &gt;= v_max
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "assignment"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-195"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-408"
-\f1\b >
-\f0\b0 t+=Tpoll,\
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "assignment"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-195"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-408"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 t+=Tpoll,\
 tUpd=0,\
 V=v_max
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <nail 
-\f0\b0 x
-\f1\b =
-\f0\b0 "-161"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-348"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <nail 
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-161"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-348"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id112"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id117"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id85"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id90"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id87"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id92"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "synchronisation"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-603"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-374"
-\f1\b >
-\f0\b0 start_r_moveTo[id-1]?
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "synchronisation"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-603"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-374"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 start_r_moveTo[id-1]?
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "assignment"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-586"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-348"
-\f1\b >
-\f0\b0 t=0, tUpd=0,\
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "assignment"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-586"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-348"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 t=0, tUpd=0,\
 plan_traj()
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b <transition 
-\f0\b0 id
-\f1\b =
-\f0\b0 "id113"
-\f1\b >
-\f0\b0 \
+\f1\b \cf2 \cb3 <transition 
+\f0\b0 \cf2 \cb3 id
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id118"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <source 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id89"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <source 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id94"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <target 
-\f0\b0 ref
-\f1\b =
-\f0\b0 "id85"
-\f1\b />
-\f0\b0 \
+\f1\b \cf2 \cb3 <target 
+\f0\b0 \cf2 \cb3 ref
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "id90"
+\f1\b \cf2 \cb3 />
+\f0\b0 \cf2 \cb3 \
 			
-\f1\b <label 
-\f0\b0 kind
-\f1\b =
-\f0\b0 "assignment"
-\f1\b  
-\f0\b0 x
-\f1\b =
-\f0\b0 "-807"
-\f1\b  
-\f0\b0 y
-\f1\b =
-\f0\b0 "-365"
-\f1\b >
-\f0\b0 initRobot()
-\f1\b </label>
-\f0\b0 \
+\f1\b \cf2 \cb3 <label 
+\f0\b0 \cf2 \cb3 kind
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "assignment"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 x
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-807"
+\f1\b \cf2 \cb3  
+\f0\b0 \cf2 \cb3 y
+\f1\b \cf2 \cb3 =
+\f0\b0 \cf2 \cb3 "-365"
+\f1\b \cf2 \cb3 >
+\f0\b0 \cf2 \cb3 initRobot()
+\f1\b \cf2 \cb3 </label>
+\f0\b0 \cf2 \cb3 \
 		
-\f1\b </transition>
-\f0\b0 \
+\f1\b \cf2 \cb3 </transition>
+\f0\b0 \cf2 \cb3 \
 	
-\f1\b </template>}
+\f1\b \cf2 \cb3 </template>}
