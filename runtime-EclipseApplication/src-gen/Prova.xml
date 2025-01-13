@@ -20,7 +20,7 @@ const double room3[2] = {500, 400};
 */
 
 // Sub-sequence Stages
-urgent broadcast chan s1, s2, s3, e;
+urgent broadcast chan s1, s2, e;
 
 // Sequence status (one for each agent)
 bool human_stat = true;
@@ -63,10 +63,9 @@ int robot_loc_target[N_R];
 
 urgent broadcast chan start_r_follow[N_R], stop_r_follow[N_R];
 // Who I have to follow (agent id)?
-int human_to_be_followed = 0;
-int robot_to_be_followed = 0;
-int f_human_loc_target = 0;
-int f_robot_loc_target = 0;
+int human_to_be_followed[N_R];
+int robot_to_be_followed[N_R];
+int f_loc_target[N_R];
 
 
 /**
@@ -158,39 +157,29 @@ double pt_dist(double x1, double x2, double y1, double y2) {
 			<name x="983" y="-34">sub_seq_s2</name>
 		</location>
 		<location id="id3" x="1500" y="0">
-			<name x="1483" y="-34">sub_seq_s3</name>
-		</location>
-		<location id="id4" x="2000" y="0">
-			<name x="1983" y="-34">end</name>
+			<name x="1483" y="-34">end</name>
 		</location>
 		<init ref="id0"/>
-		<transition id="id5">
+		<transition id="id4">
 			<source ref="id0"/>
 			<target ref="id1"/>
 			<label kind="guard" x="18" y="-34">human_stat==true and robot_stat==true and p==currP</label>
 			<label kind="synchronisation" x="18" y="-17">s1!</label>
 			<label kind="assignment" x="18" y="0">human_stat=false, robot_stat=false</label>
 		</transition>
-		<transition id="id6">
+		<transition id="id5">
 			<source ref="id1"/>
 			<target ref="id2"/>
 			<label kind="guard" x="518" y="-34">human_stat==true and robot_stat==true</label>
 			<label kind="synchronisation" x="518" y="-17">s2!</label>
 			<label kind="assignment" x="518" y="0">human_stat=false, robot_stat=false</label>
 		</transition>
-		<transition id="id7">
+		<transition id="id6">
 			<source ref="id2"/>
 			<target ref="id3"/>
 			<label kind="guard" x="1018" y="-34">human_stat==true and robot_stat==true</label>
-			<label kind="synchronisation" x="1018" y="-17">s3!</label>
-			<label kind="assignment" x="1018" y="0">human_stat=false, robot_stat=false</label>
-		</transition>
-		<transition id="id8">
-			<source ref="id3"/>
-			<target ref="id4"/>
-			<label kind="guard" x="1518" y="-34">human_stat==true and robot_stat==true</label>
-			<label kind="synchronisation" x="1518" y="-17">e!</label>
-			<label kind="assignment" x="1518" y="0">currP=currP+1</label>
+			<label kind="synchronisation" x="1018" y="-17">e!</label>
+			<label kind="assignment" x="1018" y="0">currP=currP+1</label>
 		</transition>
 	</template>
 
@@ -211,77 +200,62 @@ clock t;		</declaration>
 			<committed/>
 		</location>
 		<location id="id3" x="0" y="1050">
-			<name x="-17" y="1016">s3_start</name>
-			<committed/>
+			<name x="-17" y="1016">end_human</name>
 		</location>
-		<location id="id4" x="0" y="1400">
-			<name x="-17" y="1366">end_human</name>
-		</location>
-		<location id="id5" x="200" y="350">
+		<location id="id4" x="200" y="350">
 			<name x="183" y="316">A1_a1_moveTo_busy</name>
 			<label kind="invariant" x="190" y="367">t&lt;=5</label>
 		</location>
-		<location id="id6" x="400" y="350">
+		<location id="id5" x="400" y="350">
 			<name x="383" y="316">A1_a1_moveTo_complete</name>
 			<committed/>
 		</location>
-		<location id="id7" x="600" y="350">
+		<location id="id6" x="600" y="350">
 			<name x="583" y="316">s1_end</name>
 		</location>
-		<location id="id9" x="200" y="700">
+		<location id="id8" x="200" y="700">
 			<name x="183" y="666">A1_a2_moveTo_busy</name>
 			<label kind="invariant" x="190" y="717">t&lt;=5</label>
 		</location>
-		<location id="id10" x="400" y="700">
+		<location id="id9" x="400" y="700">
 			<name x="383" y="666">A1_a2_moveTo_complete</name>
 			<committed/>
 		</location>
-		<location id="id11" x="600" y="700">
-			<name x="583" y="666">A1_a3_moveTo_busy</name>
-			<label kind="invariant" x="590" y="717">t&lt;=5</label>
-		</location>
-		<location id="id12" x="800" y="700">
-			<name x="783" y="666">A1_a3_moveTo_complete</name>
-			<committed/>
-		</location>
-		<location id="id13" x="1000" y="700">
-			<name x="983" y="666">s2_end</name>
-		</location>
-		<location id="id15" x="200" y="1050">
-			<name x="183" y="1016">S3_idle</name>
+		<location id="id10" x="600" y="700">
+			<name x="583" y="666">s2_end</name>
 		</location>
 		<init ref="id0"/>
-		<transition id="id8">
-			<source ref="id6"/>
-			<target ref="id7"/>
+		<transition id="id7">
+			<source ref="id5"/>
+			<target ref="id6"/>
 			<label kind="assignment" x="418" y="350">human_stat = true</label>
 		</transition>
-		<transition id="id14">
-			<source ref="id12"/>
-			<target ref="id13"/>
-			<label kind="assignment" x="818" y="700">human_stat = true</label>
+		<transition id="id11">
+			<source ref="id9"/>
+			<target ref="id10"/>
+			<label kind="assignment" x="418" y="700">human_stat = true</label>
 		</transition>
-		<transition id="id16">
+		<transition id="id12">
 			<source ref="id1"/>
-			<target ref="id5"/>
+			<target ref="id4"/>
 			<label kind="synchronisation" x="18" y="333">start_h_moveTo[H-1]!</label>
 		</transition>
-		<transition id="id17">
+		<transition id="id13">
 			<source ref="id0"/>
 			<target ref="id1"/>
 			<label kind="synchronisation" x="18" y="233">s1?</label>
 			<label kind="assignment" x="18" y="250">human_loc_target[H-1] = 0</label>
 		</transition>
-		<transition id="id18">
-			<source ref="id5"/>
+		<transition id="id14">
+			<source ref="id4"/>
 			<target ref="id1"/>
 			<label kind="guard" x="18" y="416">t&gt;=5</label>
 			<label kind="assignment" x="18" y="450">t = 0</label>
 			<nail x="100" y="430"/>
 		</transition>
-		<transition id="id19">
-			<source ref="id5"/>
-			<target ref="id6"/>
+		<transition id="id15">
+			<source ref="id4"/>
+			<target ref="id5"/>
 			<label kind="guard" x="218" y="216">humanPositionX[H-1] &lt;= location_X[human_loc_target[H-1]]+30 and
 humanPositionX[H-1] &gt;= location_X[human_loc_target[H-1]]-30 and
 humanPositionY[H-1] &lt;= location_Y[human_loc_target[H-1]]+30 and
@@ -289,70 +263,38 @@ humanPositionY[H-1] &gt;= location_Y[human_loc_target[H-1]]-30</label>
 			<label kind="synchronisation" x="218" y="233">stop_h_moveTo[H-1]!</label>
 			<label kind="assignment" x="218" y="250"></label>
 		</transition>
-		<transition id="id20">
+		<transition id="id16">
 			<source ref="id2"/>
-			<target ref="id9"/>
+			<target ref="id8"/>
 			<label kind="synchronisation" x="18" y="683">start_h_moveTo[H-1]!</label>
 		</transition>
-		<transition id="id21">
-			<source ref="id7"/>
+		<transition id="id17">
+			<source ref="id6"/>
 			<target ref="id2"/>
 			<label kind="synchronisation" x="18" y="583">s2?</label>
 			<label kind="assignment" x="18" y="600">human_loc_target[H-1] = 1</label>
 		</transition>
-		<transition id="id22">
-			<source ref="id9"/>
+		<transition id="id18">
+			<source ref="id8"/>
 			<target ref="id2"/>
 			<label kind="guard" x="18" y="766">t&gt;=5</label>
 			<label kind="assignment" x="18" y="800">t = 0</label>
 			<nail x="100" y="780"/>
 		</transition>
-		<transition id="id23">
-			<source ref="id9"/>
-			<target ref="id10"/>
+		<transition id="id19">
+			<source ref="id8"/>
+			<target ref="id9"/>
 			<label kind="guard" x="218" y="566">humanPositionX[H-1] &lt;= location_X[human_loc_target[H-1]]+30 and
 humanPositionX[H-1] &gt;= location_X[human_loc_target[H-1]]-30 and
 humanPositionY[H-1] &lt;= location_Y[human_loc_target[H-1]]+30 and
 humanPositionY[H-1] &gt;= location_Y[human_loc_target[H-1]]-30</label>
 			<label kind="synchronisation" x="218" y="583">stop_h_moveTo[H-1]!</label>
-			<label kind="assignment" x="218" y="600">human_loc_target[H-1] = 0</label>
+			<label kind="assignment" x="218" y="600"></label>
 		</transition>
-		<transition id="id24">
+		<transition id="id20">
 			<source ref="id10"/>
-			<target ref="id11"/>
-			<label kind="synchronisation" x="418" y="683">start_h_moveTo[H-1]!</label>
-		</transition>
-		<transition id="id25">
-			<source ref="id11"/>
-			<target ref="id10"/>
-			<label kind="guard" x="418" y="766">t&gt;=5</label>
-			<label kind="assignment" x="418" y="800">t = 0</label>
-			<nail x="500" y="780"/>
-		</transition>
-		<transition id="id26">
-			<source ref="id11"/>
-			<target ref="id12"/>
-			<label kind="guard" x="618" y="566">humanPositionX[H-1] &lt;= location_X[human_loc_target[H-1]]+30 and
-humanPositionX[H-1] &gt;= location_X[human_loc_target[H-1]]-30 and
-humanPositionY[H-1] &lt;= location_Y[human_loc_target[H-1]]+30 and
-humanPositionY[H-1] &gt;= location_Y[human_loc_target[H-1]]-30</label>
-			<label kind="synchronisation" x="618" y="583">stop_h_moveTo[H-1]!</label>
-			<label kind="assignment" x="618" y="600"></label>
-		</transition>
-		<transition id="id27">
-			<source ref="id13"/>
 			<target ref="id3"/>
-			<label kind="synchronisation" x="18" y="933">s3?</label>
-		</transition>
-		<transition id="id28">
-			<source ref="id3"/>
-			<target ref="id15"/>
-			<label kind="assignment" x="18" y="1050">human_stat = true</label>
-		</transition>
-		<transition id="id29">
-			<source ref="id15"/>
-			<target ref="id4"/>
-			<label kind="synchronisation" x="18" y="1283">e?</label>
+			<label kind="synchronisation" x="18" y="933">e?</label>
 		</transition>
 	</template>
 	<template>
@@ -372,71 +314,69 @@ clock t;		</declaration>
 			<committed/>
 		</location>
 		<location id="id3" x="0" y="1050">
-			<name x="-17" y="1016">s3_start</name>
+			<name x="-17" y="1016">end_robot</name>
+		</location>
+		<location id="id4" x="200" y="700">
+			<name x="183" y="666">A2_a1_follow_busy</name>
+		</location>
+		<location id="id5" x="400" y="700">
+			<name x="383" y="666">A2_a1_follow_complete</name>
 			<committed/>
 		</location>
-		<location id="id4" x="0" y="1400">
-			<name x="-17" y="1366">end_robot</name>
-		</location>
-		<location id="id5" x="200" y="700">
-			<name x="183" y="666">A2_a1_moveTo_busy</name>
-		</location>
-		<location id="id6" x="400" y="700">
-			<name x="383" y="666">A2_a1_moveTo_complete</name>
-			<committed/>
-		</location>
-		<location id="id7" x="600" y="700">
+		<location id="id6" x="600" y="700">
 			<name x="583" y="666">A2_a2_moveTo_busy</name>
 		</location>
-		<location id="id8" x="800" y="700">
+		<location id="id7" x="800" y="700">
 			<name x="783" y="666">A2_a2_moveTo_complete</name>
 			<committed/>
 		</location>
-		<location id="id9" x="1000" y="700">
+		<location id="id8" x="1000" y="700">
 			<name x="983" y="666">s2_end</name>
 		</location>
-		<location id="id11" x="200" y="350">
+		<location id="id10" x="200" y="350">
 			<name x="183" y="316">S1_idle</name>
 		</location>
-		<location id="id12" x="200" y="1050">
-			<name x="183" y="1016">S3_idle</name>
-		</location>
 		<init ref="id0"/>
-		<transition id="id10">
-			<source ref="id8"/>
-			<target ref="id9"/>
-			<label kind="assignment" x="818" y="700">robot_stat = true</label>
-		</transition>
-		<transition id="id13">
-			<source ref="id2"/>
-			<target ref="id5"/>
-			<label kind="synchronisation" x="18" y="683">start_r_moveTo[R-1]!</label>
-			<label kind="assignment" x="18" y="700"></label>
-		</transition>
-		<transition id="id14">
-			<source ref="id11"/>
-			<target ref="id2"/>
-			<label kind="synchronisation" x="18" y="583">s2?</label>
-			<label kind="assignment" x="18" y="600">robot_loc_target[R-1] = 1</label>
-		</transition>
-		<transition id="id15">
-			<source ref="id5"/>
-			<target ref="id6"/>
-			<label kind="guard" x="218" y="566">robPositionX[R-1] &lt;= location_X[robot_loc_target[R-1]]+30 and
-robPositionX[R-1] &gt;= location_X[robot_loc_target[R-1]]-30 and
-robPositionY[R-1] &lt;= location_Y[robot_loc_target[R-1]]+30 and
-robPositionY[R-1] &gt;= location_Y[robot_loc_target[R-1]]-30</label>
-			<label kind="synchronisation" x="218" y="583">stop_r_moveTo[R-1]!</label>
-			<label kind="assignment" x="218" y="600">robot_loc_target[R-1] = 0</label>
-		</transition>
-		<transition id="id16">
-			<source ref="id6"/>
-			<target ref="id7"/>
-			<label kind="synchronisation" x="418" y="683">start_r_moveTo[R-1]!</label>
-		</transition>
-		<transition id="id17">
+		<transition id="id9">
 			<source ref="id7"/>
 			<target ref="id8"/>
+			<label kind="assignment" x="818" y="700">robot_stat = true</label>
+		</transition>
+		<transition id="id11">
+			<source ref="id2"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="18" y="683">start_r_follow[R-1]!</label>
+		</transition>
+		<transition id="id12">
+			<source ref="id10"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="18" y="583">s2?</label>
+			<label kind="assignment" x="18" y="600">f_loc_target[R-1] = 1,
+human_to_be_followed[R-1] = 1,
+robot_to_be_followed[R-1] = 0</label>
+		</transition>
+		<transition id="id13">
+			<source ref="id4"/>
+			<target ref="id5"/>
+			<label kind="guard" x="218" y="566">humanPositionX[human_to_be_followed[R-1]-1] &lt;= location_X[f_loc_target[R-1]]+30 and
+humanPositionX[human_to_be_followed[R-1]-1] &gt;= location_X[f_loc_target[R-1]]-30 and
+humanPositionY[human_to_be_followed[R-1]-1] &lt;= location_Y[f_loc_target[R-1]]+30 and
+humanPositionY[human_to_be_followed[R-1]-1] &gt;= location_Y[f_loc_target[R-1]]-30 and
+robPositionX[R-1] &gt;= location_X[f_loc_target[R-1]]-30 and
+robPositionX[R-1] &lt;= location_X[f_loc_target[R-1]]+30 and
+robPositionY[R-1] &gt;= location_Y[f_loc_target[R-1]]-30 and
+robPositionY[R-1] &lt;= location_Y[f_loc_target[R-1]]+30</label>
+			<label kind="synchronisation" x="218" y="583">stop_r_follow[R-1]!</label>
+			<label kind="assignment" x="218" y="600">robot_loc_target[R-1] = 0</label>
+		</transition>
+		<transition id="id14">
+			<source ref="id5"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="418" y="683">start_r_moveTo[R-1]!</label>
+		</transition>
+		<transition id="id15">
+			<source ref="id6"/>
+			<target ref="id7"/>
 			<label kind="guard" x="618" y="566">robPositionX[R-1] &lt;= location_X[robot_loc_target[R-1]]+30 and
 robPositionX[R-1] &gt;= location_X[robot_loc_target[R-1]]-30 and
 robPositionY[R-1] &lt;= location_Y[robot_loc_target[R-1]]+30 and
@@ -444,30 +384,20 @@ robPositionY[R-1] &gt;= location_Y[robot_loc_target[R-1]]-30</label>
 			<label kind="synchronisation" x="618" y="583">stop_r_moveTo[R-1]!</label>
 			<label kind="assignment" x="618" y="600"></label>
 		</transition>
-		<transition id="id18">
+		<transition id="id16">
 			<source ref="id0"/>
 			<target ref="id1"/>
 			<label kind="synchronisation" x="18" y="233">s1?</label>
 		</transition>
-		<transition id="id19">
+		<transition id="id17">
 			<source ref="id1"/>
-			<target ref="id11"/>
+			<target ref="id10"/>
 			<label kind="assignment" x="18" y="350">robot_stat = true</label>
 		</transition>
-		<transition id="id20">
-			<source ref="id9"/>
+		<transition id="id18">
+			<source ref="id8"/>
 			<target ref="id3"/>
-			<label kind="synchronisation" x="18" y="933">s3?</label>
-		</transition>
-		<transition id="id21">
-			<source ref="id3"/>
-			<target ref="id12"/>
-			<label kind="assignment" x="18" y="1050">robot_stat = true</label>
-		</transition>
-		<transition id="id22">
-			<source ref="id12"/>
-			<target ref="id4"/>
-			<label kind="synchronisation" x="18" y="1283">e?</label>
+			<label kind="synchronisation" x="18" y="933">e?</label>
 		</transition>
 	</template>
 
@@ -1604,12 +1534,12 @@ void plan_traj() {
 	bool close;
 	curr[0] = robPositionX[id-1]; curr[1] = robPositionY[id-1];
     // follow the robot (having the id)
-    if (human_to_be_followed==0 &amp;&amp; robot_to_be_followed!=0 &amp;&amp; robot_to_be_followed!=id){
-        dest[0] = robPositionX[robot_to_be_followed-1]; dest[1] = robPositionX[robot_to_be_followed-1];
+    if (human_to_be_followed[id-1]==0 &amp;&amp; robot_to_be_followed[id-1]!=0 &amp;&amp; robot_to_be_followed[id-1]!=id){
+        dest[0] = robPositionX[robot_to_be_followed[id-1]-1]; dest[1] = robPositionX[robot_to_be_followed[id-1]-1];
     }
     // follow the human (having the id)
-	if (human_to_be_followed!=0 &amp;&amp; robot_to_be_followed==0){
-        dest[0] = humanPositionX[human_to_be_followed-1]; dest[1] = humanPositionY[human_to_be_followed-1]; } // follow a human
+	if (human_to_be_followed[id-1]!=0 &amp;&amp; robot_to_be_followed[id-1]==0){
+        dest[0] = humanPositionX[human_to_be_followed[id-1]-1]; dest[1] = humanPositionY[human_to_be_followed[id-1]	-1]; } // follow a human
     // init trajectory
 	for (i = 0; i &lt; N_P; i++)
 	{

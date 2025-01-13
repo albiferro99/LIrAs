@@ -64,10 +64,9 @@ int robot_loc_target[N_R];
 
 urgent broadcast chan start_r_follow[N_R], stop_r_follow[N_R];
 // Who I have to follow (agent id)?
-int human_to_be_followed = 0;
-int robot_to_be_followed = 0;
-int f_human_loc_target = 0;
-int f_robot_loc_target = 0;
+int human_to_be_followed[N_R];
+int robot_to_be_followed[N_R];
+int f_loc_target[N_R];
 
 
 /**
@@ -1954,12 +1953,12 @@ void plan_traj() {
 	bool close;
 	curr[0] = robPositionX[id-1]; curr[1] = robPositionY[id-1];
     // follow the robot (having the id)
-    if (human_to_be_followed==0 &amp;&amp; robot_to_be_followed!=0 &amp;&amp; robot_to_be_followed!=id){
-        dest[0] = robPositionX[robot_to_be_followed-1]; dest[1] = robPositionX[robot_to_be_followed-1];
+    if (human_to_be_followed[id-1]==0 &amp;&amp; robot_to_be_followed[id-1]!=0 &amp;&amp; robot_to_be_followed[id-1]!=id){
+        dest[0] = robPositionX[robot_to_be_followed[id-1]-1]; dest[1] = robPositionX[robot_to_be_followed[id-1]-1];
     }
     // follow the human (having the id)
-	if (human_to_be_followed!=0 &amp;&amp; robot_to_be_followed==0){
-        dest[0] = humanPositionX[human_to_be_followed-1]; dest[1] = humanPositionY[human_to_be_followed-1]; } // follow a human
+	if (human_to_be_followed[id-1]!=0 &amp;&amp; robot_to_be_followed[id-1]==0){
+        dest[0] = humanPositionX[human_to_be_followed[id-1]-1]; dest[1] = humanPositionY[human_to_be_followed[id-1]	-1]; } // follow a human
     // init trajectory
 	for (i = 0; i &lt; N_P; i++)
 	{

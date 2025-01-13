@@ -9,11 +9,10 @@ resources: item
 Human:
 	1: moveTo room1
 	2: moveTo room2
-	moveTo room1
 	
 Robot:
-	2: moveTo room2
+	2: follow Human (room2)
 	moveTo room1
-	3:
-	
+
+
 	
