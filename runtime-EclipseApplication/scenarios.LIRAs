@@ -1,0 +1,26 @@
+Scenario011
+
+agents:
+	humans: Nurse, AutorizedPerson
+	robots: Deliver, AutorizedRobot, RoboticArm
+locations: drawers
+resources: sample1, sample2
+
+Nurse:
+	1: Collect(sample1)
+	   Collect(sample2)
+	2: RequestDelivery(Robot)
+	3: Load(sample1, sample2)
+	
+Deliver:
+	1-3: moveTo Nurse if RequestDelivery else stop
+	4: moveTo drawer
+
+AutorizedPerson:
+	5: open(drawer) if position(sample1, drawer) else stop until open(drawer)
+
+AutorizedRobot:
+	5: open(drawer) if position(sample1, drawer) else stop until open(drawer)
+
+RoboticArm:
+	6: picScanSortLoad

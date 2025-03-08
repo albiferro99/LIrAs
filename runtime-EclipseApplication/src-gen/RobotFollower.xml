@@ -356,80 +356,78 @@ clock t;		</declaration>
 			<name x="1583" y="1716">A1_a8_moveTo_complete</name>
 			<committed/>
 		</location>
-		<location id="id32" x="1400" y="1575">
-			<name x="1383" y="1541">A1_a9_stop</name>
-			<committed/>
-		</location>
-		<location id="id33" x="1800" y="1750">
-			<name x="1783" y="1716">A1_a10_deliver_busy</name>
+		<location id="id32" x="1800" y="1750">
+			<name x="1783" y="1716">A1_a9_deliver_busy</name>
 			<label kind="invariant" x="1790" y="1767">t&lt;=5</label>
 		</location>
-		<location id="id34" x="2000" y="1750">
-			<name x="1983" y="1716">A1_a10_deliver_complete</name>
+		<location id="id33" x="2000" y="1750">
+			<name x="1983" y="1716">A1_a9_deliver_complete</name>
 			<committed/>
 		</location>
-		<location id="id35" x="1800" y="1575">
-			<name x="1783" y="1541">A1_a11_stop</name>
-			<committed/>
-		</location>
-		<location id="id36" x="2200" y="1750">
-			<name x="2183" y="1716">A1_a12_leave_busy</name>
+		<location id="id34" x="2200" y="1750">
+			<name x="2183" y="1716">A1_a10_leave_busy</name>
 			<label kind="invariant" x="2190" y="1767">t&lt;=5</label>
 		</location>
-		<location id="id37" x="2400" y="1750">
-			<name x="2383" y="1716">A1_a12_leave_complete</name>
+		<location id="id35" x="2400" y="1750">
+			<name x="2383" y="1716">A1_a10_leave_complete</name>
 			<committed/>
 		</location>
-		<location id="id38" x="2600" y="1750">
-			<name x="2583" y="1716">A1_a13_follow_busy</name>
+		<location id="id36" x="2600" y="1750">
+			<name x="2583" y="1716">A1_a11_follow_busy</name>
 			<label kind="invariant" x="2590" y="1767">t&lt;=5</label>
 		</location>
-		<location id="id39" x="2800" y="1750">
-			<name x="2783" y="1716">A1_a13_follow_complete</name>
+		<location id="id37" x="2800" y="1750">
+			<name x="2783" y="1716">A1_a11_follow_complete</name>
 			<committed/>
 		</location>
-		<location id="id40" x="3000" y="1750">
-			<name x="2983" y="1716">A1_a14_follow_busy</name>
+		<location id="id38" x="3000" y="1750">
+			<name x="2983" y="1716">A1_a12_follow_busy</name>
 			<label kind="invariant" x="2990" y="1767">t&lt;=5</label>
 		</location>
-		<location id="id41" x="3200" y="1750">
-			<name x="3183" y="1716">A1_a14_follow_complete</name>
+		<location id="id39" x="3200" y="1750">
+			<name x="3183" y="1716">A1_a12_follow_complete</name>
 			<committed/>
 		</location>
-		<location id="id42" x="3400" y="1750">
-			<name x="3383" y="1716">A1_a15_receiveFrom_busy</name>
+		<location id="id40" x="3400" y="1750">
+			<name x="3383" y="1716">A1_a13_receiveFrom_busy</name>
 			<label kind="invariant" x="3390" y="1767">t&lt;=5</label>
 		</location>
-		<location id="id43" x="3600" y="1750">
-			<name x="3583" y="1716">A1_a15_receiveFrom_complete</name>
+		<location id="id41" x="3600" y="1750">
+			<name x="3583" y="1716">A1_a13_receiveFrom_complete</name>
 			<committed/>
 		</location>
-		<location id="id44" x="3800" y="1750">
-			<name x="3783" y="1716">A1_a16_deliver_busy</name>
+		<location id="id42" x="3800" y="1750">
+			<name x="3783" y="1716">A1_a14_deliver_busy</name>
 			<label kind="invariant" x="3790" y="1767">t&lt;=5</label>
 		</location>
-		<location id="id45" x="4000" y="1750">
-			<name x="3983" y="1716">A1_a16_deliver_complete</name>
+		<location id="id43" x="4000" y="1750">
+			<name x="3983" y="1716">A1_a14_deliver_complete</name>
 			<committed/>
 		</location>
-		<location id="id46" x="4200" y="1750">
-			<name x="4183" y="1716">A1_a17_stop_busy</name>
+		<location id="id44" x="4200" y="1750">
+			<name x="4183" y="1716">A1_a15_stop_busy</name>
 			<label kind="invariant" x="4190" y="1767">t&lt;=5</label>
 		</location>
-		<location id="id47" x="4400" y="1750">
-			<name x="4383" y="1716">A1_a17_stop_complete</name>
+		<location id="id45" x="4400" y="1750">
+			<name x="4383" y="1716">A1_a15_stop_complete</name>
 			<committed/>
 		</location>
-		<location id="id48" x="4600" y="1750">
+		<location id="id46" x="1400" y="1575">
+			<name x="1383" y="1541">A1_a16_stop</name>
+		</location>
+		<location id="id49" x="4200" y="1575">
+			<name x="4183" y="1541">A1_a17_stop</name>
+		</location>
+		<location id="id50" x="4600" y="1750">
 			<name x="4583" y="1716">s5_end</name>
 		</location>
-		<location id="id50" x="200" y="1050">
+		<location id="id52" x="200" y="1050">
 			<name x="183" y="1016">S3_idle</name>
 		</location>
-		<location id="id51" x="200" y="2450">
+		<location id="id53" x="200" y="2450">
 			<name x="183" y="2416">S7_idle</name>
 		</location>
-		<location id="id52" x="200" y="2800">
+		<location id="id54" x="200" y="2800">
 			<name x="183" y="2766">S8_idle</name>
 		</location>
 		<init ref="id0"/>
@@ -448,30 +446,40 @@ clock t;		</declaration>
 			<target ref="id22"/>
 			<label kind="assignment" x="418" y="1400">doctor_stat = true</label>
 		</transition>
-		<transition id="id49">
-			<source ref="id47"/>
-			<target ref="id48"/>
+		<transition id="id47">
+			<source ref="id30"/>
+			<target ref="id46"/>
+			<label kind="synchronisation" x="1818" y="1633">aaa?</label>
+		</transition>
+		<transition id="id48">
+			<source ref="id46"/>
+			<target ref="id29"/>
+			<label kind="synchronisation" x="1818" y="1633">aaa?</label>
+		</transition>
+		<transition id="id51">
+			<source ref="id45"/>
+			<target ref="id50"/>
 			<label kind="assignment" x="4418" y="1750">doctor_stat = true</label>
 		</transition>
-		<transition id="id53">
+		<transition id="id55">
 			<source ref="id2"/>
 			<target ref="id16"/>
 			<label kind="synchronisation" x="18" y="683">start_h_moveTo[H-1]!</label>
 		</transition>
-		<transition id="id54">
+		<transition id="id56">
 			<source ref="id14"/>
 			<target ref="id2"/>
 			<label kind="synchronisation" x="18" y="583">s2?</label>
 			<label kind="assignment" x="18" y="600">human_loc_target[H-1] = -1</label>
 		</transition>
-		<transition id="id55">
+		<transition id="id57">
 			<source ref="id16"/>
 			<target ref="id2"/>
 			<label kind="guard" x="18" y="766">t&gt;=5</label>
 			<label kind="assignment" x="18" y="800">t = 0</label>
 			<nail x="100" y="780"/>
 		</transition>
-		<transition id="id56">
+		<transition id="id58">
 			<source ref="id16"/>
 			<target ref="id17"/>
 			<label kind="guard" x="218" y="566">humanPositionX[H-1] &lt;= location_X[human_loc_target[H-1]]+30 and
@@ -481,19 +489,19 @@ humanPositionY[H-1] &gt;= location_Y[human_loc_target[H-1]]-30</label>
 			<label kind="synchronisation" x="218" y="583">stop_h_moveTo[H-1]!</label>
 			<label kind="assignment" x="218" y="600"></label>
 		</transition>
-		<transition id="id57">
+		<transition id="id59">
 			<source ref="id27"/>
 			<target ref="id28"/>
 			<label kind="synchronisation" x="818" y="1733">start_h_moveTo[H-1]!</label>
 		</transition>
-		<transition id="id58">
+		<transition id="id60">
 			<source ref="id28"/>
 			<target ref="id27"/>
 			<label kind="guard" x="818" y="1816">t&gt;=5</label>
 			<label kind="assignment" x="818" y="1850">t = 0</label>
 			<nail x="900" y="1830"/>
 		</transition>
-		<transition id="id59">
+		<transition id="id61">
 			<source ref="id28"/>
 			<target ref="id29"/>
 			<label kind="guard" x="1018" y="1616">humanPositionX[H-1] &lt;= location_X[human_loc_target[H-1]]+30 and
@@ -503,19 +511,19 @@ humanPositionY[H-1] &gt;= location_Y[human_loc_target[H-1]]-30</label>
 			<label kind="synchronisation" x="1018" y="1633">stop_h_moveTo[H-1]!</label>
 			<label kind="assignment" x="1018" y="1650">human_loc_target[H-1] = -1</label>
 		</transition>
-		<transition id="id60">
+		<transition id="id62">
 			<source ref="id29"/>
 			<target ref="id30"/>
 			<label kind="synchronisation" x="1218" y="1733">start_h_moveTo[H-1]!</label>
 		</transition>
-		<transition id="id61">
+		<transition id="id63">
 			<source ref="id30"/>
 			<target ref="id29"/>
 			<label kind="guard" x="1218" y="1816">t&gt;=5</label>
 			<label kind="assignment" x="1218" y="1850">t = 0</label>
 			<nail x="1300" y="1830"/>
 		</transition>
-		<transition id="id62">
+		<transition id="id64">
 			<source ref="id30"/>
 			<target ref="id31"/>
 			<label kind="guard" x="1418" y="1616">humanPositionX[H-1] &lt;= location_X[human_loc_target[H-1]]+30 and
@@ -532,31 +540,31 @@ humanPositionY[H-1] &gt;= location_Y[human_loc_target[H-1]]-30</label>
 		</transition>
 		<transition id="id66">
 			<source ref="id3"/>
-			<target ref="id50"/>
+			<target ref="id52"/>
 			<label kind="assignment" x="18" y="1050">doctor_stat = true</label>
 		</transition>
 		<transition id="id67">
-			<source ref="id48"/>
+			<source ref="id50"/>
 			<target ref="id7"/>
 			<label kind="synchronisation" x="18" y="2333">s7?</label>
 		</transition>
 		<transition id="id68">
 			<source ref="id7"/>
-			<target ref="id51"/>
+			<target ref="id53"/>
 			<label kind="assignment" x="18" y="2450">doctor_stat = true</label>
 		</transition>
 		<transition id="id69">
-			<source ref="id51"/>
+			<source ref="id53"/>
 			<target ref="id8"/>
 			<label kind="synchronisation" x="18" y="2683">s8?</label>
 		</transition>
 		<transition id="id70">
 			<source ref="id8"/>
-			<target ref="id52"/>
+			<target ref="id54"/>
 			<label kind="assignment" x="18" y="2800">doctor_stat = true</label>
 		</transition>
 		<transition id="id71">
-			<source ref="id52"/>
+			<source ref="id54"/>
 			<target ref="id9"/>
 			<label kind="synchronisation" x="18" y="3033">e?</label>
 		</transition>
