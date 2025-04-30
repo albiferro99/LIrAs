@@ -19,6 +19,6 @@ Robot:
 	moveTo room1 if position(Human, room1) else stop
 
 Robot2:
-	1: stop
+	1: moveTo room1 if !position(Human, room2) && position(Robot2, room1) || !position(Robot, room1) else stop
 	
 	

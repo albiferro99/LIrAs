@@ -286,12 +286,20 @@ clock t;		</declaration>
 		<transition id="id10">
 			<source ref="id7"/>
 			<target ref="id9"/>
-			<label kind="synchronisation" x="618" y="233">aaa?</label>
+			<label kind="guard" x="618" y="216">not (humanPositionX[0] &lt;= location_X[0]+30 and
+humanPositionX[0] &gt;= location_X[0]-30 and
+humanPositionY[0] &lt;= location_Y[0]+30 and
+humanPositionY[0] &gt;= location_Y[0]-30)</label>
+			<label kind="synchronisation" x="618" y="233">stop_h_moveTo[H-1]</label>
 		</transition>
 		<transition id="id11">
 			<source ref="id9"/>
 			<target ref="id1"/>
-			<label kind="synchronisation" x="618" y="233">aaa?</label>
+			<label kind="guard" x="618" y="216">not (not (humanPositionX[0] &lt;= location_X[0]+30 and
+humanPositionX[0] &gt;= location_X[0]-30 and
+humanPositionY[0] &lt;= location_Y[0]+30 and
+humanPositionY[0] &gt;= location_Y[0]-30))</label>
+			<label kind="assignment" x="618" y="250">human_loc_target[H-1] = 0</label>
 		</transition>
 		<transition id="id13">
 			<source ref="id8"/>
@@ -301,12 +309,20 @@ clock t;		</declaration>
 		<transition id="id17">
 			<source ref="id14"/>
 			<target ref="id16"/>
-			<label kind="synchronisation" x="618" y="1633">aaa?</label>
+			<label kind="guard" x="618" y="1616">not (humanPositionX[0] &lt;= location_X[0]+30 and
+humanPositionX[0] &gt;= location_X[0]-30 and
+humanPositionY[0] &lt;= location_Y[0]+30 and
+humanPositionY[0] &gt;= location_Y[0]-30)</label>
+			<label kind="synchronisation" x="618" y="1633">stop_h_moveTo[H-1]</label>
 		</transition>
 		<transition id="id18">
 			<source ref="id16"/>
 			<target ref="id5"/>
-			<label kind="synchronisation" x="618" y="1633">aaa?</label>
+			<label kind="guard" x="618" y="1616">not (not (humanPositionX[0] &lt;= location_X[0]+30 and
+humanPositionX[0] &gt;= location_X[0]-30 and
+humanPositionY[0] &lt;= location_Y[0]+30 and
+humanPositionY[0] &gt;= location_Y[0]-30))</label>
+			<label kind="assignment" x="618" y="1650">human_loc_target[H-1] = 1</label>
 		</transition>
 		<transition id="id20">
 			<source ref="id15"/>
@@ -488,22 +504,40 @@ clock t;		</declaration>
 		<transition id="id12">
 			<source ref="id7"/>
 			<target ref="id11"/>
-			<label kind="synchronisation" x="618" y="583">aaa?</label>
+			<label kind="guard" x="618" y="566">(humanPositionX[0] &lt;= location_X[1]+30 and
+humanPositionX[0] &gt;= location_X[1]-30 and
+humanPositionY[0] &lt;= location_Y[1]+30 and
+humanPositionY[0] &gt;= location_Y[1]-30)</label>
+			<label kind="synchronisation" x="618" y="583">stop_r_follow[R-1]</label>
 		</transition>
 		<transition id="id13">
 			<source ref="id11"/>
 			<target ref="id2"/>
-			<label kind="synchronisation" x="618" y="583">aaa?</label>
+			<label kind="guard" x="618" y="566">not ((humanPositionX[0] &lt;= location_X[1]+30 and
+humanPositionX[0] &gt;= location_X[1]-30 and
+humanPositionY[0] &lt;= location_Y[1]+30 and
+humanPositionY[0] &gt;= location_Y[1]-30))</label>
+			<label kind="assignment" x="618" y="600">f_loc_target[R-1] = 1,
+human_to_be_followed[R-1] = 1,
+robot_to_be_followed[R-1] = 0</label>
 		</transition>
 		<transition id="id15">
 			<source ref="id9"/>
 			<target ref="id14"/>
-			<label kind="synchronisation" x="1018" y="583">aaa?</label>
+			<label kind="guard" x="1018" y="566">(humanPositionX[0] &lt;= location_X[0]+30 and
+humanPositionX[0] &gt;= location_X[0]-30 and
+humanPositionY[0] &lt;= location_Y[0]+30 and
+humanPositionY[0] &gt;= location_Y[0]-30)</label>
+			<label kind="synchronisation" x="1018" y="583">stop_r_moveTo[R-1]</label>
 		</transition>
 		<transition id="id16">
 			<source ref="id14"/>
 			<target ref="id8"/>
-			<label kind="synchronisation" x="1018" y="583">aaa?</label>
+			<label kind="guard" x="1018" y="566">not ((humanPositionX[0] &lt;= location_X[0]+30 and
+humanPositionX[0] &gt;= location_X[0]-30 and
+humanPositionY[0] &lt;= location_Y[0]+30 and
+humanPositionY[0] &gt;= location_Y[0]-30))</label>
+			<label kind="assignment" x="1018" y="600">robot_loc_target[R-1] = 0</label>
 		</transition>
 		<transition id="id18">
 			<source ref="id10"/>
@@ -513,22 +547,38 @@ clock t;		</declaration>
 		<transition id="id26">
 			<source ref="id19"/>
 			<target ref="id25"/>
-			<label kind="synchronisation" x="618" y="1633">aaa?</label>
+			<label kind="guard" x="618" y="1616">(humanPositionX[0] &lt;= location_X[0]+30 and
+humanPositionX[0] &gt;= location_X[0]-30 and
+humanPositionY[0] &lt;= location_Y[0]+30 and
+humanPositionY[0] &gt;= location_Y[0]-30)</label>
+			<label kind="synchronisation" x="618" y="1633">stop_r_moveTo[R-1]</label>
 		</transition>
 		<transition id="id27">
 			<source ref="id25"/>
 			<target ref="id5"/>
-			<label kind="synchronisation" x="618" y="1633">aaa?</label>
+			<label kind="guard" x="618" y="1616">not ((humanPositionX[0] &lt;= location_X[0]+30 and
+humanPositionX[0] &gt;= location_X[0]-30 and
+humanPositionY[0] &lt;= location_Y[0]+30 and
+humanPositionY[0] &gt;= location_Y[0]-30))</label>
+			<label kind="assignment" x="618" y="1650">robot_loc_target[R-1] = 0</label>
 		</transition>
 		<transition id="id29">
 			<source ref="id23"/>
 			<target ref="id28"/>
-			<label kind="synchronisation" x="1418" y="1633">aaa?</label>
+			<label kind="guard" x="1418" y="1616">(humanPositionX[0] &lt;= location_X[0]+30 and
+humanPositionX[0] &gt;= location_X[0]-30 and
+humanPositionY[0] &lt;= location_Y[0]+30 and
+humanPositionY[0] &gt;= location_Y[0]-30)</label>
+			<label kind="synchronisation" x="1418" y="1633">stop_r_moveTo[R-1]</label>
 		</transition>
 		<transition id="id30">
 			<source ref="id28"/>
 			<target ref="id22"/>
-			<label kind="synchronisation" x="1418" y="1633">aaa?</label>
+			<label kind="guard" x="1418" y="1616">not ((humanPositionX[0] &lt;= location_X[0]+30 and
+humanPositionX[0] &gt;= location_X[0]-30 and
+humanPositionY[0] &lt;= location_Y[0]+30 and
+humanPositionY[0] &gt;= location_Y[0]-30))</label>
+			<label kind="assignment" x="1418" y="1650">robot_loc_target[R-1] = 0</label>
 		</transition>
 		<transition id="id32">
 			<source ref="id24"/>
@@ -676,75 +726,133 @@ clock t;		</declaration>
 			<name x="-17" y="2066">end_robot2</name>
 		</location>
 		<location id="id7" x="200" y="350">
-			<name x="183" y="316">A3_a1_stop_busy</name>
+			<name x="183" y="316">A3_a1_moveTo_busy</name>
 		</location>
 		<location id="id8" x="400" y="350">
-			<name x="383" y="316">A3_a1_stop_complete</name>
+			<name x="383" y="316">A3_a1_moveTo_complete</name>
 			<committed/>
 		</location>
-		<location id="id9" x="600" y="350">
+		<location id="id9" x="200" y="175">
+			<name x="183" y="141">A3_a2_stop</name>
+		</location>
+		<location id="id12" x="600" y="350">
 			<name x="583" y="316">s1_end</name>
 		</location>
-		<location id="id11" x="200" y="700">
+		<location id="id14" x="200" y="700">
 			<name x="183" y="666">S2_idle</name>
 		</location>
-		<location id="id12" x="200" y="1050">
+		<location id="id15" x="200" y="1050">
 			<name x="183" y="1016">S3_idle</name>
 		</location>
-		<location id="id13" x="200" y="1400">
+		<location id="id16" x="200" y="1400">
 			<name x="183" y="1366">S4_idle</name>
 		</location>
-		<location id="id14" x="200" y="1750">
+		<location id="id17" x="200" y="1750">
 			<name x="183" y="1716">S5_idle</name>
 		</location>
 		<init ref="id0"/>
 		<transition id="id10">
-			<source ref="id8"/>
+			<source ref="id7"/>
 			<target ref="id9"/>
+			<label kind="guard" x="618" y="216">not (humanPositionX[0] &lt;= location_X[1]+30 and
+humanPositionX[0] &gt;= location_X[1]-30 and
+humanPositionY[0] &lt;= location_Y[1]+30 and
+humanPositionY[0] &gt;= location_Y[1]-30) and(
+(robPositionX[1] &lt;= location_X[0]+30 and
+robPositionX[1] &gt;= location_X[0]-30 and
+robPositionY[1] &lt;= location_Y[0]+30 and
+robPositionY[1] &gt;= location_Y[0]-30)) or(
+not (robPositionX[0] &lt;= location_X[0]+30 and
+robPositionX[0] &gt;= location_X[0]-30 and
+robPositionY[0] &lt;= location_Y[0]+30 and
+robPositionY[0] &gt;= location_Y[0]-30))</label>
+			<label kind="synchronisation" x="618" y="233">stop_r_moveTo[R-1]</label>
+		</transition>
+		<transition id="id11">
+			<source ref="id9"/>
+			<target ref="id1"/>
+			<label kind="guard" x="618" y="216">not (not (humanPositionX[0] &lt;= location_X[1]+30 and
+humanPositionX[0] &gt;= location_X[1]-30 and
+humanPositionY[0] &lt;= location_Y[1]+30 and
+humanPositionY[0] &gt;= location_Y[1]-30) and(
+(robPositionX[1] &lt;= location_X[0]+30 and
+robPositionX[1] &gt;= location_X[0]-30 and
+robPositionY[1] &lt;= location_Y[0]+30 and
+robPositionY[1] &gt;= location_Y[0]-30)) or(
+not (robPositionX[0] &lt;= location_X[0]+30 and
+robPositionX[0] &gt;= location_X[0]-30 and
+robPositionY[0] &lt;= location_Y[0]+30 and
+robPositionY[0] &gt;= location_Y[0]-30)))</label>
+			<label kind="assignment" x="618" y="250">robot_loc_target[R-1] = 0</label>
+		</transition>
+		<transition id="id13">
+			<source ref="id8"/>
+			<target ref="id12"/>
 			<label kind="assignment" x="418" y="350">robot2_stat = true</label>
 		</transition>
-		<transition id="id15">
-			<source ref="id9"/>
+		<transition id="id18">
+			<source ref="id1"/>
+			<target ref="id7"/>
+			<label kind="synchronisation" x="18" y="333">start_r_moveTo[R-1]!</label>
+		</transition>
+		<transition id="id19">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="18" y="233">s1?</label>
+			<label kind="assignment" x="18" y="250">robot_loc_target[R-1] = 0</label>
+		</transition>
+		<transition id="id20">
+			<source ref="id7"/>
+			<target ref="id8"/>
+			<label kind="guard" x="218" y="216">robPositionX[R-1] &lt;= location_X[robot_loc_target[R-1]]+30 and
+robPositionX[R-1] &gt;= location_X[robot_loc_target[R-1]]-30 and
+robPositionY[R-1] &lt;= location_Y[robot_loc_target[R-1]]+30 and
+robPositionY[R-1] &gt;= location_Y[robot_loc_target[R-1]]-30</label>
+			<label kind="synchronisation" x="218" y="233">stop_r_moveTo[R-1]!</label>
+			<label kind="assignment" x="218" y="250"></label>
+		</transition>
+		<transition id="id21">
+			<source ref="id12"/>
 			<target ref="id2"/>
 			<label kind="synchronisation" x="18" y="583">s2?</label>
 		</transition>
-		<transition id="id16">
-			<source ref="id2"/>
-			<target ref="id11"/>
-			<label kind="assignment" x="18" y="700">robot2_stat = true</label>
-		</transition>
-		<transition id="id17">
-			<source ref="id11"/>
-			<target ref="id3"/>
-			<label kind="synchronisation" x="18" y="933">s3?</label>
-		</transition>
-		<transition id="id18">
-			<source ref="id3"/>
-			<target ref="id12"/>
-			<label kind="assignment" x="18" y="1050">robot2_stat = true</label>
-		</transition>
-		<transition id="id19">
-			<source ref="id12"/>
-			<target ref="id4"/>
-			<label kind="synchronisation" x="18" y="1283">s4?</label>
-		</transition>
-		<transition id="id20">
-			<source ref="id4"/>
-			<target ref="id13"/>
-			<label kind="assignment" x="18" y="1400">robot2_stat = true</label>
-		</transition>
-		<transition id="id21">
-			<source ref="id13"/>
-			<target ref="id5"/>
-			<label kind="synchronisation" x="18" y="1633">s5?</label>
-		</transition>
 		<transition id="id22">
-			<source ref="id5"/>
+			<source ref="id2"/>
 			<target ref="id14"/>
-			<label kind="assignment" x="18" y="1750">robot2_stat = true</label>
+			<label kind="assignment" x="18" y="700">robot2_stat = true</label>
 		</transition>
 		<transition id="id23">
 			<source ref="id14"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="18" y="933">s3?</label>
+		</transition>
+		<transition id="id24">
+			<source ref="id3"/>
+			<target ref="id15"/>
+			<label kind="assignment" x="18" y="1050">robot2_stat = true</label>
+		</transition>
+		<transition id="id25">
+			<source ref="id15"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="18" y="1283">s4?</label>
+		</transition>
+		<transition id="id26">
+			<source ref="id4"/>
+			<target ref="id16"/>
+			<label kind="assignment" x="18" y="1400">robot2_stat = true</label>
+		</transition>
+		<transition id="id27">
+			<source ref="id16"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="18" y="1633">s5?</label>
+		</transition>
+		<transition id="id28">
+			<source ref="id5"/>
+			<target ref="id17"/>
+			<label kind="assignment" x="18" y="1750">robot2_stat = true</label>
+		</transition>
+		<transition id="id29">
+			<source ref="id17"/>
 			<target ref="id6"/>
 			<label kind="synchronisation" x="18" y="1983">e?</label>
 		</transition>
