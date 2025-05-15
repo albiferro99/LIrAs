@@ -1,0 +1,19 @@
+Test2
+
+agents:
+	humans: Human
+	robots: Robot
+
+locations: room1, room2, room3
+
+Human:
+	1: moveTo room1
+	
+Robot:
+	1: moveTo room1 if position(Human, room1) else stop
+	
+	
+	
+	
+
+	

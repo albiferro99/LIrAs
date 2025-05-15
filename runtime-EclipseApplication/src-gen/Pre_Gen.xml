@@ -160,13 +160,6 @@ system
 ;
 </system>
 	<queries>
-		<query>
-			<formula>Pr[&lt;=400] (&lt;&gt; Prova.end)</formula>
-			<comment/>
-		</query>
-		<query>
-			<formula>simulate[&lt;=700]{humanPositionX[0], humanPositionY[0], robPositionX[0], robPositionY[0], Prova.end*100}</formula>
-			<comment/>
-		</query>
+        // **verifier**
 	</queries>
 </nta>

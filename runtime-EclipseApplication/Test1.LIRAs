@@ -1,0 +1,16 @@
+Test1
+
+agents:
+	humans: Human
+	robots: Robot
+
+locations: room1, room2, room3
+
+Human:
+	1: moveTo room1
+	
+Robot:
+	2: moveTo room1
+	
+	
+	
