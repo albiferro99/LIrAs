@@ -1,0 +1,371 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2822
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;\f1\fnil\fcharset0 Menlo-Bold;}
+{\colortbl;\red255\green255\blue255;\red255\green255\blue255;}
+{\*\expandedcolortbl;;\cssrgb\c100000\c100000\c100000\c0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab593
+\pard\tx593\pardeftab593\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 \cb2 	
+\f1\b\fs28 <template>
+\f0\b0 \
+\pard\tx692\pardeftab692\pardirnatural\partightenfactor0
+\cf0 		
+\f1\b <name>
+\f0\b0 Robot_pick
+\f1\b </name>
+\f0\b0 \
+		
+\f1\b <parameter>
+\f0\b0 int id
+\f1\b </parameter>
+\f0\b0 \
+		
+\f1\b <declaration>
+\f0\b0 clock t;\
+\
+void initRobot()\{\
+    for (i : int[0,N_R-1])\{\
+        for (j : int[0,N_ITEMS-1])\{\
+            robot_inventory[i][j] = 0;\
+        \}\
+    \}\
+\}\
+\pard\tx692\pardeftab692\pardirnatural\partightenfactor0
+
+\f1\b \cf0 </declaration>
+\f0\b0 \
+		
+\f1\b <location 
+\f0\b0 id
+\f1\b =
+\f0\b0 "id0"
+\f1\b  
+\f0\b0 x
+\f1\b =
+\f0\b0 "-416"
+\f1\b  
+\f0\b0 y
+\f1\b =
+\f0\b0 "272"
+\f1\b >
+\f0\b0 \
+			
+\f1\b <name 
+\f0\b0 x
+\f1\b =
+\f0\b0 "-426"
+\f1\b  
+\f0\b0 y
+\f1\b =
+\f0\b0 "238"
+\f1\b >
+\f0\b0 Init
+\f1\b </name>
+\f0\b0 \
+			
+\f1\b <committed/>
+\f0\b0 \
+		
+\f1\b </location>
+\f0\b0 \
+		
+\f1\b <location 
+\f0\b0 id
+\f1\b =
+\f0\b0 "id1"
+\f1\b  
+\f0\b0 x
+\f1\b =
+\f0\b0 "-204"
+\f1\b  
+\f0\b0 y
+\f1\b =
+\f0\b0 "272"
+\f1\b >
+\f0\b0 \
+			
+\f1\b <name 
+\f0\b0 x
+\f1\b =
+\f0\b0 "-246"
+\f1\b  
+\f0\b0 y
+\f1\b =
+\f0\b0 "246"
+\f1\b >
+\f0\b0 idle
+\f1\b </name>
+\f0\b0 \
+		
+\f1\b </location>
+\f0\b0 \
+		
+\f1\b <location 
+\f0\b0 id
+\f1\b =
+\f0\b0 "id2"
+\f1\b  
+\f0\b0 x
+\f1\b =
+\f0\b0 "-8"
+\f1\b  
+\f0\b0 y
+\f1\b =
+\f0\b0 "272"
+\f1\b >
+\f0\b0 \
+			
+\f1\b <name 
+\f0\b0 x
+\f1\b =
+\f0\b0 "-17"
+\f1\b  
+\f0\b0 y
+\f1\b =
+\f0\b0 "238"
+\f1\b >
+\f0\b0 starting
+\f1\b </name>
+\f0\b0 \
+		
+\f1\b </location>
+\f0\b0 \
+		
+\f1\b <location 
+\f0\b0 id
+\f1\b =
+\f0\b0 "id3"
+\f1\b  
+\f0\b0 x
+\f1\b =
+\f0\b0 "-8"
+\f1\b  
+\f0\b0 y
+\f1\b =
+\f0\b0 "416"
+\f1\b >
+\f0\b0 \
+			
+\f1\b <name 
+\f0\b0 x
+\f1\b =
+\f0\b0 "-110"
+\f1\b  
+\f0\b0 y
+\f1\b =
+\f0\b0 "407"
+\f1\b >
+\f0\b0 stopping
+\f1\b </name>
+\f0\b0 \
+		
+\f1\b </location>
+\f0\b0 \
+		
+\f1\b <init 
+\f0\b0 ref
+\f1\b =
+\f0\b0 "id0"
+\f1\b />
+\f0\b0 \
+		
+\f1\b <transition 
+\f0\b0 id
+\f1\b =
+\f0\b0 "id4"
+\f1\b >
+\f0\b0 \
+			
+\f1\b <source 
+\f0\b0 ref
+\f1\b =
+\f0\b0 "id2"
+\f1\b />
+\f0\b0 \
+			
+\f1\b <target 
+\f0\b0 ref
+\f1\b =
+\f0\b0 "id3"
+\f1\b />
+\f0\b0 \
+			
+\f1\b <label 
+\f0\b0 kind
+\f1\b =
+\f0\b0 "guard"
+\f1\b  
+\f0\b0 x
+\f1\b =
+\f0\b0 "34"
+\f1\b  
+\f0\b0 y
+\f1\b =
+\f0\b0 "314"
+\f1\b >
+\f0\b0 t &gt;= 5
+\f1\b </label>
+\f0\b0 \
+			
+\f1\b <label 
+\f0\b0 kind
+\f1\b =
+\f0\b0 "assignment"
+\f1\b  
+\f0\b0 x
+\f1\b =
+\f0\b0 "34"
+\f1\b  
+\f0\b0 y
+\f1\b =
+\f0\b0 "340"
+\f1\b >
+\f0\b0 robot_inventory[id-1][robot_res_to_pick[id-1]] += 1
+\f1\b </label>
+\f0\b0 \
+		
+\f1\b </transition>
+\f0\b0 \
+		
+\f1\b <transition 
+\f0\b0 id
+\f1\b =
+\f0\b0 "id5"
+\f1\b >
+\f0\b0 \
+			
+\f1\b <source 
+\f0\b0 ref
+\f1\b =
+\f0\b0 "id3"
+\f1\b />
+\f0\b0 \
+			
+\f1\b <target 
+\f0\b0 ref
+\f1\b =
+\f0\b0 "id1"
+\f1\b />
+\f0\b0 \
+			
+\f1\b <label 
+\f0\b0 kind
+\f1\b =
+\f0\b0 "synchronisation"
+\f1\b  
+\f0\b0 x
+\f1\b =
+\f0\b0 "-246"
+\f1\b  
+\f0\b0 y
+\f1\b =
+\f0\b0 "365"
+\f1\b >
+\f0\b0 stop_r_pick[id-1]?
+\f1\b </label>
+\f0\b0 \
+		
+\f1\b </transition>
+\f0\b0 \
+		
+\f1\b <transition 
+\f0\b0 id
+\f1\b =
+\f0\b0 "id6"
+\f1\b >
+\f0\b0 \
+			
+\f1\b <source 
+\f0\b0 ref
+\f1\b =
+\f0\b0 "id1"
+\f1\b />
+\f0\b0 \
+			
+\f1\b <target 
+\f0\b0 ref
+\f1\b =
+\f0\b0 "id2"
+\f1\b />
+\f0\b0 \
+			
+\f1\b <label 
+\f0\b0 kind
+\f1\b =
+\f0\b0 "synchronisation"
+\f1\b  
+\f0\b0 x
+\f1\b =
+\f0\b0 "-187"
+\f1\b  
+\f0\b0 y
+\f1\b =
+\f0\b0 "238"
+\f1\b >
+\f0\b0 start_r_pick[id-1]!
+\f1\b </label>
+\f0\b0 \
+			
+\f1\b <label 
+\f0\b0 kind
+\f1\b =
+\f0\b0 "assignment"
+\f1\b  
+\f0\b0 x
+\f1\b =
+\f0\b0 "-144"
+\f1\b  
+\f0\b0 y
+\f1\b =
+\f0\b0 "272"
+\f1\b >
+\f0\b0 t=0
+\f1\b </label>
+\f0\b0 \
+		
+\f1\b </transition>
+\f0\b0 \
+		
+\f1\b <transition 
+\f0\b0 id
+\f1\b =
+\f0\b0 "id7"
+\f1\b >
+\f0\b0 \
+			
+\f1\b <source 
+\f0\b0 ref
+\f1\b =
+\f0\b0 "id0"
+\f1\b />
+\f0\b0 \
+			
+\f1\b <target 
+\f0\b0 ref
+\f1\b =
+\f0\b0 "id1"
+\f1\b />
+\f0\b0 \
+			
+\f1\b <label 
+\f0\b0 kind
+\f1\b =
+\f0\b0 "assignment"
+\f1\b  
+\f0\b0 x
+\f1\b =
+\f0\b0 "-398"
+\f1\b  
+\f0\b0 y
+\f1\b =
+\f0\b0 "272"
+\f1\b >
+\f0\b0 initRobot()
+\f1\b </label>
+\f0\b0 \
+		
+\f1\b </transition>
+\f0\b0 \
+	
+\f1\b </template>}

@@ -1,0 +1,17 @@
+TestBruno
+
+agents:
+	humans: Human
+	robots: Robot, Robot2
+	
+locations: room1, room2
+resources: item1, item2
+
+Human:
+	1: moveTo room1
+
+Robot: 
+	1: pick item1
+	
+
+	

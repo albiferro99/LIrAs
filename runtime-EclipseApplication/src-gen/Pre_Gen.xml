@@ -15,6 +15,11 @@ const double room1[2] = {400, 150};
 const double room2[2] = {1200, 750};
 const double room3[2] = {500, 400};
 
+// Recources
+const double item1[2] = {415, 165};
+const double item2[2] = {1215, 765};
+const double item3[2] = {515, 415};
+
 /**
 *** STUFF TO BE GENERATED AUTOMATICALLY
 */
@@ -28,9 +33,13 @@ const double room3[2] = {500, 400};
 // Declared Locations
 // **input_location**
 
-// Quantity of agents
+// Declared Resources
+// **input_resource**
+
+// Quantity of agents and resouces
 // **human_number**
 // **robot_number**
+// **resource_number**
 
 // **human_initialization**
 
@@ -54,6 +63,8 @@ const double room3[2] = {500, 400};
 // **r_follow_sync**
 // **r_follow_var**
 
+// **r_pick_sync**
+// **r_pick_var**
 
 /**
 *** Channels
@@ -133,6 +144,7 @@ double pt_dist(double x1, double x2, double y1, double y2) {
 // **Human_moveTo**
 // **Robot_moveTo**
 // **Robot_follow**
+// **Robot_pick**
 </declaration>
 	<system>
 // Mission Definition
@@ -141,6 +153,7 @@ double pt_dist(double x1, double x2, double y1, double y2) {
 // **missDef_hm**
 // **missDef_rm**
 // **missDef_rf**
+// **missDef_rp**
 
 // Pattern Definition
 
@@ -154,6 +167,7 @@ system
 // **missDec_hm**
 // **missDec_rm**
 // **missDec_rf**
+// **missDec_rp**
 
 // **pattern_dichiaration**
 

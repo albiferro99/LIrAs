@@ -14,6 +14,12 @@ const double room1[2] = {400, 150};
 const double room2[2] = {1200, 750};
 const double room3[2] = {500, 400};
 
+// Recources (new)
+const double item1[2] = {415, 165}; // non vanno generati
+const double item2[2] = {1215, 765};
+const double item3[2] = {515, 415};
+const int N_ITEMS = 2; // item1 e item2, va generato
+
 /**
 *** STUFF TO BE GENERATED AUTOMATICALLY
 */
@@ -28,6 +34,10 @@ bool human_stat=true, robot_stat=true;
 double location_X[2]  = {room1[0], room2[0]};
 double location_Y[2]  = {room1[1], room2[1]};
 
+// Declared Recources (new)
+double resources_X[2]  = {item1[0], item2[0]};
+double resources_Y[2]  = {item1[1], item2[1]};
+
 const int N_H = 1; // Number of humans in the pattern
 const int N_R = 1; // Number of robots in the pattern
 
@@ -41,6 +51,7 @@ double batteryCharge[N_R] = {100.0};
 double robPositionX[N_R];
 double robPositionY[N_R];
 
+
 /**
 *** GLOBAL VARIABLES
 */
@@ -53,6 +64,13 @@ int human_loc_target = 0;
 
 urgent broadcast chan start_r_moveTo[N_R], stop_r_moveTo[N_R];
 int robot_loc_target = 0;
+
+// (new) Robot action pick
+urgent broadcast chan start_r_pick[N_R], stop_r_pick[N_R];
+int robot_res_to_pick[N_R];
+int robot_inventory[N_R][N_ITEMS];
+int old_inventory[N_R][N_ITEMS];
+
 
 urgent broadcast chan start_r_follow[N_R], stop_r_follow[N_R];
 // Who I have to follow (agent id)?
@@ -68,7 +86,6 @@ double h_startY[N_H] = {100.0};
 // Robot starting position
 double r_startX[N_R] = {2000.0};
 double r_startY[N_R] = {500.0};
-
 
 /**
 *** Channels
@@ -144,24 +161,74 @@ double pt_dist(double x1, double x2, double y1, double y2) {
 
 </declaration>
 	<template>
+		<name>Robot_pick</name>
+		<parameter>int id</parameter>
+		<declaration>clock t;
+
+void initRobot(){
+
+    robot_inventory[0][0] = 0; // robot 1, item1
+    robot_inventory[0][1] = 0; // robot 1, item2
+
+}
+</declaration>
+		<location id="id0" x="-416" y="272">
+			<name x="-426" y="238">Init</name>
+			<committed/>
+		</location>
+		<location id="id1" x="-204" y="272">
+			<name x="-246" y="246">idle</name>
+		</location>
+		<location id="id2" x="-8" y="272">
+			<name x="-17" y="238">starting</name>
+			<label kind="invariant" x="-18" y="289">t&lt;=5</label>
+		</location>
+		<location id="id3" x="-8" y="416">
+			<name x="-110" y="407">stopping</name>
+		</location>
+		<init ref="id0"/>
+		<transition id="id4">
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="34" y="314">t &gt;= 5</label>
+			<label kind="assignment" x="34" y="340">robot_inventory[id-1][robot_res_to_pick[id-1]] += 1</label>
+		</transition>
+		<transition id="id5">
+			<source ref="id3"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="-246" y="365">stop_r_pick[id-1]?</label>
+		</transition>
+		<transition id="id6">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="-187" y="238">start_r_pick[id-1]!</label>
+			<label kind="assignment" x="-144" y="272">t=0</label>
+		</transition>
+		<transition id="id7">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="assignment" x="-398" y="272">initRobot()</label>
+		</transition>
+	</template>
+	<template>
 		<name>exeSum_orchestrator</name>
 		<parameter>int p</parameter>
-		<location id="id0" x="246" y="-68">
+		<location id="id8" x="246" y="-68">
 			<name x="236" y="-102">end</name>
 		</location>
-		<location id="id1" x="-289" y="-68">
+		<location id="id9" x="-289" y="-68">
 			<name x="-331" y="-110">sub_seq_s1</name>
 		</location>
-		<location id="id2" x="-578" y="-68">
+		<location id="id10" x="-578" y="-68">
 			<name x="-595" y="-102">Init</name>
 		</location>
-		<location id="id3" x="-17" y="-68">
+		<location id="id11" x="-17" y="-68">
 			<name x="-59" y="-110">sub_seq_s2</name>
 		</location>
-		<init ref="id2"/>
-		<transition id="id4">
-			<source ref="id1"/>
-			<target ref="id3"/>
+		<init ref="id10"/>
+		<transition id="id12">
+			<source ref="id9"/>
+			<target ref="id11"/>
 			<label kind="guard" x="-238" y="-68">human_stat==true and
 robot_stat==true</label>
 			<label kind="synchronisation" x="-85" y="-85">s2!</label>
@@ -169,17 +236,17 @@ robot_stat==true</label>
 robot_stat=false</label>
 			<nail x="-101" y="-68"/>
 		</transition>
-		<transition id="id5">
-			<source ref="id3"/>
-			<target ref="id0"/>
+		<transition id="id13">
+			<source ref="id11"/>
+			<target ref="id8"/>
 			<label kind="guard" x="34" y="-68">human_stat==true and 
 robot_stat==true</label>
 			<label kind="synchronisation" x="178" y="-93">e!</label>
 			<label kind="assignment" x="34" y="-93">currP=currP+1</label>
 		</transition>
-		<transition id="id6">
-			<source ref="id2"/>
-			<target ref="id1"/>
+		<transition id="id14">
+			<source ref="id10"/>
+			<target ref="id9"/>
 			<label kind="guard" x="-552" y="-68">human_stat==true and 
 robot_stat==true
 and p==currP</label>
@@ -191,33 +258,33 @@ robot_stat=false</label>
 	<template>
 		<name>exeSum_human</name>
 		<parameter>int p, int H</parameter>
-		<location id="id7" x="-340" y="161">
+		<location id="id15" x="-340" y="161">
 			<name x="-382" y="178">end_human</name>
 		</location>
-		<location id="id8" x="408" y="-68">
+		<location id="id16" x="408" y="-68">
 			<name x="340" y="-102">moveTo_h_complete1</name>
 		</location>
-		<location id="id9" x="-374" y="-68">
+		<location id="id17" x="-374" y="-68">
 		</location>
-		<location id="id10" x="-238" y="-68">
+		<location id="id18" x="-238" y="-68">
 			<committed/>
 		</location>
-		<location id="id11" x="-17" y="-68">
+		<location id="id19" x="-17" y="-68">
 			<name x="-68" y="-102">moveTo_h_busy1</name>
 		</location>
-		<location id="id12" x="408" y="17">
+		<location id="id20" x="408" y="17">
 			<committed/>
 		</location>
-		<location id="id13" x="77" y="17">
+		<location id="id21" x="77" y="17">
 			<name x="-9" y="-17">moveTo_h_busy2</name>
 		</location>
-		<location id="id14" x="-340" y="17">
+		<location id="id22" x="-340" y="17">
 			<name x="-408" y="-25">moveTo_h_complete2</name>
 		</location>
-		<init ref="id9"/>
-		<transition id="id15">
-			<source ref="id13"/>
-			<target ref="id14"/>
+		<init ref="id17"/>
+		<transition id="id23">
+			<source ref="id21"/>
+			<target ref="id22"/>
 			<label kind="guard" x="-323" y="42">humanPositionX[H-1] &lt;= location_X[human_loc_target]+30 and
 humanPositionX[H-1] &gt;= location_X[human_loc_target]-30 and
 humanPositionY[H-1] &lt;= location_Y[human_loc_target]+30 and
@@ -225,25 +292,25 @@ humanPositionY[H-1] &gt;= location_Y[human_loc_target]-30</label>
 			<label kind="synchronisation" x="-229" y="-8">stop_h_moveTo[H-1]!</label>
 			<label kind="assignment" x="-221" y="17">human_stat = true</label>
 		</transition>
-		<transition id="id16">
-			<source ref="id12"/>
-			<target ref="id13"/>
+		<transition id="id24">
+			<source ref="id20"/>
+			<target ref="id21"/>
 			<label kind="synchronisation" x="161" y="-8">start_h_moveTo[H-1]!</label>
 		</transition>
-		<transition id="id17">
-			<source ref="id8"/>
-			<target ref="id12"/>
+		<transition id="id25">
+			<source ref="id16"/>
+			<target ref="id20"/>
 			<label kind="synchronisation" x="433" y="-51">s2?</label>
 			<label kind="assignment" x="433" y="-25">human_loc_target = 1</label>
 		</transition>
-		<transition id="id18">
-			<source ref="id14"/>
-			<target ref="id7"/>
+		<transition id="id26">
+			<source ref="id22"/>
+			<target ref="id15"/>
 			<label kind="synchronisation" x="-408" y="77">e?</label>
 		</transition>
-		<transition id="id19">
-			<source ref="id11"/>
-			<target ref="id8"/>
+		<transition id="id27">
+			<source ref="id19"/>
+			<target ref="id16"/>
 			<label kind="guard" x="-17" y="-187">humanPositionX[H-1] &lt;= location_X[human_loc_target]+30 and
 humanPositionX[H-1] &gt;= location_X[human_loc_target]-30 and
 humanPositionY[H-1] &lt;= location_Y[human_loc_target]+30 and
@@ -251,14 +318,14 @@ humanPositionY[H-1] &gt;= location_Y[human_loc_target]-30</label>
 			<label kind="synchronisation" x="102" y="-93">stop_h_moveTo[H-1]!</label>
 			<label kind="assignment" x="102" y="-68">human_stat = true</label>
 		</transition>
-		<transition id="id20">
-			<source ref="id10"/>
-			<target ref="id11"/>
+		<transition id="id28">
+			<source ref="id18"/>
+			<target ref="id19"/>
 			<label kind="synchronisation" x="-212" y="-85">start_h_moveTo[H-1]!</label>
 		</transition>
-		<transition id="id21">
-			<source ref="id9"/>
-			<target ref="id10"/>
+		<transition id="id29">
+			<source ref="id17"/>
+			<target ref="id18"/>
 			<label kind="guard" x="-416" y="-153">currP==p</label>
 			<label kind="synchronisation" x="-306" y="-94">s1?</label>
 			<label kind="assignment" x="-416" y="-127">human_loc_target = 0</label>
@@ -267,76 +334,72 @@ humanPositionY[H-1] &gt;= location_Y[human_loc_target]-30</label>
 	<template>
 		<name>exeSum_robot</name>
 		<parameter>int p, int R</parameter>
-		<location id="id22" x="552" y="-85">
+		<location id="id30" x="552" y="-85">
 			<name x="578" y="-93">moveTo_r_complete</name>
 		</location>
-		<location id="id23" x="-382" y="-85">
+		<location id="id31" x="-382" y="-85">
 		</location>
-		<location id="id24" x="-255" y="-85">
+		<location id="id32" x="-255" y="-85">
 			<committed/>
 		</location>
-		<location id="id25" x="-77" y="-85">
-			<name x="-136" y="-68">moveTo_r_busy</name>
+		<location id="id33" x="-76" y="-85">
+			<name x="-135" y="-68">moveTo_r_busy</name>
 		</location>
-		<location id="id26" x="34" y="8">
+		<location id="id34" x="34" y="8">
 			<name x="-26" y="-26">follow_r_busy</name>
 		</location>
-		<location id="id27" x="-383" y="8">
+		<location id="id35" x="-383" y="8">
 			<name x="-425" y="-26">follow_r_complete</name>
 		</location>
-		<location id="id28" x="552" y="8">
+		<location id="id36" x="552" y="8">
 			<committed/>
 		</location>
-		<location id="id29" x="-382" y="204">
+		<location id="id37" x="-382" y="204">
 			<name x="-365" y="195">end_robot</name>
 		</location>
-		<location id="id30" x="-76" y="-297">
-			<name x="-86" y="-331">stop</name>
-		</location>
-		<location id="id31" x="-255" y="8">
+		<location id="id38" x="-255" y="8">
 			<committed/>
 		</location>
-		<init ref="id23"/>
-		<transition id="id32">
-			<source ref="id31"/>
-			<target ref="id27"/>
+		<init ref="id31"/>
+		<transition id="id39">
+			<source ref="id38"/>
+			<target ref="id35"/>
 			<nail x="-289" y="8"/>
 			<nail x="-289" y="8"/>
 			<nail x="-323" y="8"/>
 		</transition>
-		<transition id="id33">
-			<source ref="id22"/>
-			<target ref="id28"/>
+		<transition id="id40">
+			<source ref="id30"/>
+			<target ref="id36"/>
 			<label kind="synchronisation" x="561" y="-51">s2?</label>
 			<label kind="assignment" x="569" y="-34">f_robot_loc_target = 1,
 robot_to_be_followed = 0,
 human_to_be_followed = 1</label>
 		</transition>
-		<transition id="id34">
-			<source ref="id25"/>
-			<target ref="id22"/>
-			<label kind="guard" x="34" y="-187">robPositionX[R-1] &lt;= location_X[robot_loc_target]+30 and
-robPositionX[R-1] &gt;= location_X[robot_loc_target]-30 and
-robPositionY[R-1] &lt;= location_Y[robot_loc_target]+30 and
-robPositionY[R-1] &gt;= location_Y[robot_loc_target]-30</label>
-			<label kind="synchronisation" x="153" y="-110">stop_r_moveTo[R-1]!</label>
+		<transition id="id41">
+			<source ref="id33"/>
+			<target ref="id30"/>
+			<label kind="guard" x="-34" y="-127">robot_inventory[R-1][robot_res_to_pick[R-1]] &gt; old_inventory[R-1][robot_res_to_pick[R-1]]</label>
+			<label kind="synchronisation" x="153" y="-110">stop_r_pick[R-1]!</label>
 			<label kind="assignment" x="153" y="-85">robot_stat = true</label>
 		</transition>
-		<transition id="id35">
-			<source ref="id24"/>
-			<target ref="id25"/>
-			<label kind="synchronisation" x="-263" y="-119">start_r_moveTo[R-1]!</label>
+		<transition id="id42">
+			<source ref="id32"/>
+			<target ref="id33"/>
+			<label kind="synchronisation" x="-229" y="-119">start_r_pick[R-1]!</label>
+			<label kind="assignment" x="-535" y="-153">old_inventory[R-1][robot_res_to_pick[R-1]] = robot_inventory[R-1][robot_res_to_pick[R-1]]</label>
 		</transition>
-		<transition id="id36">
-			<source ref="id23"/>
-			<target ref="id24"/>
+		<transition id="id43">
+			<source ref="id31"/>
+			<target ref="id32"/>
 			<label kind="guard" x="-357" y="-85">currP==p</label>
 			<label kind="synchronisation" x="-349" y="-111">s1?</label>
-			<label kind="assignment" x="-416" y="-68">robot_loc_target = 0</label>
+			<label kind="assignment" x="-416" y="-68">robot_loc_target = 0,
+robot_res_to_pick[R-1] = 0</label>
 		</transition>
-		<transition id="id37">
-			<source ref="id26"/>
-			<target ref="id31"/>
+		<transition id="id44">
+			<source ref="id34"/>
+			<target ref="id38"/>
 			<label kind="guard" x="-221" y="34">humanPositionX[0] &lt;= location_X[1]+30 and
 humanPositionX[0] &gt;= location_X[1]-30 and
 humanPositionY[0] &lt;= location_Y[1]+30 and
@@ -348,35 +411,15 @@ robPositionY[R-1] &lt;= location_Y[f_robot_loc_target]+30</label>
 			<label kind="synchronisation" x="-212" y="-17">stop_r_follow[R-1]!</label>
 			<label kind="assignment" x="-221" y="8">robot_stat=true</label>
 		</transition>
-		<transition id="id38">
-			<source ref="id28"/>
-			<target ref="id26"/>
+		<transition id="id45">
+			<source ref="id36"/>
+			<target ref="id34"/>
 			<label kind="synchronisation" x="119" y="-17">start_r_follow[R-1]!</label>
 		</transition>
-		<transition id="id39">
-			<source ref="id27"/>
-			<target ref="id29"/>
+		<transition id="id46">
+			<source ref="id35"/>
+			<target ref="id37"/>
 			<label kind="synchronisation" x="-408" y="93">e?</label>
-		</transition>
-		<transition id="id40">
-			<source ref="id25"/>
-			<target ref="id30"/>
-			<label kind="guard" x="-535" y="-263">not(humanPositionX[0] &lt;= location_X[0]+30 and
-humanPositionX[0] &gt;= location_X[0]-30 and
-humanPositionY[0] &lt;= location_Y[0]+30 and
-humanPositionY[0] &gt;= location_Y[0]-30)</label>
-			<label kind="synchronisation" x="-297" y="-187">stop_r_moveTo[R-1]!</label>
-			<nail x="-136" y="-195"/>
-		</transition>
-		<transition id="id41">
-			<source ref="id30"/>
-			<target ref="id25"/>
-			<label kind="guard" x="-68" y="-297">humanPositionX[0] &lt;= location_X[0]+30 and
-humanPositionX[0] &gt;= location_X[0]-30 and
-humanPositionY[0] &lt;= location_Y[0]+30 and
-humanPositionY[0] &gt;= location_Y[0]-30</label>
-			<label kind="synchronisation" x="-68" y="-221">start_r_moveTo[R-1]!</label>
-			<nail x="-17" y="-195"/>
 		</transition>
 	</template>
 	<template>
@@ -470,62 +513,62 @@ void initHuman() {
     non_crit = 999.0;
 }
     </declaration>
-		<location id="id42" x="-425" y="-153">
+		<location id="id47" x="-425" y="-153">
 			<name x="-477" y="-144">idle</name>
 			<label kind="invariant" x="-629" y="-119">F' == -Fp*mi*exp(-mi*t)
 &amp;&amp; tUpd&lt;=Tpoll</label>
 		</location>
-		<location id="id43" x="144" y="-153">
+		<location id="id48" x="144" y="-153">
 			<name x="135" y="-187">inactive</name>
 		</location>
-		<location id="id44" x="-671" y="-153">
+		<location id="id49" x="-671" y="-153">
 			<name x="-722" y="-170">Init</name>
 			<committed/>
 		</location>
-		<location id="id45" x="-170" y="-442" color="#ff0000">
+		<location id="id50" x="-170" y="-442" color="#ff0000">
 			<name x="-391" y="-527">passed_out</name>
 			<label kind="invariant" x="-391" y="-510">t' == 0 &amp;&amp;
 F' == 0 &amp;&amp;
 tExp'==0</label>
 			<label kind="exponentialrate" x="-178" y="-425">1</label>
 		</location>
-		<location id="id46" x="-535" y="-442">
+		<location id="id51" x="-535" y="-442">
 			<committed/>
 		</location>
-		<location id="id47" x="68" y="85">
+		<location id="id52" x="68" y="85">
 			<name x="76" y="51">c3</name>
 			<committed/>
 		</location>
-		<location id="id48" x="-213" y="9">
+		<location id="id53" x="-213" y="9">
 			<label kind="invariant" x="-357" y="-25">t&lt;=iteration_time</label>
 		</location>
-		<branchpoint id="id49" x="-535" y="-340"/>
-		<branchpoint id="id50" x="-212" y="85"/>
-		<init ref="id44"/>
-		<transition id="id51">
-			<source ref="id42"/>
-			<target ref="id43"/>
+		<branchpoint id="id54" x="-535" y="-340"/>
+		<branchpoint id="id55" x="-212" y="85"/>
+		<init ref="id49"/>
+		<transition id="id56">
+			<source ref="id47"/>
+			<target ref="id48"/>
 			<label kind="synchronisation" x="-263" y="-144">obey_h_moveTo[id-1]?</label>
 		</transition>
-		<transition id="id52" color="#ff0000">
-			<source ref="id49"/>
-			<target ref="id46"/>
+		<transition id="id57" color="#ff0000">
+			<source ref="id54"/>
+			<target ref="id51"/>
 			<label kind="probability" x="-494" y="-399">crit</label>
 		</transition>
-		<transition id="id53">
-			<source ref="id46"/>
-			<target ref="id45"/>
+		<transition id="id58">
+			<source ref="id51"/>
+			<target ref="id50"/>
 			<label kind="synchronisation" x="-382" y="-433">hm_fail!</label>
 		</transition>
-		<transition id="id54">
-			<source ref="id49"/>
-			<target ref="id42"/>
+		<transition id="id59">
+			<source ref="id54"/>
+			<target ref="id47"/>
 			<label kind="probability" x="-442" y="-357">non_crit</label>
 			<nail x="-425" y="-340"/>
 		</transition>
-		<transition id="id55">
-			<source ref="id42"/>
-			<target ref="id49"/>
+		<transition id="id60">
+			<source ref="id47"/>
+			<target ref="id54"/>
 			<label kind="guard" x="-739" y="-340">tUpd &gt;= Tpoll</label>
 			<label kind="assignment" x="-739" y="-323">updateF(-mi, 0),
 tUpd=0,
@@ -533,45 +576,45 @@ fw = random(FW_max),
 updateHealthDangerProb()</label>
 			<nail x="-535" y="-195"/>
 		</transition>
-		<transition id="id56">
-			<source ref="id45"/>
-			<target ref="id45"/>
+		<transition id="id61">
+			<source ref="id50"/>
+			<target ref="id50"/>
 			<nail x="-195" y="-391"/>
 			<nail x="-153" y="-391"/>
 		</transition>
-		<transition id="id57">
-			<source ref="id44"/>
-			<target ref="id42"/>
+		<transition id="id62">
+			<source ref="id49"/>
+			<target ref="id47"/>
 			<label kind="assignment" x="-603" y="-153">initHuman()</label>
 		</transition>
-		<transition id="id58">
-			<source ref="id48"/>
-			<target ref="id47"/>
+		<transition id="id63">
+			<source ref="id53"/>
+			<target ref="id52"/>
 			<label kind="guard" x="-144" y="-17">t&gt;=iteration_time</label>
 			<nail x="68" y="9"/>
 		</transition>
-		<transition id="id59">
-			<source ref="id47"/>
-			<target ref="id50"/>
+		<transition id="id64">
+			<source ref="id52"/>
+			<target ref="id55"/>
 			<label kind="assignment" x="-195" y="93">t = 0, Fp=humanFatigue[id-1],
 F=humanFatigue[id-1],
 tUpd=0, tExp=0</label>
 		</transition>
-		<transition id="id60" color="#ff0000">
-			<source ref="id50"/>
-			<target ref="id48"/>
+		<transition id="id65" color="#ff0000">
+			<source ref="id55"/>
+			<target ref="id53"/>
 			<label kind="probability" x="-280" y="42">disobey</label>
 		</transition>
-		<transition id="id61">
-			<source ref="id50"/>
-			<target ref="id42"/>
+		<transition id="id66">
+			<source ref="id55"/>
+			<target ref="id47"/>
 			<label kind="synchronisation" x="-408" y="93">obey_h_moveTo[id-1]!</label>
 			<label kind="probability" x="-357" y="59">obey</label>
 			<nail x="-425" y="85"/>
 		</transition>
-		<transition id="id62">
-			<source ref="id43"/>
-			<target ref="id47"/>
+		<transition id="id67">
+			<source ref="id48"/>
+			<target ref="id52"/>
 			<label kind="synchronisation" x="152" y="-51">stop_h_moveTo[id-1]?</label>
 			<nail x="144" y="85"/>
 		</transition>
@@ -874,81 +917,81 @@ void initHuman() {
     non_crit = 999.0;
 }
     </declaration>
-		<location id="id63" x="-977" y="-255">
+		<location id="id68" x="-977" y="-255">
 			<name x="-1028" y="-289">inactive</name>
 		</location>
-		<location id="id64" x="-51" y="-255">
+		<location id="id69" x="-51" y="-255">
 			<name x="-34" y="-280">busy</name>
 			<label kind="invariant" x="-34" y="-340">F &lt;= passout_th
 &amp;&amp; F' == Fp*lambda*exp(-lambda*t)
 &amp;&amp; tUpd&lt;=Tpoll</label>
 		</location>
-		<location id="id65" x="-1215" y="-255">
+		<location id="id70" x="-1215" y="-255">
 			<name x="-1266" y="-272">Init</name>
 			<committed/>
 		</location>
-		<location id="id66" x="459" y="-255" color="#ff0000">
+		<location id="id71" x="459" y="-255" color="#ff0000">
 			<name x="374" y="-331">passed_out</name>
 			<label kind="invariant" x="374" y="-314">t' == 0 &amp;&amp;
 F' == 0 &amp;&amp;
 tExp'==0</label>
 			<label kind="exponentialrate" x="451" y="-238">1</label>
 		</location>
-		<location id="id67" x="-722" y="-255">
+		<location id="id72" x="-722" y="-255">
 			<name x="-732" y="-289">c1</name>
 			<committed/>
 		</location>
-		<location id="id68" x="-297" y="-255">
+		<location id="id73" x="-297" y="-255">
 			<name x="-289" y="-280">c2</name>
 			<committed/>
 		</location>
-		<location id="id69" x="51" y="-25">
+		<location id="id74" x="51" y="-25">
 			<name x="-8" y="-51">pub_3</name>
 			<committed/>
 		</location>
-		<location id="id70" x="527" y="-25">
+		<location id="id75" x="527" y="-25">
 			<committed/>
 		</location>
-		<location id="id71" x="-722" y="-195">
+		<location id="id76" x="-722" y="-195">
 			<label kind="invariant" x="-866" y="-187">t&lt;=iteration_time</label>
 		</location>
-		<branchpoint id="id72" x="289" y="-25"/>
-		<branchpoint id="id73" x="-492" y="-255"/>
-		<init ref="id65"/>
-		<transition id="id74">
-			<source ref="id71"/>
-			<target ref="id67"/>
+		<branchpoint id="id77" x="289" y="-25"/>
+		<branchpoint id="id78" x="-492" y="-255"/>
+		<init ref="id70"/>
+		<transition id="id79">
+			<source ref="id76"/>
+			<target ref="id72"/>
 			<label kind="guard" x="-875" y="-238">t&gt;=iteration_time</label>
 		</transition>
-		<transition id="id75">
-			<source ref="id70"/>
-			<target ref="id66"/>
+		<transition id="id80">
+			<source ref="id75"/>
+			<target ref="id71"/>
 			<label kind="synchronisation" x="476" y="-280">hm_fail!</label>
 			<nail x="527" y="-255"/>
 		</transition>
-		<transition id="id76" color="#ff0000">
-			<source ref="id72"/>
-			<target ref="id70"/>
+		<transition id="id81" color="#ff0000">
+			<source ref="id77"/>
+			<target ref="id75"/>
 			<label kind="probability" x="391" y="-25">crit</label>
 		</transition>
-		<transition id="id77">
-			<source ref="id72"/>
-			<target ref="id69"/>
+		<transition id="id82">
+			<source ref="id77"/>
+			<target ref="id74"/>
 			<label kind="probability" x="204" y="-25">non_crit</label>
 		</transition>
-		<transition id="id78">
-			<source ref="id67"/>
-			<target ref="id73"/>
+		<transition id="id83">
+			<source ref="id72"/>
+			<target ref="id78"/>
 		</transition>
-		<transition id="id79" color="#ff0000">
-			<source ref="id73"/>
-			<target ref="id71"/>
+		<transition id="id84" color="#ff0000">
+			<source ref="id78"/>
+			<target ref="id76"/>
 			<label kind="probability" x="-645" y="-221">disobey</label>
 			<nail x="-492" y="-195"/>
 		</transition>
-		<transition id="id80">
-			<source ref="id73"/>
-			<target ref="id68"/>
+		<transition id="id85">
+			<source ref="id78"/>
+			<target ref="id73"/>
 			<label kind="synchronisation" x="-484" y="-280">obey_h_moveTo[id-1]!</label>
 			<label kind="assignment" x="-696" y="-340">t = 0,
 tExp=0,
@@ -956,9 +999,9 @@ tUpd=0,
 F = humanFatigue[id-1]</label>
 			<label kind="probability" x="-484" y="-297">obey</label>
 		</transition>
-		<transition id="id81">
-			<source ref="id64"/>
-			<target ref="id72"/>
+		<transition id="id86">
+			<source ref="id69"/>
+			<target ref="id77"/>
 			<label kind="guard" x="306" y="-127">tUpd &gt;= Tpoll</label>
 			<label kind="assignment" x="306" y="-110">updateF(-lambda, 1),
 updateP(), tUpd=0,
@@ -966,56 +1009,56 @@ fw = random(FW_max),
 updateHealthDangerProb()</label>
 			<nail x="289" y="-136"/>
 		</transition>
-		<transition id="id82">
-			<source ref="id69"/>
-			<target ref="id64"/>
+		<transition id="id87">
+			<source ref="id74"/>
+			<target ref="id69"/>
 			<label kind="assignment" x="17" y="-135">check_crit(),
 update_crit()</label>
 		</transition>
-		<transition id="id83">
-			<source ref="id68"/>
-			<target ref="id64"/>
+		<transition id="id88">
+			<source ref="id73"/>
+			<target ref="id69"/>
 			<label kind="guard" x="-272" y="-255">F&lt;=0 &amp;&amp; F&gt;=-0.05</label>
 			<label kind="assignment" x="-272" y="-238">Fp=1, F=0, plan_traj()</label>
 		</transition>
-		<transition id="id84">
-			<source ref="id68"/>
-			<target ref="id64"/>
+		<transition id="id89">
+			<source ref="id73"/>
+			<target ref="id69"/>
 			<label kind="guard" x="-221" y="-408">F&gt;0</label>
 			<label kind="assignment" x="-221" y="-391">Fp=1-F,
 plan_traj()</label>
 			<nail x="-297" y="-348"/>
 			<nail x="-51" y="-348"/>
 		</transition>
-		<transition id="id85">
-			<source ref="id64"/>
-			<target ref="id63"/>
+		<transition id="id90">
+			<source ref="id69"/>
+			<target ref="id68"/>
 			<label kind="synchronisation" x="-586" y="-17">obey_h_moveTo[id-1]?</label>
 			<nail x="-51" y="-25"/>
 			<nail x="-977" y="-25"/>
 		</transition>
-		<transition id="id86">
-			<source ref="id63"/>
-			<target ref="id67"/>
+		<transition id="id91">
+			<source ref="id68"/>
+			<target ref="id72"/>
 			<label kind="guard" x="-900" y="-297">currH==id</label>
 			<label kind="synchronisation" x="-943" y="-280">start_h_moveTo[id-1]?</label>
 		</transition>
-		<transition id="id87">
-			<source ref="id64"/>
-			<target ref="id66"/>
+		<transition id="id92">
+			<source ref="id69"/>
+			<target ref="id71"/>
 			<label kind="guard" x="178" y="-280">F &gt;= passout_th</label>
 			<label kind="synchronisation" x="212" y="-255">hm_fail!</label>
 			<label kind="assignment" x="221" y="-238">t = 0</label>
 		</transition>
-		<transition id="id88">
-			<source ref="id66"/>
-			<target ref="id66"/>
+		<transition id="id93">
+			<source ref="id71"/>
+			<target ref="id71"/>
 			<nail x="434" y="-204"/>
 			<nail x="476" y="-204"/>
 		</transition>
-		<transition id="id89">
-			<source ref="id65"/>
-			<target ref="id63"/>
+		<transition id="id94">
+			<source ref="id70"/>
+			<target ref="id68"/>
 			<label kind="assignment" x="-1164" y="-255">initHuman()</label>
 		</transition>
 	</template>
@@ -1241,173 +1284,173 @@ void varsUpdate(double coeff) {
 	update_pos(coeff);
 }
 </declaration>
-		<location id="id90" x="-629" y="-348">
+		<location id="id95" x="-629" y="-348">
 			<name x="-680" y="-374">idle</name>
 			<label kind="invariant" x="-731" y="-348">V' == 0 &amp;&amp;
 tUpd'==0</label>
 		</location>
-		<location id="id91" x="-416" y="-42">
+		<location id="id96" x="-416" y="-42">
 			<name x="-408" y="-42">stopping</name>
 			<label kind="invariant" x="-595" y="18">V' == -a_max
 &amp;&amp; tUpd&lt;=Tpoll</label>
 			<label kind="comments" x="-331" y="-33">&amp;&amp; V &gt;=0</label>
 		</location>
-		<location id="id92" x="-416" y="-348">
+		<location id="id97" x="-416" y="-348">
 			<name x="-399" y="-366">starting</name>
 			<label kind="invariant" x="-314" y="-408">V' == a_max
 &amp;&amp; V &lt;= v_max
 &amp;&amp; tUpd&lt;=Tpoll</label>
 		</location>
-		<location id="id93" x="-161" y="-246">
+		<location id="id98" x="-161" y="-246">
 			<name x="-229" y="-263">moving</name>
 			<label kind="invariant" x="-263" y="-246">V' == 0 &amp;&amp;
 tUpd&lt;=Tpoll</label>
 		</location>
-		<location id="id94" x="-833" y="-348">
+		<location id="id99" x="-833" y="-348">
 			<name x="-843" y="-382">Init</name>
 			<committed/>
 		</location>
-		<location id="id95" x="204" y="-246">
+		<location id="id100" x="204" y="-246">
 			<name x="221" y="-272">turning</name>
 			<label kind="invariant" x="221" y="-255">V'==0 &amp;&amp;
 Th&lt;=fabs(ort*PI/180)</label>
 		</location>
-		<location id="id96" x="42" y="-246">
+		<location id="id101" x="42" y="-246">
 			<committed/>
 		</location>
-		<location id="id97" x="-416" y="-501">
+		<location id="id102" x="-416" y="-501">
 			<committed/>
 		</location>
-		<location id="id98" x="-416" y="102">
+		<location id="id103" x="-416" y="102">
 			<committed/>
 		</location>
-		<location id="id99" x="-59" y="-170">
+		<location id="id104" x="-59" y="-170">
 			<committed/>
 		</location>
-		<location id="id100" x="-629" y="-42">
+		<location id="id105" x="-629" y="-42">
 			<committed/>
 		</location>
-		<init ref="id94"/>
-		<transition id="id101">
-			<source ref="id91"/>
-			<target ref="id100"/>
+		<init ref="id99"/>
+		<transition id="id106">
+			<source ref="id96"/>
+			<target ref="id105"/>
 			<label kind="guard" x="-578" y="-68">V &lt;= 0</label>
 		</transition>
-		<transition id="id102">
-			<source ref="id99"/>
-			<target ref="id93"/>
+		<transition id="id107">
+			<source ref="id104"/>
+			<target ref="id98"/>
 		</transition>
-		<transition id="id103">
-			<source ref="id96"/>
-			<target ref="id99"/>
+		<transition id="id108">
+			<source ref="id101"/>
+			<target ref="id104"/>
 			<label kind="guard" x="-9" y="-204">!needsTurning</label>
 			<label kind="assignment" x="8" y="-187">tUpd=0</label>
 		</transition>
-		<transition id="id104">
-			<source ref="id98"/>
-			<target ref="id91"/>
+		<transition id="id109">
+			<source ref="id103"/>
+			<target ref="id96"/>
 			<nail x="-459" y="86"/>
 			<nail x="-459" y="-16"/>
 		</transition>
-		<transition id="id105">
-			<source ref="id97"/>
-			<target ref="id92"/>
+		<transition id="id110">
+			<source ref="id102"/>
+			<target ref="id97"/>
 			<nail x="-374" y="-459"/>
 			<nail x="-374" y="-391"/>
 		</transition>
-		<transition id="id106">
-			<source ref="id91"/>
-			<target ref="id98"/>
+		<transition id="id111">
+			<source ref="id96"/>
+			<target ref="id103"/>
 			<label kind="guard" x="-408" y="43">tUpd&gt;=Tpoll
 &amp;&amp;V&gt;0</label>
 			<label kind="assignment" x="-408" y="1">t+=Tpoll, tUpd=0,
 varsUpdate(v_max-a_max*t)</label>
 		</transition>
-		<transition id="id107">
-			<source ref="id92"/>
-			<target ref="id97"/>
+		<transition id="id112">
+			<source ref="id97"/>
+			<target ref="id102"/>
 			<label kind="guard" x="-527" y="-493">tUpd&gt;=Tpoll
 &amp;&amp;V&lt;v_max</label>
 			<label kind="assignment" x="-586" y="-450">t+=Tpoll, tUpd=0,
 varsUpdate(a_max*t)</label>
 		</transition>
-		<transition id="id108">
-			<source ref="id95"/>
-			<target ref="id91"/>
+		<transition id="id113">
+			<source ref="id100"/>
+			<target ref="id96"/>
 			<label kind="synchronisation" x="-170" y="-67">stop_r_moveTo[id-1]?</label>
 			<label kind="assignment" x="-25" y="-68">tUpd=0, t=0</label>
 			<nail x="204" y="-50"/>
 		</transition>
-		<transition id="id109">
-			<source ref="id95"/>
-			<target ref="id93"/>
+		<transition id="id114">
+			<source ref="id100"/>
+			<target ref="id98"/>
 			<label kind="guard" x="-42" y="-374">Th&gt;=fabs(ort*PI/180)</label>
 			<label kind="assignment" x="-42" y="-348">tUpd = 0, Th = 0,
 needsTurning = false</label>
 			<nail x="204" y="-348"/>
 			<nail x="-161" y="-348"/>
 		</transition>
-		<transition id="id110">
-			<source ref="id96"/>
-			<target ref="id95"/>
+		<transition id="id115">
+			<source ref="id101"/>
+			<target ref="id100"/>
 			<label kind="guard" x="68" y="-263">needsTurning</label>
 			<label kind="assignment" x="102" y="-246">Th=0</label>
 		</transition>
-		<transition id="id111">
-			<source ref="id93"/>
-			<target ref="id96"/>
+		<transition id="id116">
+			<source ref="id98"/>
+			<target ref="id101"/>
 			<label kind="guard" x="-119" y="-280">tUpd&gt;=Tpoll</label>
 			<label kind="assignment" x="-136" y="-263">varsUpdate(v_max)</label>
 		</transition>
-		<transition id="id112">
-			<source ref="id91"/>
-			<target ref="id92"/>
+		<transition id="id117">
+			<source ref="id96"/>
+			<target ref="id97"/>
 			<label kind="synchronisation" x="-416" y="-204">start_r_moveTo[id-1]?</label>
 			<label kind="assignment" x="-416" y="-187">t=0, tUpd=0,
 plan_traj()</label>
 		</transition>
-		<transition id="id113">
-			<source ref="id92"/>
-			<target ref="id91"/>
+		<transition id="id118">
+			<source ref="id97"/>
+			<target ref="id96"/>
 			<label kind="synchronisation" x="-595" y="-204">stop_r_moveTo[id-1]?</label>
 			<label kind="assignment" x="-578" y="-187">t=0, tUpd=0</label>
 			<nail x="-476" y="-314"/>
 			<nail x="-476" y="-92"/>
 		</transition>
-		<transition id="id114">
-			<source ref="id100"/>
-			<target ref="id90"/>
+		<transition id="id119">
+			<source ref="id105"/>
+			<target ref="id95"/>
 			<label kind="synchronisation" x="-706" y="-221">rm_still!</label>
 			<label kind="assignment" x="-706" y="-204">t=0,
 tUpd = 0,
 V=0</label>
 		</transition>
-		<transition id="id115">
-			<source ref="id93"/>
-			<target ref="id91"/>
+		<transition id="id120">
+			<source ref="id98"/>
+			<target ref="id96"/>
 			<label kind="synchronisation" x="-289" y="-136">stop_r_moveTo[id-1]?</label>
 			<label kind="assignment" x="-280" y="-119">tUpd=0, t=0</label>
 			<nail x="-161" y="-101"/>
 		</transition>
-		<transition id="id116">
-			<source ref="id92"/>
-			<target ref="id93"/>
+		<transition id="id121">
+			<source ref="id97"/>
+			<target ref="id98"/>
 			<label kind="guard" x="-314" y="-348">V &gt;= v_max</label>
 			<label kind="assignment" x="-195" y="-408">t+=Tpoll,
 tUpd=0,
 V=v_max</label>
 			<nail x="-161" y="-348"/>
 		</transition>
-		<transition id="id117">
-			<source ref="id90"/>
-			<target ref="id92"/>
+		<transition id="id122">
+			<source ref="id95"/>
+			<target ref="id97"/>
 			<label kind="synchronisation" x="-603" y="-374">start_r_moveTo[id-1]?</label>
 			<label kind="assignment" x="-586" y="-348">t=0, tUpd=0,
 plan_traj()</label>
 		</transition>
-		<transition id="id118">
-			<source ref="id94"/>
-			<target ref="id90"/>
+		<transition id="id123">
+			<source ref="id99"/>
+			<target ref="id95"/>
 			<label kind="assignment" x="-807" y="-365">initRobot()</label>
 		</transition>
 	</template>
@@ -1641,107 +1684,107 @@ void varsUpdate(double coeff) {
 	update_pos(coeff);
 }
 </declaration>
-		<location id="id119" x="-620" y="-348">
+		<location id="id124" x="-620" y="-348">
 			<name x="-671" y="-374">idle</name>
 			<label kind="invariant" x="-722" y="-348">V' == 0 &amp;&amp;
 tUpd'==0</label>
 		</location>
-		<location id="id120" x="-416" y="-127">
+		<location id="id125" x="-416" y="-127">
 			<name x="-408" y="-127">stopping</name>
 			<label kind="invariant" x="-586" y="-76">V' == -a_max
 &amp;&amp; tUpd&lt;=Tpoll</label>
 			<label kind="comments" x="-331" y="-119">&amp;&amp; V &gt;=0</label>
 		</location>
-		<location id="id121" x="-416" y="-348">
+		<location id="id126" x="-416" y="-348">
 			<name x="-399" y="-366">starting</name>
 			<label kind="invariant" x="-314" y="-408">V' == a_max
 &amp;&amp; V &lt;= v_max
 &amp;&amp; tUpd&lt;=Tpoll</label>
 		</location>
-		<location id="id122" x="-161" y="-246">
+		<location id="id127" x="-161" y="-246">
 			<name x="-229" y="-263">moving</name>
 			<label kind="invariant" x="-263" y="-246">V' == 0 &amp;&amp;
 tUpd&lt;=Tpoll</label>
 		</location>
-		<location id="id123" x="-841" y="-348">
+		<location id="id128" x="-841" y="-348">
 			<name x="-851" y="-382">Init</name>
 			<committed/>
 		</location>
-		<location id="id124" x="212" y="-246">
+		<location id="id129" x="212" y="-246">
 			<name x="229" y="-272">turning</name>
 			<label kind="invariant" x="229" y="-255">V'==0 &amp;&amp;
 Th&lt;=fabs(ort*PI/180)</label>
 		</location>
-		<location id="id125" x="51" y="-246">
+		<location id="id130" x="51" y="-246">
 			<committed/>
 		</location>
-		<location id="id126" x="-416" y="-501">
+		<location id="id131" x="-416" y="-501">
 			<committed/>
 		</location>
-		<location id="id127" x="-416" y="25">
+		<location id="id132" x="-416" y="25">
 			<committed/>
 		</location>
-		<location id="id128" x="-51" y="-170">
+		<location id="id133" x="-51" y="-170">
 			<committed/>
 		</location>
-		<location id="id129" x="-620" y="-127">
+		<location id="id134" x="-620" y="-127">
 			<committed/>
 		</location>
-		<init ref="id123"/>
-		<transition id="id130">
-			<source ref="id120"/>
-			<target ref="id129"/>
+		<init ref="id128"/>
+		<transition id="id135">
+			<source ref="id125"/>
+			<target ref="id134"/>
 			<label kind="guard" x="-552" y="-152">V &lt;= 0</label>
 		</transition>
-		<transition id="id131">
-			<source ref="id128"/>
-			<target ref="id122"/>
+		<transition id="id136">
+			<source ref="id133"/>
+			<target ref="id127"/>
 		</transition>
-		<transition id="id132">
-			<source ref="id125"/>
-			<target ref="id128"/>
+		<transition id="id137">
+			<source ref="id130"/>
+			<target ref="id133"/>
 			<label kind="guard" x="-9" y="-204">!needsTurning</label>
 			<label kind="assignment" x="8" y="-187">tUpd=0</label>
 		</transition>
-		<transition id="id133">
-			<source ref="id127"/>
-			<target ref="id120"/>
+		<transition id="id138">
+			<source ref="id132"/>
+			<target ref="id125"/>
 			<nail x="-459" y="-34"/>
 			<nail x="-459" y="-101"/>
 		</transition>
-		<transition id="id134">
-			<source ref="id126"/>
-			<target ref="id121"/>
+		<transition id="id139">
+			<source ref="id131"/>
+			<target ref="id126"/>
 			<nail x="-391" y="-467"/>
 			<nail x="-391" y="-382"/>
 		</transition>
-		<transition id="id135">
-			<source ref="id120"/>
-			<target ref="id127"/>
+		<transition id="id140">
+			<source ref="id125"/>
+			<target ref="id132"/>
 			<label kind="guard" x="-408" y="-43">tUpd&gt;=Tpoll
 &amp;&amp;V&gt;0</label>
 			<label kind="assignment" x="-416" y="-85">t+=Tpoll, tUpd=0,
 varsUpdate(v_max-a_max*t)</label>
 		</transition>
-		<transition id="id136">
-			<source ref="id121"/>
-			<target ref="id126"/>
+		<transition id="id141">
+			<source ref="id126"/>
+			<target ref="id131"/>
 			<label kind="guard" x="-595" y="-501">tUpd&gt;=Tpoll
 &amp;&amp;V&lt;v_max</label>
 			<label kind="assignment" x="-595" y="-459">t+=Tpoll, tUpd=0,
 varsUpdate(a_max*t),
 plan_traj()</label>
 		</transition>
-		<transition id="id137">
-			<source ref="id124"/>
-			<target ref="id120"/>
+		<transition id="id142">
+			<source ref="id129"/>
+			<target ref="id125"/>
 			<label kind="synchronisation" x="-170" y="-152">stop_r_follow[id-1]?</label>
 			<label kind="assignment" x="-25" y="-153">tUpd=0, t=0</label>
 			<nail x="212" y="-135"/>
 		</transition>
-		<transition id="id138">
-			<source ref="id124"/>
-			<target ref="id122"/>
+		<transition id="id143">
+			<source ref="id129"/>
+			<target ref="id127"/>
 			<label kind="guard" x="-42" y="-374">Th&gt;=fabs(ort*PI/180)</label>
 			<label kind="assignment" x="-42" y="-348">tUpd = 0, Th = 0,
 needsTurning = false,
@@ -1749,52 +1792,52 @@ plan_traj()</label>
 			<nail x="212" y="-348"/>
 			<nail x="-161" y="-348"/>
 		</transition>
-		<transition id="id139">
-			<source ref="id125"/>
-			<target ref="id124"/>
+		<transition id="id144">
+			<source ref="id130"/>
+			<target ref="id129"/>
 			<label kind="guard" x="85" y="-263">needsTurning</label>
 			<label kind="assignment" x="111" y="-246">Th=0</label>
 		</transition>
-		<transition id="id140">
-			<source ref="id122"/>
-			<target ref="id125"/>
+		<transition id="id145">
+			<source ref="id127"/>
+			<target ref="id130"/>
 			<label kind="guard" x="-127" y="-280">tUpd&gt;=Tpoll</label>
 			<label kind="assignment" x="-127" y="-263">varsUpdate(v_max),
 plan_traj()</label>
 		</transition>
-		<transition id="id141">
-			<source ref="id120"/>
-			<target ref="id121"/>
+		<transition id="id146">
+			<source ref="id125"/>
+			<target ref="id126"/>
 			<label kind="synchronisation" x="-416" y="-289">start_r_follow[id-1]?</label>
 			<label kind="assignment" x="-416" y="-272">t=0, tUpd=0,
 plan_traj()</label>
 		</transition>
-		<transition id="id142">
-			<source ref="id121"/>
-			<target ref="id120"/>
+		<transition id="id147">
+			<source ref="id126"/>
+			<target ref="id125"/>
 			<label kind="synchronisation" x="-603" y="-204">stop_r_follow[id-1]?</label>
 			<label kind="assignment" x="-603" y="-187">t=0, tUpd=0</label>
 			<nail x="-476" y="-314"/>
 			<nail x="-476" y="-177"/>
 		</transition>
-		<transition id="id143">
-			<source ref="id129"/>
-			<target ref="id119"/>
+		<transition id="id148">
+			<source ref="id134"/>
+			<target ref="id124"/>
 			<label kind="synchronisation" x="-697" y="-221">rf_still!</label>
 			<label kind="assignment" x="-697" y="-204">t=0,
 tUpd = 0,
 V=0</label>
 		</transition>
-		<transition id="id144">
-			<source ref="id122"/>
-			<target ref="id120"/>
+		<transition id="id149">
+			<source ref="id127"/>
+			<target ref="id125"/>
 			<label kind="synchronisation" x="-374" y="-195">stop_r_follow[id-1]?</label>
 			<label kind="assignment" x="-365" y="-178">tUpd=0, t=0</label>
 			<nail x="-161" y="-186"/>
 		</transition>
-		<transition id="id145">
-			<source ref="id121"/>
-			<target ref="id122"/>
+		<transition id="id150">
+			<source ref="id126"/>
+			<target ref="id127"/>
 			<label kind="guard" x="-314" y="-348">V &gt;= v_max</label>
 			<label kind="assignment" x="-195" y="-408">t+=Tpoll,
 tUpd=0,
@@ -1802,16 +1845,16 @@ V=v_max,
 plan_traj()</label>
 			<nail x="-161" y="-348"/>
 		</transition>
-		<transition id="id146">
-			<source ref="id119"/>
-			<target ref="id121"/>
+		<transition id="id151">
+			<source ref="id124"/>
+			<target ref="id126"/>
 			<label kind="synchronisation" x="-586" y="-374">start_r_follow[id-1]?</label>
 			<label kind="assignment" x="-586" y="-348">t=0, tUpd=0,
 plan_traj()</label>
 		</transition>
-		<transition id="id147">
-			<source ref="id123"/>
-			<target ref="id119"/>
+		<transition id="id152">
+			<source ref="id128"/>
+			<target ref="id124"/>
 			<label kind="assignment" x="-824" y="-348">initRobot()</label>
 		</transition>
 	</template>
@@ -1820,6 +1863,7 @@ plan_traj()</label>
 
 r_1 = Robot_moveTo(1, 26.0, 26.0);
 rf_1 = Robot_follow(1, 26.0, 26.0);
+rp_1 = Robot_pick(1);
 h_1 = Human_moveTo(1, 26.0);
 hi_1 = Human_idle(1);
 
@@ -1840,6 +1884,7 @@ exeSum_robot_1,
 
 h_1, hi_1,
 rf_1,
+rp_1,
 r_1
 ;
 </system>
@@ -1851,588 +1896,208 @@ r_1
 		<query>
 			<formula>Pr[&lt;=400] (&lt;&gt; exeSum.end)</formula>
 			<comment/>
-			<result outcome="success" type="interval" value="≥ 0.950056 (95% CI)" timestamp="2025-01-09 10:28:50 +0100">
+			<result outcome="success" type="interval" value="≥ 0.950056 (95% CI)" timestamp="2025-06-11 08:28:53 +0200">
 				<details>≥ 0.950056 (95% CI)</details>
 				<plot title="Probability Density Distribution" xaxis="run duration in time" yaxis="probability density">
-					<series title="density" type="b(0.000001)" color="0x0000ff" encoding="csv">299.2730665904157,362158.5491996575
-299.27306800937674,0.0
-299.27306942833786,0.0
-299.2730708472989,0.0
-299.27307226626004,0.0
-299.2730736852211,0.0
-299.2730751041822,0.0
-299.2730765231433,0.0
-299.2730779421044,342582.41140508145
+					<series title="density" type="b(0.000000)" color="0x0000ff" encoding="csv">268.4570028738633,1.6492674416639998E12
+268.4570028738633,0.0
+268.45700287386336,8.246337208319998E12
+268.45700287386336,0.0
+268.4570028738634,1.3743895347199996E13
+268.4570028738634,0.0
+268.4570028738635,3.2985348833279995E12
+268.4570028738635,0.0
+268.45700287386353,1.2644383719423998E13
 					</series>
-					<series title="average" type="pl" color="0x00dd00" encoding="csv">299.27307279837,0.0
-299.27307279837,362158.54919965746
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">268.4570028738634,0.0
+268.4570028738634,1.3743895347199996E13
 					</series>
-					<comment>Parameters: α=0.05, ε=0.05, bucket width=1.419e-06, bucket count=9
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.5264e-14, bucket count=9
 Runs: 72 in total, 72 (100%) displayed, 0 (0%) remaining
-Span of displayed sample: [299.27306659, 299.27307936]
-Mean estimate of displayed sample: 299.2730728 ± 1.5104234876e-06 (95% CI)</comment>
+Span of displayed sample: [268.457002873863, 268.457002873864]
+Mean estimate of displayed sample: ≈ 268.457002873863</comment>
 				</plot>
 				<plot title="Probability Density Confidence Intervals" xaxis="run duration in time" yaxis="probability density">
-					<series title="upper limit" type="b(0.000001)" color="0xa0a0ff" encoding="csv">299.2730665904157,0.6334997211807669
-299.27306800937674,0.04994408370585468
-299.27306942833786,0.04994408370585468
-299.2730708472989,0.04994408370585468
-299.27307226626004,0.04994408370585468
-299.2730736852211,0.04994408370585468
-299.2730751041822,0.04994408370585468
-299.2730765231433,0.04994408370585468
-299.2730779421044,0.606899953520338
+					<series title="upper limit" type="b(0.000000)" color="0xa0a0ff" encoding="csv">268.4570028738633,0.11697481982594136
+268.4570028738633,0.04994408370585468
+268.45700287386336,0.32022951112937165
+268.45700287386336,0.04994408370585468
+268.4570028738634,0.46863283128129885
+268.4570028738634,0.04994408370585468
+268.4570028738635,0.172608584683674
+268.4570028738635,0.04994408370585468
+268.45700287386353,0.439858436528534
 					</series>
-					<series title="lower limit" type="b(0.000001)" color="0x0000ff" encoding="csv">299.2730665904157,0.393100046479662
-299.27306800937674,0.0
-299.27306942833786,0.0
-299.2730708472989,0.0
-299.27307226626004,0.0
-299.2730736852211,0.0
-299.2730751041822,0.0
-299.2730765231433,0.0
-299.2730779421044,0.36650027881923314
+					<series title="lower limit" type="b(0.000000)" color="0x0000ff" encoding="csv">268.4570028738633,0.008676497316343764
+268.4570028738633,0.0
+268.45700287386336,0.12155120290780827
+268.45700287386336,0.0
+268.4570028738634,0.238812769405364
+268.4570028738634,0.0
+268.4570028738635,0.031197509141384482
+268.4570028738635,0.0
+268.45700287386353,0.21441793608731277
 					</series>
-					<series title="average" type="pl" color="0x00dd00" encoding="csv">299.27307279837,0.0
-299.27307279837,446453.202047768
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">268.4570028738634,0.0
+268.4570028738634,1.854962089744955E13
 					</series>
-					<comment>Parameters: α=0.05, ε=0.05, bucket width=1.419e-06, bucket count=9
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.5264e-14, bucket count=9
 Runs: 72 in total, 72 (100%) displayed, 0 (0%) remaining
-Span of displayed sample: [299.27306659, 299.27307936]
-Mean estimate of displayed sample: 299.2730728 ± 1.5104234876e-06 (95% CI)</comment>
+Span of displayed sample: [268.457002873863, 268.457002873864]
+Mean estimate of displayed sample: ≈ 268.457002873863</comment>
 				</plot>
 				<plot title="Probability Distribution" xaxis="run duration in time" yaxis="probability">
-					<series title="probability" type="b(0.000001)" color="0x0000ff" encoding="csv">299.2730665904157,0.5138888888888888
-299.27306800937674,0.0
-299.27306942833786,0.0
-299.2730708472989,0.0
-299.27307226626004,0.0
-299.2730736852211,0.0
-299.2730751041822,0.0
-299.2730765231433,0.0
-299.2730779421044,0.4861111111111111
+					<series title="probability" type="b(0.000000)" color="0x0000ff" encoding="csv">268.4570028738633,0.041666666666666664
+268.4570028738633,0.0
+268.45700287386336,0.20833333333333334
+268.45700287386336,0.0
+268.4570028738634,0.3472222222222222
+268.4570028738634,0.0
+268.4570028738635,0.08333333333333333
+268.4570028738635,0.0
+268.45700287386353,0.3194444444444444
 					</series>
-					<series title="average" type="pl" color="0x00dd00" encoding="csv">299.27307279837,0.0
-299.27307279837,0.5138888888888888
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">268.4570028738634,0.0
+268.4570028738634,0.3472222222222222
 					</series>
-					<comment>Parameters: α=0.05, ε=0.05, bucket width=1.419e-06, bucket count=9
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.5264e-14, bucket count=9
 Runs: 72 in total, 72 (100%) displayed, 0 (0%) remaining
-Span of displayed sample: [299.27306659, 299.27307936]
-Mean estimate of displayed sample: 299.2730728 ± 1.5104234876e-06 (95% CI)</comment>
+Span of displayed sample: [268.457002873863, 268.457002873864]
+Mean estimate of displayed sample: ≈ 268.457002873863</comment>
 				</plot>
 				<plot title="Probability Confidence Intervals" xaxis="run duration in time" yaxis="probability">
-					<series title="upper limit" type="b(0.000001)" color="0xa0a0ff" encoding="csv">299.2730665904157,0.6334997211807669
-299.27306800937674,0.04994408370585468
-299.27306942833786,0.04994408370585468
-299.2730708472989,0.04994408370585468
-299.27307226626004,0.04994408370585468
-299.2730736852211,0.04994408370585468
-299.2730751041822,0.04994408370585468
-299.2730765231433,0.04994408370585468
-299.2730779421044,0.606899953520338
+					<series title="upper limit" type="b(0.000000)" color="0xa0a0ff" encoding="csv">268.4570028738633,0.11697481982594136
+268.4570028738633,0.04994408370585468
+268.45700287386336,0.32022951112937165
+268.45700287386336,0.04994408370585468
+268.4570028738634,0.46863283128129885
+268.4570028738634,0.04994408370585468
+268.4570028738635,0.172608584683674
+268.4570028738635,0.04994408370585468
+268.45700287386353,0.439858436528534
 					</series>
-					<series title="lower limit" type="b(0.000001)" color="0x0000ff" encoding="csv">299.2730665904157,0.393100046479662
-299.27306800937674,0.0
-299.27306942833786,0.0
-299.2730708472989,0.0
-299.27307226626004,0.0
-299.2730736852211,0.0
-299.2730751041822,0.0
-299.2730765231433,0.0
-299.2730779421044,0.36650027881923314
+					<series title="lower limit" type="b(0.000000)" color="0x0000ff" encoding="csv">268.4570028738633,0.008676497316343764
+268.4570028738633,0.0
+268.45700287386336,0.12155120290780827
+268.45700287386336,0.0
+268.4570028738634,0.238812769405364
+268.4570028738634,0.0
+268.4570028738635,0.031197509141384482
+268.4570028738635,0.0
+268.45700287386353,0.21441793608731277
 					</series>
-					<series title="average" type="pl" color="0x00dd00" encoding="csv">299.27307279837,0.0
-299.27307279837,0.6334997211807669
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">268.4570028738634,0.0
+268.4570028738634,0.46863283128129885
 					</series>
-					<comment>Parameters: α=0.05, ε=0.05, bucket width=1.419e-06, bucket count=9
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.5264e-14, bucket count=9
 Runs: 72 in total, 72 (100%) displayed, 0 (0%) remaining
-Span of displayed sample: [299.27306659, 299.27307936]
-Mean estimate of displayed sample: 299.2730728 ± 1.5104234876e-06 (95% CI)</comment>
+Span of displayed sample: [268.457002873863, 268.457002873864]
+Mean estimate of displayed sample: ≈ 268.457002873863</comment>
 				</plot>
 				<plot title="Cumulative Probability Distribution" xaxis="run duration in time" yaxis="probability">
-					<series title="cumulative" type="l" color="0x000000" encoding="csv">299.2730665904157,0.0
-299.27306800937674,0.5138888888888888
-299.27306942833786,0.5138888888888888
-299.2730708472989,0.5138888888888888
-299.27307226626004,0.5138888888888888
-299.2730736852211,0.5138888888888888
-299.2730751041822,0.5138888888888888
-299.2730765231433,0.5138888888888888
-299.2730779421044,0.5138888888888888
+					<series title="cumulative" type="l" color="0x000000" encoding="csv">268.4570028738633,0.0
+268.4570028738633,0.041666666666666664
+268.45700287386336,0.041666666666666664
+268.45700287386336,0.25
+268.4570028738634,0.25
+268.4570028738634,0.5972222222222222
+268.4570028738635,0.5972222222222222
+268.4570028738635,0.6805555555555556
+268.45700287386353,0.6805555555555556
 					</series>
-					<series title="average" type="pl" color="0x00dd00" encoding="csv">299.27307279837,0.0
-299.27307279837,1.0
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">268.4570028738634,0.0
+268.4570028738634,1.0
 					</series>
-					<comment>Parameters: α=0.05, ε=0.05, bucket width=1.419e-06, bucket count=9
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.5264e-14, bucket count=9
 Runs: 72 in total, 72 (100%) displayed, 0 (0%) remaining
-Span of displayed sample: [299.27306659, 299.27307936]
-Mean estimate of displayed sample: 299.2730728 ± 1.5104234876e-06 (95% CI)</comment>
+Span of displayed sample: [268.457002873863, 268.457002873864]
+Mean estimate of displayed sample: ≈ 268.457002873863</comment>
 				</plot>
 				<plot title="Cumulative Probability Confidence Intervals" xaxis="run duration in time" yaxis="probability">
-					<series title="upper limit" type="k" color="0x0000dd" encoding="csv">299.2730665904157,0.04994408370585468
-299.27306800937674,0.6334997211807669
-299.27306942833786,0.6334997211807669
-299.2730708472989,0.6334997211807669
-299.27307226626004,0.6334997211807669
-299.2730736852211,0.6334997211807669
-299.2730751041822,0.6334997211807669
-299.2730765231433,0.6334997211807669
-299.2730779421044,0.6334997211807669
+					<series title="upper limit" type="k" color="0x0000dd" encoding="csv">268.4570028738633,0.04994408370585468
+268.4570028738633,0.11697481982594136
+268.45700287386336,0.11697481982594136
+268.45700287386336,0.3660280721379009
+268.4570028738634,0.3660280721379009
+268.4570028738634,0.7112079862392012
+268.4570028738635,0.7112079862392012
+268.4570028738635,0.7855820639126873
+268.45700287386353,0.7855820639126873
 					</series>
-					<series title="lower limit" type="k" color="0xdd0000" encoding="csv">299.2730665904157,0.0
-299.27306800937674,0.393100046479662
-299.27306942833786,0.393100046479662
-299.2730708472989,0.393100046479662
-299.27307226626004,0.393100046479662
-299.2730736852211,0.393100046479662
-299.2730751041822,0.393100046479662
-299.2730765231433,0.393100046479662
-299.2730779421044,0.393100046479662
+					<series title="lower limit" type="k" color="0xdd0000" encoding="csv">268.4570028738633,0.0
+268.4570028738633,0.008676497316343764
+268.45700287386336,0.008676497316343764
+268.45700287386336,0.15539265735437505
+268.4570028738634,0.15539265735437505
+268.4570028738634,0.47497988455265755
+268.4570028738635,0.47497988455265755
+268.4570028738635,0.560141563471466
+268.45700287386353,0.560141563471466
 					</series>
-					<series title="cumulative" type="l" color="0x000000" encoding="csv">299.2730665904157,0.0
-299.27306800937674,0.5138888888888888
-299.27306942833786,0.5138888888888888
-299.2730708472989,0.5138888888888888
-299.27307226626004,0.5138888888888888
-299.2730736852211,0.5138888888888888
-299.2730751041822,0.5138888888888888
-299.2730765231433,0.5138888888888888
-299.2730779421044,0.5138888888888888
+					<series title="cumulative" type="l" color="0x000000" encoding="csv">268.4570028738633,0.0
+268.4570028738633,0.041666666666666664
+268.45700287386336,0.041666666666666664
+268.45700287386336,0.25
+268.4570028738634,0.25
+268.4570028738634,0.5972222222222222
+268.4570028738635,0.5972222222222222
+268.4570028738635,0.6805555555555556
+268.45700287386353,0.6805555555555556
 					</series>
-					<series title="average" type="pl" color="0x00dd00" encoding="csv">299.27307279837,0.0
-299.27307279837,1.0
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">268.4570028738634,0.0
+268.4570028738634,1.0
 					</series>
-					<comment>Parameters: α=0.05, ε=0.05, bucket width=1.419e-06, bucket count=9
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.5264e-14, bucket count=9
 Runs: 72 in total, 72 (100%) displayed, 0 (0%) remaining
-Span of displayed sample: [299.27306659, 299.27307936]
-Mean estimate of displayed sample: 299.2730728 ± 1.5104234876e-06 (95% CI)</comment>
+Span of displayed sample: [268.457002873863, 268.457002873864]
+Mean estimate of displayed sample: ≈ 268.457002873863</comment>
 				</plot>
 				<plot title="Frequency Histogram" xaxis="run duration in time" yaxis="count">
-					<series title="count" type="b(0.000001)" color="0x0000ff" encoding="csv">299.2730665904157,37.0
-299.27306800937674,0.0
-299.27306942833786,0.0
-299.2730708472989,0.0
-299.27307226626004,0.0
-299.2730736852211,0.0
-299.2730751041822,0.0
-299.2730765231433,0.0
-299.2730779421044,35.0
+					<series title="count" type="b(0.000000)" color="0x0000ff" encoding="csv">268.4570028738633,3.0
+268.4570028738633,0.0
+268.45700287386336,15.0
+268.45700287386336,0.0
+268.4570028738634,25.0
+268.4570028738634,0.0
+268.4570028738635,6.0
+268.4570028738635,0.0
+268.45700287386353,23.0
 					</series>
-					<series title="average" type="pl" color="0x00dd00" encoding="csv">299.27307279837,0.0
-299.27307279837,37.0
+					<series title="average" type="pl" color="0x00dd00" encoding="csv">268.4570028738634,0.0
+268.4570028738634,25.0
 					</series>
-					<comment>Parameters: α=0.05, ε=0.05, bucket width=1.419e-06, bucket count=9
+					<comment>Parameters: α=0.05, ε=0.05, bucket width=2.5264e-14, bucket count=9
 Runs: 72 in total, 72 (100%) displayed, 0 (0%) remaining
-Span of displayed sample: [299.27306659, 299.27307936]
-Mean estimate of displayed sample: 299.2730728 ± 1.5104234876e-06 (95% CI)</comment>
+Span of displayed sample: [268.457002873863, 268.457002873864]
+Mean estimate of displayed sample: ≈ 268.457002873863</comment>
 				</plot>
 			</result>
 		</query>
 		<query>
-			<formula>simulate[&lt;=200]{humanFatigue[0]*100}</formula>
+			<formula/>
 			<comment/>
-			<result outcome="success" type="quality" timestamp="2025-01-09 09:59:45 +0100">
+		</query>
+		<query>
+			<formula>simulate[&lt;=400]{robot_inventory[0][0], exeSum_robot_1.moveTo_r_complete, old_inventory[0][0]}</formula>
+			<comment/>
+			<result outcome="success" type="quality" timestamp="2025-06-11 08:28:09 +0200">
 				<plot title="Simulations (1)" xaxis="time" yaxis="value">
-					<series title="humanFatigue[0] * 100" type="l" color="0xff0000" encoding="csv">0.0,0.0
-1.0,0.0
-1.0,0.24514654484649734
-2.0,0.24514654484649734
-2.0,0.4896921214084915
-3.0,0.4896921214084915
-3.0,0.7336382029389688
-4.0,0.7336382029389688
-4.0,0.9769862590792822
-5.0,0.9769862590792822
-5.0,1.2197377558680222
-6.0,1.2197377558680222
-6.0,1.461894155749821
-7.0,1.461894155749821
-7.0,1.7034569175841896
-8.0,1.7034569175841896
-8.0,1.9444274966542774
-9.0,1.9444274966542774
-9.0,2.1848073446756766
-10.0,2.1848073446756766
-10.0,2.4245979098051484
-11.0,2.4245979098051484
-11.0,2.6638006366493383
-12.0,2.6638006366493383
-12.0,2.902416966273491
-13.0,2.902416966273491
-13.0,3.140448336210133
-14.0,3.140448336210133
-14.0,3.377896180467721
-15.0,3.377896180467721
-15.0,3.6147619295393008
-16.0,3.6147619295393008
-16.0,3.8510470104111016
-17.0,3.8510470104111016
-17.0,4.086752846571162
-18.0,4.086752846571162
-18.0,4.321880858017879
-19.0,4.321880858017879
-19.0,4.556432461268567
-20.0,4.556432461268567
-20.0,4.790409069367996
-21.0,4.790409069367996
-21.0,5.023812091896929
-22.0,5.023812091896929
-22.0,5.25664293498056
-23.0,5.25664293498056
-23.0,5.48890300129703
-24.0,5.48890300129703
-24.0,5.720593690085874
-25.0,5.720593690085874
-25.0,5.951716397156415
-26.0,5.951716397156415
-26.0,6.182272514896225
-27.0,6.182272514896225
-27.0,6.412263432279463
-28.0,6.412263432279463
-28.0,6.641690534875277
-29.0,6.641690534875277
-29.0,6.8705552048561325
-30.0,6.8705552048561325
-30.0,7.098858821006148
-31.0,7.098858821006148
-31.0,7.3266027587294165
-32.0,7.3266027587294165
-32.0,7.5537883900582585
-33.0,7.5537883900582585
-33.0,7.780417083661517
-34.0,7.780417083661517
-34.0,8.006490204852767
-35.0,8.006490204852767
-35.0,8.232009115598593
-36.0,8.232009115598593
-36.0,8.456975174526749
-37.0,8.456975174526749
-37.0,8.681389736934364
-38.0,8.681389736934364
-38.0,8.905254154796104
-39.0,8.905254154796104
-39.0,9.128569776772322
-40.0,9.128569776772322
-40.0,9.351337948217164
-41.0,9.351337948217164
-41.0,9.573560011186688
-42.0,9.573560011186688
-42.0,9.795237304446957
-43.0,9.795237304446957
-43.0,10.016371163482084
-44.0,10.016371163482084
-44.0,10.236962920502302
-45.0,10.236962920502302
-45.0,10.457013904451973
-46.0,10.457013904451973
-46.0,10.676525441017592
-47.0,10.676525441017592
-47.0,10.895498852635777
-48.0,10.895498852635777
-48.0,11.113935458501246
-49.0,11.113935458501246
-49.0,11.33183657457476
-50.0,11.33183657457476
-50.0,11.549203513591033
-51.0,11.549203513591033
-51.0,11.76603758506667
-52.0,11.76603758506667
-52.0,11.98234009530803
-53.0,11.98234009530803
-53.0,12.198112347419121
-54.0,12.198112347419121
-54.0,12.413355641309431
-55.0,12.413355641309431
-55.0,12.628071273701746
-56.0,12.628071273701746
-56.0,12.842260538140016
-57.0,12.842260538140016
-57.0,13.05592472499708
-58.0,13.05592472499708
-58.0,13.269065121482493
-59.0,13.269065121482493
-59.0,13.481683011650247
-60.0,13.481683011650247
-60.0,13.693779676406525
-61.0,13.693779676406525
-61.0,13.90535639351742
-62.0,13.90535639351742
-62.0,14.11641443761662
-63.0,14.11641443761662
-63.0,14.32695508021309
-64.0,14.32695508021309
-64.0,14.536979589698728
-65.0,14.536979589698728
-65.0,14.74648923135604
-66.0,14.74648923135604
-66.0,14.95548526736571
-67.0,14.95548526736571
-67.0,15.163968956814234
-68.0,15.163968956814234
-68.0,15.371941555701508
-69.0,15.371941555701508
-69.0,15.579404316948375
-70.0,15.579404316948375
-70.0,15.786358490404206
-71.0,15.786358490404206
-71.0,15.992805322854398
-72.0,15.992805322854398
-72.0,16.19874605802789
-73.0,16.19874605802789
-73.0,16.40418193660468
-74.0,16.40418193660468
-74.0,16.609114196223253
-75.0,16.609114196223253
-75.0,16.813544071488096
-76.0,16.813544071488096
-76.0,17.017472793977095
-77.0,17.017472793977095
-77.0,17.22090159224896
-78.0,17.22090159224896
-78.0,17.423831691850644
-79.0,17.423831691850644
-79.0,17.626264315324704
-80.0,17.626264315324704
-80.0,17.828200682216668
-81.0,17.828200682216668
-81.0,18.029642009082416
-82.0,18.029642009082416
-82.0,18.230589509495452
-83.0,18.230589509495452
-83.0,18.13757111302775
-84.0,18.13757111302775
-84.0,18.04502732666944
-85.0,18.04502732666944
-85.0,17.9529557288054
-86.0,17.9529557288054
-86.0,17.861353910176366
-87.0,17.861353910176366
-87.0,17.770219473815906
-88.0,17.770219473815906
-88.0,17.67955003498769
-89.0,17.67955003498769
-89.0,17.589343221123084
-90.0,17.589343221123084
-90.0,17.499596671759072
-91.0,17.499596671759072
-91.0,17.41030803847649
-92.0,17.41030803847649
-92.0,17.321474984838574
-93.0,17.321474984838574
-93.0,17.233095186329813
-94.0,17.233095186329813
-94.0,17.145166330295133
-95.0,17.145166330295133
-95.0,17.057686115879385
-96.0,17.057686115879385
-96.0,16.970652253967128
-97.0,16.970652253967128
-97.0,16.884062467122725
-98.0,16.884062467122725
-98.0,16.79791448953076
-99.0,16.79791448953076
-99.0,16.712206066936748
-100.0,16.712206066936748
-100.0,16.626934956588148
-101.0,16.626934956588148
-101.0,16.54209892717565
-102.0,16.54209892717565
-102.0,16.45769575877484
-103.0,16.45769575877484
-103.0,16.373723242788056
-104.0,16.373723242788056
-104.0,16.290179181886636
-105.0,16.290179181886636
-105.0,16.207061389953388
-106.0,16.207061389953388
-106.0,16.124367692025416
-107.0,16.124367692025416
-107.0,16.04209592423718
-108.0,16.04209592423718
-108.0,15.960243933763893
-109.0,15.960243933763893
-109.0,15.878809578765177
-110.0,15.878809578765177
-110.0,15.797790728329023
-111.0,15.797790728329023
-111.0,15.717185262416022
-112.0,15.717185262416022
-112.0,15.636991071803905
-113.0,15.636991071803905
-113.0,15.55720605803233
-114.0,15.55720605803233
-114.0,15.477828133347993
-115.0,15.477828133347993
-115.0,15.398855220649976
-116.0,15.398855220649976
-116.0,15.320285253435415
-117.0,15.320285253435415
-117.0,15.242116175745407
-118.0,15.242116175745407
-118.0,15.164345942111227
-119.0,15.164345942111227
-119.0,15.086972517500794
-120.0,15.086972517500794
-120.0,15.009993877265417
-121.0,15.009993877265417
-121.0,14.933408007086834
-122.0,14.933408007086834
-122.0,14.857212902924477
-123.0,14.857212902924477
-123.0,14.781406570963052
-124.0,14.781406570963052
-124.0,14.705987027560353
-125.0,14.705987027560353
-125.0,14.630952299195368
-126.0,14.630952299195368
-126.0,14.55630042241663
-127.0,14.55630042241663
-127.0,14.482029443790836
-128.0,14.482029443790836
-128.0,14.408137419851737
-129.0,14.408137419851737
-129.0,14.334622417049287
-130.0,14.334622417049287
-130.0,14.261482511699027
-131.0,14.261482511699027
-131.0,14.188715789931775
-132.0,14.188715789931775
-132.0,14.116320347643525
-133.0,14.116320347643525
-133.0,14.044294290445631
-134.0,14.044294290445631
-134.0,13.972635733615235
-135.0,13.972635733615235
-135.0,13.90134280204595
-136.0,13.90134280204595
-136.0,13.830413630198782
-137.0,13.830413630198782
-137.0,13.759846362053333
-138.0,13.759846362053333
-138.0,13.689639151059222
-139.0,13.689639151059222
-139.0,13.619790160087767
-140.0,13.619790160087767
-140.0,13.550297561383918
-141.0,13.550297561383918
-141.0,13.481159536518419
-142.0,13.481159536518419
-142.0,13.41237427634024
-143.0,13.41237427634024
-143.0,13.343939980929221
-144.0,13.343939980929221
-144.0,13.27585485954898
-145.0,13.27585485954898
-145.0,13.208117130600062
-146.0,13.208117130600062
-146.0,13.140725021573301
-147.0,13.140725021573301
-147.0,13.073676769003459
-148.0,13.073676769003459
-148.0,13.006970618423065
-149.0,13.006970618423065
-149.0,12.940604824316512
-150.0,12.940604824316512
-150.0,12.874577650074384
-151.0,12.874577650074384
-151.0,12.80888736794801
-152.0,12.80888736794801
-152.0,12.743532259004256
-153.0,12.743532259004256
-153.0,12.67851061308054
-154.0,12.67851061308054
-154.0,12.613820728740087
-155.0,12.613820728740087
-155.0,12.549460913227412
-156.0,12.549460913227412
-156.0,12.485429482424006
-157.0,12.485429482424006
-157.0,12.421724760804294
-158.0,12.421724760804294
-158.0,12.358345081391768
-159.0,12.358345081391768
-159.0,12.29528878571538
-160.0,12.29528878571538
-160.0,12.232554223766142
-161.0,12.232554223766142
-161.0,12.170139753953944
-162.0,12.170139753953944
-162.0,12.108043743064608
-163.0,12.108043743064608
-163.0,12.046264566217141
-164.0,12.046264566217141
-164.0,11.984800606821224
-165.0,11.984800606821224
-165.0,11.92365025653491
-166.0,11.92365025653491
-166.0,11.862811915222528
-167.0,11.862811915222528
-167.0,11.802283990912827
-168.0,11.802283990912827
-168.0,11.742064899757306
-169.0,11.742064899757306
-169.0,11.68215306598878
-170.0,11.68215306598878
-170.0,11.622546921880135
-171.0,11.622546921880135
-171.0,11.56324490770331
-172.0,11.56324490770331
-172.0,11.504245471688494
-173.0,11.504245471688494
-173.0,11.445547069983494
-174.87509492502542,11.445547069983494
-174.87509492502542,11.662635251649146
-175.8750949250254,11.662635251649146
-175.8750949250254,11.879191249138177
-176.87509492502537,11.879191249138177
-176.87509492502537,12.095216367081708
-177.87509492502537,12.095216367081708
-177.87509492502537,12.310711906912598
-178.87509492502537,12.310711906912598
-178.87509492502537,12.525679166873294
-179.87509492502537,12.525679166873294
-179.87509492502537,12.740119442023644
-180.87509492502534,12.740119442023644
-180.87509492502534,12.954034024248706
-181.8750949250253,12.954034024248706
-181.8750949250253,13.16742420226652
-182.87509492502525,13.16742420226652
-182.87509492502525,13.380291261635879
-183.87509492502522,13.380291261635879
-183.87509492502522,13.592636484764075
-184.8750949250252,13.592636484764075
-184.8750949250252,13.804461150914626
-185.87509492502514,13.804461150914626
-185.87509492502514,14.01576653621498
-186.8750949250251,14.01576653621498
-186.8750949250251,14.226553913664198
-187.87509492502508,14.226553913664198
-187.87509492502508,14.436824553140626
-188.87509492502505,14.436824553140626
-188.87509492502505,14.646579721409548
-189.87509492502502,14.646579721409548
-189.87509492502502,14.855820682130815
-190.87509492502497,14.855820682130815
-190.87509492502497,15.064548695866476
-191.8750949250249,15.064548695866476
-191.8750949250249,15.272765020088341
-192.87509492502488,15.272765020088341
-192.87509492502488,15.480470909185573
-193.87509492502483,15.480470909185573
-193.87509492502483,15.687667614472234
-194.87509492502477,15.687667614472234
-194.87509492502477,15.894356384194852
-195.87509492502474,15.894356384194852
-195.87509492502474,16.100538463539905
-196.87509492502468,16.100538463539905
-196.87509492502468,16.306215094641352
-197.87509492502463,16.306215094641352
-197.87509492502463,16.511387516588094
-198.87509492502457,16.511387516588094
-198.87509492502457,16.71605696543146
-199.8750949250245,16.71605696543146
-199.8750949250245,16.92022467419263
-200.0,16.92022467419263
+					<series title="robot_inventory[0][0]" type="l" color="0xff0000" encoding="csv">0.0,0.0
+5.0,0.0
+5.0,1.0
+10.0,1.0
+10.0,2.0
+400.0,2.0
+					</series>
+					<series title="exeSum_robot_1.moveTo_r_complete" type="l" color="0x00ff00" encoding="csv">0.0,0.0
+5.0,0.0
+5.0,1.0
+82.0,1.0
+82.0,0.0
+400.0,0.0
+					</series>
+					<series title="old_inventory[0][0]" type="l" color="0x0000ff" encoding="csv">0.0,0.0
+400.0,0.0
 					</series>
 					<comment/>
 				</plot>
@@ -2441,7 +2106,7 @@ Mean estimate of displayed sample: 299.2730728 ± 1.5104234876e-06 (95% CI)</com
 		<query>
 			<formula>simulate[&lt;=700]{humanPositionX[0], humanPositionY[0], robPositionX[0], robPositionY[0], rf_1.starting*100, exeSum.end*100, humanFatigue[0]*100}</formula>
 			<comment/>
-			<result outcome="success" type="quality" timestamp="2025-01-09 10:27:42 +0100">
+			<result outcome="success" type="quality" timestamp="2025-06-11 08:25:52 +0200">
 				<plot title="Simulations (1)" xaxis="time" yaxis="value">
 					<series title="humanPositionX[0]" type="l" color="0xff0000" encoding="csv">0.0,0.0
 0.0,2500.0
@@ -2609,149 +2274,7 @@ Mean estimate of displayed sample: 299.2730728 ± 1.5104234876e-06 (95% CI)</com
 81.0,449.27016629579595
 82.0,449.27016629579595
 82.0,423.27269832370234
-174.8750949250253,423.27269832370234
-174.8750949250253,449.2705662480819
-175.87509492502528,449.2705662480819
-175.87509492502528,475.2684341724614
-176.87509492502525,475.2684341724614
-176.87509492502525,501.26630209684095
-177.87509492502525,501.26630209684095
-177.87509492502525,527.2641700212205
-178.87509492502525,527.2641700212205
-178.87509492502525,553.2620379456
-179.87509492502525,553.2620379456
-179.87509492502525,579.2599058699795
-180.87509492502522,579.2599058699795
-180.87509492502522,605.2577737943591
-181.8750949250252,605.2577737943591
-181.8750949250252,631.2556417187386
-182.87509492502514,631.2556417187386
-182.87509492502514,657.2535096431182
-183.8750949250251,657.2535096431182
-183.8750949250251,683.2513775674977
-184.87509492502508,683.2513775674977
-184.87509492502508,709.2492454918772
-185.87509492502502,709.2492454918772
-185.87509492502502,735.2471134162568
-186.875094925025,735.2471134162568
-186.875094925025,761.2449813406363
-187.87509492502497,761.2449813406363
-187.87509492502497,787.2428492650158
-188.87509492502494,787.2428492650158
-188.87509492502494,813.2407171893954
-189.8750949250249,813.2407171893954
-189.8750949250249,839.2385851137749
-190.87509492502485,839.2385851137749
-190.87509492502485,865.2364530381544
-191.8750949250248,865.2364530381544
-191.8750949250248,891.234320962534
-192.87509492502477,891.234320962534
-192.87509492502477,917.2321888869135
-193.8750949250247,917.2321888869135
-193.8750949250247,943.230056811293
-194.87509492502465,943.230056811293
-194.87509492502465,969.2279247356726
-195.87509492502463,969.2279247356726
-195.87509492502463,995.2257926600521
-196.87509492502457,995.2257926600521
-196.87509492502457,1021.2236605844316
-197.8750949250245,1021.2236605844316
-197.8750949250245,1047.2215285088112
-198.87509492502446,1047.2215285088112
-198.87509492502446,1073.2193964331907
-199.8750949250244,1073.2193964331907
-199.8750949250244,1099.2172643575702
-200.87509492502434,1099.2172643575702
-200.87509492502434,1125.2151322819498
-201.8750949250243,1125.2151322819498
-201.8750949250243,1151.2130002063293
-202.87509492502429,1151.2130002063293
-202.87509492502429,1177.2108681307088
-203.87509492502426,1177.2108681307088
-203.87509492502426,1203.2087360550884
-204.8750949250242,1203.2087360550884
-204.8750949250242,1229.206603979468
-205.87509492502414,1229.206603979468
-205.87509492502414,1255.2044719038474
-206.8750949250241,1255.2044719038474
-206.8750949250241,1281.202339828227
-207.87509492502403,1281.202339828227
-207.87509492502403,1307.2002077526065
-208.87509492502397,1307.2002077526065
-208.87509492502397,1333.198075676986
-209.87509492502392,1333.198075676986
-209.87509492502392,1359.1959436013656
-210.87509492502386,1359.1959436013656
-210.87509492502386,1385.193811525745
-211.8750949250238,1385.193811525745
-211.8750949250238,1411.1916794501246
-212.87509492502375,1411.1916794501246
-212.87509492502375,1437.1895473745042
-213.8750949250237,1437.1895473745042
-213.8750949250237,1437.8334014032375
-214.87509492502363,1437.8334014032375
-214.87509492502363,1438.477255431971
-215.8750949250236,1438.477255431971
-215.8750949250236,1439.1211094607042
-216.87509492502357,1439.1211094607042
-216.87509492502357,1439.7649634894376
-217.87509492502352,1439.7649634894376
-217.87509492502352,1440.408817518171
-218.87509492502346,1440.408817518171
-218.87509492502346,1441.0526715469043
-219.8750949250234,1441.0526715469043
-219.8750949250234,1441.6965255756377
-220.87509492502335,1441.6965255756377
-220.87509492502335,1442.340379604371
-221.8750949250233,1442.340379604371
-221.8750949250233,1442.9842336331044
-222.87509492502323,1442.9842336331044
-222.87509492502323,1443.6280876618378
-223.87509492502318,1443.6280876618378
-223.87509492502318,1444.271941690571
-224.87509492502312,1444.271941690571
-224.87509492502312,1444.9157957193045
-225.87509492502306,1444.9157957193045
-225.87509492502306,1445.5596497480378
-226.875094925023,1445.5596497480378
-226.875094925023,1446.2035037767712
-227.87509492502295,1446.2035037767712
-227.87509492502295,1446.8473578055045
-228.8750949250229,1446.8473578055045
-228.8750949250229,1447.491211834238
-229.87509492502284,1447.491211834238
-229.87509492502284,1448.1350658629713
-230.87509492502278,1448.1350658629713
-230.87509492502278,1448.7789198917046
-231.87509492502272,1448.7789198917046
-231.87509492502272,1449.422773920438
-232.87509492502267,1449.422773920438
-232.87509492502267,1450.0666279491713
-233.8750949250226,1450.0666279491713
-233.8750949250226,1450.7104819779047
-234.87509492502255,1450.7104819779047
-234.87509492502255,1451.354336006638
-235.8750949250225,1451.354336006638
-235.8750949250225,1451.9981900353714
-236.87509492502244,1451.9981900353714
-236.87509492502244,1426.023498451274
-237.87509492502238,1426.023498451274
-237.87509492502238,1400.0488068671766
-238.87509492502232,1400.0488068671766
-238.87509492502232,1374.0741152830792
-239.87509492502227,1374.0741152830792
-239.87509492502227,1348.0994236989818
-240.87509492502224,1348.0994236989818
-240.87509492502224,1322.1247321148844
-241.8750949250222,1322.1247321148844
-241.8750949250222,1296.150040530787
-242.87509492502215,1296.150040530787
-242.87509492502215,1270.1753489466896
-243.87509492502213,1270.1753489466896
-243.87509492502213,1244.2006573625922
-244.8750949250221,1244.2006573625922
-244.8750949250221,1218.2259657784948
-700.0,1218.2259657784948
+700.000002,423.27269832370234
 					</series>
 					<series title="humanPositionY[0]" type="l" color="0xffdb00" encoding="csv">0.0,0.0
 0.0,100.0
@@ -2919,2177 +2442,1423 @@ Mean estimate of displayed sample: 299.2730728 ± 1.5104234876e-06 (95% CI)</com
 81.0,150.68766711743456
 82.0,150.68766711743456
 82.0,150.32481860914595
-174.8750949250253,150.32481860914595
-174.8750949250253,150.65778014824465
-175.87509492502528,150.65778014824465
-175.87509492502528,150.99074168734336
-176.87509492502525,150.99074168734336
-176.87509492502525,151.32370322644206
-177.87509492502525,151.32370322644206
-177.87509492502525,151.65666476554077
-178.87509492502525,151.65666476554077
-178.87509492502525,151.98962630463947
-179.87509492502525,151.98962630463947
-179.87509492502525,152.32258784373818
-180.87509492502522,152.32258784373818
-180.87509492502522,152.65554938283688
-181.8750949250252,152.65554938283688
-181.8750949250252,152.98851092193559
-182.87509492502514,152.98851092193559
-182.87509492502514,153.3214724610343
-183.8750949250251,153.3214724610343
-183.8750949250251,153.654434000133
-184.87509492502508,153.654434000133
-184.87509492502508,153.9873955392317
-185.87509492502502,153.9873955392317
-185.87509492502502,154.3203570783304
-186.875094925025,154.3203570783304
-186.875094925025,154.6533186174291
-187.87509492502497,154.6533186174291
-187.87509492502497,154.9862801565278
-188.87509492502494,154.9862801565278
-188.87509492502494,155.31924169562652
-189.8750949250249,155.31924169562652
-189.8750949250249,155.65220323472522
-190.87509492502485,155.65220323472522
-190.87509492502485,155.98516477382393
-191.8750949250248,155.98516477382393
-191.8750949250248,156.31812631292263
-192.87509492502477,156.31812631292263
-192.87509492502477,156.65108785202133
-193.8750949250247,156.65108785202133
-193.8750949250247,156.98404939112004
-194.87509492502465,156.98404939112004
-194.87509492502465,157.31701093021874
-195.87509492502463,157.31701093021874
-195.87509492502463,157.64997246931745
-196.87509492502457,157.64997246931745
-196.87509492502457,157.98293400841615
-197.8750949250245,157.98293400841615
-197.8750949250245,158.31589554751486
-198.87509492502446,158.31589554751486
-198.87509492502446,158.64885708661356
-199.8750949250244,158.64885708661356
-199.8750949250244,158.98181862571226
-200.87509492502434,158.98181862571226
-200.87509492502434,159.31478016481097
-201.8750949250243,159.31478016481097
-201.8750949250243,159.64774170390967
-202.87509492502429,159.64774170390967
-202.87509492502429,159.98070324300838
-203.87509492502426,159.98070324300838
-203.87509492502426,160.31366478210708
-204.8750949250242,160.31366478210708
-204.8750949250242,160.6466263212058
-205.87509492502414,160.6466263212058
-205.87509492502414,160.9795878603045
-206.8750949250241,160.9795878603045
-206.8750949250241,161.3125493994032
-207.87509492502403,161.3125493994032
-207.87509492502403,161.6455109385019
-208.87509492502397,161.6455109385019
-208.87509492502397,161.9784724776006
-209.87509492502392,161.9784724776006
-209.87509492502392,162.3114340166993
-210.87509492502386,162.3114340166993
-210.87509492502386,162.644395555798
-211.8750949250238,162.644395555798
-211.8750949250238,162.97735709489672
-212.87509492502375,162.97735709489672
-212.87509492502375,163.31031863399542
-213.8750949250237,163.31031863399542
-213.8750949250237,189.3023453343065
-214.87509492502363,189.3023453343065
-214.87509492502363,215.29437203461757
-215.8750949250236,215.29437203461757
-215.8750949250236,241.28639873492864
-216.87509492502357,241.28639873492864
-216.87509492502357,267.27842543523974
-217.87509492502352,267.27842543523974
-217.87509492502352,293.27045213555084
-218.87509492502346,293.27045213555084
-218.87509492502346,319.26247883586194
-219.8750949250234,319.26247883586194
-219.8750949250234,345.25450553617304
-220.87509492502335,345.25450553617304
-220.87509492502335,371.24653223648414
-221.8750949250233,371.24653223648414
-221.8750949250233,397.23855893679524
-222.87509492502323,397.23855893679524
-222.87509492502323,423.23058563710634
-223.87509492502318,423.23058563710634
-223.87509492502318,449.22261233741744
-224.87509492502312,449.22261233741744
-224.87509492502312,475.21463903772855
-225.87509492502306,475.21463903772855
-225.87509492502306,501.20666573803965
-226.875094925023,501.20666573803965
-226.875094925023,527.1986924383507
-227.87509492502295,527.1986924383507
-227.87509492502295,553.1907191386617
-228.8750949250229,553.1907191386617
-228.8750949250229,579.1827458389728
-229.87509492502284,579.1827458389728
-229.87509492502284,605.1747725392838
-230.87509492502278,605.1747725392838
-230.87509492502278,631.1667992395949
-231.87509492502272,631.1667992395949
-231.87509492502272,657.1588259399059
-232.87509492502267,657.1588259399059
-232.87509492502267,683.150852640217
-233.8750949250226,683.150852640217
-233.8750949250226,709.142879340528
-234.87509492502255,709.142879340528
-234.87509492502255,735.134906040839
-235.8750949250225,735.134906040839
-235.8750949250225,761.1269327411501
-236.87509492502244,761.1269327411501
-236.87509492502244,759.9800251114697
-237.87509492502238,759.9800251114697
-237.87509492502238,758.8331174817893
-238.87509492502232,758.8331174817893
-238.87509492502232,757.6862098521088
-239.87509492502227,757.6862098521088
-239.87509492502227,756.5393022224284
-240.87509492502224,756.5393022224284
-240.87509492502224,755.392394592748
-241.8750949250222,755.392394592748
-241.8750949250222,754.2454869630676
-242.87509492502215,754.2454869630676
-242.87509492502215,753.0985793333872
-243.87509492502213,753.0985793333872
-243.87509492502213,751.9516717037068
-244.8750949250221,751.9516717037068
-244.8750949250221,750.8047640740264
-700.0,750.8047640740264
+700.000002,150.32481860914595
 					</series>
 					<series title="robPositionX[0]" type="l" color="0x49ff00" encoding="csv">0.0,0.0
 0.0,2000.0
-84.0,2000.0
-84.0,2019.1613005981214
-85.74221514906031,2019.1613005981214
-85.74221514906031,2038.3226011962429
-86.74221514906033,2038.3226011962429
-86.74221514906033,2057.4839017943646
-87.74221514906033,2057.4839017943646
-87.74221514906033,2076.645202392486
-88.7422151490603,2076.645202392486
-88.7422151490603,2095.806502990608
-89.74221514906033,2095.806502990608
-89.74221514906033,2114.9678035887296
-90.74221514906033,2114.9678035887296
-90.74221514906033,2134.1291041868512
-91.74221514906033,2134.1291041868512
-91.74221514906033,2153.290404784973
-92.74221514906034,2153.290404784973
-92.74221514906034,2172.4517053830946
-93.74221514906034,2172.4517053830946
-93.74221514906034,2191.6130059812162
-94.74221514906034,2191.6130059812162
-94.74221514906034,2210.774306579338
-95.74221514906034,2210.774306579338
-95.74221514906034,2229.9356071774596
-96.74221514906034,2229.9356071774596
-96.74221514906034,2249.0969077755813
-97.74221514906034,2249.0969077755813
-97.74221514906034,2223.3324901942524
-101.74908899461586,2223.3324901942524
-101.74908899461586,2197.5680726129235
-102.74908899461586,2197.5680726129235
-102.74908899461586,2171.8036550315946
-103.74908899461586,2171.8036550315946
-103.74908899461586,2146.039237450266
-104.74908899461586,2146.039237450266
-104.74908899461586,2120.274819868937
-105.74908899461586,2120.274819868937
-105.74908899461586,2094.510402287608
-106.74908899461586,2094.510402287608
-106.74908899461586,2068.745984706279
-107.74908899461586,2068.745984706279
-107.74908899461586,2042.9815671249503
-108.74908899461586,2042.9815671249503
-108.74908899461586,2017.2171495436214
-109.74908899461586,2017.2171495436214
-109.74908899461586,1991.4527319622925
-110.74908899461586,1991.4527319622925
-110.74908899461586,1965.6883143809637
-111.74908899461586,1965.6883143809637
-111.74908899461586,1939.9238967996348
-112.74908899461586,1939.9238967996348
-112.74908899461586,1914.159479218306
-113.74908899461586,1914.159479218306
-113.74908899461586,1888.395061636977
-114.74908899461586,1888.395061636977
-114.74908899461586,1862.6306440556482
-115.74908899461586,1862.6306440556482
-115.74908899461586,1836.8662264743193
-116.74908899461586,1836.8662264743193
-116.74908899461586,1811.1018088929904
-117.74908899461586,1811.1018088929904
-117.74908899461586,1785.3373913116616
-118.74908899461586,1785.3373913116616
-118.74908899461586,1759.5729737303327
-119.74908899461586,1759.5729737303327
-119.74908899461586,1733.8085561490038
-120.74908899461586,1733.8085561490038
-120.74908899461586,1708.044138567675
-121.74908899461586,1708.044138567675
-121.74908899461586,1682.279720986346
-122.74908899461586,1682.279720986346
-122.74908899461586,1656.5153034050172
-123.74908899461586,1656.5153034050172
-123.74908899461586,1630.7508858236883
-124.74908899461586,1630.7508858236883
-124.74908899461586,1604.9864682423595
-125.74908899461586,1604.9864682423595
-125.74908899461586,1579.2220506610306
-126.74908899461586,1579.2220506610306
-126.74908899461586,1553.4576330797017
-127.74908899461586,1553.4576330797017
-127.74908899461586,1527.6932154983729
-128.74908899461576,1527.6932154983729
-128.74908899461576,1501.928797917044
-129.74908899461576,1501.928797917044
-129.74908899461576,1476.1643803357151
-130.74908899461576,1476.1643803357151
-130.74908899461576,1450.1675385689875
-134.87509492502622,1450.1675385689875
-134.87509492502622,1424.17069680226
-135.87509492502622,1424.17069680226
-135.87509492502622,1398.1738550355324
-136.87509492502622,1398.1738550355324
-136.87509492502622,1372.1770132688048
-137.87509492502622,1372.1770132688048
-137.87509492502622,1346.1801715020772
-138.87509492502622,1346.1801715020772
-138.87509492502622,1320.1833297353496
-139.87509492502622,1320.1833297353496
-139.87509492502622,1294.186487968622
-140.87509492502622,1294.186487968622
-140.87509492502622,1268.1896462018944
-141.87509492502622,1268.1896462018944
-141.87509492502622,1242.1928044351669
-142.87509492502622,1242.1928044351669
-142.87509492502622,1216.1959626684393
-143.87509492502622,1216.1959626684393
-143.87509492502622,1190.1991209017117
-144.87509492502622,1190.1991209017117
-144.87509492502622,1164.202279134984
-145.87509492502622,1164.202279134984
-145.87509492502622,1138.2054373682565
-146.87509492502622,1138.2054373682565
-146.87509492502622,1112.208595601529
-147.87509492502622,1112.208595601529
-147.87509492502622,1086.2117538348014
-148.87509492502622,1086.2117538348014
-148.87509492502622,1060.2149120680738
-149.87509492502622,1060.2149120680738
-149.87509492502622,1034.2180703013462
-150.87509492502622,1034.2180703013462
-150.87509492502622,1008.2212285346185
-151.87509492502622,1008.2212285346185
-151.87509492502622,982.2243867678908
-152.87509492502622,982.2243867678908
-152.87509492502622,956.2275450011631
-153.87509492502622,956.2275450011631
-153.87509492502622,930.2307032344354
-154.87509492502622,930.2307032344354
-154.87509492502622,904.2338614677077
-155.87509492502622,904.2338614677077
-155.87509492502622,878.23701970098
-156.87509492502622,878.23701970098
-156.87509492502622,852.2401779342523
-157.87509492502622,852.2401779342523
-157.87509492502622,826.2433361675246
-158.87509492502622,826.2433361675246
-158.87509492502622,800.2464944007969
-159.87509492502622,800.2464944007969
-159.87509492502622,774.2496526340692
-160.87509492502622,774.2496526340692
-160.87509492502622,748.2528108673415
-161.87509492502622,748.2528108673415
-161.87509492502622,722.2559691006138
-162.87509492502622,722.2559691006138
-162.87509492502622,696.2591273338861
-163.87509492502622,696.2591273338861
-163.87509492502622,670.2622855671584
-164.87509492502622,670.2622855671584
-164.87509492502622,644.2654438004307
-165.87509492502622,644.2654438004307
-165.87509492502622,618.268602033703
-166.87509492502622,618.268602033703
-166.87509492502622,592.2717602669753
-167.87509492502622,592.2717602669753
-167.87509492502622,566.2749185002476
-168.87509492502622,566.2749185002476
-168.87509492502622,540.2780767335199
-169.87509492502622,540.2780767335199
-169.87509492502622,514.2812349667922
-170.87509492502622,514.2812349667922
-170.87509492502622,488.2843932000645
-171.87509492502622,488.2843932000645
-171.87509492502622,462.28755143333683
-172.87509492502622,462.28755143333683
-172.87509492502622,436.29070966660913
-173.87509492502622,436.29070966660913
-173.87509492502622,410.29386789988143
-175.87509492502528,410.29386789988143
-175.87509492502528,436.2917517259991
-176.88785364026472,436.2917517259991
-176.88785364026472,462.28962495209356
-177.900654897914,462.28962495209356
-177.900654897914,488.2874946426191
-178.91345969435866,488.2874946426191
-178.91345969435866,514.2853631551872
-179.9262656691835,514.2853631551872
-179.9262656691835,540.283231275436
-180.93907203639603,540.283231275436
-180.93907203639603,566.281099265039
-181.95187853426938,566.281099265039
-181.95187853426938,592.2789672111372
-182.96468507565137,592.2789672111372
-182.96468507565137,618.2768351427488
-183.97749163152125,618.2768351427488
-183.97749163152125,644.2747030695366
-184.99029819221542,644.2747030695366
-184.99029819221542,670.2725709947181
-186.00310475451604,670.2725709947181
-186.00310475451604,696.2704389193647
-187.01591131735162,696.2704389193647
-187.01591131735162,722.2683068438331
-188.02871788036532,722.2683068438331
-188.02871788036532,748.2661747682422
-189.04152444343833,748.2661747682422
-189.04152444343833,774.2640426926316
-190.05433100653107,774.2640426926316
-190.05433100653107,800.2619106170145
-191.06713756963038,800.2619106170145
-191.06713756963038,826.259778541395
-192.07994413273187,826.259778541395
-192.07994413273187,852.2576464657749
-193.09275069583413,852.2576464657749
-193.09275069583413,878.2555143901545
-194.10555725893659,878.2555143901545
-194.10555725893659,904.2533823145341
-195.11836382203916,904.2533823145341
-195.11836382203916,930.2512502389136
-196.13117038514173,930.2512502389136
-196.13117038514173,956.2491181632931
-197.14397694824433,956.2491181632931
-197.14397694824433,982.2469860876727
-198.1567835113469,982.2469860876727
-198.1567835113469,1008.2448540120522
-199.1695900744495,1008.2448540120522
-199.1695900744495,1034.2427219364317
-200.18239663755207,1034.2427219364317
-200.18239663755207,1060.2405898608113
-201.19520320065467,1060.2405898608113
-201.19520320065467,1086.2384577851908
-202.2080097637573,1086.2384577851908
-202.2080097637573,1112.2363257095703
-203.2208163268599,1112.2363257095703
-203.2208163268599,1138.2341936339499
-204.23362288996253,1138.2341936339499
-204.23362288996253,1164.2320615583294
-205.2464294530651,1164.2320615583294
-205.2464294530651,1190.229929482709
-206.25923601616768,1190.229929482709
-206.25923601616768,1216.2277974070885
-207.27204257927028,1216.2277974070885
-207.27204257927028,1242.225665331468
-208.28484914237288,1242.225665331468
-208.28484914237288,1268.2235332558475
-209.29765570547545,1268.2235332558475
-209.29765570547545,1294.221401180227
-210.31046226857805,1294.221401180227
-210.31046226857805,1320.2192691046066
-211.32326883168062,1320.2192691046066
-211.32326883168062,1346.2171370289861
-212.33607539478322,1346.2171370289861
-212.33607539478322,1372.2150049533657
-213.34888195788582,1372.2150049533657
-213.34888195788582,1398.2128728777452
-214.3616885209884,1398.2128728777452
-214.3616885209884,1424.2107408021247
-216.45235275458091,1424.2107408021247
-216.45235275458091,1431.0713566244485
-218.87259739488698,1431.0713566244485
-218.87259739488698,1433.9133910178375
-221.36156764020373,1433.9133910178375
-221.36156764020373,1435.4532176160958
-223.8799286063468,1435.4532176160958
-223.8799286063468,1436.61219384249
-226.40894463480367,1436.61219384249
-226.40894463480367,1437.6432832676344
-228.9419236088602,1437.6432832676344
-228.9419236088602,1438.558838475519
-231.47853894649717,1438.558838475519
-231.47853894649717,1439.425237354795
-234.01678079548998,1439.425237354795
-234.01678079548998,1440.2404931880162
-236.5567212389482,1440.2404931880162
-236.5567212389482,1441.0313571896634
-239.09749753545836,1441.0313571896634
-239.09749753545836,1438.1138131108114
-241.85666719475356,1438.1138131108114
-241.85666719475356,1439.1765462217388
-244.3865777810145,1439.1765462217388
-244.3865777810145,1440.2392793326662
-246.91648836727543,1440.2392793326662
-246.91648836727543,1441.3020124435936
-249.44639895353637,1441.3020124435936
-249.44639895353637,1442.364745554521
-251.9763095397973,1442.364745554521
-251.9763095397973,1443.4274786654485
-254.50622012605822,1443.4274786654485
-254.50622012605822,1444.4902117763759
-257.0361307123191,1444.4902117763759
-257.0361307123191,1445.5529448873033
-259.56604129858,1445.5529448873033
-259.56604129858,1446.6156779982307
-262.0959518848409,1446.6156779982307
-262.0959518848409,1447.6784111091586
-264.62586247110175,1447.6784111091586
-264.62586247110175,1448.741144220086
-268.4755518176185,1448.741144220086
-268.4755518176185,1423.840999202474
-272.3252411641462,1423.840999202474
-272.3252411641462,1398.9408541847806
-276.1749305106861,1398.9408541847806
-276.1749305106861,1374.0407091669947
-280.0246198572405,1374.0407091669947
-280.0246198572405,1349.1405641491012
-283.874309203812,1349.1405641491012
-283.874309203812,1324.24041913108
-287.7239985504045,1324.24041913108
-287.7239985504045,1299.3402741129012
-291.57368789702457,1299.3402741129012
-291.57368789702457,1274.4401290945161
-295.42337724368446,1274.4401290945161
-295.42337724368446,1249.5399840758334
-299.2730665904157,1249.5399840758334
-299.2730665904157,1224.6398390566164
-700.0,1224.6398390566164
+700.000002,2000.0
 					</series>
 					<series title="robPositionY[0]" type="l" color="0x00ff92" encoding="csv">0.0,0.0
 0.0,500.0
-84.0,500.0
-84.0,482.42602607864603
-85.74221514906031,482.42602607864603
-85.74221514906031,464.85205215729206
-86.74221514906033,464.85205215729206
-86.74221514906033,447.2780782359381
-87.74221514906033,447.2780782359381
-87.74221514906033,429.70410431458413
-88.7422151490603,429.70410431458413
-88.7422151490603,412.13013039323016
-89.74221514906033,412.13013039323016
-89.74221514906033,394.5561564718762
-90.74221514906033,394.5561564718762
-90.74221514906033,376.9821825505222
-91.74221514906033,376.9821825505222
-91.74221514906033,359.40820862916826
-92.74221514906034,359.40820862916826
-92.74221514906034,341.8342347078143
-93.74221514906034,341.8342347078143
-93.74221514906034,324.2602607864603
-94.74221514906034,324.2602607864603
-94.74221514906034,306.68628686510635
-95.74221514906034,306.68628686510635
-95.74221514906034,289.1123129437524
-96.74221514906034,289.1123129437524
-96.74221514906034,271.5383390223984
-97.74221514906034,271.5383390223984
-97.74221514906034,268.046235545279
-101.74908899461586,268.046235545279
-101.74908899461586,264.55413206815956
-102.74908899461586,264.55413206815956
-102.74908899461586,261.06202859104013
-103.74908899461586,261.06202859104013
-103.74908899461586,257.5699251139207
-104.74908899461586,257.5699251139207
-104.74908899461586,254.07782163680125
-105.74908899461586,254.07782163680125
-105.74908899461586,250.5857181596818
-106.74908899461586,250.5857181596818
-106.74908899461586,247.09361468256233
-107.74908899461586,247.09361468256233
-107.74908899461586,243.60151120544288
-108.74908899461586,243.60151120544288
-108.74908899461586,240.10940772832342
-109.74908899461586,240.10940772832342
-109.74908899461586,236.61730425120396
-110.74908899461586,236.61730425120396
-110.74908899461586,233.1252007740845
-111.74908899461586,233.1252007740845
-111.74908899461586,229.63309729696505
-112.74908899461586,229.63309729696505
-112.74908899461586,226.1409938198456
-113.74908899461586,226.1409938198456
-113.74908899461586,222.64889034272613
-114.74908899461586,222.64889034272613
-114.74908899461586,219.15678686560668
-115.74908899461586,219.15678686560668
-115.74908899461586,215.66468338848722
-116.74908899461586,215.66468338848722
-116.74908899461586,212.17257991136776
-117.74908899461586,212.17257991136776
-117.74908899461586,208.6804764342483
-118.74908899461586,208.6804764342483
-118.74908899461586,205.18837295712885
-119.74908899461586,205.18837295712885
-119.74908899461586,201.6962694800094
-120.74908899461586,201.6962694800094
-120.74908899461586,198.20416600288993
-121.74908899461586,198.20416600288993
-121.74908899461586,194.71206252577048
-122.74908899461586,194.71206252577048
-122.74908899461586,191.21995904865102
-123.74908899461586,191.21995904865102
-123.74908899461586,187.72785557153156
-124.74908899461586,187.72785557153156
-124.74908899461586,184.2357520944121
-125.74908899461586,184.2357520944121
-125.74908899461586,180.74364861729265
-126.74908899461586,180.74364861729265
-126.74908899461586,177.2515451401732
-127.74908899461586,177.2515451401732
-127.74908899461586,173.75944166305374
-128.74908899461576,173.75944166305374
-128.74908899461576,170.26733818593428
-129.74908899461576,170.26733818593428
-129.74908899461576,166.77523470881482
-130.74908899461576,166.77523470881482
-130.74908899461576,166.3699963151216
-134.87509492502622,166.3699963151216
-134.87509492502622,165.96475792142837
-135.87509492502622,165.96475792142837
-135.87509492502622,165.55951952773515
-136.87509492502622,165.55951952773515
-136.87509492502622,165.15428113404192
-137.87509492502622,165.15428113404192
-137.87509492502622,164.7490427403487
-138.87509492502622,164.7490427403487
-138.87509492502622,164.34380434665547
-139.87509492502622,164.34380434665547
-139.87509492502622,163.93856595296225
-140.87509492502622,163.93856595296225
-140.87509492502622,163.53332755926903
-141.87509492502622,163.53332755926903
-141.87509492502622,163.1280891655758
-142.87509492502622,163.1280891655758
-142.87509492502622,162.72285077188258
-143.87509492502622,162.72285077188258
-143.87509492502622,162.31761237818935
-144.87509492502622,162.31761237818935
-144.87509492502622,161.91237398449613
-145.87509492502622,161.91237398449613
-145.87509492502622,161.5071355908029
-146.87509492502622,161.5071355908029
-146.87509492502622,161.10189719710968
-147.87509492502622,161.10189719710968
-147.87509492502622,160.69665880341645
-148.87509492502622,160.69665880341645
-148.87509492502622,160.29142040972323
-149.87509492502622,160.29142040972323
-149.87509492502622,159.88618201603
-150.87509492502622,159.88618201603
-150.87509492502622,159.48094362233678
-151.87509492502622,159.48094362233678
-151.87509492502622,159.07570522864356
-152.87509492502622,159.07570522864356
-152.87509492502622,158.67046683495033
-153.87509492502622,158.67046683495033
-153.87509492502622,158.2652284412571
-154.87509492502622,158.2652284412571
-154.87509492502622,157.85999004756388
-155.87509492502622,157.85999004756388
-155.87509492502622,157.45475165387066
-156.87509492502622,157.45475165387066
-156.87509492502622,157.04951326017743
-157.87509492502622,157.04951326017743
-157.87509492502622,156.6442748664842
-158.87509492502622,156.6442748664842
-158.87509492502622,156.23903647279099
-159.87509492502622,156.23903647279099
-159.87509492502622,155.83379807909776
-160.87509492502622,155.83379807909776
-160.87509492502622,155.42855968540454
-161.87509492502622,155.42855968540454
-161.87509492502622,155.0233212917113
-162.87509492502622,155.0233212917113
-162.87509492502622,154.6180828980181
-163.87509492502622,154.6180828980181
-163.87509492502622,154.21284450432486
-164.87509492502622,154.21284450432486
-164.87509492502622,153.80760611063164
-165.87509492502622,153.80760611063164
-165.87509492502622,153.40236771693841
-166.87509492502622,153.40236771693841
-166.87509492502622,152.9971293232452
-167.87509492502622,152.9971293232452
-167.87509492502622,152.59189092955197
-168.87509492502622,152.59189092955197
-168.87509492502622,152.18665253585874
-169.87509492502622,152.18665253585874
-169.87509492502622,151.78141414216552
-170.87509492502622,151.78141414216552
-170.87509492502622,151.3761757484723
-171.87509492502622,151.3761757484723
-171.87509492502622,150.97093735477907
-172.87509492502622,150.97093735477907
-172.87509492502622,150.56569896108584
-173.87509492502622,150.56569896108584
-173.87509492502622,150.16046056739262
-175.87509492502528,150.16046056739262
-175.87509492502528,150.49217816368434
-176.88785364026472,150.49217816368434
-176.88785364026472,150.8247254835094
-177.900654897914,150.8247254835094
-177.900654897914,151.1575490921271
-178.91345969435866,151.1575490921271
-178.91345969435866,151.4904647018842
-179.9262656691835,151.4904647018842
-179.9262656691835,151.823410947014
-180.93907203639603,151.823410947014
-180.93907203639603,152.15636739338836
-181.95187853426938,152.15636739338836
-181.95187853426938,152.48932723666562
-182.96468507565137,152.48932723666562
-182.96468507565137,152.82228821107464
-183.97749163152125,152.82228821107464
-183.97749163152125,153.1552495621375
-184.99029819221542,153.1552495621375
-184.99029819221542,153.48821103862218
-186.00310475451604,153.48821103862218
-186.00310475451604,153.82117255687137
-187.01591131735162,153.82117255687137
-187.01591131735162,154.15413408902734
-188.02871788036532,154.15413408902734
-188.02871788036532,154.48709562581453
-189.04152444343833,154.48709562581453
-189.04152444343833,154.82005716414338
-190.05433100653107,154.82005716414338
-190.05433100653107,155.15301870298586
-191.06713756963038,155.15301870298586
-191.06713756963038,155.4859802419992
-192.07994413273187,155.4859802419992
-192.07994413273187,155.8189417810691
-193.09275069583413,155.8189417810691
-193.09275069583413,156.1519033201584
-194.10555725893659,156.1519033201584
-194.10555725893659,156.484864859254
-195.11836382203916,156.484864859254
-195.11836382203916,156.81782639835185
-196.13117038514173,156.81782639835185
-196.13117038514173,157.15078793744993
-197.14397694824433,157.15078793744993
-197.14397694824433,157.48374947654847
-198.1567835113469,157.48374947654847
-198.1567835113469,157.816711015647
-199.1695900744495,157.816711015647
-199.1695900744495,158.149672554746
-200.18239663755207,158.149672554746
-200.18239663755207,158.48263409384452
-201.19520320065467,158.48263409384452
-201.19520320065467,158.81559563294306
-202.2080097637573,158.81559563294306
-202.2080097637573,159.14855717204205
-203.2208163268599,159.14855717204205
-203.2208163268599,159.48151871114058
-204.23362288996253,159.48151871114058
-204.23362288996253,159.81448025023957
-205.2464294530651,159.81448025023957
-205.2464294530651,160.1474417893381
-206.25923601616768,160.1474417893381
-206.25923601616768,160.48040332843664
-207.27204257927028,160.48040332843664
-207.27204257927028,160.81336486753563
-208.28484914237288,160.81336486753563
-208.28484914237288,161.14632640663416
-209.29765570547545,161.14632640663416
-209.29765570547545,161.4792879457327
-210.31046226857805,161.4792879457327
-210.31046226857805,161.81224948483168
-211.32326883168062,161.81224948483168
-211.32326883168062,162.14521102393022
-212.33607539478322,162.14521102393022
-212.33607539478322,162.4781725630292
-213.34888195788582,162.4781725630292
-213.34888195788582,162.81113410212774
-214.3616885209884,162.81113410212774
-214.3616885209884,163.14409564122627
-216.45235275458091,163.14409564122627
-216.45235275458091,188.22261135764137
-218.87259739488698,188.22261135764137
-218.87259739488698,214.06681458596307
-221.36156764020373,214.06681458596307
-221.36156764020373,240.02117711034992
-223.8799286063468,240.02117711034992
-223.8799286063468,265.9953329985911
-226.40894463480367,265.9953329985911
-226.40894463480367,291.9748798498615
-228.9419236088602,291.9748798498615
-228.9419236088602,317.9587548238009
-231.47853894649717,317.9587548238009
-231.47853894649717,343.9443152946083
-234.01678079548998,343.9443152946083
-234.01678079548998,369.93153057301777
-236.5567212389482,369.93153057301777
-236.5567212389482,395.91949959968275
-239.09749753545836,395.91949959968275
-239.09749753545836,421.7552875022793
-241.85666719475356,421.7552875022793
-241.85666719475356,447.7335591602426
-244.3865777810145,447.7335591602426
-244.3865777810145,473.71183081820584
-246.91648836727543,473.71183081820584
-246.91648836727543,499.6901024761691
-249.44639895353637,499.6901024761691
-249.44639895353637,525.6683741341324
-251.9763095397973,525.6683741341324
-251.9763095397973,551.6466457920957
-254.50622012605822,551.6466457920957
-254.50622012605822,577.624917450059
-257.0361307123191,577.624917450059
-257.0361307123191,603.6031891080223
-259.56604129858,603.6031891080223
-259.56604129858,629.5814607659856
-262.0959518848409,629.5814607659856
-262.0959518848409,655.559732423949
-264.62586247110175,655.559732423949
-264.62586247110175,681.5380040819123
-268.4755518176185,681.5380040819123
-268.4755518176185,689.020168080509
-272.3252411641462,689.020168080509
-272.3252411641462,696.5023320788347
-276.1749305106861,696.5023320788347
-276.1749305106861,703.984496076852
-280.0246198572405,703.984496076852
-280.0246198572405,711.466660074512
-283.874309203812,711.466660074512
-283.874309203812,718.9488240717467
-287.7239985504045,718.9488240717467
-287.7239985504045,726.4309880684565
-291.57368789702457,726.4309880684565
-291.57368789702457,733.9131520644802
-295.42337724368446,733.9131520644802
-295.42337724368446,741.3953160595133
-299.2730665904157,741.3953160595133
-299.2730665904157,748.8774800527686
-700.0,748.8774800527686
+700.000002,500.0
 					</series>
 					<series title="rf_1.starting * 100" type="l" color="0x0092ff" encoding="csv">0.0,0.0
-173.87509492502622,0.0
-173.87509492502622,100.0
-174.8750949250253,100.0
-174.8750949250253,0.0
-700.0,0.0
+700.000002,0.0
 					</series>
 					<series title="exeSum.end * 100" type="l" color="0x4900ff" encoding="csv">0.0,0.0
-299.2730665904157,0.0
-299.2730665904157,100.0
-700.0,100.0
+700.000002,0.0
 					</series>
 					<series title="humanFatigue[0] * 100" type="l" color="0xff00db" encoding="csv">0.0,0.0
 1.0,0.0
-1.0,0.16250838701090675
-2.0,0.16250838701090675
-2.0,0.3247526842633297
-3.0,0.3247526842633297
-3.0,0.48673332092527
-4.0,0.48673332092527
-4.0,0.6484507254672978
-5.0,0.6484507254672978
-5.0,0.8099053256636846
-6.0,0.8099053256636846
-6.0,0.9710975485935358
-7.0,0.9710975485935358
-7.0,1.1320278206419232
-8.0,1.1320278206419232
-8.0,1.292696567500995
-9.0,1.292696567500995
-9.0,1.4531042141711081
-10.0,1.4531042141711081
-10.0,1.6132511849619724
-11.0,1.6132511849619724
-11.0,1.77313790349376
-12.0,1.77313790349376
-12.0,1.932764792698216
-13.0,1.932764792698216
-13.0,2.0921322748197912
-14.0,2.0921322748197912
-14.0,2.2512407714167515
-15.0,2.2512407714167515
-15.0,2.4100907033623
-16.0,2.4100907033623
-16.0,2.568682490845675
-17.0,2.568682490845675
-17.0,2.7270165533732738
-18.0,2.7270165533732738
-18.0,2.8850933097697706
-19.0,2.8850933097697706
-19.0,3.0429131781792074
-20.0,3.0429131781792074
-20.0,3.2004765760661136
-21.0,3.2004765760661136
-21.0,3.357783920216595
-22.0,3.357783920216595
-22.0,3.514835626739443
-23.0,3.514835626739443
-23.0,3.6716321110672467
-24.0,3.6716321110672467
-24.0,3.8281737879574784
-25.0,3.8281737879574784
-25.0,3.9844610714936057
-26.0,3.9844610714936057
-26.0,4.140494375086146
-27.0,4.140494375086146
-27.0,4.296274111473819
-28.0,4.296274111473819
-28.0,4.451800692724605
-29.0,4.451800692724605
-29.0,4.607074530236821
-30.0,4.607074530236821
-30.0,4.762096034740249
-31.0,4.762096034740249
-31.0,4.9168656162971835
-32.0,4.9168656162971835
-32.0,5.071383684303554
-33.0,5.071383684303554
-33.0,5.2256506474899656
-34.0,5.2256506474899656
-34.0,5.37966691392281
-35.0,5.37966691392281
-35.0,5.533432891005341
-36.0,5.533432891005341
-36.0,5.686948985478746
-37.0,5.686948985478746
-37.0,5.840215603423216
-38.0,5.840215603423216
-38.0,5.993233150259036
-39.0,5.993233150259036
-39.0,6.146002030747654
-40.0,6.146002030747654
-40.0,6.298522648992733
-41.0,6.298522648992733
-41.0,6.4507954084412455
-42.0,6.4507954084412455
-42.0,6.602820711884516
-43.0,6.602820711884516
-43.0,6.754598961459313
-44.0,6.754598961459313
-44.0,6.9061305586488935
-45.0,6.9061305586488935
-45.0,7.0574159042840705
-46.0,7.0574159042840705
-46.0,7.208455398544277
-47.0,7.208455398544277
-47.0,7.3592494409586156
-48.0,7.3592494409586156
-48.0,7.509798430406911
-49.0,7.509798430406911
-49.0,7.660102765120791
-50.0,7.660102765120791
-50.0,7.81016284268472
-51.0,7.81016284268472
-51.0,7.959979060037059
-52.0,7.959979060037059
-52.0,8.109551813471095
-53.0,8.109551813471095
-53.0,8.258881498636118
-54.0,8.258881498636118
-54.0,8.407968510538444
-55.0,8.407968510538444
-55.0,8.556813243542493
-56.0,8.556813243542493
-56.0,8.705416091371788
-57.0,8.705416091371788
-57.0,8.853777447110023
-58.0,8.853777447110023
-58.0,9.0018977032021
-59.0,9.0018977032021
-59.0,9.14977725145516
-60.0,9.14977725145516
-60.0,9.297416483039633
-61.0,9.297416483039633
-61.0,9.444815788490269
-62.0,9.444815788490269
-62.0,9.591975557707144
-63.0,9.591975557707144
-63.0,9.738896179956736
-64.0,9.738896179956736
-64.0,9.885578043872922
-65.0,9.885578043872922
-65.0,10.032021537458025
-66.0,10.032021537458025
-66.0,10.178227048083821
-67.0,10.178227048083821
-67.0,10.324194962492584
-68.0,10.324194962492584
-68.0,10.469925666798085
-69.0,10.469925666798085
-69.0,10.615419546486638
-70.0,10.615419546486638
-70.0,10.760676986418105
-71.0,10.760676986418105
-71.0,10.905698370826933
-72.0,10.905698370826933
-72.0,11.05048408332313
-73.0,11.05048408332313
-73.0,11.19503450689333
-74.0,11.19503450689333
-74.0,11.339350023901773
-75.0,11.339350023901773
-75.0,11.483431016091316
-76.0,11.483431016091316
-76.0,11.627277864584462
-77.0,11.627277864584462
-77.0,11.770890949884361
-78.0,11.770890949884361
-78.0,11.914270651875803
-79.0,11.914270651875803
-79.0,12.057417349826228
-80.0,12.057417349826228
-80.0,12.200331422386757
-81.0,12.200331422386757
-81.0,12.34301324759316
-82.0,12.34301324759316
-82.0,12.485463202866864
-83.0,12.485463202866864
-83.0,12.421722256990892
-84.0,12.421722256990892
-84.0,12.358306722204212
-85.0,12.358306722204212
-85.0,12.295214937213983
-86.0,12.295214937213983
-86.0,12.232445249208618
-87.0,12.232445249208618
-87.0,12.169996013814487
-88.0,12.169996013814487
-88.0,12.107865595052832
-89.0,12.107865595052832
-89.0,12.046052365296918
-90.0,12.046052365296918
-90.0,11.984554705229392
-91.0,11.984554705229392
-91.0,11.923371003799856
-92.0,11.923371003799856
-92.0,11.86249965818267
-93.0,11.86249965818267
-93.0,11.801939073734962
-94.0,11.801939073734962
-94.0,11.741687663954849
-95.0,11.741687663954849
-95.0,11.681743850439874
-96.0,11.681743850439874
-96.0,11.622106062845667
-97.0,11.622106062845667
-97.0,11.562772738844796
-98.0,11.562772738844796
-98.0,11.503742324085843
-99.0,11.503742324085843
-99.0,11.445013272152686
-100.0,11.445013272152686
-100.0,11.386584044523985
-101.0,11.386584044523985
-101.0,11.32845311053288
-102.0,11.32845311053288
-102.0,11.270618947326891
-103.0,11.270618947326891
-103.0,11.213080039828025
-104.0,11.213080039828025
-104.0,11.155834880693078
-105.0,11.155834880693078
-105.0,11.098881970274164
-106.0,11.098881970274164
-106.0,11.042219816579408
-107.0,11.042219816579408
-107.0,10.985846935233878
-108.0,10.985846935233878
-108.0,10.929761849440691
-109.0,10.929761849440691
-109.0,10.873963089942325
-110.0,10.873963089942325
-110.0,10.818449194982131
-111.0,10.818449194982131
-111.0,10.763218710266036
-112.0,10.763218710266036
-112.0,10.708270188924448
-113.0,10.708270188924448
-113.0,10.653602191474357
-114.0,10.653602191474357
-114.0,10.599213285781616
-115.0,10.599213285781616
-115.0,10.545102047023429
-116.0,10.545102047023429
-116.0,10.491267057651022
-117.0,10.491267057651022
-117.0,10.437706907352508
-118.0,10.437706907352508
-118.0,10.384420193015947
-119.0,10.384420193015947
-119.0,10.331405518692579
-120.0,10.331405518692579
-120.0,10.27866149556026
-121.0,10.27866149556026
-121.0,10.226186741887085
-122.0,10.226186741887085
-122.0,10.173979882995173
-123.0,10.173979882995173
-123.0,10.122039551224677
-124.0,10.122039551224677
-124.0,10.070364385897939
-125.0,10.070364385897939
-125.0,10.018953033283848
-126.0,10.018953033283848
-126.0,9.967804146562383
-127.0,9.967804146562383
-127.0,9.916916385789323
-128.0,9.916916385789323
-128.0,9.86628841786115
-129.0,9.86628841786115
-129.0,9.815918916480118
-130.0,9.815918916480118
-130.0,9.765806562119518
-131.0,9.765806562119518
-131.0,9.715950041989103
-132.0,9.715950041989103
-132.0,9.666348050000702
-133.0,9.666348050000702
-133.0,9.616999286733998
-134.0,9.616999286733998
-134.0,9.567902459402497
-135.0,9.567902459402497
-135.0,9.519056281819648
-136.0,9.519056281819648
-136.0,9.47045947436516
-137.0,9.47045947436516
-137.0,9.422110763951478
-138.0,9.422110763951478
-138.0,9.374008883990424
-139.0,9.374008883990424
-139.0,9.326152574360028
-140.0,9.326152574360028
-140.0,9.278540581371505
-141.0,9.278540581371505
-141.0,9.231171657736423
-142.0,9.231171657736423
-142.0,9.184044562534023
-143.0,9.184044562534023
-143.0,9.137158061178704
-144.0,9.137158061178704
-144.0,9.090510925387694
-145.0,9.090510925387694
-145.0,9.044101933148863
-146.0,9.044101933148863
-146.0,8.997929868688711
-147.0,8.997929868688711
-147.0,8.951993522440524
-148.0,8.951993522440524
-148.0,8.906291691012685
-149.0,8.906291691012685
-149.0,8.860823177157139
-150.0,8.860823177157139
-150.0,8.815586789738044
-151.0,8.815586789738044
-151.0,8.770581343700558
-152.0,8.770581343700558
-152.0,8.725805660039796
-153.0,8.725805660039796
-153.0,8.681258565769948
-154.0,8.681258565769948
-154.0,8.636938893893536
-155.0,8.636938893893536
-155.0,8.592845483370862
-156.0,8.592845483370862
-156.0,8.548977179089578
-157.0,8.548977179089578
-157.0,8.50533283183443
-158.0,8.50533283183443
-158.0,8.461911298257158
-159.0,8.461911298257158
-159.0,8.41871144084653
-160.0,8.41871144084653
-160.0,8.375732127898555
-161.0,8.375732127898555
-161.0,8.332972233486833
-162.0,8.332972233486833
-162.0,8.290430637433056
-163.0,8.290430637433056
-163.0,8.248106225277665
-164.0,8.248106225277665
-164.0,8.20599788825065
-165.0,8.20599788825065
-165.0,8.164104523242516
-166.0,8.164104523242516
-166.0,8.122425032775372
-167.0,8.122425032775372
-167.0,8.080958324974182
-168.0,8.080958324974182
-168.0,8.039703313538169
-169.0,8.039703313538169
-169.0,7.998658917712355
-170.0,7.998658917712355
-170.0,7.957824062259239
-171.0,7.957824062259239
-171.0,7.91719767743064
-172.0,7.91719767743064
-172.0,7.8767786989396695
-173.0,7.8767786989396695
-173.0,7.836566067932848
-174.8750949250253,7.836566067932848
-174.8750949250253,7.98633937782971
-175.87509492502528,7.98633937782971
-175.87509492502528,8.13586929353649
-176.87509492502525,8.13586929353649
-176.87509492502525,8.28515621058915
-177.87509492502525,8.28515621058915
-177.87509492502525,8.434200523880897
-178.87509492502525,8.434200523880897
-178.87509492502525,8.583002627663184
-179.87509492502525,8.583002627663184
-179.87509492502525,8.731562915546775
-180.87509492502522,8.731562915546775
-180.87509492502522,8.879881780502785
-181.8750949250252,8.879881780502785
-181.8750949250252,9.027959614863724
-182.87509492502514,9.027959614863724
-182.87509492502514,9.17579681032452
-183.8750949250251,9.17579681032452
-183.8750949250251,9.323393757943577
-184.87509492502508,9.323393757943577
-184.87509492502508,9.470750848143773
-185.87509492502502,9.470750848143773
-185.87509492502502,9.617868470713542
-186.875094925025,9.617868470713542
-186.875094925025,9.764747014807861
-187.87509492502497,9.764747014807861
-187.87509492502497,9.911386868949313
-188.87509492502494,9.911386868949313
-188.87509492502494,10.057788421029079
-189.8750949250249,10.057788421029079
-189.8750949250249,10.203952058307998
-190.87509492502485,10.203952058307998
-190.87509492502485,10.34987816741758
-191.8750949250248,10.34987816741758
-191.8750949250248,10.495567134361028
-192.87509492502477,10.495567134361028
-192.87509492502477,10.641019344514236
-193.8750949250247,10.641019344514236
-193.8750949250247,10.786235182626857
-194.87509492502465,10.786235182626857
-194.87509492502465,10.931215032823271
-195.87509492502463,10.931215032823271
-195.87509492502463,11.075959278603642
-196.87509492502457,11.075959278603642
-196.87509492502457,11.22046830284491
-197.8750949250245,11.22046830284491
-197.8750949250245,11.364742487801793
-198.87509492502446,11.364742487801793
-198.87509492502446,11.508782215107827
-199.8750949250244,11.508782215107827
-199.8750949250244,11.652587865776365
-200.87509492502434,11.652587865776365
-200.87509492502434,11.796159820201568
-201.8750949250243,11.796159820201568
-201.8750949250243,11.939498458159436
-202.87509492502429,11.939498458159436
-202.87509492502429,12.082604158808795
-203.87509492502426,12.082604158808795
-203.87509492502426,12.225477300692312
-204.8750949250242,12.225477300692312
-204.8750949250242,12.368118261737482
-205.87509492502414,12.368118261737482
-205.87509492502414,12.510527419257633
-206.8750949250241,12.510527419257633
-206.8750949250241,12.652705149952947
-207.87509492502403,12.652705149952947
-207.87509492502403,12.79465182991142
-208.87509492502397,12.79465182991142
-208.87509492502397,12.936367834609875
-209.87509492502392,12.936367834609875
-209.87509492502392,13.077853538914963
-210.87509492502386,13.077853538914963
-210.87509492502386,13.219109317084133
-211.8750949250238,13.219109317084133
-211.8750949250238,13.360135542766638
-212.87509492502375,13.360135542766638
-212.87509492502375,13.500932589004522
-213.8750949250237,13.500932589004522
-213.8750949250237,13.64150082823361
-214.87509492502363,13.64150082823361
-214.87509492502363,13.78184063228447
-215.8750949250236,13.78184063228447
-215.8750949250236,13.921952372383439
-216.87509492502357,13.921952372383439
-216.87509492502357,14.061836419153561
-217.87509492502352,14.061836419153561
-217.87509492502352,14.201493142615584
-218.87509492502346,14.201493142615584
-218.87509492502346,14.340922912188958
-219.8750949250234,14.340922912188958
-219.8750949250234,14.480126096692791
-220.87509492502335,14.480126096692791
-220.87509492502335,14.619103064346817
-221.8750949250233,14.619103064346817
-221.8750949250233,14.75785418277239
-222.87509492502323,14.75785418277239
-222.87509492502323,14.896379818993456
-223.87509492502318,14.896379818993456
-223.87509492502318,15.0346803394375
-224.87509492502312,15.0346803394375
-224.87509492502312,15.172756109936536
-225.87509492502306,15.172756109936536
-225.87509492502306,15.31060749572809
-226.875094925023,15.31060749572809
-226.875094925023,15.448234861456122
-227.87509492502295,15.448234861456122
-227.87509492502295,15.585638571172023
-228.8750949250229,15.585638571172023
-228.8750949250229,15.722818988335563
-229.87509492502284,15.722818988335563
-229.87509492502284,15.85977647581588
-230.87509492502278,15.85977647581588
-230.87509492502278,15.996511395892398
-231.87509492502272,15.996511395892398
-231.87509492502272,16.13302411025582
-232.87509492502267,16.13302411025582
-232.87509492502267,16.269314980009074
-233.8750949250226,16.269314980009074
-233.8750949250226,16.40538436566824
-234.87509492502255,16.40538436566824
-234.87509492502255,16.54123262716356
-235.8750949250225,16.54123262716356
-235.8750949250225,16.676860123840342
-236.87509492502244,16.676860123840342
-236.87509492502244,16.81226721445993
-237.87509492502238,16.81226721445993
-237.87509492502238,16.947454257200654
-238.87509492502232,16.947454257200654
-238.87509492502232,17.08242160965877
-239.87509492502227,17.08242160965877
-239.87509492502227,17.217169628849415
-240.87509492502224,17.217169628849415
-240.87509492502224,17.35169867120755
-241.8750949250222,17.35169867120755
-241.8750949250222,17.486009092588883
-242.87509492502215,17.486009092588883
-242.87509492502215,17.62010124827085
-243.87509492502213,17.62010124827085
-243.87509492502213,17.7539754929535
-244.8750949250221,17.7539754929535
-244.8750949250221,17.887632180760495
-245.87509492502204,17.887632180760495
-245.87509492502204,17.79631201296557
-246.875094925022,17.79631201296557
-246.875094925022,17.705458054055185
-247.87509492502198,17.705458054055185
-247.87509492502198,17.615067923933804
-248.87509492502195,17.615067923933804
-248.87509492502195,17.525139254656782
-249.87509492502193,17.525139254656782
-249.87509492502193,17.435669690368332
-250.87509492502187,17.435669690368332
-250.87509492502187,17.346656887239817
-251.87509492502184,17.346656887239817
-251.87509492502184,17.258098513408342
-252.8750949250218,17.258098513408342
-252.8750949250218,17.169992248915662
-253.87509492502176,17.169992248915662
-253.87509492502176,17.08233578564743
-254.8750949250217,17.08233578564743
-254.8750949250217,16.995126827272692
-255.87509492502164,16.995126827272692
-255.87509492502164,16.908363089183766
-256.8750949250216,16.908363089183766
-256.8750949250216,16.822042298436372
-257.87509492502153,16.822042298436372
-257.87509492502153,16.736162193690095
-258.8750949250215,16.736162193690095
-258.8750949250215,16.65072052514915
-259.8750949250214,16.65072052514915
-259.8750949250214,16.565715054503436
-260.87509492502136,16.565715054503436
-260.87509492502136,16.481143554869888
-261.8750949250213,16.481143554869888
-261.8750949250213,16.397003810734176
-262.87509492502124,16.397003810734176
-262.87509492502124,16.313293617892622
-263.8750949250212,16.313293617892622
-263.8750949250212,16.230010783394484
-264.87509492502113,16.230010783394484
-264.87509492502113,16.1471531254845
-265.8750949250211,16.1471531254845
-265.8750949250211,16.06471847354574
-266.875094925021,16.06471847354574
-266.875094925021,15.982704668042722
-267.875094925021,15.982704668042722
-267.875094925021,15.90110956046486
-268.875094925021,15.90110956046486
-268.875094925021,15.81993101327017
-269.87509492502096,15.81993101327017
-269.87509492502096,15.739166899829273
-270.8750949250209,15.739166899829273
-270.8750949250209,15.658815104369689
-271.8750949250209,15.658815104369689
-271.8750949250209,15.578873521920405
-272.8750949250209,15.578873521920405
-272.8750949250209,15.499340058256731
-273.87509492502085,15.499340058256731
-273.87509492502085,15.420212629845443
-274.8750949250208,15.420212629845443
-274.8750949250208,15.341489163790193
-275.87509492502073,15.341489163790193
-275.87509492502073,15.263167597777214
-276.8750949250207,15.263167597777214
-276.8750949250207,15.185245880021286
-277.8750949250206,15.185245880021286
-277.8750949250206,15.107721969211992
-278.87509492502056,15.107721969211992
-278.87509492502056,15.030593834460237
-279.87509492502056,15.030593834460237
-279.87509492502056,14.95385945524505
-280.87509492502056,14.95385945524505
-280.87509492502056,14.877516821360645
-281.8750949250205,14.877516821360645
-281.8750949250205,14.801563932863768
-282.8750949250205,14.801563932863768
-282.8750949250205,14.725998800021298
-283.8750949250205,14.725998800021298
-283.8750949250205,14.650819443258126
-284.87509492502045,14.650819443258126
-284.87509492502045,14.576023893105294
-285.8750949250204,14.576023893105294
-285.8750949250204,14.501610190148407
-286.87509492502033,14.501610190148407
-286.87509492502033,14.427576384976287
-287.8750949250203,14.427576384976287
-287.8750949250203,14.353920538129927
-288.8750949250202,14.353920538129927
-288.8750949250202,14.280640720051663
-289.87509492502016,14.280640720051663
-289.87509492502016,14.207735011034634
-290.87509492502016,14.207735011034634
-290.87509492502016,14.135201501172496
-291.87509492502016,14.135201501172496
-291.87509492502016,14.063038290309377
-292.8750949250201,14.063038290309377
-292.8750949250201,13.991243487990108
-293.87509492502005,13.991243487990108
-293.87509492502005,13.919815213410693
-294.87509492502005,13.919815213410693
-294.87509492502005,13.84875159536905
-295.87509492502005,13.84875159536905
-295.87509492502005,13.778050772215966
-296.87509492502,13.778050772215966
-296.87509492502,13.707710891806357
-297.87509492501994,13.707710891806357
-297.87509492501994,13.637730111450729
-298.8750949250199,13.637730111450729
-298.8750949250199,13.568106597866908
-299.8750949250193,13.568106597866908
-299.8750949250193,13.498838527132017
-300.87509492501897,13.498838527132017
-300.87509492501897,13.429924084634695
-301.87509492501897,13.429924084634695
-301.87509492501897,13.361361465027555
-302.87509492501886,13.361361465027555
-302.87509492501886,13.293148872179891
-303.87509492501897,13.293148872179891
-303.87509492501897,13.225284519130634
-304.87509492501897,13.225284519130634
-304.87509492501897,13.157766628041525
-305.87509492501897,13.157766628041525
-305.87509492501897,13.090593430150548
-306.8750949250189,13.090593430150548
-306.8750949250189,13.0237631657256
-307.87509492501897,13.0237631657256
-307.87509492501897,12.957274084018373
-308.8750949250191,12.957274084018373
-308.8750949250191,12.891124443218507
-309.87509492501925,12.891124443218507
-309.87509492501925,12.82531251040796
-310.8750949250194,12.82531251040796
-310.8750949250194,12.7598365615156
-311.8750949250196,12.7598365615156
-311.8750949250196,12.694694881272046
-312.87509492501977,12.694694881272046
-312.87509492501977,12.629885763164728
-313.87509492501994,12.629885763164728
-313.87509492501994,12.565407509393195
-314.8750949250201,12.565407509393195
-314.8750949250201,12.501258430824619
-315.8750949250203,12.501258430824619
-315.8750949250203,12.43743684694956
-316.87509492502045,12.43743684694956
-316.87509492502045,12.373941085837933
-317.8750949250206,12.373941085837933
-317.8750949250206,12.310769484095214
-318.8750949250208,12.310769484095214
-318.8750949250208,12.247920386818862
-319.87509492502096,12.247920386818862
-319.87509492502096,12.185392147554966
-320.87509492502113,12.185392147554966
-320.87509492502113,12.123183128255109
-321.8750949250213,12.123183128255109
-321.8750949250213,12.061291699233463
-322.8750949250215,12.061291699233463
-322.8750949250215,11.999716239124092
-323.87509492502164,11.999716239124092
-323.87509492502164,11.938455134838478
-324.8750949250218,11.938455134838478
-324.8750949250218,11.87750678152326
-325.875094925022,11.87750678152326
-325.875094925022,11.816869582518203
-326.87509492502215,11.816869582518203
-326.87509492502215,11.756541949314354
-327.8750949250223,11.756541949314354
-327.8750949250223,11.696522301512436
-328.8750949250225,11.696522301512436
-328.8750949250225,11.636809066781456
-329.87509492502267,11.636809066781456
-329.87509492502267,11.577400680817496
-330.87509492502284,11.577400680817496
-330.87509492502284,11.518295587302745
-331.875094925023,11.518295587302745
-331.875094925023,11.459492237864726
-332.8750949250232,11.459492237864726
-332.8750949250232,11.400989092035731
-333.87509492502335,11.400989092035731
-333.87509492502335,11.34278461721247
-334.8750949250235,11.34278461721247
-334.8750949250235,11.28487728861592
-335.8750949250237,11.28487728861592
-335.8750949250237,11.227265589251374
-336.87509492502386,11.227265589251374
-336.87509492502386,11.169948009868712
-337.87509492502403,11.169948009868712
-337.87509492502403,11.11292304892285
-338.8750949250242,11.11292304892285
-338.8750949250242,11.056189212534417
-339.87509492502437,11.056189212534417
-339.87509492502437,10.999745014450612
-340.87509492502454,10.999745014450612
-340.87509492502454,10.943588976006271
-341.8750949250247,10.943588976006271
-341.8750949250247,10.88771962608513
-342.8750949250249,10.88771962608513
-342.8750949250249,10.832135501081284
-343.87509492502505,10.832135501081284
-343.87509492502505,10.776835144860854
-344.8750949250252,10.776835144860854
-344.8750949250252,10.721817108723826
-345.8750949250254,10.721817108723826
-345.8750949250254,10.667079951366114
-346.87509492502556,10.667079951366114
-346.87509492502556,10.612622238841794
-347.87509492502573,10.612622238841794
-347.87509492502573,10.55844254452554
-348.8750949250259,10.55844254452554
-348.8750949250259,10.504539449075255
-349.8750949250261,10.504539449075255
-349.8750949250261,10.45091154039488
-350.87509492502625,10.45091154039488
-350.87509492502625,10.397557413597411
-351.8750949250264,10.397557413597411
-351.8750949250264,10.344475670968093
-352.8750949250266,10.344475670968093
-352.8750949250266,10.291664921927794
-353.87509492502676,10.291664921927794
-353.87509492502676,10.23912378299659
-354.87509492502693,10.23912378299659
-354.87509492502693,10.186850877757518
-355.8750949250271,10.186850877757518
-355.8750949250271,10.134844836820514
-356.87509492502727,10.134844836820514
-356.87509492502727,10.083104297786543
-357.87509492502744,10.083104297786543
-357.87509492502744,10.031627905211902
-358.8750949250276,10.031627905211902
-358.8750949250276,9.980414310572723
-359.8750949250278,9.980414310572723
-359.8750949250278,9.929462172229636
-360.87509492502795,9.929462172229636
-360.87509492502795,9.878770155392626
-361.8750949250281,9.878770155392626
-361.8750949250281,9.828336932086062
-362.8750949250283,9.828336932086062
-362.8750949250283,9.77816118111392
-363.87509492502846,9.77816118111392
-363.87509492502846,9.72824158802515
-364.87509492502863,9.72824158802515
-364.87509492502863,9.678576845079263
-365.8750949250288,9.678576845079263
-365.8750949250288,9.629165651212064
-366.875094925029,9.629165651212064
-366.875094925029,9.580006712001563
-367.87509492502915,9.580006712001563
-367.87509492502915,9.531098739634071
-368.8750949250293,9.531098739634071
-368.8750949250293,9.482440452870463
-369.8750949250295,9.482440452870463
-369.8750949250295,9.434030577012614
-370.87509492502966,9.434030577012614
-370.87509492502966,9.385867843869997
-371.8750949250298,9.385867843869997
-371.8750949250298,9.337950991726474
-372.87509492503,9.337950991726474
-372.87509492503,9.290278765307237
-373.87509492503017,9.290278765307237
-373.87509492503017,9.24284991574592
-374.87509492503034,9.24284991574592
-374.87509492503034,9.195663200551882
-375.8750949250305,9.195663200551882
-375.8750949250305,9.14871738357767
-376.8750949250307,9.14871738357767
-376.8750949250307,9.10201123498662
-377.87509492503085,9.10201123498662
-377.87509492503085,9.055543531220646
-378.875094925031,9.055543531220646
-378.875094925031,9.00931305496819
-379.8750949250312,9.00931305496819
-379.8750949250312,8.963318595132327
-380.87509492503136,8.963318595132327
-380.87509492503136,8.917558946799035
-381.87509492503153,8.917558946799035
-381.87509492503153,8.872032911205642
-382.8750949250317,8.872032911205642
-382.8750949250317,8.82673929570941
-383.8750949250319,8.82673929570941
-383.8750949250319,8.781676913756296
-384.87509492503204,8.781676913756296
-384.87509492503204,8.73684458484987
-385.8750949250322,8.73684458484987
-385.8750949250322,8.692241134520383
-386.8750949250324,8.692241134520383
-386.8750949250324,8.647865394294008
-387.87509492503256,8.647865394294008
-387.87509492503256,8.603716201662227
-388.8750949250327,8.603716201662227
-388.8750949250327,8.559792400051371
-389.8750949250329,8.559792400051371
-389.8750949250329,8.516092838792327
-390.87509492503307,8.516092838792327
-390.87509492503307,8.47261637309039
-391.87509492503324,8.47261637309039
-391.87509492503324,8.429361863995283
-392.8750949250334,8.429361863995283
-392.8750949250334,8.386328178371304
-393.8750949250336,8.386328178371304
-393.8750949250336,8.343514188867658
-394.87509492503375,8.343514188867658
-394.87509492503375,8.300918773888908
-395.8750949250339,8.300918773888908
-395.8750949250339,8.258540817565606
-396.8750949250341,8.258540817565606
-396.8750949250341,8.21637920972505
-397.87509492503426,8.21637920972505
-397.87509492503426,8.17443284586221
-398.87509492503443,8.17443284586221
-398.87509492503443,8.132700627110788
-399.8750949250346,8.132700627110788
-399.8750949250346,8.09118146021443
-400.8750949250348,8.09118146021443
-400.8750949250348,8.049874257498093
-401.87509492503494,8.049874257498093
-401.87509492503494,8.00877793683954
-402.8750949250351,8.00877793683954
-402.8750949250351,7.967891421641005
-403.8750949250353,7.967891421641005
-403.8750949250353,7.927213640800977
-404.87509492503546,7.927213640800977
-404.87509492503546,7.886743528686151
-405.8750949250356,7.886743528686151
-405.8750949250356,7.846480025103501
-406.8750949250358,7.846480025103501
-406.8750949250358,7.806422075272519
-407.87509492503597,7.806422075272519
-407.87509492503597,7.76656862979757
-408.87509492503614,7.76656862979757
-408.87509492503614,7.726918644640408
-409.8750949250363,7.726918644640408
-409.8750949250363,7.687471081092828
-410.8750949250365,7.687471081092828
-410.8750949250365,7.648224905749447
-411.87509492503665,7.648224905749447
-411.87509492503665,7.609179090480639
-412.8750949250368,7.609179090480639
-412.8750949250368,7.570332612405598
-413.875094925037,7.570332612405598
-413.875094925037,7.531684453865539
-414.87509492503716,7.531684453865539
-414.87509492503716,7.493233602397048
-415.87509492503733,7.493233602397048
-415.87509492503733,7.454979050705547
-416.8750949250375,7.454979050705547
-416.8750949250375,7.416919796638913
-417.8750949250377,7.416919796638913
-417.8750949250377,7.37905484316122
-418.87509492503784,7.37905484316122
-418.87509492503784,7.341383198326628
-419.875094925038,7.341383198326628
-419.875094925038,7.303903875253385
-420.8750949250382,7.303903875253385
-420.8750949250382,7.266615892097988
-421.87509492503835,7.266615892097988
-421.87509492503835,7.2295182720294475
-422.8750949250385,7.2295182720294475
-422.8750949250385,7.192610043203707
-423.8750949250387,7.192610043203707
-423.8750949250387,7.155890238738177
-424.87509492503887,7.155890238738177
-424.87509492503887,7.119357896686417
-425.87509492503904,7.119357896686417
-425.87509492503904,7.083012060012919
-426.8750949250392,7.083012060012919
-426.8750949250392,7.04685177656805
-427.8750949250394,7.04685177656805
-427.8750949250394,7.010876099063103
-428.87509492503955,7.010876099063103
-428.87509492503955,6.97508408504548
-429.8750949250397,6.97508408504548
-429.8750949250397,6.939474796874004
-430.8750949250399,6.939474796874004
-430.8750949250399,6.904047301694358
-431.87509492504006,6.904047301694358
-431.87509492504006,6.868800671414641
-432.87509492504023,6.868800671414641
-432.87509492504023,6.8337339826810615
-433.8750949250404,6.8337339826810615
-433.8750949250404,6.798846316853746
-434.87509492504057,6.798846316853746
-434.87509492504057,6.764136759982671
-435.87509492504074,6.764136759982671
-435.87509492504074,6.729604402783722
-436.8750949250409,6.729604402783722
-436.8750949250409,6.695248340614874
-437.8750949250411,6.695248340614874
-437.8750949250411,6.661067673452495
-438.87509492504125,6.661067673452495
-438.87509492504125,6.627061505867761
-439.8750949250414,6.627061505867761
-439.8750949250414,6.593228947003203
-440.8750949250416,6.593228947003203
-440.8750949250416,6.559569110549372
-441.87509492504176,6.559569110549372
-441.87509492504176,6.526081114721614
-442.87509492504194,6.526081114721614
-442.87509492504194,6.492764082236975
-443.8750949250421,6.492764082236975
-443.8750949250421,6.459617140291217
-444.8750949250423,6.459617140291217
-444.8750949250423,6.4266394205359525
-445.87509492504245,6.4266394205359525
-445.87509492504245,6.393830059055898
-446.8750949250426,6.393830059055898
-446.8750949250426,6.361188196346242
-447.8750949250428,6.361188196346242
-447.8750949250428,6.328712977290126
-448.87509492504296,6.328712977290126
-448.87509492504296,6.296403551136246
-449.87509492504313,6.296403551136246
-449.87509492504313,6.264259071476563
-450.8750949250433,6.264259071476563
-450.8750949250433,6.232278696224136
-451.87509492504347,6.232278696224136
-451.87509492504347,6.200461587591051
-452.87509492504364,6.200461587591051
-452.87509492504364,6.168806912066483
-453.8750949250438,6.168806912066483
-453.8750949250438,6.137313840394855
-454.875094925044,6.137313840394855
-454.875094925044,6.105981547554118
-455.87509492504415,6.105981547554118
-455.87509492504415,6.074809212734136
-456.8750949250443,6.074809212734136
-456.8750949250443,6.043796019315182
-457.8750949250445,6.043796019315182
-457.8750949250445,6.012941154846547
-458.87509492504466,6.012941154846547
-458.87509492504466,5.982243811025255
-459.87509492504483,5.982243811025255
-459.87509492504483,5.9517031836748915
-460.875094925045,5.9517031836748915
-460.875094925045,5.921318472724531
-461.8750949250452,5.921318472724531
-461.8750949250452,5.8910888821877805
-462.87509492504535,5.8910888821877805
-462.87509492504535,5.861013620141928
-463.8750949250455,5.861013620141928
-463.8750949250455,5.831091898707194
-464.8750949250457,5.831091898707194
-464.8750949250457,5.801322934026094
-465.87509492504586,5.801322934026094
-465.87509492504586,5.771705946242902
-466.875094925046,5.771705946242902
-466.875094925046,5.742240159483223
-467.8750949250462,5.742240159483223
-467.8750949250462,5.712924801833664
-468.87509492504637,5.712924801833664
-468.87509492504637,5.683759105321614
-469.87509492504654,5.683759105321614
-469.87509492504654,5.654742305895127
-470.8750949250467,5.654742305895127
-470.8750949250467,5.625873643402904
-471.8750949250469,5.625873643402904
-471.8750949250469,5.59715236157438
-472.87509492504705,5.59715236157438
-472.87509492504705,5.568577707999912
-473.8750949250472,5.568577707999912
-473.8750949250472,5.54014893411107
-474.8750949250474,5.54014893411107
-474.8750949250474,5.511865295161021
-475.87509492504756,5.511865295161021
-475.87509492504756,5.4837260502050285
-476.87509492504773,5.4837260502050285
-476.87509492504773,5.455730462081031
-477.8750949250479,5.455730462081031
-477.8750949250479,5.427877797390341
-478.8750949250481,5.427877797390341
-478.8750949250481,5.4001673264784245
-479.87509492504824,5.4001673264784245
-479.87509492504824,5.372598323415789
-480.8750949250484,5.372598323415789
-480.8750949250484,5.3451700659789685
-481.8750949250486,5.3451700659789685
-481.8750949250486,5.317881835631599
-482.87509492504876,5.317881835631599
-482.87509492504876,5.2907329175056
-483.8750949250489,5.2907329175056
-483.8750949250489,5.263722600382442
-484.8750949250491,5.263722600382442
-484.8750949250491,5.23685017667452
-485.87509492504927,5.23685017667452
-485.87509492504927,5.210114942406612
-486.87509492504944,5.210114942406612
-486.87509492504944,5.1835161971974415
-487.8750949250496,5.1835161971974415
-487.8750949250496,5.157053244241324
-488.8750949250498,5.157053244241324
-488.8750949250498,5.130725390289922
-489.87509492504995,5.130725390289922
-489.87509492504995,5.104531945634071
-490.8750949250501,5.104531945634071
-490.8750949250501,5.078472224085725
-491.8750949250503,5.078472224085725
-491.8750949250503,5.05254554295997
-492.87509492505046,5.05254554295997
-492.87509492505046,5.026751223057145
-493.87509492505063,5.026751223057145
-493.87509492505063,5.0010885886450485
-494.8750949250508,5.0010885886450485
-494.8750949250508,4.975556967441233
-495.875094925051,4.975556967441233
-495.875094925051,4.950155690595399
-496.87509492505114,4.950155690595399
-496.87509492505114,4.92488409267187
-497.8750949250513,4.92488409267187
-497.8750949250513,4.899741511632157
-498.8750949250515,4.899741511632157
-498.8750949250515,4.8747272888176205
-499.87509492505166,4.8747272888176205
-499.87509492505166,4.849840768932215
-500.8750949250518,4.849840768932215
-500.8750949250518,4.825081300025317
-501.875094925052,4.825081300025317
-501.875094925052,4.800448233474654
-502.87509492505217,4.800448233474654
-502.87509492505217,4.775940923969304
-503.87509492505234,4.775940923969304
-503.87509492505234,4.751558729492797
-504.8750949250525,4.751558729492797
-504.8750949250525,4.727301011306293
-505.8750949250527,4.727301011306293
-505.8750949250527,4.703167133931851
-506.87509492505285,4.703167133931851
-506.87509492505285,4.679156465135777
-507.875094925053,4.679156465135777
-507.875094925053,4.655268375912067
-508.8750949250532,4.655268375912067
-508.8750949250532,4.6315022404659265
-509.87509492505336,4.6315022404659265
-509.87509492505336,4.607857436197376
-510.87509492505353,4.607857436197376
-510.87509492505353,4.58433334368494
-511.8750949250537,4.58433334368494
-511.8750949250537,4.5609293466694245
-512.8750949250533,4.5609293466694245
-512.8750949250533,4.537644832037765
-513.8750949250528,4.537644832037765
-513.8750949250528,4.514479189806975
-514.8750949250524,4.514479189806975
-514.8750949250524,4.491431813108158
-515.8750949250519,4.491431813108158
-515.8750949250519,4.468502098170613
-516.8750949250515,4.468502098170613
-516.8750949250515,4.445689444306016
-517.875094925051,4.445689444306016
-517.875094925051,4.422993253892686
-518.8750949250506,4.422993253892686
-518.8750949250506,4.400412932359927
-519.8750949250501,4.400412932359927
-519.8750949250501,4.377947888172453
-520.8750949250497,4.377947888172453
-520.8750949250497,4.355597532814892
-521.8750949250492,4.355597532814892
-521.8750949250492,4.3333612807763675
-522.8750949250488,4.3333612807763675
-522.8750949250488,4.311238549535161
-523.8750949250483,4.311238549535161
-523.8750949250483,4.289228759543451
-524.8750949250478,4.289228759543451
-524.8750949250478,4.26733133421213
-525.8750949250474,4.26733133421213
-525.8750949250474,4.245545699895705
-526.8750949250469,4.245545699895705
-526.8750949250469,4.223871285877258
-527.8750949250465,4.223871285877258
-527.8750949250465,4.202307524353508
-528.875094925046,4.202307524353508
-528.875094925046,4.180853850419928
-529.8750949250456,4.180853850419928
-529.8750949250456,4.159509702055952
-530.8750949250451,4.159509702055952
-530.8750949250451,4.138274520110243
-531.8750949250447,4.138274520110243
-531.8750949250447,4.117147748286055
-532.8750949250442,4.117147748286055
-532.8750949250442,4.096128833126653
-533.8750949250438,4.096128833126653
-533.8750949250438,4.075217224000819
-534.8750949250433,4.075217224000819
-534.8750949250433,4.054412373088422
-535.8750949250428,4.054412373088422
-535.8750949250428,4.033713735366069
-536.8750949250424,4.033713735366069
-536.8750949250424,4.01312076859283
-537.8750949250419,4.01312076859283
-537.8750949250419,3.992632933296028
-538.8750949250415,3.992632933296028
-538.8750949250415,3.97224969275711
-539.875094925041,3.97224969275711
-539.875094925041,3.9519705129975846
-540.8750949250406,3.9519705129975846
-540.8750949250406,3.931794862765034
-541.8750949250401,3.931794862765034
-541.8750949250401,3.9117222135191985
-542.8750949250397,3.9117222135191985
-542.8750949250397,3.8917520394181273
-543.8750949250392,3.8917520394181273
-543.8750949250392,3.871883817304406
-544.8750949250388,3.871883817304406
-544.8750949250388,3.8521170266914484
-545.8750949250383,3.8521170266914484
-545.8750949250383,3.8324511497498643
-546.8750949250378,3.8324511497498643
-546.8750949250378,3.8128856712938934
-547.8750949250374,3.8128856712938934
-547.8750949250374,3.793420078767906
-548.8750949250369,3.793420078767906
-548.8750949250369,3.7740538622329804
-549.8750949250365,3.7740538622329804
-549.8750949250365,3.754786514353539
-550.875094925036,3.754786514353539
-550.875094925036,3.7356175303840633
-551.8750949250356,3.7356175303840633
-551.8750949250356,3.7165464081558652
-552.8750949250351,3.7165464081558652
-552.8750949250351,3.6975726480639364
-553.8750949250347,3.6975726480639364
-553.8750949250347,3.6786957530538573
-554.8750949250342,3.6786957530538573
-554.8750949250342,3.659915228608778
-555.8750949250337,3.659915228608778
-555.8750949250337,3.641230582736462
-556.8750949250333,3.641230582736462
-556.8750949250333,3.622641325956397
-557.8750949250328,3.622641325956397
-557.8750949250328,3.604146971286974
-558.8750949250324,3.604146971286974
-558.8750949250324,3.5857470342327282
-559.8750949250319,3.5857470342327282
-559.8750949250319,3.567441032771647
-560.8750949250315,3.567441032771647
-560.8750949250315,3.5492284873425426
-561.875094925031,3.5492284873425426
-561.875094925031,3.5311089208324904
-562.8750949250306,3.5311089208324904
-562.8750949250306,3.5130818585643264
-563.8750949250301,3.5130818585643264
-563.8750949250301,3.4951468282842173
-564.8750949250297,3.4951468282842173
-564.8750949250297,3.4773033601492838
-565.8750949250292,3.4773033601492838
-565.8750949250292,3.459550986715295
-566.8750949250287,3.459550986715295
-566.8750949250287,3.441889242924424
-567.8750949250283,3.441889242924424
-567.8750949250283,3.42431766609306
-568.8750949250278,3.42431766609306
-568.8750949250278,3.4068357958996938
-569.8750949250274,3.4068357958996938
-569.8750949250274,3.3894431743728526
-570.8750949250269,3.3894431743728526
-570.8750949250269,3.3721393458791065
-571.8750949250265,3.3721393458791065
-571.8750949250265,3.3549238571111313
-572.875094925026,3.3549238571111313
-572.875094925026,3.3377962570758335
-573.8750949250256,3.3377962570758335
-573.8750949250256,3.3207560970825347
-574.8750949250251,3.3207560970825347
-574.8750949250251,3.303802930731218
-575.8750949250247,3.303802930731218
-575.8750949250247,3.2869363139008336
-576.8750949250242,3.2869363139008336
-576.8750949250242,3.2701558047376644
-577.8750949250237,3.2701558047376644
-577.8750949250237,3.2534609636437497
-578.8750949250233,3.2534609636437497
-578.8750949250233,3.236851353265371
-579.8750949250228,3.236851353265371
-579.8750949250228,3.2203265384815922
-580.8750949250224,3.2203265384815922
-580.8750949250224,3.2038860863928638
-581.8750949250219,3.2038860863928638
-581.8750949250219,3.1875295663096797
-582.8750949250215,3.1875295663096797
-582.8750949250215,3.171256549741295
-583.875094925021,3.171256549741295
-583.875094925021,3.155066610384502
-584.8750949250206,3.155066610384502
-584.8750949250206,3.138959324112461
-585.8750949250201,3.138959324112461
-585.8750949250201,3.1229342689635913
-586.8750949250197,3.1229342689635913
-586.8750949250197,3.106991025130513
-587.8750949250192,3.106991025130513
-587.8750949250192,3.0911291749490557
-588.8750949250187,3.0911291749490557
-588.8750949250187,3.0753483028873108
-589.8750949250183,3.0753483028873108
-589.8750949250183,3.0596479955347493
-590.8750949250178,3.0596479955347493
-590.8750949250178,3.044027841591392
-591.8750949250174,3.044027841591392
-591.8750949250174,3.0284874318570316
-592.8750949250169,3.0284874318570316
-592.8750949250169,3.0130263592205164
-593.8750949250165,3.0130263592205164
-593.8750949250165,2.997644218649083
-594.875094925016,2.997644218649083
-594.875094925016,2.982340607177748
-595.8750949250156,2.982340607177748
-595.8750949250156,2.9671151238987465
-596.8750949250151,2.9671151238987465
-596.8750949250151,2.951967369951037
-597.8750949250147,2.951967369951037
-597.8750949250147,2.936896948509846
-598.8750949250142,2.936896948509846
-598.8750949250142,2.9219034647762756
-599.8750949250137,2.9219034647762756
-599.8750949250137,2.9069865259669605
-600.8750949250133,2.9069865259669605
-600.8750949250133,2.8921457413037777
-601.8750949250128,2.8921457413037777
-601.8750949250128,2.8773807220036094
-602.8750949250124,2.8773807220036094
-602.8750949250124,2.862691081268159
-603.8750949250119,2.862691081268159
-603.8750949250119,2.848076434273817
-604.8750949250115,2.848076434273817
-604.8750949250115,2.833536398161581
-605.875094925011,2.833536398161581
-605.875094925011,2.8190705920270243
-606.8750949250106,2.8190705920270243
-606.8750949250106,2.8046786369103187
-607.8750949250101,2.8046786369103187
-607.8750949250101,2.7903601557863067
-608.8750949250096,2.7903601557863067
-608.8750949250096,2.7761147735546237
-609.8750949250092,2.7761147735546237
-609.8750949250092,2.761942117029874
-610.8750949250087,2.761942117029874
-610.8750949250087,2.7478418149318515
-611.8750949250083,2.7478418149318515
-611.8750949250083,2.7338134978758135
-612.8750949250078,2.7338134978758135
-612.8750949250078,2.719856798362808
-613.8750949250074,2.719856798362808
-613.8750949250074,2.70597135077004
-614.8750949250069,2.70597135077004
-614.8750949250069,2.692156791341299
-615.8750949250065,2.692156791341299
-615.8750949250065,2.678412758177426
-616.875094925006,2.678412758177426
-616.875094925006,2.664738891226835
-617.8750949250056,2.664738891226835
-617.8750949250056,2.6511348322760795
-618.8750949250051,2.6511348322760795
-618.8750949250051,2.637600224940469
-619.8750949250046,2.637600224940469
-619.8750949250046,2.624134714654733
-620.8750949250042,2.624134714654733
-620.8750949250042,2.6107379486637314
-621.8750949250037,2.6107379486637314
-621.8750949250037,2.5974095760132148
-622.8750949250033,2.5974095760132148
-622.8750949250033,2.5841492475406294
-623.8750949250028,2.5841492475406294
-623.8750949250028,2.570956615865971
-624.8750949250024,2.570956615865971
-624.8750949250024,2.557831335382684
-625.8750949250019,2.557831335382684
-625.8750949250019,2.5447730622486078
-626.8750949250015,2.5447730622486078
-626.8750949250015,2.531781454376969
-627.875094925001,2.531781454376969
-627.875094925001,2.5188561714274202
-628.8750949250006,2.5188561714274202
-628.8750949250006,2.505996874797124
-629.8750949250001,2.505996874797124
-629.8750949250001,2.493203227611882
-630.8750949249996,2.493203227611882
-630.8750949249996,2.480474894717311
-631.8750949249992,2.480474894717311
-631.8750949249992,2.467811542670061
-632.8750949249987,2.467811542670061
-632.8750949249987,2.455212839729083
-633.8750949249983,2.455212839729083
-633.8750949249983,2.442678455846935
-634.8750949249978,2.442678455846935
-634.8750949249978,2.430208062661139
-635.8750949249974,2.430208062661139
-635.8750949249974,2.417801333485575
-636.8750949249969,2.417801333485575
-636.8750949249969,2.4054579433019274
-637.8750949249965,2.4054579433019274
-637.8750949249965,2.393177568751167
-638.875094924996,2.393177568751167
-638.875094924996,2.380959888125082
-639.8750949249956,2.380959888125082
-639.8750949249956,2.3688045813578498
-640.8750949249951,2.3688045813578498
-640.8750949249951,2.35671133001765
-641.8750949249946,2.35671133001765
-641.8750949249946,2.3446798172983256
-642.8750949249942,2.3446798172983256
-642.8750949249942,2.3327097280110833
-643.8750949249937,2.3327097280110833
-643.8750949249937,2.320800748576234
-644.8750949249933,2.320800748576234
-644.8750949249933,2.308952567014981
-645.8750949249928,2.308952567014981
-645.8750949249928,2.297164872941244
-646.8750949249924,2.297164872941244
-646.8750949249924,2.285437357553532
-647.8750949249919,2.285437357553532
-647.8750949249919,2.2737697136268498
-648.8750949249915,2.2737697136268498
-648.8750949249915,2.262161635504651
-649.875094924991,2.262161635504651
-649.875094924991,2.250612819090832
-650.8750949249905,2.250612819090832
-650.8750949249905,2.2391229618417636
-651.8750949249901,2.2391229618417636
-651.8750949249901,2.2276917627583663
-652.8750949249896,2.2276917627583663
-652.8750949249896,2.216318922378225
-653.8750949249892,2.216318922378225
-653.8750949249892,2.205004142767744
-654.8750949249887,2.205004142767744
-654.8750949249887,2.1937471275143428
-655.8750949249883,2.1937471275143428
-655.8750949249883,2.182547581718689
-656.8750949249878,2.182547581718689
-656.8750949249878,2.171405211986974
-657.8750949249874,2.171405211986974
-657.8750949249874,2.1603197264232272
-658.8750949249869,2.1603197264232272
-658.8750949249869,2.14929083462167
-659.8750949249865,2.14929083462167
-659.8750949249865,2.1383182476591065
-660.875094924986,2.1383182476591065
-660.875094924986,2.1274016780873546
-661.8750949249855,2.1274016780873546
-661.8750949249855,2.116540839925717
-662.8750949249851,2.116540839925717
-662.8750949249851,2.1057354486534883
-663.8750949249846,2.1057354486534883
-663.8750949249846,2.094985221202502
-664.8750949249842,2.094985221202502
-664.8750949249842,2.0842898759497146
-665.8750949249837,2.0842898759497146
-665.8750949249837,2.073649132709829
-666.8750949249833,2.073649132709829
-666.8750949249833,2.063062712727952
-667.8750949249828,2.063062712727952
-667.8750949249828,2.052530338672296
-668.8750949249824,2.052530338672296
-668.8750949249824,2.042051734626908
-669.8750949249819,2.042051734626908
-669.8750949249819,2.0316266260844467
-670.8750949249815,2.0316266260844467
-670.8750949249815,2.0212547399389895
-671.875094924981,2.0212547399389895
-671.875094924981,2.010935804478876
-672.8750949249805,2.010935804478876
-672.8750949249805,2.0006695493795927
-673.8750949249801,2.0006695493795927
-673.8750949249801,1.9904557056966907
-674.8750949249796,1.9904557056966907
-674.8750949249796,1.9802940058587384
-675.8750949249792,1.9802940058587384
-675.8750949249792,1.9701841836603138
-676.8750949249787,1.9701841836603138
-676.8750949249787,1.960125974255031
-677.8750949249783,1.960125974255031
-677.8750949249783,1.9501191141486
-678.8750949249778,1.9501191141486
-678.8750949249778,1.9401633411919263
-679.8750949249774,1.9401633411919263
-679.8750949249774,1.930258394574242
-680.8750949249769,1.930258394574242
-680.8750949249769,1.920404014816273
-681.8750949249765,1.920404014816273
-681.8750949249765,1.9105999437634427
-682.875094924976,1.9105999437634427
-682.875094924976,1.9008459245791083
-683.8750949249755,1.9008459245791083
-683.8750949249755,1.8911417017378334
-684.8750949249751,1.8911417017378334
-684.8750949249751,1.881487021018692
-685.8750949249746,1.881487021018692
-685.8750949249746,1.8718816294986114
-686.8750949249742,1.8718816294986114
-686.8750949249742,1.862325275545744
-687.8750949249737,1.862325275545744
-687.8750949249737,1.8528177088128766
-688.8750949249733,1.8528177088128766
-688.8750949249733,1.8433586802308717
-689.8750949249728,1.8433586802308717
-689.8750949249728,1.8339479420021434
-690.8750949249724,1.8339479420021434
-690.8750949249724,1.8245852475941644
-691.8750949249719,1.8245852475941644
-691.8750949249719,1.8152703517330084
-692.8750949249714,1.8152703517330084
-692.8750949249714,1.8060030103969256
-693.875094924971,1.8060030103969256
-693.875094924971,1.7967829808099478
-694.8750949249705,1.7967829808099478
-694.8750949249705,1.7876100214355306
-695.8750949249701,1.7876100214355306
-695.8750949249701,1.7784838919702253
-696.8750949249696,1.7784838919702253
-696.8750949249696,1.7694043533373827
-697.8750949249692,1.7694043533373827
-697.8750949249692,1.7603711676808913
-698.8750949249687,1.7603711676808913
-698.8750949249687,1.7513840983589453
-699.8750949249683,1.7513840983589453
-700.0,1.7424429099378458
+1.0,0.14291451511729836
+2.0,0.14291451511729836
+2.0,0.2856247846482862
+3.0,0.2856247846482862
+3.0,0.4281311004895483
+4.0,0.4281311004895483
+4.0,0.570433754120514
+5.0,0.570433754120514
+5.0,0.7125330366040461
+6.0,0.7125330366040461
+6.0,0.8544292385870289
+7.0,0.8544292385870289
+7.0,0.996122650300979
+8.0,0.996122650300979
+8.0,1.1376135615626226
+9.0,1.1376135615626226
+9.0,1.278902261774506
+10.0,1.278902261774506
+10.0,1.4199890399255621
+11.0,1.4199890399255621
+11.0,1.5608741845917318
+12.0,1.5608741845917318
+12.0,1.7015579839365302
+13.0,1.7015579839365302
+13.0,1.8420407257116467
+14.0,1.8420407257116467
+14.0,1.9823226972575325
+15.0,1.9823226972575325
+15.0,2.12240418550399
+16.0,2.12240418550399
+16.0,2.262285476970749
+17.0,2.262285476970749
+17.0,2.4019668577680675
+18.0,2.4019668577680675
+18.0,2.541448613597308
+19.0,2.541448613597308
+19.0,2.6807310297515263
+20.0,2.6807310297515263
+20.0,2.81981439111606
+21.0,2.81981439111606
+21.0,2.9586989821690834
+22.0,2.9586989821690834
+22.0,3.0973850869822295
+23.0,3.0973850869822295
+23.0,3.2358729892211557
+24.0,3.2358729892211557
+24.0,3.3741629721460997
+25.0,3.3741629721460997
+25.0,3.5122553186124894
+26.0,3.5122553186124894
+26.0,3.6501503110715094
+27.0,3.6501503110715094
+27.0,3.7878482315706896
+28.0,3.7878482315706896
+28.0,3.92534936175446
+29.0,3.92534936175446
+29.0,4.0626539828647505
+30.0,4.0626539828647505
+30.0,4.199762375741544
+31.0,4.199762375741544
+31.0,4.336674820823472
+32.0,4.336674820823472
+32.0,4.47339159814838
+33.0,4.47339159814838
+33.0,4.609912987353882
+34.0,4.609912987353882
+34.0,4.746239267677977
+35.0,4.746239267677977
+35.0,4.882370717959561
+36.0,4.882370717959561
+36.0,5.018307616639062
+37.0,5.018307616639062
+37.0,5.154050241758945
+38.0,5.154050241758945
+38.0,5.28959887096433
+39.0,5.28959887096433
+39.0,5.424953781503539
+40.0,5.424953781503539
+40.0,5.560115250228659
+41.0,5.560115250228659
+41.0,5.695083553596126
+42.0,5.695083553596126
+42.0,5.8298589676672785
+43.0,5.8298589676672785
+43.0,5.964441768108908
+44.0,5.964441768108908
+44.0,6.098832230193862
+45.0,6.098832230193862
+45.0,6.233030628801561
+46.0,6.233030628801561
+46.0,6.367037238418593
+47.0,6.367037238418593
+47.0,6.500852333139273
+48.0,6.500852333139273
+48.0,6.634476186666172
+49.0,6.634476186666172
+49.0,6.767909072310719
+50.0,6.767909072310719
+50.0,6.901151262993743
+51.0,6.901151262993743
+51.0,7.034203031246022
+52.0,7.034203031246022
+52.0,7.167064649208854
+53.0,7.167064649208854
+53.0,7.299736388634592
+54.0,7.299736388634592
+54.0,7.4322185208872344
+55.0,7.4322185208872344
+55.0,7.564511316942946
+56.0,7.564511316942946
+56.0,7.696615047390642
+57.0,7.696615047390642
+57.0,7.828529982432519
+58.0,7.828529982432519
+58.0,7.960256391884613
+59.0,7.960256391884613
+59.0,8.091794545177356
+60.0,8.091794545177356
+60.0,8.223144711356124
+61.0,8.223144711356124
+61.0,8.354307159081797
+62.0,8.354307159081797
+62.0,8.48528215663128
+63.0,8.48528215663128
+63.0,8.6160699718981
+64.0,8.6160699718981
+64.0,8.746670872392892
+65.0,8.746670872392892
+65.0,8.877085125244
+66.0,8.877085125244
+66.0,9.007312997198003
+67.0,9.007312997198003
+67.0,9.137354754620253
+68.0,9.137354754620253
+68.0,9.26721066349544
+69.0,9.26721066349544
+69.0,9.396880989428102
+70.0,9.396880989428102
+70.0,9.526365997643204
+71.0,9.526365997643204
+71.0,9.65566595298667
+72.0,9.65566595298667
+72.0,9.784781119925912
+73.0,9.784781119925912
+73.0,9.913711762550381
+74.0,9.913711762550381
+74.0,10.042458144572109
+75.0,10.042458144572109
+75.0,10.171020529326235
+76.0,10.171020529326235
+76.0,10.299399179771562
+77.0,10.299399179771562
+77.0,10.427594358491099
+78.0,10.427594358491099
+78.0,10.555606327692557
+79.0,10.555606327692557
+79.0,10.683435349208947
+80.0,10.683435349208947
+80.0,10.811081684499058
+81.0,10.811081684499058
+81.0,10.93854559464802
+82.0,10.93854559464802
+82.0,11.06582734036784
+83.0,11.06582734036784
+83.0,11.009331293671783
+84.0,11.009331293671783
+84.0,10.953123684811787
+85.0,10.953123684811787
+85.0,10.89720304118242
+86.0,10.89720304118242
+86.0,10.841567897696567
+87.0,10.841567897696567
+87.0,10.786216796747041
+88.0,10.786216796747041
+88.0,10.731148288168399
+89.0,10.731148288168399
+89.0,10.676360929198951
+90.0,10.676360929198951
+90.0,10.621853284442953
+91.0,10.621853284442953
+91.0,10.567623925833008
+92.0,10.567623925833008
+92.0,10.513671432592643
+93.0,10.513671432592643
+93.0,10.459994391199098
+94.0,10.459994391199098
+94.0,10.406591395346279
+95.0,10.406591395346279
+95.0,10.353461045907922
+96.0,10.353461045907922
+96.0,10.300601950900935
+97.0,10.300601950900935
+97.0,10.248012725448929
+98.0,10.248012725448929
+98.0,10.19569199174593
+99.0,10.19569199174593
+99.0,10.14363837902029
+100.0,10.14363837902029
+100.0,10.091850523498772
+101.0,10.091850523498772
+101.0,10.04032706837081
+102.0,10.04032706837081
+102.0,9.989066663752975
+103.0,9.989066663752975
+103.0,9.9380679666536
+104.0,9.9380679666536
+104.0,9.887329640937596
+105.0,9.887329640937596
+105.0,9.836850357291448
+106.0,9.836850357291448
+106.0,9.786628793188388
+107.0,9.786628793188388
+107.0,9.736663632853746
+108.0,9.736663632853746
+108.0,9.686953567230473
+109.0,9.686953567230473
+109.0,9.637497293944847
+110.0,9.637497293944847
+110.0,9.588293517272353
+111.0,9.588293517272353
+111.0,9.539340948103737
+112.0,9.539340948103737
+112.0,9.490638303911227
+113.0,9.490638303911227
+113.0,9.442184308714939
+114.0,9.442184308714939
+114.0,9.393977693049434
+115.0,9.393977693049434
+115.0,9.346017193930479
+116.0,9.346017193930479
+116.0,9.298301554821935
+117.0,9.298301554821935
+117.0,9.250829525602855
+118.0,9.250829525602855
+118.0,9.203599862534722
+119.0,9.203599862534722
+119.0,9.156611328228863
+120.0,9.156611328228863
+120.0,9.109862691614037
+121.0,9.109862691614037
+121.0,9.063352727904176
+122.0,9.063352727904176
+122.0,9.0170802185663
+123.0,9.0170802185663
+123.0,8.971043951288586
+124.0,8.971043951288586
+124.0,8.925242719948614
+125.0,8.925242719948614
+125.0,8.879675324581763
+126.0,8.879675324581763
+126.0,8.834340571349772
+127.0,8.834340571349772
+127.0,8.789237272509466
+128.0,8.789237272509466
+128.0,8.744364246381634
+129.0,8.744364246381634
+129.0,8.699720317320068
+130.0,8.699720317320068
+130.0,8.655304315680773
+131.0,8.655304315680773
+131.0,8.611115077791306
+132.0,8.611115077791306
+132.0,8.567151445920302
+133.0,8.567151445920302
+133.0,8.523412268247139
+134.0,8.523412268247139
+134.0,8.479896398831755
+135.0,8.479896398831755
+135.0,8.436602697584632
+136.0,8.436602697584632
+136.0,8.393530030236928
+137.0,8.393530030236928
+137.0,8.350677268310745
+138.0,8.350677268310745
+138.0,8.308043289089586
+139.0,8.308043289089586
+139.0,8.265626975588921
+140.0,8.265626975588921
+140.0,8.223427216526936
+141.0,8.223427216526936
+141.0,8.181442906295407
+142.0,8.181442906295407
+142.0,8.139672944930744
+143.0,8.139672944930744
+143.0,8.098116238085167
+144.0,8.098116238085167
+144.0,8.056771696998034
+145.0,8.056771696998034
+145.0,8.01563823846732
+146.0,8.01563823846732
+146.0,7.9747147848212325
+147.0,7.9747147848212325
+147.0,7.934000263889983
+148.0,7.934000263889983
+148.0,7.8934936089776935
+149.0,7.8934936089776935
+149.0,7.85319375883445
+150.0,7.85319375883445
+150.0,7.813099657628499
+151.0,7.813099657628499
+151.0,7.773210254918583
+152.0,7.773210254918583
+152.0,7.733524505626425
+153.0,7.733524505626425
+153.0,7.694041370009343
+154.0,7.694041370009343
+154.0,7.654759813633008
+155.0,7.654759813633008
+155.0,7.61567880734435
+156.0,7.61567880734435
+156.0,7.5767973272445905
+157.0,7.5767973272445905
+157.0,7.538114354662412
+158.0,7.538114354662412
+158.0,7.499628876127278
+159.0,7.499628876127278
+159.0,7.461339883342875
+160.0,7.461339883342875
+160.0,7.423246373160701
+161.0,7.423246373160701
+161.0,7.385347347553775
+162.0,7.385347347553775
+162.0,7.347641813590498
+163.0,7.347641813590498
+163.0,7.3101287834086355
+164.0,7.3101287834086355
+164.0,7.272807274189433
+165.0,7.272807274189433
+165.0,7.235676308131872
+166.0,7.235676308131872
+166.0,7.19873491242705
+167.0,7.19873491242705
+167.0,7.161982119232692
+168.0,7.161982119232692
+168.0,7.125416965647796
+169.0,7.125416965647796
+169.0,7.089038493687403
+170.0,7.089038493687403
+170.0,7.052845750257504
+171.0,7.052845750257504
+171.0,7.01683778713006
+172.0,7.01683778713006
+172.0,6.981013660918165
+173.0,6.981013660918165
+173.0,6.945372433051336
+174.0,6.945372433051336
+174.0,6.909913169750909
+175.0,6.909913169750909
+175.0,6.874634942005583
+176.0,6.874634942005583
+176.0,6.839536825547084
+177.0,6.839536825547084
+177.0,6.804617900825938
+178.0,6.804617900825938
+178.0,6.769877252987391
+179.0,6.769877252987391
+179.0,6.735313971847436
+180.0,6.735313971847436
+180.0,6.700927151868963
+181.0,6.700927151868963
+181.0,6.666715892138041
+182.0,6.666715892138041
+182.0,6.63267929634031
+183.0,6.63267929634031
+183.0,6.598816472737503
+184.0,6.598816472737503
+184.0,6.565126534144072
+185.0,6.565126534144072
+185.0,6.531608597903961
+186.0,6.531608597903961
+186.0,6.4982617858674665
+187.0,6.4982617858674665
+187.0,6.465085224368237
+188.0,6.465085224368237
+188.0,6.432078044200383
+189.0,6.432078044200383
+189.0,6.399239380595702
+190.0,6.399239380595702
+190.0,6.366568373201025
+191.0,6.366568373201025
+191.0,6.334064166055674
+192.0,6.334064166055674
+192.0,6.301725907569038
+193.0,6.301725907569038
+193.0,6.269552750498258
+194.0,6.269552750498258
+194.0,6.237543851926038
+195.0,6.237543851926038
+195.0,6.2056983732385484
+196.0,6.2056983732385484
+196.0,6.174015480103468
+197.0,6.174015480103468
+197.0,6.142494342448115
+198.0,6.142494342448115
+198.0,6.111134134437706
+199.0,6.111134134437706
+199.0,6.079934034453715
+200.0,6.079934034453715
+200.0,6.0488932250723515
+201.0,6.0488932250723515
+201.0,6.018010893043142
+202.0,6.018010893043142
+202.0,5.987286229267623
+203.0,5.987286229267623
+203.0,5.956718428778146
+204.0,5.956718428778146
+204.0,5.926306690716785
+205.0,5.926306690716785
+205.0,5.896050218314356
+206.0,5.896050218314356
+206.0,5.865948218869539
+207.0,5.865948218869539
+207.0,5.8359999037281165
+208.0,5.8359999037281165
+208.0,5.8062044882623045
+209.0,5.8062044882623045
+209.0,5.776561191850198
+210.0,5.776561191850198
+210.0,5.747069237855319
+211.0,5.747069237855319
+211.0,5.717727853606272
+212.0,5.717727853606272
+212.0,5.6885362703764955
+213.0,5.6885362703764955
+213.0,5.659493723364125
+214.0,5.659493723364125
+214.0,5.630599451671957
+215.0,5.630599451671957
+215.0,5.601852698287508
+216.0,5.601852698287508
+216.0,5.573252710063188
+217.0,5.573252710063188
+217.0,5.5447987376965635
+218.0,5.5447987376965635
+218.0,5.516490035710732
+219.0,5.516490035710732
+219.0,5.488325862434784
+220.0,5.488325862434784
+220.0,5.460305479984375
+221.0,5.460305479984375
+221.0,5.4324281542423964
+222.0,5.4324281542423964
+222.0,5.404693154839736
+223.0,5.404693154839736
+223.0,5.377099755136146
+224.0,5.377099755136146
+224.0,5.349647232201207
+225.0,5.349647232201207
+225.0,5.3223348667953845
+226.0,5.3223348667953845
+226.0,5.295161943351187
+227.0,5.295161943351187
+227.0,5.268127749954419
+228.0,5.268127749954419
+228.0,5.241231578325527
+229.0,5.241231578325527
+229.0,5.214472723801046
+230.0,5.214472723801046
+230.0,5.187850485315137
+231.0,5.187850485315137
+231.0,5.161364165381214
+232.0,5.161364165381214
+232.0,5.135013070073683
+233.0,5.135013070073683
+233.0,5.108796509009745
+234.0,5.108796509009745
+234.0,5.0827137953313235
+235.0,5.0827137953313235
+235.0,5.056764245687059
+236.0,5.056764245687059
+236.0,5.030947180214413
+237.0,5.030947180214413
+237.0,5.005261922521846
+238.0,5.005261922521846
+238.0,4.979707799671111
+239.0,4.979707799671111
+239.0,4.954284142159608
+240.0,4.954284142159608
+240.0,4.928990283902854
+241.0,4.928990283902854
+241.0,4.903825562217025
+242.0,4.903825562217025
+242.0,4.878789317801601
+243.0,4.878789317801601
+243.0,4.853880894722088
+244.0,4.853880894722088
+244.0,4.829099640392829
+245.0,4.829099640392829
+245.0,4.804444905559918
+246.0,4.804444905559918
+246.0,4.779916044284181
+247.0,4.779916044284181
+247.0,4.7555124139242535
+248.0,4.7555124139242535
+248.0,4.731233375119749
+249.0,4.731233375119749
+249.0,4.707078291774501
+250.0,4.707078291774501
+250.0,4.683046531039904
+251.0,4.683046531039904
+251.0,4.659137463298327
+252.0,4.659137463298327
+252.0,4.6353504621466275
+253.0,4.6353504621466275
+253.0,4.611684904379727
+254.0,4.611684904379727
+254.0,4.588140169974294
+255.0,4.588140169974294
+255.0,4.564715642072496
+256.0,4.564715642072496
+256.0,4.54141070696584
+257.0,4.54141070696584
+257.0,4.518224754079085
+258.0,4.518224754079085
+258.0,4.4951571759542635
+259.0,4.4951571759542635
+259.0,4.472207368234745
+260.0,4.472207368234745
+260.0,4.449374729649419
+261.0,4.449374729649419
+261.0,4.426658661996933
+262.0,4.426658661996933
+262.0,4.404058570130022
+263.0,4.404058570130022
+263.0,4.38157386193992
+264.0,4.38157386193992
+264.0,4.359203948340839
+265.0,4.359203948340839
+265.0,4.336948243254543
+266.0,4.336948243254543
+266.0,4.31480616359499
+267.0,4.31480616359499
+267.0,4.292777129253054
+268.0,4.292777129253054
+268.0,4.27086056308133
+269.0,4.27086056308133
+269.0,4.24905589087901
+270.0,4.24905589087901
+270.0,4.227362541376841
+271.0,4.227362541376841
+271.0,4.205779946222158
+272.0,4.205779946222158
+272.0,4.184307539963991
+273.0,4.184307539963991
+273.0,4.162944760038256
+274.0,4.162944760038256
+274.0,4.141691046753008
+275.0,4.141691046753008
+275.0,4.1205458432737885
+276.0,4.1205458432737885
+276.0,4.099508595609024
+277.0,4.099508595609024
+277.0,4.078578752595522
+278.0,4.078578752595522
+278.0,4.057755765884027
+279.0,4.057755765884027
+279.0,4.0370390899248525
+280.0,4.0370390899248525
+280.0,4.01642818195359
+281.0,4.01642818195359
+281.0,3.9959225019768896
+282.0,3.9959225019768896
+282.0,3.97552151275831
+283.0,3.97552151275831
+283.0,3.955224679804245
+284.0,3.955224679804245
+284.0,3.9350314713499204
+285.0,3.9350314713499204
+285.0,3.9149413583454598
+286.0,3.9149413583454598
+286.0,3.8949538144420273
+287.0,3.8949538144420273
+287.0,3.875068315978034
+288.0,3.875068315978034
+288.0,3.855284341965421
+289.0,3.855284341965421
+289.0,3.835601374076007
+290.0,3.835601374076007
+290.0,3.816018896627913
+291.0,3.816018896627913
+291.0,3.7965363965720464
+292.0,3.7965363965720464
+292.0,3.7771533634786634
+293.0,3.7771533634786634
+293.0,3.757869289523994
+294.0,3.757869289523994
+294.0,3.738683669476938
+295.0,3.738683669476938
+295.0,3.719596000685828
+296.0,3.719596000685828
+296.0,3.7006057830652606
+297.0,3.7006057830652606
+297.0,3.681712519082994
+298.0,3.681712519082994
+298.0,3.6629157137469135
+299.0,3.6629157137469135
+299.0,3.644214874592063
+300.0,3.644214874592063
+300.0,3.625609511667742
+301.0,3.625609511667742
+301.0,3.6070991375246697
+302.0,3.6070991375246697
+302.0,3.5886832672022138
+303.0,3.5886832672022138
+303.0,3.570361418215686
+304.0,3.570361418215686
+304.0,3.552133110543699
+305.0,3.552133110543699
+305.0,3.5339978666155916
+306.0,3.5339978666155916
+306.0,3.5159552112989183
+307.0,3.5159552112989183
+307.0,3.498004671886997
+308.0,3.498004671886997
+308.0,3.4801457780865284
+309.0,3.4801457780865284
+309.0,3.4623780620052718
+310.0,3.4623780620052718
+310.0,3.4447010581397888
+311.0,3.4447010581397888
+311.0,3.4271143033632456
+312.0,3.4271143033632456
+312.0,3.4096173369132794
+313.0,3.4096173369132794
+313.0,3.3922097003799285
+314.0,3.3922097003799285
+314.0,3.374890937693621
+315.0,3.374890937693621
+315.0,3.3576605951132263
+316.0,3.3576605951132263
+316.0,3.3405182212141664
+317.0,3.3405182212141664
+317.0,3.3234633668765903
+318.0,3.3234633668765903
+318.0,3.3064955852736064
+319.0,3.3064955852736064
+319.0,3.2896144318595755
+320.0,3.2896144318595755
+320.0,3.2728194643584665
+321.0,3.2728194643584665
+321.0,3.2561102427522663
+322.0,3.2561102427522663
+322.0,3.2394863292694516
+323.0,3.2394863292694516
+323.0,3.222947288373522
+324.0,3.222947288373522
+324.0,3.2064926867515857
+325.0,3.2064926867515857
+325.0,3.190122093303011
+326.0,3.190122093303011
+326.0,3.173835079128129
+327.0,3.173835079128129
+327.0,3.1576312175169963
+328.0,3.1576312175169963
+328.0,3.1415100839382184
+329.0,3.1415100839382184
+329.0,3.125471256027823
+330.0,3.125471256027823
+330.0,3.1095143135781984
+331.0,3.1095143135781984
+331.0,3.093638838527082
+332.0,3.093638838527082
+332.0,3.077844414946608
+333.0,3.077844414946608
+333.0,3.06213062903241
+334.0,3.06213062903241
+334.0,3.0464970690927795
+335.0,3.0464970690927795
+335.0,3.0309433255378813
+336.0,3.0309433255378813
+336.0,3.01546899086902
+337.0,3.01546899086902
+337.0,3.0000736596679656
+338.0,3.0000736596679656
+338.0,2.984756928586331
+339.0,2.984756928586331
+339.0,2.9695183963350056
+340.0,2.9695183963350056
+340.0,2.9543576636736404
+341.0,2.9543576636736404
+341.0,2.939274333400189
+342.0,2.939274333400189
+342.0,2.9242680103405
+343.0,2.9242680103405
+343.0,2.9093383013379657
+344.0,2.9093383013379657
+344.0,2.8944848152432194
+345.0,2.8944848152432194
+345.0,2.8797071629038893
+346.0,2.8797071629038893
+346.0,2.8650049571544023
+347.0,2.8650049571544023
+347.0,2.85037781280584
+348.0,2.85037781280584
+348.0,2.8358253466358474
+349.0,2.8358253466358474
+349.0,2.821347177378593
+350.0,2.821347177378593
+350.0,2.8069429257147798
+351.0,2.8069429257147798
+351.0,2.792612214261706
+352.0,2.792612214261706
+352.0,2.77835466756338
+353.0,2.77835466756338
+353.0,2.764169912080682
+354.0,2.764169912080682
+354.0,2.7500575761815793
+355.0,2.7500575761815793
+355.0,2.7360172901313877
+356.0,2.7360172901313877
+356.0,2.722048686083085
+357.0,2.722048686083085
+357.0,2.708151398067675
+358.0,2.708151398067675
+358.0,2.6943250619845984
+359.0,2.6943250619845984
+359.0,2.680569315592194
+360.0,2.680569315592194
+360.0,2.666883798498207
+361.0,2.666883798498207
+361.0,2.6532681521503485
+362.0,2.6532681521503485
+362.0,2.639722019826901
+363.0,2.639722019826901
+363.0,2.6262450466273726
+364.0,2.6262450466273726
+364.0,2.6128368794631975
+365.0,2.6128368794631975
+365.0,2.5994971670484888
+366.0,2.5994971670484888
+366.0,2.5862255598908304
+367.0,2.5862255598908304
+367.0,2.573021710282124
+368.0,2.573021710282124
+368.0,2.5598852722894785
+369.0,2.5598852722894785
+369.0,2.5468159017461454
+370.0,2.5468159017461454
+370.0,2.5338132562425035
+371.0,2.5338132562425035
+371.0,2.5208769951170877
+372.0,2.5208769951170877
+372.0,2.5080067794476633
+373.0,2.5080067794476633
+373.0,2.495202272042346
+374.0,2.495202272042346
+374.0,2.482463137430769
+375.0,2.482463137430769
+375.0,2.4697890418552944
+376.0,2.4697890418552944
+376.0,2.457179653262265
+377.0,2.457179653262265
+377.0,2.4446346412933098
+378.0,2.4446346412933098
+378.0,2.432153677276686
+379.0,2.432153677276686
+379.0,2.4197364342186676
+380.0,2.4197364342186676
+380.0,2.4073825867949807
+381.0,2.4073825867949807
+381.0,2.395091811342278
+382.0,2.395091811342278
+382.0,2.3828637858496595
+383.0,2.3828637858496595
+383.0,2.370698189950236
+384.0,2.370698189950236
+384.0,2.3585947049127376
+385.0,2.3585947049127376
+385.0,2.3465530136331596
+386.0,2.3465530136331596
+386.0,2.3345728006264577
+387.0,2.3345728006264577
+387.0,2.3226537520182813
+388.0,2.3226537520182813
+388.0,2.3107955555367488
+389.0,2.3107955555367488
+389.0,2.298997900504269
+390.0,2.298997900504269
+390.0,2.2872604778293995
+391.0,2.2872604778293995
+391.0,2.2755829799987493
+392.0,2.2755829799987493
+392.0,2.2639651010689223
+393.0,2.2639651010689223
+393.0,2.2524065366585018
+394.0,2.2524065366585018
+394.0,2.240906983940076
+395.0,2.240906983940076
+395.0,2.2294661416323023
+396.0,2.2294661416323023
+396.0,2.218083709992017
+397.0,2.218083709992017
+397.0,2.2067593908063805
+398.0,2.2067593908063805
+398.0,2.1954928873850634
+399.0,2.1954928873850634
+399.0,2.1842839045524753
+400.0,2.1842839045524753
+400.0,2.1731321486400303
+401.0,2.1731321486400303
+401.0,2.1620373274784535
+402.0,2.1620373274784535
+402.0,2.150999150390126
+403.0,2.150999150390126
+403.0,2.1400173281814685
+404.0,2.1400173281814685
+404.0,2.129091573135367
+405.0,2.129091573135367
+405.0,2.1182215990036326
+406.0,2.1182215990036326
+406.0,2.107407120999503
+407.0,2.107407120999503
+407.0,2.0966478557901804
+408.0,2.0966478557901804
+408.0,2.0859435214894093
+409.0,2.0859435214894093
+409.0,2.0752938376500913
+410.0,2.0752938376500913
+410.0,2.0646985252569356
+411.0,2.0646985252569356
+411.0,2.0541573067191523
+412.0,2.0541573067191523
+412.0,2.043669905863177
+413.0,2.043669905863177
+413.0,2.0332360479254357
+414.0,2.0332360479254357
+414.0,2.022855459545147
+415.0,2.022855459545147
+415.0,2.0125278687571604
+416.0,2.0125278687571604
+416.0,2.002253004984829
+417.0,2.002253004984829
+417.0,1.9920305990329228
+418.0,1.9920305990329228
+418.0,1.9818603830805748
+419.0,1.9818603830805748
+419.0,1.9717420906742646
+420.0,1.9717420906742646
+420.0,1.961675456720837
+421.0,1.961675456720837
+421.0,1.9516602174805577
+422.0,1.9516602174805577
+422.0,1.9416961105602024
+423.0,1.9416961105602024
+423.0,1.9317828749061825
+424.0,1.9317828749061825
+424.0,1.9219202507977067
+425.0,1.9219202507977067
+425.0,1.9121079798399752
+426.0,1.9121079798399752
+426.0,1.9023458049574102
+427.0,1.9023458049574102
+427.0,1.892633470386921
+428.0,1.892633470386921
+428.0,1.8829707216712028
+429.0,1.8829707216712028
+429.0,1.8733573056520705
+430.0,1.8733573056520705
+430.0,1.8637929704638259
+431.0,1.8637929704638259
+431.0,1.854277465526659
+432.0,1.854277465526659
+432.0,1.8448105415400828
+433.0,1.8448105415400828
+433.0,1.8353919504764018
+434.0,1.8353919504764018
+434.0,1.8260214455742139
+435.0,1.8260214455742139
+435.0,1.8166987813319455
+436.0,1.8166987813319455
+436.0,1.8074237135014197
+437.0,1.8074237135014197
+437.0,1.7981959990814564
+438.0,1.7981959990814564
+438.0,1.7890153963115065
+439.0,1.7890153963115065
+439.0,1.7798816646653177
+440.0,1.7798816646653177
+440.0,1.7707945648446328
+441.0,1.7707945648446328
+441.0,1.76175385877292
+442.0,1.76175385877292
+442.0,1.752759309589137
+443.0,1.752759309589137
+443.0,1.7438106816415222
+444.0,1.7438106816415222
+444.0,1.734907740481424
+445.0,1.734907740481424
+445.0,1.7260502528571566
+446.0,1.7260502528571566
+446.0,1.7172379867078893
+447.0,1.7172379867078893
+447.0,1.7084707111575674
+448.0,1.7084707111575674
+448.0,1.6997481965088619
+449.0,1.6997481965088619
+449.0,1.6910702142371532
+450.0,1.6910702142371532
+450.0,1.6824365369845422
+451.0,1.6824365369845422
+451.0,1.6738469385538957
+452.0,1.6738469385538957
+452.0,1.6653011939029179
+453.0,1.6653011939029179
+453.0,1.656799079138256
+454.0,1.656799079138256
+454.0,1.6483403715096347
+455.0,1.6483403715096347
+455.0,1.639924849404018
+456.0,1.639924849404018
+456.0,1.6315522923398051
+457.0,1.6315522923398051
+457.0,1.6232224809610543
+458.0,1.6232224809610543
+458.0,1.6149351970317336
+459.0,1.6149351970317336
+459.0,1.606690223430006
+460.0,1.606690223430006
+460.0,1.598487344142538
+461.0,1.598487344142538
+461.0,1.590326344258843
+462.0,1.590326344258843
+462.0,1.5822070099656484
+463.0,1.5822070099656484
+463.0,1.5741291285412962
+464.0,1.5741291285412962
+464.0,1.5660924883501675
+465.0,1.5660924883501675
+465.0,1.5580968788371392
+466.0,1.5580968788371392
+466.0,1.550142090522067
+467.0,1.550142090522067
+467.0,1.5422279149942981
+468.0,1.5422279149942981
+468.0,1.5343541449072091
+469.0,1.5343541449072091
+469.0,1.5265205739727756
+470.0,1.5265205739727756
+470.0,1.5187269969561663
+471.0,1.5187269969561663
+471.0,1.5109732096703667
+472.0,1.5109732096703667
+472.0,1.5032590089708293
+473.0,1.5032590089708293
+473.0,1.4955841927501508
+474.0,1.4955841927501508
+474.0,1.4879485599327775
+475.0,1.4879485599327775
+475.0,1.4803519104697382
+476.0,1.4803519104697382
+476.0,1.4727940453334007
+477.0,1.4727940453334007
+477.0,1.4652747665122599
+478.0,1.4652747665122599
+478.0,1.457793877005748
+479.0,1.457793877005748
+479.0,1.4503511808190745
+480.0,1.4503511808190745
+480.0,1.4429464829580911
+481.0,1.4429464829580911
+481.0,1.4355795894241818
+482.0,1.4355795894241818
+482.0,1.4282503072091823
+483.0,1.4282503072091823
+483.0,1.4209584442903211
+484.0,1.4209584442903211
+484.0,1.4137038096251906
+485.0,1.4137038096251906
+485.0,1.4064862131467402
+486.0,1.4064862131467402
+486.0,1.3993054657582982
+487.0,1.3993054657582982
+487.0,1.3921613793286158
+488.0,1.3921613793286158
+488.0,1.3850537666869405
+489.0,1.3850537666869405
+489.0,1.3779824416181097
+490.0,1.3779824416181097
+490.0,1.3709472188576746
+491.0,1.3709472188576746
+491.0,1.3639479140870439
+492.0,1.3639479140870439
+492.0,1.3569843439286566
+493.0,1.3569843439286566
+493.0,1.350056325941177
+494.0,1.350056325941177
+494.0,1.3431636786147148
+495.0,1.3431636786147148
+495.0,1.3363062213660692
+496.0,1.3363062213660692
+496.0,1.3294837745339991
+497.0,1.3294837745339991
+497.0,1.3226961593745143
+498.0,1.3226961593745143
+498.0,1.315943198056194
+499.0,1.315943198056194
+499.0,1.3092247136555264
+500.0,1.3092247136555264
+500.0,1.3025405301522752
+501.0,1.3025405301522752
+501.0,1.2958904724248659
+502.0,1.2958904724248659
+502.0,1.2892743662457995
+503.0,1.2892743662457995
+503.0,1.2826920382770866
+504.0,1.2826920382770866
+504.0,1.2761433160657067
+505.0,1.2761433160657067
+505.0,1.2696280280390897
+506.0,1.2696280280390897
+506.0,1.2631460035006215
+507.0,1.2631460035006215
+507.0,1.2566970726251703
+508.0,1.2566970726251703
+508.0,1.2502810664546395
+509.0,1.2502810664546395
+509.0,1.243897816893539
+510.0,1.243897816893539
+510.0,1.2375471567045824
+511.0,1.2375471567045824
+511.0,1.2312289195043056
+512.0,1.2312289195043056
+512.0,1.2249429397587064
+513.0,1.2249429397587064
+513.0,1.218689052778909
+514.0,1.218689052778909
+514.0,1.2124670947168485
+515.0,1.2124670947168485
+515.0,1.2062769025609785
+516.0,1.2062769025609785
+516.0,1.2001183141320004
+517.0,1.2001183141320004
+517.0,1.1939911680786137
+518.0,1.1939911680786137
+518.0,1.1878953038732893
+519.0,1.1878953038732893
+519.0,1.1818305618080638
+520.0,1.1818305618080638
+520.0,1.175796782990355
+521.0,1.175796782990355
+521.0,1.169793809338799
+522.0,1.169793809338799
+522.0,1.1638214835791088
+523.0,1.1638214835791088
+523.0,1.1578796492399537
+524.0,1.1578796492399537
+524.0,1.1519681506488597
+525.0,1.1519681506488597
+525.0,1.146086832928131
+526.0,1.146086832928131
+526.0,1.1402355419907928
+527.0,1.1402355419907928
+527.0,1.1344141245365538
+528.0,1.1344141245365538
+528.0,1.1286224280477892
+529.0,1.1286224280477892
+529.0,1.1228603007855464
+530.0,1.1228603007855464
+530.0,1.1171275917855685
+531.0,1.1171275917855685
+531.0,1.1114241508543392
+532.0,1.1114241508543392
+532.0,1.105749828565148
+533.0,1.105749828565148
+533.0,1.100104476254175
+534.0,1.100104476254175
+534.0,1.0944879460165968
+535.0,1.0944879460165968
+535.0,1.0889000907027102
+536.0,1.0889000907027102
+536.0,1.0833407639140784
+537.0,1.0833407639140784
+537.0,1.0778098199996946
+538.0,1.0778098199996946
+538.0,1.0723071140521656
+539.0,1.0723071140521656
+539.0,1.0668325019039164
+540.0,1.0668325019039164
+540.0,1.0613858401234129
+541.0,1.0613858401234129
+541.0,1.0559669860114027
+542.0,1.0559669860114027
+542.0,1.0505757975971788
+543.0,1.0505757975971788
+543.0,1.0452121336348577
+544.0,1.0452121336348577
+544.0,1.0398758535996808
+545.0,1.0398758535996808
+545.0,1.0345668176843312
+546.0,1.0345668176843312
+546.0,1.029284886795272
+547.0,1.029284886795272
+547.0,1.0240299225491014
+548.0,1.0240299225491014
+548.0,1.0188017872689272
+549.0,1.0188017872689272
+549.0,1.0136003439807604
+550.0,1.0136003439807604
+550.0,1.0084254564099253
+551.0,1.0084254564099253
+551.0,1.0032769889774906
+552.0,1.0032769889774906
+552.0,0.998154806796717
+553.0,0.998154806796717
+553.0,0.9930587756695219
+554.0,0.9930587756695219
+554.0,0.9879887620829654
+555.0,0.9879887620829654
+555.0,0.9829446332057509
+556.0,0.9829446332057509
+556.0,0.9779262568847459
+557.0,0.9779262568847459
+557.0,0.9729335016415195
+558.0,0.9729335016415195
+558.0,0.9679662366688969
+559.0,0.9679662366688969
+559.0,0.9630243318275339
+560.0,0.9630243318275339
+560.0,0.9581076576425056
+561.0,0.9581076576425056
+561.0,0.9532160852999155
+562.0,0.9532160852999155
+562.0,0.9483494866435201
+563.0,0.9483494866435201
+563.0,0.9435077341713718
+564.0,0.9435077341713718
+564.0,0.9386907010324774
+565.0,0.9386907010324774
+565.0,0.9338982610234756
+566.0,0.9338982610234756
+566.0,0.9291302885853303
+567.0,0.9291302885853303
+567.0,0.924386658800041
+568.0,0.924386658800041
+568.0,0.91966724738737
+569.0,0.91966724738737
+569.0,0.9149719307015863
+570.0,0.9149719307015863
+570.0,0.9103005857282261
+571.0,0.9103005857282261
+571.0,0.9056530900808704
+572.0,0.9056530900808704
+572.0,0.9010293219979377
+573.0,0.9010293219979377
+573.0,0.8964291603394946
+574.0,0.8964291603394946
+574.0,0.8918524845840816
+575.0,0.8918524845840816
+575.0,0.887299174825556
+576.0,0.887299174825556
+576.0,0.8827691117699498
+577.0,0.8827691117699498
+577.0,0.8782621767323447
+578.0,0.8782621767323447
+578.0,0.8737782516337627
+579.0,0.8737782516337627
+579.0,0.8693172189980719
+580.0,0.8693172189980719
+580.0,0.8648789619489096
+581.0,0.8648789619489096
+581.0,0.8604633642066193
+582.0,0.8604633642066193
+582.0,0.8560703100852048
+583.0,0.8560703100852048
+583.0,0.8516996844892994
+584.0,0.8516996844892994
+584.0,0.84735137291115
+585.0,0.84735137291115
+585.0,0.8430252614276172
+586.0,0.8430252614276172
+586.0,0.8387212366971911
+587.0,0.8387212366971911
+587.0,0.8344391859570208
+588.0,0.8344391859570208
+588.0,0.8301789970199612
+589.0,0.8301789970199612
+589.0,0.8259405582716329
+590.0,0.8259405582716329
+590.0,0.8217237586674987
+591.0,0.8217237586674987
+591.0,0.8175284877299535
+592.0,0.8175284877299535
+592.0,0.8133546355454305
+593.0,0.8133546355454305
+593.0,0.8092020927615214
+594.0,0.8092020927615214
+594.0,0.8050707505841111
+595.0,0.8050707505841111
+595.0,0.8009605007745277
+596.0,0.8009605007745277
+596.0,0.7968712356467067
+597.0,0.7968712356467067
+597.0,0.7928028480643695
+598.0,0.7928028480643695
+598.0,0.7887552314382165
+599.0,0.7887552314382165
+599.0,0.7847282797231347
+600.0,0.7847282797231347
+600.0,0.7807218874154196
+601.0,0.7807218874154196
+601.0,0.7767359495500101
+602.0,0.7767359495500101
+602.0,0.7727703616977398
+603.0,0.7727703616977398
+603.0,0.7688250199626001
+604.0,0.7688250199626001
+604.0,0.7648998209790183
+605.0,0.7648998209790183
+605.0,0.7609946619091499
+606.0,0.7609946619091499
+606.0,0.7571094404401838
+607.0,0.7571094404401838
+607.0,0.7532440547816622
+608.0,0.7532440547816622
+608.0,0.7493984036628136
+609.0,0.7493984036628136
+609.0,0.7455723863298992
+610.0,0.7455723863298992
+610.0,0.741765902543574
+611.0,0.741765902543574
+611.0,0.7379788525762598
+612.0,0.7379788525762598
+612.0,0.7342111372095329
+613.0,0.7342111372095329
+613.0,0.7304626577315244
+614.0,0.7304626577315244
+614.0,0.7267333159343341
+615.0,0.7267333159343341
+615.0,0.7230230141114573
+616.0,0.7230230141114573
+616.0,0.7193316550552254
+617.0,0.7193316550552254
+617.0,0.715659142054259
+618.0,0.715659142054259
+618.0,0.7120053788909334
+619.0,0.7120053788909334
+619.0,0.7083702698388589
+620.0,0.7083702698388589
+620.0,0.7047537196603717
+621.0,0.7047537196603717
+621.0,0.70115563360404
+622.0,0.70115563360404
+622.0,0.6975759174021803
+623.0,0.6975759174021803
+623.0,0.6940144772683884
+624.0,0.6940144772683884
+624.0,0.690471219895082
+625.0,0.690471219895082
+625.0,0.6869460524510562
+626.0,0.6869460524510562
+626.0,0.6834388825790513
+627.0,0.6834388825790513
+627.0,0.6799496183933331
+628.0,0.6799496183933331
+628.0,0.6764781684772857
+629.0,0.6764781684772857
+629.0,0.6730244418810161
+630.0,0.6730244418810161
+630.0,0.6695883481189718
+631.0,0.6695883481189718
+631.0,0.6661697971675697
+632.0,0.6661697971675697
+632.0,0.6627686994628381
+633.0,0.6627686994628381
+633.0,0.6593849658980694
+634.0,0.6593849658980694
+634.0,0.6560185078214864
+635.0,0.6560185078214864
+635.0,0.6526692370339189
+636.0,0.6526692370339189
+636.0,0.6493370657864934
+637.0,0.6493370657864934
+637.0,0.6460219067783343
+638.0,0.6460219067783343
+638.0,0.642723673154276
+639.0,0.642723673154276
+639.0,0.6394422785025882
+640.0,0.6394422785025882
+640.0,0.6361776368527109
+641.0,0.6361776368527109
+641.0,0.6329296626730033
+642.0,0.6329296626730033
+642.0,0.6296982708685018
+643.0,0.6296982708685018
+643.0,0.6264833767786913
+644.0,0.6264833767786913
+644.0,0.6232848961752865
+645.0,0.6232848961752865
+645.0,0.6201027452600261
+646.0,0.6201027452600261
+646.0,0.6169368406624762
+647.0,0.6169368406624762
+647.0,0.6137870994378472
+648.0,0.6137870994378472
+648.0,0.6106534390648194
+649.0,0.6106534390648194
+649.0,0.6075357774433824
+650.0,0.6075357774433824
+650.0,0.6044340328926829
+651.0,0.6044340328926829
+651.0,0.6013481241488858
+652.0,0.6013481241488858
+652.0,0.598277970363044
+653.0,0.598277970363044
+653.0,0.5952234910989812
+654.0,0.5952234910989812
+654.0,0.592184606331184
+655.0,0.592184606331184
+655.0,0.5891612364427052
+656.0,0.5891612364427052
+656.0,0.5861533022230785
+657.0,0.5861533022230785
+657.0,0.5831607248662424
+658.0,0.5831607248662424
+658.0,0.5801834259684762
+659.0,0.5801834259684762
+659.0,0.5772213275263451
+660.0,0.5772213275263451
+660.0,0.574274351934658
+661.0,0.574274351934658
+661.0,0.5713424219844326
+662.0,0.5713424219844326
+662.0,0.5684254608608734
+663.0,0.5684254608608734
+663.0,0.5655233921413595
+664.0,0.5655233921413595
+664.0,0.5626361397934416
+665.0,0.5626361397934416
+665.0,0.5597636281728507
+666.0,0.5597636281728507
+666.0,0.5569057820215157
+667.0,0.5569057820215157
+667.0,0.5540625264655923
+668.0,0.5540625264655923
+668.0,0.5512337870135003
+669.0,0.5512337870135003
+669.0,0.5484194895539737
+670.0,0.5484194895539737
+670.0,0.5456195603541169
+671.0,0.5456195603541169
+671.0,0.5428339260574748
+672.0,0.5428339260574748
+672.0,0.5400625136821099
+673.0,0.5400625136821099
+673.0,0.5373052506186904
+674.0,0.5373052506186904
+674.0,0.5345620646285879
+675.0,0.5345620646285879
+675.0,0.531832883841985
+676.0,0.531832883841985
+676.0,0.529117636755992
+677.0,0.529117636755992
+677.0,0.5264162522327739
+678.0,0.5264162522327739
+678.0,0.5237286594976863
+679.0,0.5237286594976863
+679.0,0.5210547881374216
+680.0,0.5210547881374216
+680.0,0.5183945680981635
+681.0,0.5183945680981635
+681.0,0.5157479296837526
+682.0,0.5157479296837526
+682.0,0.5131148035538596
+683.0,0.5131148035538596
+683.0,0.5104951207221687
+684.0,0.5104951207221687
+684.0,0.5078888125545709
+685.0,0.5078888125545709
+685.0,0.5052958107673647
+686.0,0.5052958107673647
+686.0,0.5027160474254684
+687.0,0.5027160474254684
+687.0,0.5001494549406391
+688.0,0.5001494549406391
+688.0,0.4975959660697027
+689.0,0.4975959660697027
+689.0,0.49505551391279157
+690.0,0.49505551391279157
+690.0,0.49252803191159233
+691.0,0.49252803191159233
+691.0,0.4900134538476019
+692.0,0.4900134538476019
+692.0,0.48751171384039255
+693.0,0.48751171384039255
+693.0,0.48502274634588566
+694.0,0.48502274634588566
+694.0,0.48254648615463497
+695.0,0.48254648615463497
+695.0,0.48008286839011777
+696.0,0.48008286839011777
+696.0,0.47763182850703545
+697.0,0.47763182850703545
+697.0,0.47519330228962214
+698.0,0.47519330228962214
+698.0,0.4727672258499625
+699.0,0.4727672258499625
+699.0,0.47035353562631793
+700.0,0.47035353562631793
+700.000002,0.46795216838146114
 					</series>
 					<comment/>
 				</plot>

@@ -15,6 +15,11 @@ const double room1[2] = {400, 150};
 const double room2[2] = {1200, 750};
 const double room3[2] = {500, 400};
 
+// Recources
+const double item1[2] = {415, 165};
+const double item2[2] = {1215, 765};
+const double item3[2] = {515, 415};
+
 /**
 *** STUFF TO BE GENERATED AUTOMATICALLY
 */
@@ -31,9 +36,14 @@ bool robot_stat = true;
 double location_X[3]  = {room1[0], room2[0], room3[0]};
 double location_Y[3]  = {room1[1], room2[1], room3[1]};
 
-// Quantity of agents
+// Declared Resources
+};
+};
+
+// Quantity of agents and resouces
 const int N_H = 1; // Number of humans in the pattern
 const int N_R = 1; // Number of robots in the pattern
+// There are no Resources in the pattern Input
 
 // Human initialization
 double humanFatigue[N_H] = {0.0};
@@ -67,6 +77,10 @@ int human_to_be_followed[N_R];
 int robot_to_be_followed[N_R];
 int f_loc_target[N_R];
 
+urgent broadcast chan start_r_pick[N_R], stop_r_pick[N_R];
+int robot_res_to_pick[N_R];
+int robot_inventory[N_R][N_ITEMS];
+int old_inventory[N_R][N_ITEMS];
 
 /**
 *** Channels
@@ -1760,6 +1774,57 @@ plan_traj()</label>
 		</transition>
 	</template>
 
+	<template>
+		<name>Robot_pick</name>
+		<parameter>int id</parameter>
+		<declaration>clock t;
+
+void initRobot(){
+    for (i : int[0,N_R-1]){
+        for (j : int[0,N_ITEMS-1]){
+            robot_inventory[i][j] = 0;
+        }
+    }
+}
+</declaration>
+		<location id="id0" x="-416" y="272">
+			<name x="-426" y="238">Init</name>
+			<committed/>
+		</location>
+		<location id="id1" x="-204" y="272">
+			<name x="-246" y="246">idle</name>
+		</location>
+		<location id="id2" x="-8" y="272">
+			<name x="-17" y="238">starting</name>
+		</location>
+		<location id="id3" x="-8" y="416">
+			<name x="-110" y="407">stopping</name>
+		</location>
+		<init ref="id0"/>
+		<transition id="id4">
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="34" y="314">t &gt;= 5</label>
+			<label kind="assignment" x="34" y="340">robot_inventory[id-1][robot_res_to_pick[id-1]] += 1</label>
+		</transition>
+		<transition id="id5">
+			<source ref="id3"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="-246" y="365">stop_r_pick[id-1]?</label>
+		</transition>
+		<transition id="id6">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="-187" y="238">start_r_pick[id-1]!</label>
+			<label kind="assignment" x="-144" y="272">t=0</label>
+		</transition>
+		<transition id="id7">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="assignment" x="-398" y="272">initRobot()</label>
+		</transition>
+	</template>
+
 </declaration>
 	<system>
 // Mission Definition
@@ -1768,6 +1833,7 @@ hi_1 = Human_idle(1);
 hm_1 = Human_moveTo(1, 26.0);
 rm_1 = Robot_moveTo(1, 26.0, 26.0);
 rf_1 = Robot_follow(1, 26.0, 26.0);
+rp_1 = Robot_pick(1);
 
 // Pattern Definition
 
@@ -1784,6 +1850,7 @@ hi_1,
 hm_1,
 rm_1,
 rf_1,
+rp_1,
 
 Test1,
 Test1_human_def,

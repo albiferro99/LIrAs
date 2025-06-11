@@ -15,6 +15,11 @@ const double room1[2] = {400, 150};
 const double room2[2] = {1200, 750};
 const double room3[2] = {500, 400};
 
+// Recources
+const double item1[2] = {415, 165};
+const double item2[2] = {1215, 765};
+const double item3[2] = {515, 415};
+
 /**
 *** STUFF TO BE GENERATED AUTOMATICALLY
 */
@@ -31,9 +36,14 @@ bool robot_stat = true;
 double location_X[3]  = {room1[0], room2[0], room3[0]};
 double location_Y[3]  = {room1[1], room2[1], room3[1]};
 
-// Quantity of agents
+// Declared Resources
+};
+};
+
+// Quantity of agents and resouces
 const int N_H = 1; // Number of humans in the pattern
 const int N_R = 1; // Number of robots in the pattern
+// There are no Resources in the pattern Input
 
 // Human initialization
 double humanFatigue[N_H] = {0.0};
@@ -67,6 +77,10 @@ int human_to_be_followed[N_R];
 int robot_to_be_followed[N_R];
 int f_loc_target[N_R];
 
+urgent broadcast chan start_r_pick[N_R], stop_r_pick[N_R];
+int robot_res_to_pick[N_R];
+int robot_inventory[N_R][N_ITEMS];
+int old_inventory[N_R][N_ITEMS];
 
 /**
 *** Channels
@@ -142,7 +156,6 @@ double pt_dist(double x1, double x2, double y1, double y2) {
     double ydifference = y2-y1;
     return sqrt((xdifference*xdifference)+(ydifference*ydifference));
 }
-	</declaration>
 	<template>
 		<name>Test3_orchestrator</name>
 		<parameter>int p</parameter>
@@ -151,8 +164,8 @@ double pt_dist(double x1, double x2, double y1, double y2) {
 		<location id="id0" x="0" y="0">
 			<name x="-17" y="-34">Init</name>
 		</location>
-		<location id="id1" x="467" y="-42">
-			<name x="450" y="-76">sub_seq_s1</name>
+		<location id="id1" x="500" y="0">
+			<name x="483" y="-34">sub_seq_s1</name>
 		</location>
 		<location id="id2" x="1000" y="0">
 			<name x="983" y="-34">sub_seq_s2</name>
@@ -183,59 +196,60 @@ double pt_dist(double x1, double x2, double y1, double y2) {
 			<label kind="assignment" x="1018" y="0">currP=currP+1</label>
 		</transition>
 	</template>
+
 	<template>
 		<name>Test3_human</name>
 		<parameter>int p, int H</parameter>
 		<declaration>// Place local declarations here.
 clock t;		</declaration>
-		<location id="id7" x="0" y="0">
+		<location id="id0" x="0" y="0">
 			<name x="-17" y="-34">init_human</name>
 		</location>
-		<location id="id8" x="0" y="350">
+		<location id="id1" x="0" y="350">
 			<name x="-17" y="316">s1_start</name>
 			<committed/>
 		</location>
-		<location id="id9" x="0" y="700">
+		<location id="id2" x="0" y="700">
 			<name x="-17" y="666">s2_start</name>
 			<committed/>
 		</location>
-		<location id="id10" x="0" y="1050">
+		<location id="id3" x="0" y="1050">
 			<name x="-17" y="1016">end_human</name>
 		</location>
-		<location id="id11" x="200" y="350">
+		<location id="id4" x="200" y="350">
 			<name x="183" y="316">A1_a1_moveTo_busy</name>
 			<label kind="invariant" x="190" y="367">t&lt;=5</label>
 		</location>
-		<location id="id12" x="400" y="350">
+		<location id="id5" x="400" y="350">
 			<name x="383" y="316">A1_a1_moveTo_complete</name>
 			<committed/>
 		</location>
-		<location id="id13" x="600" y="350">
+		<location id="id6" x="600" y="350">
 			<name x="583" y="316">A1_a2_moveTo_busy</name>
 			<label kind="invariant" x="590" y="367">t&lt;=5</label>
 		</location>
-		<location id="id14" x="800" y="350">
+		<location id="id7" x="800" y="350">
 			<name x="783" y="316">A1_a2_moveTo_complete</name>
 			<committed/>
 		</location>
-		<location id="id15" x="1000" y="350">
+		<location id="id10" x="1000" y="350">
 			<name x="983" y="316">s1_end</name>
 		</location>
-		<location id="id16" x="200" y="700">
+		<location id="id12" x="200" y="700">
 			<name x="183" y="666">A1_a3_moveTo_busy</name>
 			<label kind="invariant" x="190" y="717">t&lt;=5</label>
 		</location>
-		<location id="id17" x="400" y="700">
+		<location id="id13" x="400" y="700">
 			<name x="383" y="666">A1_a3_moveTo_complete</name>
 			<committed/>
 		</location>
-		<location id="id18" x="600" y="700">
+		<location id="id14" x="600" y="700">
 			<name x="583" y="666">s2_end</name>
 		</location>
-		<init ref="id7"/>
-		<transition id="id19">
-			<source ref="id11"/>
-			<target ref="id12"/>
+		<init ref="id0"/>
+		<transition id="id8">
+			<source ref="id4"/>
+			<target ref="id5"/>
 			<label kind="guard" x="218" y="216">(robPositionX[0] &lt;= location_X[0]+30 and
 robPositionX[0] &gt;= location_X[0]-30 and
 robPositionY[0] &lt;= location_Y[0]+30 and
@@ -243,9 +257,9 @@ robPositionY[0] &gt;= location_Y[0]-30)</label>
 			<label kind="synchronisation" x="218" y="233">stop_h_moveTo[H-1]!</label>
 			<nail x="300" y="250"/>
 		</transition>
-		<transition id="id20">
-			<source ref="id13"/>
-			<target ref="id14"/>
+		<transition id="id9">
+			<source ref="id6"/>
+			<target ref="id7"/>
 			<label kind="guard" x="618" y="216">(robPositionX[0] &lt;= location_X[0]+30 and
 robPositionX[0] &gt;= location_X[0]-30 and
 robPositionY[0] &lt;= location_Y[0]+30 and
@@ -253,37 +267,37 @@ robPositionY[0] &gt;= location_Y[0]-30)</label>
 			<label kind="synchronisation" x="618" y="233">stop_h_moveTo[H-1]!</label>
 			<nail x="700" y="250"/>
 		</transition>
-		<transition id="id21">
-			<source ref="id14"/>
-			<target ref="id15"/>
+		<transition id="id11">
+			<source ref="id7"/>
+			<target ref="id10"/>
 			<label kind="assignment" x="818" y="350">human_stat = true</label>
 		</transition>
-		<transition id="id22">
-			<source ref="id17"/>
-			<target ref="id18"/>
+		<transition id="id15">
+			<source ref="id13"/>
+			<target ref="id14"/>
 			<label kind="assignment" x="418" y="700">human_stat = true</label>
 		</transition>
-		<transition id="id23">
-			<source ref="id8"/>
-			<target ref="id11"/>
+		<transition id="id16">
+			<source ref="id1"/>
+			<target ref="id4"/>
 			<label kind="synchronisation" x="18" y="333">start_h_moveTo[H-1]!</label>
 		</transition>
-		<transition id="id24">
-			<source ref="id7"/>
-			<target ref="id8"/>
+		<transition id="id17">
+			<source ref="id0"/>
+			<target ref="id1"/>
 			<label kind="synchronisation" x="18" y="233">s1?</label>
 			<label kind="assignment" x="18" y="250">human_loc_target[H-1] = 0</label>
 		</transition>
-		<transition id="id25">
-			<source ref="id11"/>
-			<target ref="id8"/>
+		<transition id="id18">
+			<source ref="id4"/>
+			<target ref="id1"/>
 			<label kind="guard" x="18" y="416">t&gt;=5</label>
 			<label kind="assignment" x="18" y="450">t = 0</label>
 			<nail x="100" y="430"/>
 		</transition>
-		<transition id="id26">
-			<source ref="id11"/>
-			<target ref="id12"/>
+		<transition id="id19">
+			<source ref="id4"/>
+			<target ref="id5"/>
 			<label kind="guard" x="218" y="216">humanPositionX[H-1] &lt;= location_X[human_loc_target[H-1]]+30 and
 humanPositionX[H-1] &gt;= location_X[human_loc_target[H-1]]-30 and
 humanPositionY[H-1] &lt;= location_Y[human_loc_target[H-1]]+30 and
@@ -291,57 +305,59 @@ humanPositionY[H-1] &gt;= location_Y[human_loc_target[H-1]]-30</label>
 			<label kind="synchronisation" x="218" y="233">stop_h_moveTo[H-1]!</label>
 			<label kind="assignment" x="218" y="250">human_loc_target[H-1] = 1</label>
 		</transition>
-		<transition id="id27">
-			<source ref="id12"/>
-			<target ref="id13"/>
+		<transition id="id20">
+			<source ref="id5"/>
+			<target ref="id6"/>
 			<label kind="synchronisation" x="418" y="333">start_h_moveTo[H-1]!</label>
 		</transition>
-		<transition id="id28">
-			<source ref="id13"/>
-			<target ref="id12"/>
+		<transition id="id21">
+			<source ref="id6"/>
+			<target ref="id5"/>
 			<label kind="guard" x="418" y="416">t&gt;=5</label>
 			<label kind="assignment" x="418" y="450">t = 0</label>
 			<nail x="500" y="430"/>
 		</transition>
-		<transition id="id29">
-			<source ref="id13"/>
-			<target ref="id14"/>
+		<transition id="id22">
+			<source ref="id6"/>
+			<target ref="id7"/>
 			<label kind="guard" x="618" y="216">humanPositionX[H-1] &lt;= location_X[human_loc_target[H-1]]+30 and
 humanPositionX[H-1] &gt;= location_X[human_loc_target[H-1]]-30 and
 humanPositionY[H-1] &lt;= location_Y[human_loc_target[H-1]]+30 and
 humanPositionY[H-1] &gt;= location_Y[human_loc_target[H-1]]-30</label>
 			<label kind="synchronisation" x="618" y="233">stop_h_moveTo[H-1]!</label>
+			<label kind="assignment" x="618" y="250"></label>
 		</transition>
-		<transition id="id30">
-			<source ref="id9"/>
-			<target ref="id16"/>
+		<transition id="id23">
+			<source ref="id2"/>
+			<target ref="id12"/>
 			<label kind="synchronisation" x="18" y="683">start_h_moveTo[H-1]!</label>
 		</transition>
-		<transition id="id31">
-			<source ref="id15"/>
-			<target ref="id9"/>
+		<transition id="id24">
+			<source ref="id10"/>
+			<target ref="id2"/>
 			<label kind="synchronisation" x="18" y="583">s2?</label>
 			<label kind="assignment" x="18" y="600">human_loc_target[H-1] = 0</label>
 		</transition>
-		<transition id="id32">
-			<source ref="id16"/>
-			<target ref="id9"/>
+		<transition id="id25">
+			<source ref="id12"/>
+			<target ref="id2"/>
 			<label kind="guard" x="18" y="766">t&gt;=5</label>
 			<label kind="assignment" x="18" y="800">t = 0</label>
 			<nail x="100" y="780"/>
 		</transition>
-		<transition id="id33">
-			<source ref="id16"/>
-			<target ref="id17"/>
+		<transition id="id26">
+			<source ref="id12"/>
+			<target ref="id13"/>
 			<label kind="guard" x="218" y="566">humanPositionX[H-1] &lt;= location_X[human_loc_target[H-1]]+30 and
 humanPositionX[H-1] &gt;= location_X[human_loc_target[H-1]]-30 and
 humanPositionY[H-1] &lt;= location_Y[human_loc_target[H-1]]+30 and
 humanPositionY[H-1] &gt;= location_Y[human_loc_target[H-1]]-30</label>
 			<label kind="synchronisation" x="218" y="583">stop_h_moveTo[H-1]!</label>
+			<label kind="assignment" x="218" y="600"></label>
 		</transition>
-		<transition id="id34">
-			<source ref="id18"/>
-			<target ref="id10"/>
+		<transition id="id27">
+			<source ref="id14"/>
+			<target ref="id3"/>
 			<label kind="synchronisation" x="18" y="933">e?</label>
 		</transition>
 	</template>
@@ -350,97 +366,100 @@ humanPositionY[H-1] &gt;= location_Y[human_loc_target[H-1]]-30</label>
 		<parameter>int p, int R</parameter>
 		<declaration>// Place local declarations here.
 clock t;		</declaration>
-		<location id="id35" x="0" y="0">
+		<location id="id0" x="0" y="0">
 			<name x="-17" y="-34">init_robot</name>
 		</location>
-		<location id="id36" x="0" y="350">
+		<location id="id1" x="0" y="350">
 			<name x="-17" y="316">s1_start</name>
 			<committed/>
 		</location>
-		<location id="id37" x="0" y="700">
+		<location id="id2" x="0" y="700">
 			<name x="-17" y="666">s2_start</name>
 			<committed/>
 		</location>
-		<location id="id38" x="0" y="1050">
+		<location id="id3" x="0" y="1050">
 			<name x="-17" y="1016">end_robot</name>
 		</location>
-		<location id="id39" x="200" y="350">
+		<location id="id4" x="200" y="350">
 			<name x="183" y="316">A2_a1_moveTo_busy</name>
 		</location>
-		<location id="id40" x="400" y="350">
+		<location id="id5" x="400" y="350">
 			<name x="383" y="316">A2_a1_moveTo_complete</name>
 			<committed/>
 		</location>
-		<location id="id41" x="600" y="350">
+		<location id="id6" x="600" y="350">
 			<name x="583" y="316">s1_end</name>
 		</location>
-		<location id="id42" x="200" y="700">
+		<location id="id8" x="200" y="700">
 			<name x="183" y="666">A2_a2_moveTo_busy</name>
 		</location>
-		<location id="id43" x="400" y="700">
+		<location id="id9" x="400" y="700">
 			<name x="383" y="666">A2_a2_moveTo_complete</name>
 			<committed/>
 		</location>
-		<location id="id44" x="600" y="700">
+		<location id="id10" x="600" y="700">
 			<name x="583" y="666">s2_end</name>
 		</location>
-		<init ref="id35"/>
-		<transition id="id45">
-			<source ref="id40"/>
-			<target ref="id41"/>
+		<init ref="id0"/>
+		<transition id="id7">
+			<source ref="id5"/>
+			<target ref="id6"/>
 			<label kind="assignment" x="418" y="350">robot_stat = true</label>
 		</transition>
-		<transition id="id46">
-			<source ref="id43"/>
-			<target ref="id44"/>
+		<transition id="id11">
+			<source ref="id9"/>
+			<target ref="id10"/>
 			<label kind="assignment" x="418" y="700">robot_stat = true</label>
 		</transition>
-		<transition id="id47">
-			<source ref="id36"/>
-			<target ref="id39"/>
+		<transition id="id12">
+			<source ref="id1"/>
+			<target ref="id4"/>
 			<label kind="synchronisation" x="18" y="333">start_r_moveTo[R-1]!</label>
 		</transition>
-		<transition id="id48">
-			<source ref="id35"/>
-			<target ref="id36"/>
+		<transition id="id13">
+			<source ref="id0"/>
+			<target ref="id1"/>
 			<label kind="synchronisation" x="18" y="233">s1?</label>
 			<label kind="assignment" x="18" y="250">robot_loc_target[R-1] = 0</label>
 		</transition>
-		<transition id="id49">
-			<source ref="id39"/>
-			<target ref="id40"/>
+		<transition id="id14">
+			<source ref="id4"/>
+			<target ref="id5"/>
 			<label kind="guard" x="218" y="216">robPositionX[R-1] &lt;= location_X[robot_loc_target[R-1]]+30 and
 robPositionX[R-1] &gt;= location_X[robot_loc_target[R-1]]-30 and
 robPositionY[R-1] &lt;= location_Y[robot_loc_target[R-1]]+30 and
 robPositionY[R-1] &gt;= location_Y[robot_loc_target[R-1]]-30</label>
 			<label kind="synchronisation" x="218" y="233">stop_r_moveTo[R-1]!</label>
+			<label kind="assignment" x="218" y="250"></label>
 		</transition>
-		<transition id="id50">
-			<source ref="id37"/>
-			<target ref="id42"/>
+		<transition id="id15">
+			<source ref="id2"/>
+			<target ref="id8"/>
 			<label kind="synchronisation" x="18" y="683">start_r_moveTo[R-1]!</label>
 		</transition>
-		<transition id="id51">
-			<source ref="id41"/>
-			<target ref="id37"/>
+		<transition id="id16">
+			<source ref="id6"/>
+			<target ref="id2"/>
 			<label kind="synchronisation" x="18" y="583">s2?</label>
 			<label kind="assignment" x="18" y="600">robot_loc_target[R-1] = 2</label>
 		</transition>
-		<transition id="id52">
-			<source ref="id42"/>
-			<target ref="id43"/>
+		<transition id="id17">
+			<source ref="id8"/>
+			<target ref="id9"/>
 			<label kind="guard" x="218" y="566">robPositionX[R-1] &lt;= location_X[robot_loc_target[R-1]]+30 and
 robPositionX[R-1] &gt;= location_X[robot_loc_target[R-1]]-30 and
 robPositionY[R-1] &lt;= location_Y[robot_loc_target[R-1]]+30 and
 robPositionY[R-1] &gt;= location_Y[robot_loc_target[R-1]]-30</label>
 			<label kind="synchronisation" x="218" y="583">stop_r_moveTo[R-1]!</label>
+			<label kind="assignment" x="218" y="600"></label>
 		</transition>
-		<transition id="id53">
-			<source ref="id44"/>
-			<target ref="id38"/>
+		<transition id="id18">
+			<source ref="id10"/>
+			<target ref="id3"/>
 			<label kind="synchronisation" x="18" y="933">e?</label>
 		</transition>
 	</template>
+
 	<template>
 		<name>Human_idle</name>
 		<parameter>int id</parameter>
@@ -523,62 +542,62 @@ void initHuman() {
     non_crit = 999.0;
 }
     </declaration>
-		<location id="id54" x="-425" y="-153">
+		<location id="id42" x="-425" y="-153">
 			<name x="-477" y="-144">idle</name>
 			<label kind="invariant" x="-629" y="-119">F' == -Fp*mi*exp(-mi*t)
 &amp;&amp; tUpd&lt;=Tpoll</label>
 		</location>
-		<location id="id55" x="144" y="-153">
+		<location id="id43" x="144" y="-153">
 			<name x="135" y="-187">inactive</name>
 		</location>
-		<location id="id56" x="-671" y="-153">
+		<location id="id44" x="-671" y="-153">
 			<name x="-722" y="-170">Init</name>
 			<committed/>
 		</location>
-		<location id="id57" x="-111" y="-442" color="#ff0000">
+		<location id="id45" x="-111" y="-442" color="#ff0000">
 			<name x="-357" y="-527">passed_out</name>
 			<label kind="invariant" x="-357" y="-510">t' == 0 &amp;&amp;
 F' == 0 &amp;&amp;
 tExp'==0</label>
 			<label kind="exponentialrate" x="-119" y="-425">1</label>
 		</location>
-		<location id="id58" x="-535" y="-442">
+		<location id="id46" x="-535" y="-442">
 			<committed/>
 		</location>
-		<location id="id59" x="68" y="85">
+		<location id="id47" x="68" y="85">
 			<name x="76" y="51">c3</name>
 			<committed/>
 		</location>
-		<location id="id60" x="-213" y="9">
+		<location id="id48" x="-213" y="9">
 			<label kind="invariant" x="-357" y="-25">t&lt;=iteration_time</label>
 		</location>
-		<branchpoint id="id61" x="-535" y="-340"/>
-		<branchpoint id="id62" x="-212" y="85"/>
-		<init ref="id56"/>
-		<transition id="id63">
-			<source ref="id54"/>
-			<target ref="id55"/>
+		<branchpoint id="id49" x="-535" y="-340"/>
+		<branchpoint id="id50" x="-212" y="85"/>
+		<init ref="id44"/>
+		<transition id="id51">
+			<source ref="id42"/>
+			<target ref="id43"/>
 			<label kind="synchronisation" x="-263" y="-144">obey_h_moveTo[id-1]?</label>
 		</transition>
-		<transition id="id64" color="#ff0000">
-			<source ref="id61"/>
-			<target ref="id58"/>
+		<transition id="id52" color="#ff0000">
+			<source ref="id49"/>
+			<target ref="id46"/>
 			<label kind="probability" x="-494" y="-399">crit</label>
 		</transition>
-		<transition id="id65">
-			<source ref="id58"/>
-			<target ref="id57"/>
+		<transition id="id53">
+			<source ref="id46"/>
+			<target ref="id45"/>
 			<label kind="synchronisation" x="-348" y="-433">hm_fail!</label>
 		</transition>
-		<transition id="id66">
-			<source ref="id61"/>
-			<target ref="id54"/>
+		<transition id="id54">
+			<source ref="id49"/>
+			<target ref="id42"/>
 			<label kind="probability" x="-442" y="-357">non_crit</label>
 			<nail x="-425" y="-340"/>
 		</transition>
-		<transition id="id67">
-			<source ref="id54"/>
-			<target ref="id61"/>
+		<transition id="id55">
+			<source ref="id42"/>
+			<target ref="id49"/>
 			<label kind="guard" x="-739" y="-340">tUpd &gt;= Tpoll</label>
 			<label kind="assignment" x="-739" y="-323">updateF(-mi, 0),
 tUpd=0,
@@ -586,50 +605,51 @@ fw = random(FW_max),
 updateHealthDangerProb()</label>
 			<nail x="-535" y="-195"/>
 		</transition>
-		<transition id="id68">
-			<source ref="id57"/>
-			<target ref="id57"/>
+		<transition id="id56">
+			<source ref="id45"/>
+			<target ref="id45"/>
 			<nail x="-136" y="-391"/>
 			<nail x="-94" y="-391"/>
 		</transition>
-		<transition id="id69">
-			<source ref="id56"/>
-			<target ref="id54"/>
+		<transition id="id57">
+			<source ref="id44"/>
+			<target ref="id42"/>
 			<label kind="assignment" x="-603" y="-153">initHuman()</label>
 		</transition>
-		<transition id="id70">
-			<source ref="id60"/>
-			<target ref="id59"/>
+		<transition id="id58">
+			<source ref="id48"/>
+			<target ref="id47"/>
 			<label kind="guard" x="-144" y="-17">t&gt;=iteration_time</label>
 			<nail x="68" y="9"/>
 		</transition>
-		<transition id="id71">
-			<source ref="id59"/>
-			<target ref="id62"/>
+		<transition id="id59">
+			<source ref="id47"/>
+			<target ref="id50"/>
 			<label kind="assignment" x="-195" y="93">t = 0, Fp=humanFatigue[id-1],
 F=humanFatigue[id-1],
 tUpd=0, tExp=0</label>
 		</transition>
-		<transition id="id72" color="#ff0000">
-			<source ref="id62"/>
-			<target ref="id60"/>
+		<transition id="id60" color="#ff0000">
+			<source ref="id50"/>
+			<target ref="id48"/>
 			<label kind="probability" x="-280" y="42">disobey</label>
 		</transition>
-		<transition id="id73">
-			<source ref="id62"/>
-			<target ref="id54"/>
+		<transition id="id61">
+			<source ref="id50"/>
+			<target ref="id42"/>
 			<label kind="synchronisation" x="-408" y="93">obey_h_moveTo[id-1]!</label>
 			<label kind="probability" x="-357" y="59">obey</label>
 			<nail x="-425" y="85"/>
 		</transition>
-		<transition id="id74">
-			<source ref="id55"/>
-			<target ref="id59"/>
+		<transition id="id62">
+			<source ref="id43"/>
+			<target ref="id47"/>
 			<label kind="synchronisation" x="152" y="-51">stop_h_moveTo[id-1]?</label>
 			<nail x="144" y="85"/>
 		</transition>
 	</template>
-	<template>
+
+<template>
 		<name>Human_moveTo</name>
 		<parameter>int id, double _v</parameter>
 		<declaration>clock t, F;
@@ -915,81 +935,81 @@ void initHuman() {
     non_crit = 999.0;
 }
     </declaration>
-		<location id="id75" x="-977" y="-255">
+		<location id="id63" x="-977" y="-255">
 			<name x="-1028" y="-289">inactive</name>
 		</location>
-		<location id="id76" x="-51" y="-255">
+		<location id="id64" x="-51" y="-255">
 			<name x="-34" y="-280">busy</name>
 			<label kind="invariant" x="-34" y="-340">F &lt;= passout_th
 &amp;&amp; F' == Fp*lambda*exp(-lambda*t)
 &amp;&amp; tUpd&lt;=Tpoll</label>
 		</location>
-		<location id="id77" x="-1215" y="-255">
+		<location id="id65" x="-1215" y="-255">
 			<name x="-1266" y="-272">Init</name>
 			<committed/>
 		</location>
-		<location id="id78" x="459" y="-255" color="#ff0000">
+		<location id="id66" x="459" y="-255" color="#ff0000">
 			<name x="374" y="-331">passed_out</name>
 			<label kind="invariant" x="374" y="-314">t' == 0 &amp;&amp;
 F' == 0 &amp;&amp;
 tExp'==0</label>
 			<label kind="exponentialrate" x="451" y="-238">1</label>
 		</location>
-		<location id="id79" x="-722" y="-255">
+		<location id="id67" x="-722" y="-255">
 			<name x="-732" y="-289">c1</name>
 			<committed/>
 		</location>
-		<location id="id80" x="-297" y="-255">
+		<location id="id68" x="-297" y="-255">
 			<name x="-289" y="-280">c2</name>
 			<committed/>
 		</location>
-		<location id="id81" x="51" y="-25">
+		<location id="id69" x="51" y="-25">
 			<name x="-8" y="-51">pub_3</name>
 			<committed/>
 		</location>
-		<location id="id82" x="527" y="-25">
+		<location id="id70" x="527" y="-25">
 			<committed/>
 		</location>
-		<location id="id83" x="-722" y="-195">
+		<location id="id71" x="-722" y="-195">
 			<label kind="invariant" x="-866" y="-187">t&lt;=iteration_time</label>
 		</location>
-		<branchpoint id="id84" x="289" y="-25"/>
-		<branchpoint id="id85" x="-492" y="-255"/>
-		<init ref="id77"/>
-		<transition id="id86">
-			<source ref="id83"/>
-			<target ref="id79"/>
+		<branchpoint id="id72" x="289" y="-25"/>
+		<branchpoint id="id73" x="-492" y="-255"/>
+		<init ref="id65"/>
+		<transition id="id74">
+			<source ref="id71"/>
+			<target ref="id67"/>
 			<label kind="guard" x="-875" y="-238">t&gt;=iteration_time</label>
 		</transition>
-		<transition id="id87">
-			<source ref="id82"/>
-			<target ref="id78"/>
+		<transition id="id75">
+			<source ref="id70"/>
+			<target ref="id66"/>
 			<label kind="synchronisation" x="476" y="-280">hm_fail!</label>
 			<nail x="527" y="-255"/>
 		</transition>
-		<transition id="id88" color="#ff0000">
-			<source ref="id84"/>
-			<target ref="id82"/>
+		<transition id="id76" color="#ff0000">
+			<source ref="id72"/>
+			<target ref="id70"/>
 			<label kind="probability" x="391" y="-25">crit</label>
 		</transition>
-		<transition id="id89">
-			<source ref="id84"/>
-			<target ref="id81"/>
+		<transition id="id77">
+			<source ref="id72"/>
+			<target ref="id69"/>
 			<label kind="probability" x="204" y="-25">non_crit</label>
 		</transition>
-		<transition id="id90">
-			<source ref="id79"/>
-			<target ref="id85"/>
+		<transition id="id78">
+			<source ref="id67"/>
+			<target ref="id73"/>
 		</transition>
-		<transition id="id91" color="#ff0000">
-			<source ref="id85"/>
-			<target ref="id83"/>
+		<transition id="id79" color="#ff0000">
+			<source ref="id73"/>
+			<target ref="id71"/>
 			<label kind="probability" x="-645" y="-221">disobey</label>
 			<nail x="-492" y="-195"/>
 		</transition>
-		<transition id="id92">
-			<source ref="id85"/>
-			<target ref="id80"/>
+		<transition id="id80">
+			<source ref="id73"/>
+			<target ref="id68"/>
 			<label kind="synchronisation" x="-484" y="-280">obey_h_moveTo[id-1]!</label>
 			<label kind="assignment" x="-696" y="-340">t = 0,
 tExp=0,
@@ -997,9 +1017,9 @@ tUpd=0,
 F = humanFatigue[id-1]</label>
 			<label kind="probability" x="-484" y="-297">obey</label>
 		</transition>
-		<transition id="id93">
-			<source ref="id76"/>
-			<target ref="id84"/>
+		<transition id="id81">
+			<source ref="id64"/>
+			<target ref="id72"/>
 			<label kind="guard" x="306" y="-127">tUpd &gt;= Tpoll</label>
 			<label kind="assignment" x="306" y="-110">updateF(-lambda, 1),
 updateP(), tUpd=0,
@@ -1007,58 +1027,59 @@ fw = random(FW_max),
 updateHealthDangerProb()</label>
 			<nail x="289" y="-136"/>
 		</transition>
-		<transition id="id94">
-			<source ref="id81"/>
-			<target ref="id76"/>
+		<transition id="id82">
+			<source ref="id69"/>
+			<target ref="id64"/>
 			<label kind="assignment" x="17" y="-135">check_crit(),
 update_crit()</label>
 		</transition>
-		<transition id="id95">
-			<source ref="id80"/>
-			<target ref="id76"/>
+		<transition id="id83">
+			<source ref="id68"/>
+			<target ref="id64"/>
 			<label kind="guard" x="-272" y="-255">F&lt;=0 &amp;&amp; F&gt;=-0.05</label>
 			<label kind="assignment" x="-272" y="-238">Fp=1, F=0, plan_traj()</label>
 		</transition>
-		<transition id="id96">
-			<source ref="id80"/>
-			<target ref="id76"/>
+		<transition id="id84">
+			<source ref="id68"/>
+			<target ref="id64"/>
 			<label kind="guard" x="-221" y="-408">F&gt;0</label>
 			<label kind="assignment" x="-221" y="-391">Fp=1-F,
 plan_traj()</label>
 			<nail x="-297" y="-348"/>
 			<nail x="-51" y="-348"/>
 		</transition>
-		<transition id="id97">
-			<source ref="id76"/>
-			<target ref="id75"/>
+		<transition id="id85">
+			<source ref="id64"/>
+			<target ref="id63"/>
 			<label kind="synchronisation" x="-586" y="-17">obey_h_moveTo[id-1]?</label>
 			<nail x="-51" y="-25"/>
 			<nail x="-977" y="-25"/>
 		</transition>
-		<transition id="id98">
-			<source ref="id75"/>
-			<target ref="id79"/>
+		<transition id="id86">
+			<source ref="id63"/>
+			<target ref="id67"/>
 			<label kind="synchronisation" x="-943" y="-280">start_h_moveTo[id-1]?</label>
 		</transition>
-		<transition id="id99">
-			<source ref="id76"/>
-			<target ref="id78"/>
+		<transition id="id87">
+			<source ref="id64"/>
+			<target ref="id66"/>
 			<label kind="guard" x="178" y="-280">F &gt;= passout_th</label>
 			<label kind="synchronisation" x="212" y="-255">hm_fail!</label>
 			<label kind="assignment" x="221" y="-238">t = 0</label>
 		</transition>
-		<transition id="id100">
-			<source ref="id78"/>
-			<target ref="id78"/>
+		<transition id="id88">
+			<source ref="id66"/>
+			<target ref="id66"/>
 			<nail x="434" y="-204"/>
 			<nail x="476" y="-204"/>
 		</transition>
-		<transition id="id101">
-			<source ref="id77"/>
-			<target ref="id75"/>
+		<transition id="id89">
+			<source ref="id65"/>
+			<target ref="id63"/>
 			<label kind="assignment" x="-1164" y="-255">initHuman()</label>
 		</transition>
 	</template>
+
 	<template>
 		<name>Robot_moveTo</name>
 		<parameter>int id, double _v_max, double _a_max</parameter>
@@ -1281,176 +1302,177 @@ void varsUpdate(double coeff) {
 	update_pos(coeff);
 }
 </declaration>
-		<location id="id102" x="-629" y="-348">
+		<location id="id90" x="-629" y="-348">
 			<name x="-680" y="-374">idle</name>
 			<label kind="invariant" x="-731" y="-348">V' == 0 &amp;&amp;
 tUpd'==0</label>
 		</location>
-		<location id="id103" x="-416" y="-42">
+		<location id="id91" x="-416" y="-42">
 			<name x="-408" y="-42">stopping</name>
 			<label kind="invariant" x="-595" y="18">V' == -a_max
 &amp;&amp; tUpd&lt;=Tpoll</label>
 			<label kind="comments" x="-331" y="-33">&amp;&amp; V &gt;=0</label>
 		</location>
-		<location id="id104" x="-416" y="-348">
+		<location id="id92" x="-416" y="-348">
 			<name x="-399" y="-366">starting</name>
 			<label kind="invariant" x="-314" y="-408">V' == a_max
 &amp;&amp; V &lt;= v_max
 &amp;&amp; tUpd&lt;=Tpoll</label>
 		</location>
-		<location id="id105" x="-161" y="-246">
+		<location id="id93" x="-161" y="-246">
 			<name x="-229" y="-263">moving</name>
 			<label kind="invariant" x="-263" y="-246">V' == 0 &amp;&amp;
 tUpd&lt;=Tpoll</label>
 		</location>
-		<location id="id106" x="-833" y="-348">
+		<location id="id94" x="-833" y="-348">
 			<name x="-843" y="-382">Init</name>
 			<committed/>
 		</location>
-		<location id="id107" x="204" y="-246">
+		<location id="id95" x="204" y="-246">
 			<name x="221" y="-272">turning</name>
 			<label kind="invariant" x="221" y="-255">V'==0 &amp;&amp;
 Th&lt;=fabs(ort*PI/180)</label>
 		</location>
-		<location id="id108" x="42" y="-246">
+		<location id="id96" x="42" y="-246">
 			<committed/>
 		</location>
-		<location id="id109" x="-416" y="-501">
+		<location id="id97" x="-416" y="-501">
 			<committed/>
 		</location>
-		<location id="id110" x="-416" y="102">
+		<location id="id98" x="-416" y="102">
 			<committed/>
 		</location>
-		<location id="id111" x="-59" y="-170">
+		<location id="id99" x="-59" y="-170">
 			<committed/>
 		</location>
-		<location id="id112" x="-629" y="-42">
+		<location id="id100" x="-629" y="-42">
 			<committed/>
 		</location>
-		<init ref="id106"/>
-		<transition id="id113">
-			<source ref="id103"/>
-			<target ref="id112"/>
+		<init ref="id94"/>
+		<transition id="id101">
+			<source ref="id91"/>
+			<target ref="id100"/>
 			<label kind="guard" x="-578" y="-68">V &lt;= 0</label>
 		</transition>
-		<transition id="id114">
-			<source ref="id111"/>
-			<target ref="id105"/>
+		<transition id="id102">
+			<source ref="id99"/>
+			<target ref="id93"/>
 		</transition>
-		<transition id="id115">
-			<source ref="id108"/>
-			<target ref="id111"/>
+		<transition id="id103">
+			<source ref="id96"/>
+			<target ref="id99"/>
 			<label kind="guard" x="-9" y="-204">!needsTurning</label>
 			<label kind="assignment" x="8" y="-187">tUpd=0</label>
 		</transition>
-		<transition id="id116">
-			<source ref="id110"/>
-			<target ref="id103"/>
+		<transition id="id104">
+			<source ref="id98"/>
+			<target ref="id91"/>
 			<nail x="-459" y="86"/>
 			<nail x="-459" y="-16"/>
 		</transition>
-		<transition id="id117">
-			<source ref="id109"/>
-			<target ref="id104"/>
+		<transition id="id105">
+			<source ref="id97"/>
+			<target ref="id92"/>
 			<nail x="-374" y="-459"/>
 			<nail x="-374" y="-391"/>
 		</transition>
-		<transition id="id118">
-			<source ref="id103"/>
-			<target ref="id110"/>
+		<transition id="id106">
+			<source ref="id91"/>
+			<target ref="id98"/>
 			<label kind="guard" x="-408" y="43">tUpd&gt;=Tpoll
 &amp;&amp;V&gt;0</label>
 			<label kind="assignment" x="-408" y="1">t+=Tpoll, tUpd=0,
 varsUpdate(v_max-a_max*t)</label>
 		</transition>
-		<transition id="id119">
-			<source ref="id104"/>
-			<target ref="id109"/>
+		<transition id="id107">
+			<source ref="id92"/>
+			<target ref="id97"/>
 			<label kind="guard" x="-527" y="-493">tUpd&gt;=Tpoll
 &amp;&amp;V&lt;v_max</label>
 			<label kind="assignment" x="-586" y="-450">t+=Tpoll, tUpd=0,
 varsUpdate(a_max*t)</label>
 		</transition>
-		<transition id="id120">
-			<source ref="id107"/>
-			<target ref="id103"/>
+		<transition id="id108">
+			<source ref="id95"/>
+			<target ref="id91"/>
 			<label kind="synchronisation" x="-170" y="-67">stop_r_moveTo[id-1]?</label>
 			<label kind="assignment" x="-25" y="-68">tUpd=0, t=0</label>
 			<nail x="204" y="-50"/>
 		</transition>
-		<transition id="id121">
-			<source ref="id107"/>
-			<target ref="id105"/>
+		<transition id="id109">
+			<source ref="id95"/>
+			<target ref="id93"/>
 			<label kind="guard" x="-42" y="-374">Th&gt;=fabs(ort*PI/180)</label>
 			<label kind="assignment" x="-42" y="-348">tUpd = 0, Th = 0,
 needsTurning = false</label>
 			<nail x="204" y="-348"/>
 			<nail x="-161" y="-348"/>
 		</transition>
-		<transition id="id122">
-			<source ref="id108"/>
-			<target ref="id107"/>
+		<transition id="id110">
+			<source ref="id96"/>
+			<target ref="id95"/>
 			<label kind="guard" x="68" y="-263">needsTurning</label>
 			<label kind="assignment" x="102" y="-246">Th=0</label>
 		</transition>
-		<transition id="id123">
-			<source ref="id105"/>
-			<target ref="id108"/>
+		<transition id="id111">
+			<source ref="id93"/>
+			<target ref="id96"/>
 			<label kind="guard" x="-119" y="-280">tUpd&gt;=Tpoll</label>
 			<label kind="assignment" x="-136" y="-263">varsUpdate(v_max)</label>
 		</transition>
-		<transition id="id124">
-			<source ref="id103"/>
-			<target ref="id104"/>
+		<transition id="id112">
+			<source ref="id91"/>
+			<target ref="id92"/>
 			<label kind="synchronisation" x="-416" y="-204">start_r_moveTo[id-1]?</label>
 			<label kind="assignment" x="-416" y="-187">t=0, tUpd=0,
 plan_traj()</label>
 		</transition>
-		<transition id="id125">
-			<source ref="id104"/>
-			<target ref="id103"/>
+		<transition id="id113">
+			<source ref="id92"/>
+			<target ref="id91"/>
 			<label kind="synchronisation" x="-595" y="-204">stop_r_moveTo[id-1]?</label>
 			<label kind="assignment" x="-578" y="-187">t=0, tUpd=0</label>
 			<nail x="-476" y="-314"/>
 			<nail x="-476" y="-92"/>
 		</transition>
-		<transition id="id126">
-			<source ref="id112"/>
-			<target ref="id102"/>
+		<transition id="id114">
+			<source ref="id100"/>
+			<target ref="id90"/>
 			<label kind="synchronisation" x="-706" y="-221">rm_still!</label>
 			<label kind="assignment" x="-706" y="-204">t=0,
 tUpd = 0,
 V=0</label>
 		</transition>
-		<transition id="id127">
-			<source ref="id105"/>
-			<target ref="id103"/>
+		<transition id="id115">
+			<source ref="id93"/>
+			<target ref="id91"/>
 			<label kind="synchronisation" x="-289" y="-136">stop_r_moveTo[id-1]?</label>
 			<label kind="assignment" x="-280" y="-119">tUpd=0, t=0</label>
 			<nail x="-161" y="-101"/>
 		</transition>
-		<transition id="id128">
-			<source ref="id104"/>
-			<target ref="id105"/>
+		<transition id="id116">
+			<source ref="id92"/>
+			<target ref="id93"/>
 			<label kind="guard" x="-314" y="-348">V &gt;= v_max</label>
 			<label kind="assignment" x="-195" y="-408">t+=Tpoll,
 tUpd=0,
 V=v_max</label>
 			<nail x="-161" y="-348"/>
 		</transition>
-		<transition id="id129">
-			<source ref="id102"/>
-			<target ref="id104"/>
+		<transition id="id117">
+			<source ref="id90"/>
+			<target ref="id92"/>
 			<label kind="synchronisation" x="-603" y="-374">start_r_moveTo[id-1]?</label>
 			<label kind="assignment" x="-586" y="-348">t=0, tUpd=0,
 plan_traj()</label>
 		</transition>
-		<transition id="id130">
-			<source ref="id106"/>
-			<target ref="id102"/>
+		<transition id="id118">
+			<source ref="id94"/>
+			<target ref="id90"/>
 			<label kind="assignment" x="-807" y="-365">initRobot()</label>
 		</transition>
 	</template>
+
 	<template>
 		<name>Robot_follow</name>
 		<parameter>int id, double _v_max, double _a_max</parameter>
@@ -1681,107 +1703,107 @@ void varsUpdate(double coeff) {
 	update_pos(coeff);
 }
 </declaration>
-		<location id="id131" x="-620" y="-348">
+		<location id="id119" x="-620" y="-348">
 			<name x="-671" y="-374">idle</name>
 			<label kind="invariant" x="-722" y="-348">V' == 0 &amp;&amp;
 tUpd'==0</label>
 		</location>
-		<location id="id132" x="-416" y="-127">
+		<location id="id120" x="-416" y="-127">
 			<name x="-408" y="-127">stopping</name>
 			<label kind="invariant" x="-586" y="-76">V' == -a_max
 &amp;&amp; tUpd&lt;=Tpoll</label>
 			<label kind="comments" x="-331" y="-119">&amp;&amp; V &gt;=0</label>
 		</location>
-		<location id="id133" x="-416" y="-348">
+		<location id="id121" x="-416" y="-348">
 			<name x="-399" y="-366">starting</name>
 			<label kind="invariant" x="-314" y="-408">V' == a_max
 &amp;&amp; V &lt;= v_max
 &amp;&amp; tUpd&lt;=Tpoll</label>
 		</location>
-		<location id="id134" x="-161" y="-246">
+		<location id="id122" x="-161" y="-246">
 			<name x="-229" y="-263">moving</name>
 			<label kind="invariant" x="-263" y="-246">V' == 0 &amp;&amp;
 tUpd&lt;=Tpoll</label>
 		</location>
-		<location id="id135" x="-841" y="-348">
+		<location id="id123" x="-841" y="-348">
 			<name x="-851" y="-382">Init</name>
 			<committed/>
 		</location>
-		<location id="id136" x="212" y="-246">
+		<location id="id124" x="212" y="-246">
 			<name x="229" y="-272">turning</name>
 			<label kind="invariant" x="229" y="-255">V'==0 &amp;&amp;
 Th&lt;=fabs(ort*PI/180)</label>
 		</location>
-		<location id="id137" x="51" y="-246">
+		<location id="id125" x="51" y="-246">
 			<committed/>
 		</location>
-		<location id="id138" x="-416" y="-501">
+		<location id="id126" x="-416" y="-501">
 			<committed/>
 		</location>
-		<location id="id139" x="-416" y="25">
+		<location id="id127" x="-416" y="25">
 			<committed/>
 		</location>
-		<location id="id140" x="-51" y="-170">
+		<location id="id128" x="-51" y="-170">
 			<committed/>
 		</location>
-		<location id="id141" x="-620" y="-127">
+		<location id="id129" x="-620" y="-127">
 			<committed/>
 		</location>
-		<init ref="id135"/>
-		<transition id="id142">
-			<source ref="id132"/>
-			<target ref="id141"/>
+		<init ref="id123"/>
+		<transition id="id130">
+			<source ref="id120"/>
+			<target ref="id129"/>
 			<label kind="guard" x="-552" y="-152">V &lt;= 0</label>
 		</transition>
-		<transition id="id143">
-			<source ref="id140"/>
-			<target ref="id134"/>
+		<transition id="id131">
+			<source ref="id128"/>
+			<target ref="id122"/>
 		</transition>
-		<transition id="id144">
-			<source ref="id137"/>
-			<target ref="id140"/>
+		<transition id="id132">
+			<source ref="id125"/>
+			<target ref="id128"/>
 			<label kind="guard" x="-9" y="-204">!needsTurning</label>
 			<label kind="assignment" x="8" y="-187">tUpd=0</label>
 		</transition>
-		<transition id="id145">
-			<source ref="id139"/>
-			<target ref="id132"/>
+		<transition id="id133">
+			<source ref="id127"/>
+			<target ref="id120"/>
 			<nail x="-459" y="-34"/>
 			<nail x="-459" y="-101"/>
 		</transition>
-		<transition id="id146">
-			<source ref="id138"/>
-			<target ref="id133"/>
+		<transition id="id134">
+			<source ref="id126"/>
+			<target ref="id121"/>
 			<nail x="-391" y="-467"/>
 			<nail x="-391" y="-382"/>
 		</transition>
-		<transition id="id147">
-			<source ref="id132"/>
-			<target ref="id139"/>
+		<transition id="id135">
+			<source ref="id120"/>
+			<target ref="id127"/>
 			<label kind="guard" x="-408" y="-43">tUpd&gt;=Tpoll
 &amp;&amp;V&gt;0</label>
 			<label kind="assignment" x="-416" y="-85">t+=Tpoll, tUpd=0,
 varsUpdate(v_max-a_max*t)</label>
 		</transition>
-		<transition id="id148">
-			<source ref="id133"/>
-			<target ref="id138"/>
+		<transition id="id136">
+			<source ref="id121"/>
+			<target ref="id126"/>
 			<label kind="guard" x="-595" y="-501">tUpd&gt;=Tpoll
 &amp;&amp;V&lt;v_max</label>
 			<label kind="assignment" x="-595" y="-459">t+=Tpoll, tUpd=0,
 varsUpdate(a_max*t),
 plan_traj()</label>
 		</transition>
-		<transition id="id149">
-			<source ref="id136"/>
-			<target ref="id132"/>
+		<transition id="id137">
+			<source ref="id124"/>
+			<target ref="id120"/>
 			<label kind="synchronisation" x="-170" y="-152">stop_r_follow[id-1]?</label>
 			<label kind="assignment" x="-25" y="-153">tUpd=0, t=0</label>
 			<nail x="212" y="-135"/>
 		</transition>
-		<transition id="id150">
-			<source ref="id136"/>
-			<target ref="id134"/>
+		<transition id="id138">
+			<source ref="id124"/>
+			<target ref="id122"/>
 			<label kind="guard" x="-42" y="-374">Th&gt;=fabs(ort*PI/180)</label>
 			<label kind="assignment" x="-42" y="-348">tUpd = 0, Th = 0,
 needsTurning = false,
@@ -1789,52 +1811,52 @@ plan_traj()</label>
 			<nail x="212" y="-348"/>
 			<nail x="-161" y="-348"/>
 		</transition>
-		<transition id="id151">
-			<source ref="id137"/>
-			<target ref="id136"/>
+		<transition id="id139">
+			<source ref="id125"/>
+			<target ref="id124"/>
 			<label kind="guard" x="85" y="-263">needsTurning</label>
 			<label kind="assignment" x="111" y="-246">Th=0</label>
 		</transition>
-		<transition id="id152">
-			<source ref="id134"/>
-			<target ref="id137"/>
+		<transition id="id140">
+			<source ref="id122"/>
+			<target ref="id125"/>
 			<label kind="guard" x="-127" y="-280">tUpd&gt;=Tpoll</label>
 			<label kind="assignment" x="-127" y="-263">varsUpdate(v_max),
 plan_traj()</label>
 		</transition>
-		<transition id="id153">
-			<source ref="id132"/>
-			<target ref="id133"/>
+		<transition id="id141">
+			<source ref="id120"/>
+			<target ref="id121"/>
 			<label kind="synchronisation" x="-416" y="-289">start_r_follow[id-1]?</label>
 			<label kind="assignment" x="-416" y="-272">t=0, tUpd=0,
 plan_traj()</label>
 		</transition>
-		<transition id="id154">
-			<source ref="id133"/>
-			<target ref="id132"/>
+		<transition id="id142">
+			<source ref="id121"/>
+			<target ref="id120"/>
 			<label kind="synchronisation" x="-603" y="-204">stop_r_follow[id-1]?</label>
 			<label kind="assignment" x="-603" y="-187">t=0, tUpd=0</label>
 			<nail x="-476" y="-314"/>
 			<nail x="-476" y="-177"/>
 		</transition>
-		<transition id="id155">
-			<source ref="id141"/>
-			<target ref="id131"/>
+		<transition id="id143">
+			<source ref="id129"/>
+			<target ref="id119"/>
 			<label kind="synchronisation" x="-697" y="-221">rf_still!</label>
 			<label kind="assignment" x="-697" y="-204">t=0,
 tUpd = 0,
 V=0</label>
 		</transition>
-		<transition id="id156">
-			<source ref="id134"/>
-			<target ref="id132"/>
+		<transition id="id144">
+			<source ref="id122"/>
+			<target ref="id120"/>
 			<label kind="synchronisation" x="-374" y="-195">stop_r_follow[id-1]?</label>
 			<label kind="assignment" x="-365" y="-178">tUpd=0, t=0</label>
 			<nail x="-161" y="-186"/>
 		</transition>
-		<transition id="id157">
-			<source ref="id133"/>
-			<target ref="id134"/>
+		<transition id="id145">
+			<source ref="id121"/>
+			<target ref="id122"/>
 			<label kind="guard" x="-314" y="-348">V &gt;= v_max</label>
 			<label kind="assignment" x="-195" y="-408">t+=Tpoll,
 tUpd=0,
@@ -1842,19 +1864,72 @@ V=v_max,
 plan_traj()</label>
 			<nail x="-161" y="-348"/>
 		</transition>
-		<transition id="id158">
-			<source ref="id131"/>
-			<target ref="id133"/>
+		<transition id="id146">
+			<source ref="id119"/>
+			<target ref="id121"/>
 			<label kind="synchronisation" x="-586" y="-374">start_r_follow[id-1]?</label>
 			<label kind="assignment" x="-586" y="-348">t=0, tUpd=0,
 plan_traj()</label>
 		</transition>
-		<transition id="id159">
-			<source ref="id135"/>
-			<target ref="id131"/>
+		<transition id="id147">
+			<source ref="id123"/>
+			<target ref="id119"/>
 			<label kind="assignment" x="-824" y="-348">initRobot()</label>
 		</transition>
 	</template>
+
+	<template>
+		<name>Robot_pick</name>
+		<parameter>int id</parameter>
+		<declaration>clock t;
+
+void initRobot(){
+    for (i : int[0,N_R-1]){
+        for (j : int[0,N_ITEMS-1]){
+            robot_inventory[i][j] = 0;
+        }
+    }
+}
+</declaration>
+		<location id="id0" x="-416" y="272">
+			<name x="-426" y="238">Init</name>
+			<committed/>
+		</location>
+		<location id="id1" x="-204" y="272">
+			<name x="-246" y="246">idle</name>
+		</location>
+		<location id="id2" x="-8" y="272">
+			<name x="-17" y="238">starting</name>
+		</location>
+		<location id="id3" x="-8" y="416">
+			<name x="-110" y="407">stopping</name>
+		</location>
+		<init ref="id0"/>
+		<transition id="id4">
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="guard" x="34" y="314">t &gt;= 5</label>
+			<label kind="assignment" x="34" y="340">robot_inventory[id-1][robot_res_to_pick[id-1]] += 1</label>
+		</transition>
+		<transition id="id5">
+			<source ref="id3"/>
+			<target ref="id1"/>
+			<label kind="synchronisation" x="-246" y="365">stop_r_pick[id-1]?</label>
+		</transition>
+		<transition id="id6">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="-187" y="238">start_r_pick[id-1]!</label>
+			<label kind="assignment" x="-144" y="272">t=0</label>
+		</transition>
+		<transition id="id7">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="assignment" x="-398" y="272">initRobot()</label>
+		</transition>
+	</template>
+
+</declaration>
 	<system>
 // Mission Definition
 
@@ -1862,6 +1937,7 @@ hi_1 = Human_idle(1);
 hm_1 = Human_moveTo(1, 26.0);
 rm_1 = Robot_moveTo(1, 26.0, 26.0);
 rf_1 = Robot_follow(1, 26.0, 26.0);
+rp_1 = Robot_pick(1);
 
 // Pattern Definition
 
@@ -1878,6 +1954,7 @@ hi_1,
 hm_1,
 rm_1,
 rf_1,
+rp_1,
 
 Test3,
 Test3_human_def,
@@ -1887,2445 +1964,14 @@ Test3_robot_def
 ;
 </system>
 	<queries>
-		<query>
+        		<query>
 			<formula>Pr[&lt;=400] (&lt;&gt; Test3.end)</formula>
 			<comment>Check if the whole pattern ends within 400 time unit</comment>
 		</query>
 		<query>
-			<formula>simulate[&lt;=700]{humanPositionX[0], humanPositionY[0],robPositionX[0], robPositionY[0], Test3.sub_seq_s1*100, Test3.end*100}</formula>
+			<formula>simulate[&lt;=700]{humanPositionX[0], humanPositionY[0],robPositionX[0], robPositionY[0], Test3.end*100}</formula>
 			<comment>Check the position of all the agent in the pattern for 700 time unit</comment>
-			<result outcome="success" type="quality" timestamp="2025-05-08 12:17:45 +0200">
-				<plot title="Simulations (1)" xaxis="time" yaxis="value">
-					<series title="humanPositionX[0]" type="l" color="0xff0000" encoding="csv">0.0,0.0
-0.0,2500.0
-1.0,2500.0
-1.0,2478.495044194882
-2.0,2478.495044194882
-2.0,2456.9900883897644
-3.0,2456.9900883897644
-3.0,2435.4851325846466
-4.0,2435.4851325846466
-4.0,2413.980176779529
-5.0,2413.980176779529
-5.0,2392.475220974411
-6.0,2392.475220974411
-6.0,2370.9702651692933
-7.0,2370.9702651692933
-7.0,2349.4653093641755
-8.0,2349.4653093641755
-8.0,2327.9603535590577
-9.0,2327.9603535590577
-9.0,2306.45539775394
-10.0,2306.45539775394
-10.0,2284.950441948822
-11.0,2284.950441948822
-11.0,2263.4454861437043
-12.0,2263.4454861437043
-12.0,2237.6301935973734
-13.0,2237.6301935973734
-13.0,2211.8149010510424
-14.0,2211.8149010510424
-14.0,2185.9996085047114
-15.0,2185.9996085047114
-15.0,2160.1843159583805
-16.0,2160.1843159583805
-16.0,2134.3690234120495
-17.0,2134.3690234120495
-17.0,2108.5537308657185
-18.0,2108.5537308657185
-18.0,2082.7384383193876
-19.0,2082.7384383193876
-19.0,2056.9231457730566
-20.0,2056.9231457730566
-20.0,2031.1078532267256
-21.0,2031.1078532267256
-21.0,2005.2925606803947
-22.0,2005.2925606803947
-22.0,1979.4772681340637
-23.0,1979.4772681340637
-23.0,1953.6619755877327
-24.0,1953.6619755877327
-24.0,1927.8466830414018
-25.0,1927.8466830414018
-25.0,1902.0313904950708
-26.0,1902.0313904950708
-26.0,1876.2160979487398
-27.0,1876.2160979487398
-27.0,1850.4008054024089
-28.0,1850.4008054024089
-28.0,1824.585512856078
-29.0,1824.585512856078
-29.0,1798.770220309747
-30.0,1798.770220309747
-30.0,1772.954927763416
-31.0,1772.954927763416
-31.0,1747.139635217085
-32.0,1747.139635217085
-32.0,1721.324342670754
-33.0,1721.324342670754
-33.0,1695.509050124423
-34.0,1695.509050124423
-34.0,1669.6937575780921
-35.0,1669.6937575780921
-35.0,1643.8784650317612
-36.0,1643.8784650317612
-36.0,1618.0631724854302
-37.0,1618.0631724854302
-37.0,1592.2478799390992
-38.0,1592.2478799390992
-38.0,1566.4325873927683
-39.0,1566.4325873927683
-39.0,1540.6172948464373
-40.0,1540.6172948464373
-40.0,1514.8020023001063
-41.0,1514.8020023001063
-41.0,1488.9867097537754
-42.0,1488.9867097537754
-42.0,1463.1714172074444
-43.0,1463.1714172074444
-43.0,1437.1739492353508
-44.0,1437.1739492353508
-44.0,1411.1764812632573
-45.0,1411.1764812632573
-45.0,1385.1790132911638
-46.0,1385.1790132911638
-46.0,1359.1815453190702
-47.0,1359.1815453190702
-47.0,1333.1840773469767
-48.0,1333.1840773469767
-48.0,1307.1866093748831
-49.0,1307.1866093748831
-49.0,1281.1891414027896
-50.0,1281.1891414027896
-50.0,1255.191673430696
-51.0,1255.191673430696
-51.0,1229.1942054586025
-52.0,1229.1942054586025
-52.0,1203.196737486509
-53.0,1203.196737486509
-53.0,1177.1992695144154
-54.0,1177.1992695144154
-54.0,1151.2018015423218
-55.0,1151.2018015423218
-55.0,1125.2043335702283
-56.0,1125.2043335702283
-56.0,1099.2068655981348
-57.0,1099.2068655981348
-57.0,1073.2093976260412
-58.0,1073.2093976260412
-58.0,1047.2119296539477
-59.0,1047.2119296539477
-59.0,1021.2144616818541
-60.0,1021.2144616818541
-60.0,995.2169937097606
-61.0,995.2169937097606
-61.0,969.219525737667
-62.0,969.219525737667
-62.0,943.2220577655735
-63.0,943.2220577655735
-63.0,917.2245897934799
-64.0,917.2245897934799
-64.0,891.2271218213864
-65.0,891.2271218213864
-65.0,865.2296538492928
-66.0,865.2296538492928
-66.0,839.2321858771993
-67.0,839.2321858771993
-67.0,813.2347179051058
-68.0,813.2347179051058
-68.0,787.2372499330122
-69.0,787.2372499330122
-69.0,761.2397819609187
-70.0,761.2397819609187
-70.0,735.2423139888251
-71.0,735.2423139888251
-71.0,709.2448460167316
-72.0,709.2448460167316
-72.0,683.247378044638
-73.0,683.247378044638
-73.0,657.2499100725445
-74.0,657.2499100725445
-74.0,631.2524421004509
-75.0,631.2524421004509
-75.0,605.2549741283574
-76.0,605.2549741283574
-76.0,579.2575061562638
-77.0,579.2575061562638
-77.0,553.2600381841703
-78.0,553.2600381841703
-78.0,527.2625702120768
-79.0,527.2625702120768
-79.0,501.26510223998315
-80.0,501.26510223998315
-80.0,475.26763426788955
-81.0,475.26763426788955
-81.0,449.27016629579595
-82.0,449.27016629579595
-82.0,423.27269832370234
-83.0,423.27269832370234
-83.0,449.2705662480819
-84.0,449.2705662480819
-84.0,475.2684341724614
-85.0,475.2684341724614
-85.0,501.26630209684095
-86.0,501.26630209684095
-86.0,527.2641700212205
-87.0,527.2641700212205
-87.0,553.2620379456
-88.0,553.2620379456
-88.0,579.2599058699795
-89.0,579.2599058699795
-89.0,605.2577737943591
-90.0,605.2577737943591
-90.0,631.2556417187386
-91.0,631.2556417187386
-91.0,657.2535096431182
-92.87509492502627,657.2535096431182
-92.87509492502627,631.2556764876855
-93.87509492502629,631.2556764876855
-93.87509492502629,605.2578433322528
-94.8750949250263,605.2578433322528
-94.8750949250263,579.2600101768202
-95.87509492502633,579.2600101768202
-95.87509492502633,553.2621770213875
-96.87509492502632,553.2621770213875
-96.87509492502632,527.2643438659549
-97.87509492502632,527.2643438659549
-97.87509492502632,501.26651071052214
-98.87509492502632,501.26651071052214
-98.87509492502632,475.2686775550894
-99.87509492502635,475.2686775550894
-99.87509492502635,449.2708443996567
-100.87509492502637,449.2708443996567
-100.87509492502637,423.273011244224
-700.0,423.273011244224
-					</series>
-					<series title="humanPositionY[0]" type="l" color="0xffff00" encoding="csv">0.0,0.0
-0.0,100.0
-1.0,100.0
-1.0,114.61290100630023
-2.0,114.61290100630023
-2.0,129.22580201260047
-3.0,129.22580201260047
-3.0,143.8387030189007
-4.0,143.8387030189007
-4.0,158.45160402520094
-5.0,158.45160402520094
-5.0,173.06450503150117
-6.0,173.06450503150117
-6.0,187.6774060378014
-7.0,187.6774060378014
-7.0,202.29030704410164
-8.0,202.29030704410164
-8.0,216.90320805040187
-9.0,216.90320805040187
-9.0,231.5161090567021
-10.0,231.5161090567021
-10.0,246.12901006300234
-11.0,246.12901006300234
-11.0,260.74191106930255
-12.0,260.74191106930255
-12.0,257.64826100063766
-13.0,257.64826100063766
-13.0,254.55461093197275
-14.0,254.55461093197275
-14.0,251.46096086330783
-15.0,251.46096086330783
-15.0,248.36731079464292
-16.0,248.36731079464292
-16.0,245.273660725978
-17.0,245.273660725978
-17.0,242.1800106573131
-18.0,242.1800106573131
-18.0,239.08636058864818
-19.0,239.08636058864818
-19.0,235.99271051998326
-20.0,235.99271051998326
-20.0,232.89906045131835
-21.0,232.89906045131835
-21.0,229.80541038265343
-22.0,229.80541038265343
-22.0,226.71176031398852
-23.0,226.71176031398852
-23.0,223.6181102453236
-24.0,223.6181102453236
-24.0,220.5244601766587
-25.0,220.5244601766587
-25.0,217.43081010799378
-26.0,217.43081010799378
-26.0,214.33716003932886
-27.0,214.33716003932886
-27.0,211.24350997066395
-28.0,211.24350997066395
-28.0,208.14985990199904
-29.0,208.14985990199904
-29.0,205.05620983333412
-30.0,205.05620983333412
-30.0,201.9625597646692
-31.0,201.9625597646692
-31.0,198.8689096960043
-32.0,198.8689096960043
-32.0,195.77525962733938
-33.0,195.77525962733938
-33.0,192.68160955867447
-34.0,192.68160955867447
-34.0,189.58795949000955
-35.0,189.58795949000955
-35.0,186.49430942134464
-36.0,186.49430942134464
-36.0,183.40065935267972
-37.0,183.40065935267972
-37.0,180.3070092840148
-38.0,180.3070092840148
-38.0,177.2133592153499
-39.0,177.2133592153499
-39.0,174.11970914668498
-40.0,174.11970914668498
-40.0,171.02605907802007
-41.0,171.02605907802007
-41.0,167.93240900935515
-42.0,167.93240900935515
-42.0,164.83875894069024
-43.0,164.83875894069024
-43.0,164.47591043240163
-44.0,164.47591043240163
-44.0,164.11306192411303
-45.0,164.11306192411303
-45.0,163.75021341582442
-46.0,163.75021341582442
-46.0,163.3873649075358
-47.0,163.3873649075358
-47.0,163.0245163992472
-48.0,163.0245163992472
-48.0,162.6616678909586
-49.0,162.6616678909586
-49.0,162.29881938267
-50.0,162.29881938267
-50.0,161.93597087438138
-51.0,161.93597087438138
-51.0,161.57312236609278
-52.0,161.57312236609278
-52.0,161.21027385780417
-53.0,161.21027385780417
-53.0,160.84742534951556
-54.0,160.84742534951556
-54.0,160.48457684122695
-55.0,160.48457684122695
-55.0,160.12172833293835
-56.0,160.12172833293835
-56.0,159.75887982464974
-57.0,159.75887982464974
-57.0,159.39603131636113
-58.0,159.39603131636113
-58.0,159.03318280807252
-59.0,159.03318280807252
-59.0,158.67033429978392
-60.0,158.67033429978392
-60.0,158.3074857914953
-61.0,158.3074857914953
-61.0,157.9446372832067
-62.0,157.9446372832067
-62.0,157.5817887749181
-63.0,157.5817887749181
-63.0,157.2189402666295
-64.0,157.2189402666295
-64.0,156.85609175834088
-65.0,156.85609175834088
-65.0,156.49324325005227
-66.0,156.49324325005227
-66.0,156.13039474176367
-67.0,156.13039474176367
-67.0,155.76754623347506
-68.0,155.76754623347506
-68.0,155.40469772518645
-69.0,155.40469772518645
-69.0,155.04184921689784
-70.0,155.04184921689784
-70.0,154.67900070860924
-71.0,154.67900070860924
-71.0,154.31615220032063
-72.0,154.31615220032063
-72.0,153.95330369203202
-73.0,153.95330369203202
-73.0,153.59045518374342
-74.0,153.59045518374342
-74.0,153.2276066754548
-75.0,153.2276066754548
-75.0,152.8647581671662
-76.0,152.8647581671662
-76.0,152.5019096588776
-77.0,152.5019096588776
-77.0,152.139061150589
-78.0,152.139061150589
-78.0,151.77621264230038
-79.0,151.77621264230038
-79.0,151.41336413401177
-80.0,151.41336413401177
-80.0,151.05051562572316
-81.0,151.05051562572316
-81.0,150.68766711743456
-82.0,150.68766711743456
-82.0,150.32481860914595
-83.0,150.32481860914595
-83.0,150.65778014824465
-84.0,150.65778014824465
-84.0,150.99074168734336
-85.0,150.99074168734336
-85.0,151.32370322644206
-86.0,151.32370322644206
-86.0,151.65666476554077
-87.0,151.65666476554077
-87.0,151.98962630463947
-88.0,151.98962630463947
-88.0,152.32258784373818
-89.0,152.32258784373818
-89.0,152.65554938283688
-90.0,152.65554938283688
-90.0,152.98851092193559
-91.0,152.98851092193559
-91.0,153.3214724610343
-92.87509492502627,153.3214724610343
-92.87509492502627,152.9858071183429
-93.87509492502629,152.9858071183429
-93.87509492502629,152.65014177565152
-94.8750949250263,152.65014177565152
-94.8750949250263,152.31447643296013
-95.87509492502633,152.31447643296013
-95.87509492502633,151.97881109026875
-96.87509492502632,151.97881109026875
-96.87509492502632,151.64314574757736
-97.87509492502632,151.64314574757736
-97.87509492502632,151.30748040488598
-98.87509492502632,151.30748040488598
-98.87509492502632,150.9718150621946
-99.87509492502635,150.9718150621946
-99.87509492502635,150.6361497195032
-100.87509492502637,150.6361497195032
-100.87509492502637,150.30048437681182
-700.0,150.30048437681182
-					</series>
-					<series title="robPositionX[0]" type="l" color="0x00ff00" encoding="csv">0.0,0.0
-0.0,2000.0
-2.0,2000.0
-2.0,2019.1613005981214
-3.742215149060318,2019.1613005981214
-3.742215149060318,2038.3226011962429
-4.742215149060319,2038.3226011962429
-4.742215149060319,2057.4839017943646
-5.742215149060318,2057.4839017943646
-5.742215149060318,2076.645202392486
-6.742215149060318,2076.645202392486
-6.742215149060318,2095.806502990608
-7.742215149060319,2095.806502990608
-7.742215149060319,2114.9678035887296
-8.74221514906032,2114.9678035887296
-8.74221514906032,2134.1291041868512
-9.74221514906032,2134.1291041868512
-9.74221514906032,2153.290404784973
-10.742215149060321,2153.290404784973
-10.742215149060321,2172.4517053830946
-11.742215149060318,2172.4517053830946
-11.742215149060318,2191.6130059812162
-12.742215149060318,2191.6130059812162
-12.742215149060318,2210.774306579338
-13.742215149060318,2210.774306579338
-13.742215149060318,2229.9356071774596
-14.742215149060318,2229.9356071774596
-14.742215149060318,2249.0969077755813
-15.742215149060318,2249.0969077755813
-15.742215149060318,2223.3324901942524
-19.74908899461584,2223.3324901942524
-19.74908899461584,2197.5680726129235
-20.74908899461584,2197.5680726129235
-20.74908899461584,2171.8036550315946
-21.74908899461584,2171.8036550315946
-21.74908899461584,2146.039237450266
-22.74908899461584,2146.039237450266
-22.74908899461584,2120.274819868937
-23.74908899461584,2120.274819868937
-23.74908899461584,2094.510402287608
-24.74908899461584,2094.510402287608
-24.74908899461584,2068.745984706279
-25.74908899461584,2068.745984706279
-25.74908899461584,2042.9815671249503
-26.74908899461584,2042.9815671249503
-26.74908899461584,2017.2171495436214
-27.74908899461584,2017.2171495436214
-27.74908899461584,1991.4527319622925
-28.74908899461584,1991.4527319622925
-28.74908899461584,1965.6883143809637
-29.74908899461584,1965.6883143809637
-29.74908899461584,1939.9238967996348
-30.74908899461584,1939.9238967996348
-30.74908899461584,1914.159479218306
-31.74908899461584,1914.159479218306
-31.74908899461584,1888.395061636977
-32.74908899461584,1888.395061636977
-32.74908899461584,1862.6306440556482
-33.74908899461584,1862.6306440556482
-33.74908899461584,1836.8662264743193
-34.74908899461584,1836.8662264743193
-34.74908899461584,1811.1018088929904
-35.74908899461584,1811.1018088929904
-35.74908899461584,1785.3373913116616
-36.74908899461584,1785.3373913116616
-36.74908899461584,1759.5729737303327
-37.74908899461584,1759.5729737303327
-37.74908899461584,1733.8085561490038
-38.74908899461584,1733.8085561490038
-38.74908899461584,1708.044138567675
-39.74908899461584,1708.044138567675
-39.74908899461584,1682.279720986346
-40.74908899461584,1682.279720986346
-40.74908899461584,1656.5153034050172
-41.74908899461584,1656.5153034050172
-41.74908899461584,1630.7508858236883
-42.74908899461584,1630.7508858236883
-42.74908899461584,1604.9864682423595
-43.74908899461584,1604.9864682423595
-43.74908899461584,1579.2220506610306
-44.74908899461584,1579.2220506610306
-44.74908899461584,1553.4576330797017
-45.74908899461584,1553.4576330797017
-45.74908899461584,1527.6932154983729
-46.74908899461584,1527.6932154983729
-46.74908899461584,1501.928797917044
-47.74908899461584,1501.928797917044
-47.74908899461584,1476.1643803357151
-48.74908899461584,1476.1643803357151
-48.74908899461584,1450.1675385689875
-52.87509492502634,1450.1675385689875
-52.87509492502634,1424.17069680226
-53.87509492502634,1424.17069680226
-53.87509492502634,1398.1738550355324
-54.87509492502634,1398.1738550355324
-54.87509492502634,1372.1770132688048
-55.875094925026346,1372.1770132688048
-55.875094925026346,1346.1801715020772
-56.87509492502634,1346.1801715020772
-56.87509492502634,1320.1833297353496
-57.87509492502634,1320.1833297353496
-57.87509492502634,1294.186487968622
-58.87509492502634,1294.186487968622
-58.87509492502634,1268.1896462018944
-59.87509492502634,1268.1896462018944
-59.87509492502634,1242.1928044351669
-60.87509492502634,1242.1928044351669
-60.87509492502634,1216.1959626684393
-61.87509492502634,1216.1959626684393
-61.87509492502634,1190.1991209017117
-62.87509492502634,1190.1991209017117
-62.87509492502634,1164.202279134984
-63.87509492502634,1164.202279134984
-63.87509492502634,1138.2054373682565
-64.87509492502627,1138.2054373682565
-64.87509492502627,1112.208595601529
-65.87509492502627,1112.208595601529
-65.87509492502627,1086.2117538348014
-66.87509492502627,1086.2117538348014
-66.87509492502627,1060.2149120680738
-67.87509492502627,1060.2149120680738
-67.87509492502627,1034.2180703013462
-68.87509492502627,1034.2180703013462
-68.87509492502627,1008.2212285346185
-69.87509492502627,1008.2212285346185
-69.87509492502627,982.2243867678908
-70.87509492502627,982.2243867678908
-70.87509492502627,956.2275450011631
-71.87509492502627,956.2275450011631
-71.87509492502627,930.2307032344354
-72.87509492502627,930.2307032344354
-72.87509492502627,904.2338614677077
-73.87509492502627,904.2338614677077
-73.87509492502627,878.23701970098
-74.87509492502627,878.23701970098
-74.87509492502627,852.2401779342523
-75.87509492502627,852.2401779342523
-75.87509492502627,826.2433361675246
-76.87509492502627,826.2433361675246
-76.87509492502627,800.2464944007969
-77.87509492502627,800.2464944007969
-77.87509492502627,774.2496526340692
-78.87509492502627,774.2496526340692
-78.87509492502627,748.2528108673415
-79.87509492502627,748.2528108673415
-79.87509492502627,722.2559691006138
-80.87509492502627,722.2559691006138
-80.87509492502627,696.2591273338861
-81.87509492502627,696.2591273338861
-81.87509492502627,670.2622855671584
-82.87509492502627,670.2622855671584
-82.87509492502627,644.2654438004307
-83.87509492502627,644.2654438004307
-83.87509492502627,618.268602033703
-84.87509492502627,618.268602033703
-84.87509492502627,592.2717602669753
-85.87509492502627,592.2717602669753
-85.87509492502627,566.2749185002476
-86.87509492502627,566.2749185002476
-86.87509492502627,540.2780767335199
-87.87509492502627,540.2780767335199
-87.87509492502627,514.2812349667922
-88.87509492502627,514.2812349667922
-88.87509492502627,488.2843932000645
-89.87509492502627,488.2843932000645
-89.87509492502627,462.28755143333683
-90.87509492502627,462.28755143333683
-90.87509492502627,436.29070966660913
-91.87509492502627,436.29070966660913
-91.87509492502627,410.29386789988143
-92.87509492502627,410.29386789988143
-92.87509492502627,384.3167428713849
-96.97473675892196,384.3167428713849
-96.97473675892196,358.3396178428884
-97.97473675892198,358.3396178428884
-97.97473675892198,332.3624928143919
-98.97473675892198,332.3624928143919
-98.97473675892198,306.38536778589537
-99.974736758922,306.38536778589537
-99.974736758922,280.40824275739885
-100.97473675892203,280.40824275739885
-100.97473675892203,254.43111772890234
-101.97473675892209,254.43111772890234
-101.97473675892209,228.45399270040582
-102.97473675892215,228.45399270040582
-102.97473675892215,202.4768676719093
-103.9747367589222,202.4768676719093
-103.9747367589222,176.4997426434128
-104.97473675892226,176.4997426434128
-104.97473675892226,150.52261761491627
-105.97473675892232,150.52261761491627
-105.97473675892232,124.54549258641975
-106.97473675892238,124.54549258641975
-106.97473675892238,98.56836755792324
-107.97473675892243,98.56836755792324
-107.97473675892243,98.30451910110241
-110.55568127747321,98.30451910110241
-110.55568127747321,98.04067064428159
-111.55568127747327,98.04067064428159
-111.55568127747327,97.77682218746077
-112.55568127747333,97.77682218746077
-112.55568127747333,97.51297373063994
-113.55568127747338,97.51297373063994
-113.55568127747338,97.24912527381912
-114.55568127747344,97.24912527381912
-114.55568127747344,96.9852768169983
-115.5556812774735,96.9852768169983
-115.5556812774735,96.72142836017747
-116.55568127747355,96.72142836017747
-116.55568127747355,96.45757990335665
-117.55568127747361,96.45757990335665
-117.55568127747361,96.19373144653582
-118.55568127747367,96.19373144653582
-118.55568127747367,95.929882989715
-119.55568127747372,95.929882989715
-119.55568127747372,95.66603453289417
-120.55568127747378,95.66603453289417
-120.55568127747378,95.40218607607335
-121.55568127747384,95.40218607607335
-121.55568127747384,95.13833761925252
-122.5556812774739,95.13833761925252
-122.5556812774739,94.8744891624317
-123.55568127747395,94.8744891624317
-123.55568127747395,94.61064070561088
-124.55568127747401,94.61064070561088
-124.55568127747401,94.34679224879005
-125.55568127747406,94.34679224879005
-125.55568127747406,94.08294379196923
-126.55568127747412,94.08294379196923
-126.55568127747412,93.8190953351484
-127.55568127747418,93.8190953351484
-127.55568127747418,93.55524687832758
-128.55568127747424,93.55524687832758
-128.55568127747424,93.29139842150676
-129.5556812774743,93.29139842150676
-129.5556812774743,93.02754996468593
-130.55568127747435,93.02754996468593
-130.55568127747435,92.76370150786511
-131.5556812774744,92.76370150786511
-131.5556812774744,118.75895195953478
-132.5747956959977,118.75895195953478
-132.5747956959977,144.75420241120446
-133.57479569599772,144.75420241120446
-133.57479569599772,170.74945286287414
-134.57479569599775,170.74945286287414
-134.57479569599775,196.7447033145438
-135.57479569599778,196.7447033145438
-135.57479569599778,222.7399537662135
-136.5747956959978,222.7399537662135
-136.5747956959978,248.73520421788317
-137.57479569599784,248.73520421788317
-137.57479569599784,274.73045466955284
-138.57479569599786,274.73045466955284
-138.57479569599786,300.7257051212225
-139.5747956959979,300.7257051212225
-139.5747956959979,326.7209555728922
-140.57479569599792,326.7209555728922
-140.57479569599792,352.71620602456187
-141.57479569599795,352.71620602456187
-141.57479569599795,378.71145647623155
-142.57479569599798,378.71145647623155
-142.57479569599798,404.7067069279012
-143.574795695998,404.7067069279012
-143.574795695998,430.7019573795709
-144.57479569599803,430.7019573795709
-144.57479569599803,456.6972078312406
-145.57479569599806,456.6972078312406
-145.57479569599806,482.69245828291025
-146.5747956959981,482.69245828291025
-146.5747956959981,508.6877087345799
-147.57479569599812,508.6877087345799
-147.57479569599812,534.6829591862496
-148.57479569599815,534.6829591862496
-148.57479569599815,560.6782096379193
-149.57479569599818,560.6782096379193
-149.57479569599818,586.673460089589
-150.5747956959982,586.673460089589
-150.5747956959982,612.6687105412586
-151.57479569599823,612.6687105412586
-151.57479569599823,638.6639609929283
-152.57479569599826,638.6639609929283
-152.57479569599826,664.659211444598
-153.5747956959983,664.659211444598
-153.5747956959983,690.6544618962677
-154.57479569599832,690.6544618962677
-154.57479569599832,716.6497123479373
-155.57479569599835,716.6497123479373
-155.57479569599835,742.644962799607
-156.57479569599838,742.644962799607
-156.57479569599838,768.6402132512767
-157.5747956959984,768.6402132512767
-157.5747956959984,794.6354637029464
-158.57479569599843,794.6354637029464
-158.57479569599843,820.630714154616
-159.57479569599846,820.630714154616
-159.57479569599846,846.6259646062857
-160.5747956959985,846.6259646062857
-160.5747956959985,872.6212150579554
-161.57479569599852,872.6212150579554
-161.57479569599852,898.6164655096251
-162.57479569599855,898.6164655096251
-162.57479569599855,924.6117159612947
-163.57479569599857,924.6117159612947
-163.57479569599857,950.6069664129644
-164.5747956959986,950.6069664129644
-164.5747956959986,976.6022168646341
-165.57479569599863,976.6022168646341
-165.57479569599863,1002.5974673163038
-166.57479569599866,1002.5974673163038
-166.57479569599866,1028.5927177679735
-167.5747956959987,1028.5927177679735
-167.5747956959987,1054.5879682196432
-168.57479569599872,1054.5879682196432
-168.57479569599872,1080.5832186713128
-169.57479569599874,1080.5832186713128
-169.57479569599874,1106.5784691229824
-170.57479569599877,1106.5784691229824
-170.57479569599877,1132.573719574652
-171.5747956959988,1132.573719574652
-171.5747956959988,1158.5689700263215
-172.57479569599883,1158.5689700263215
-172.57479569599883,1184.564220477991
-173.57479569599886,1184.564220477991
-173.57479569599886,1210.5594709296606
-174.5747956959989,1210.5594709296606
-174.5747956959989,1236.5547213813302
-175.57479569599892,1236.5547213813302
-175.57479569599892,1262.5499718329997
-176.57479569599894,1262.5499718329997
-176.57479569599894,1288.5452222846693
-177.57479569599897,1288.5452222846693
-177.57479569599897,1314.5404727363389
-178.574795695999,1314.5404727363389
-178.574795695999,1340.5357231880084
-179.57479569599903,1340.5357231880084
-179.57479569599903,1366.530973639678
-180.57479569599906,1366.530973639678
-180.57479569599906,1392.5262240913476
-181.5747956959991,1392.5262240913476
-181.5747956959991,1418.5214745430171
-182.57479569599911,1418.5214745430171
-182.57479569599911,1444.5167249946867
-183.57479569599914,1444.5167249946867
-183.57479569599914,1444.8423004853078
-186.13306956126328,1444.8423004853078
-186.13306956126328,1445.1678759759288
-187.13306956126334,1445.1678759759288
-187.13306956126334,1445.49345146655
-188.1330695612634,1445.49345146655
-188.1330695612634,1445.819026957171
-189.13306956126345,1445.819026957171
-189.13306956126345,1446.144602447792
-190.1330695612635,1446.144602447792
-190.1330695612635,1446.4701779384131
-191.13306956126357,1446.4701779384131
-191.13306956126357,1446.7957534290342
-192.13306956126362,1446.7957534290342
-192.13306956126362,1447.1213289196553
-193.13306956126368,1447.1213289196553
-193.13306956126368,1447.4469044102764
-194.13306956126374,1447.4469044102764
-194.13306956126374,1447.7724799008975
-195.1330695612638,1447.7724799008975
-195.1330695612638,1448.0980553915185
-196.13306956126385,1448.0980553915185
-196.13306956126385,1448.4236308821396
-197.1330695612639,1448.4236308821396
-197.1330695612639,1448.7492063727607
-198.13306956126397,1448.7492063727607
-198.13306956126397,1449.0747818633818
-199.13306956126402,1449.0747818633818
-199.13306956126402,1449.4003573540028
-200.13306956126408,1449.4003573540028
-200.13306956126408,1449.725932844624
-201.13306956126414,1449.725932844624
-201.13306956126414,1450.051508335245
-202.1330695612642,1450.051508335245
-202.1330695612642,1450.377083825866
-203.13306956126425,1450.377083825866
-203.13306956126425,1450.7026593164871
-204.1330695612643,1450.7026593164871
-204.1330695612643,1451.0282348071082
-205.13306956126436,1451.0282348071082
-205.13306956126436,1451.3538102977293
-206.13306956126442,1451.3538102977293
-206.13306956126442,1451.6793857883504
-207.13306956126448,1451.6793857883504
-207.13306956126448,1477.555989850811
-208.23053500579013,1477.555989850811
-208.23053500579013,1503.4325939132718
-209.23053500579016,1503.4325939132718
-209.23053500579016,1529.3091979757326
-210.2305350057902,1529.3091979757326
-210.2305350057902,1555.1858020381933
-211.23053500579022,1555.1858020381933
-211.23053500579022,1581.062406100654
-212.23053500579024,1581.062406100654
-212.23053500579024,1606.9390101631147
-213.23053500579027,1606.9390101631147
-213.23053500579027,1632.8156142255755
-214.2305350057903,1632.8156142255755
-214.2305350057903,1658.6922182880362
-215.23053500579033,1658.6922182880362
-215.23053500579033,1684.568822350497
-216.23053500579036,1684.568822350497
-216.23053500579036,1710.4454264129577
-217.2305350057904,1710.4454264129577
-217.2305350057904,1736.3220304754184
-218.23053500579041,1736.3220304754184
-218.23053500579041,1762.1986345378791
-219.23053500579044,1762.1986345378791
-219.23053500579044,1788.0752386003398
-220.23053500579047,1788.0752386003398
-220.23053500579047,1813.9518426628006
-221.2305350057905,1813.9518426628006
-221.2305350057905,1839.8284467252613
-222.23053500579053,1839.8284467252613
-222.23053500579053,1865.705050787722
-223.23053500579056,1865.705050787722
-223.23053500579056,1891.5816548501828
-224.23053500579059,1891.5816548501828
-224.23053500579059,1917.4582589126435
-225.2305350057906,1917.4582589126435
-225.2305350057906,1943.3348629751042
-226.23053500579064,1943.3348629751042
-226.23053500579064,1969.211467037565
-227.23053500579067,1969.211467037565
-227.23053500579067,1995.0880711000257
-228.2305350057907,1995.0880711000257
-228.2305350057907,2020.9646751624864
-229.23053500579073,2020.9646751624864
-229.23053500579073,2046.8412792249471
-230.23053500579076,2046.8412792249471
-230.23053500579076,2072.717883287408
-231.23053500579078,2072.717883287408
-231.23053500579078,2098.5944873498684
-232.2305350057908,2098.5944873498684
-232.2305350057908,2124.471091412329
-233.23053500579084,2124.471091412329
-233.23053500579084,2150.3476954747894
-234.23053500579087,2150.3476954747894
-234.23053500579087,2176.22429953725
-235.2305350057909,2176.22429953725
-235.2305350057909,2202.1009035997104
-236.23053500579093,2202.1009035997104
-236.23053500579093,2227.977507662171
-237.23053500579095,2227.977507662171
-237.23053500579095,2253.7872896317044
-238.35157232543375,2253.7872896317044
-238.35157232543375,2279.597071601238
-239.3515723254338,2279.597071601238
-239.3515723254338,2305.4068535707715
-240.35157232543386,2305.4068535707715
-240.35157232543386,2331.216635540305
-241.35157232543392,2331.216635540305
-241.35157232543392,2357.0264175098387
-242.35157232543398,2357.0264175098387
-242.35157232543398,2382.836199479372
-243.35157232543403,2382.836199479372
-243.35157232543403,2408.645981448906
-244.3515723254341,2408.645981448906
-244.3515723254341,2434.4557634184393
-245.35157232543415,2434.4557634184393
-245.35157232543415,2460.265545387973
-246.3515723254342,2460.265545387973
-246.3515723254342,2486.0753273575065
-247.35157232543426,2486.0753273575065
-247.35157232543426,2511.88510932704
-248.35157232543432,2511.88510932704
-248.35157232543432,2537.6948912965736
-249.35157232543438,2537.6948912965736
-249.35157232543438,2563.504673266107
-250.35157232543443,2563.504673266107
-250.35157232543443,2589.3144552356407
-251.3515723254345,2589.3144552356407
-251.3515723254345,2615.1242372051743
-252.35157232543455,2615.1242372051743
-252.35157232543455,2640.934019174708
-253.3515723254346,2640.934019174708
-253.3515723254346,2666.7438011442414
-254.35157232543466,2666.7438011442414
-254.35157232543466,2692.553583113775
-255.35157232543472,2692.553583113775
-255.35157232543472,2718.3633650833085
-256.3515723254347,2718.3633650833085
-256.3515723254347,2744.173147052842
-257.35157232543446,2744.173147052842
-257.35157232543446,2769.9829290223756
-258.35157232543423,2769.9829290223756
-258.35157232543423,2795.792710991909
-259.351572325434,2795.792710991909
-259.351572325434,2821.6024929614427
-260.3515723254338,2821.6024929614427
-260.3515723254338,2847.4122749309763
-261.35157232543355,2847.4122749309763
-261.35157232543355,2873.22205690051
-262.3515723254333,2873.22205690051
-262.3515723254333,2899.0318388700434
-263.3515723254331,2899.0318388700434
-263.3515723254331,2924.841620839577
-264.35157232543287,2924.841620839577
-264.35157232543287,2950.6514028091106
-265.35157232543264,2950.6514028091106
-265.35157232543264,2976.461184778644
-266.3515723254324,2976.461184778644
-266.3515723254324,3002.2709667481777
-267.3515723254322,3002.2709667481777
-267.3515723254322,3028.0807487177112
-268.35157232543196,3028.0807487177112
-268.35157232543196,3053.890530687245
-269.35157232543173,3053.890530687245
-269.35157232543173,3054.2656615783403
-271.90794004039884,3054.2656615783403
-271.90794004039884,3054.640792469436
-272.90794004039856,3054.640792469436
-272.90794004039856,3055.0159233605314
-273.9079400403983,3055.0159233605314
-273.9079400403983,3055.391054251627
-274.907940040398,3055.391054251627
-274.907940040398,3055.7661851427224
-275.9079400403977,3055.7661851427224
-275.9079400403977,3056.141316033818
-276.9079400403974,3056.141316033818
-276.9079400403974,3056.5164469249135
-277.90794004039714,3056.5164469249135
-277.90794004039714,3056.891577816009
-278.90794004039685,3056.891577816009
-278.90794004039685,3057.2667087071045
-279.90794004039657,3057.2667087071045
-279.90794004039657,3057.6418395982
-280.9079400403963,3057.6418395982
-280.9079400403963,3058.0169704892955
-281.907940040396,3058.0169704892955
-281.907940040396,3058.392101380391
-282.9079400403957,3058.392101380391
-282.9079400403957,3058.7672322714866
-283.90794004039543,3058.7672322714866
-283.90794004039543,3059.142363162582
-284.90794004039515,3059.142363162582
-284.90794004039515,3059.5174940536776
-285.90794004039486,3059.5174940536776
-285.90794004039486,3059.892624944773
-286.9079400403946,3059.892624944773
-286.9079400403946,3060.2677558358687
-287.9079400403943,3060.2677558358687
-287.9079400403943,3060.642886726964
-288.907940040394,3060.642886726964
-288.907940040394,3061.0180176180597
-289.9079400403937,3061.0180176180597
-289.9079400403937,3061.3931485091553
-290.90794004039344,3061.3931485091553
-290.90794004039344,3061.768279400251
-291.90794004039316,3061.768279400251
-291.90794004039316,3062.1434102913463
-292.9079400403929,3062.1434102913463
-292.9079400403929,3088.139086381997
-293.9261778481258,3088.139086381997
-293.9261778481258,3114.1347624726477
-294.9261778481256,3114.1347624726477
-294.9261778481256,3140.1304385632984
-295.92617784812535,3140.1304385632984
-295.92617784812535,3166.126114653949
-296.9261778481251,3166.126114653949
-296.9261778481251,3192.1217907446
-297.9261778481249,3192.1217907446
-297.9261778481249,3218.1174668352505
-298.92617784812467,3218.1174668352505
-298.92617784812467,3244.1131429259012
-299.92617784812444,3244.1131429259012
-299.92617784812444,3270.108819016552
-300.9261778481242,3270.108819016552
-300.9261778481242,3296.1044951072026
-301.926177848124,3296.1044951072026
-301.926177848124,3322.1001711978533
-302.92617784812376,3322.1001711978533
-302.92617784812376,3348.095847288504
-303.92617784812353,3348.095847288504
-303.92617784812353,3374.0915233791548
-304.9261778481233,3374.0915233791548
-304.9261778481233,3400.0871994698055
-305.9261778481231,3400.0871994698055
-305.9261778481231,3426.082875560456
-306.92617784812285,3426.082875560456
-306.92617784812285,3452.078551651107
-307.9261778481226,3452.078551651107
-307.9261778481226,3478.0742277417576
-308.9261778481224,3478.0742277417576
-308.9261778481224,3504.0699038324083
-309.92617784812217,3504.0699038324083
-309.92617784812217,3530.065579923059
-310.92617784812194,3530.065579923059
-310.92617784812194,3556.0612560137097
-311.9261778481217,3556.0612560137097
-311.9261778481217,3582.0569321043604
-312.9261778481215,3582.0569321043604
-312.9261778481215,3608.052608195011
-313.92617784812126,3608.052608195011
-313.92617784812126,3634.048284285662
-314.92617784812103,3634.048284285662
-314.92617784812103,3660.0439603763125
-315.9261778481208,3660.0439603763125
-315.9261778481208,3686.039636466963
-316.9261778481206,3686.039636466963
-316.9261778481206,3712.035312557614
-317.92617784812035,3712.035312557614
-317.92617784812035,3738.0309886482646
-318.9261778481201,3738.0309886482646
-318.9261778481201,3764.0266647389153
-319.9261778481199,3764.0266647389153
-319.9261778481199,3790.022340829566
-320.92617784811966,3790.022340829566
-320.92617784811966,3816.0180169202167
-321.92617784811944,3816.0180169202167
-321.92617784811944,3842.0136930108674
-322.9261778481192,3842.0136930108674
-322.9261778481192,3868.009369101518
-323.926177848119,3868.009369101518
-323.926177848119,3894.005045192169
-324.92617784811875,3894.005045192169
-324.92617784811875,3920.0007212828195
-325.9261778481185,3920.0007212828195
-325.9261778481185,3945.9963973734702
-326.9261778481183,3945.9963973734702
-326.9261778481183,3971.992073464121
-327.9261778481181,3971.992073464121
-327.9261778481181,3997.9877495547717
-328.92617784811785,3997.9877495547717
-328.92617784811785,4023.9834256454224
-329.9261778481176,4023.9834256454224
-329.9261778481176,4049.979101736073
-330.9261778481174,4049.979101736073
-330.9261778481174,4075.9747778267238
-331.92617784811716,4075.9747778267238
-331.92617784811716,4101.9704539173745
-332.92617784811694,4101.9704539173745
-332.92617784811694,4127.966130008025
-333.9261778481167,4127.966130008025
-333.9261778481167,4153.961806098676
-334.9261778481165,4153.961806098676
-334.9261778481165,4179.957482189327
-335.92617784811625,4179.957482189327
-335.92617784811625,4205.953158279977
-336.926177848116,4205.953158279977
-336.926177848116,4231.948834370628
-337.9261778481158,4231.948834370628
-337.9261778481158,4257.944510461279
-338.92617784811557,4257.944510461279
-338.92617784811557,4283.940186551929
-339.92617784811534,4283.940186551929
-339.92617784811534,4309.93586264258
-340.9261778481151,4309.93586264258
-340.9261778481151,4335.931538733231
-341.9261778481149,4335.931538733231
-341.9261778481149,4361.9272148238815
-342.92617784811466,4361.9272148238815
-342.92617784811466,4387.922890914532
-343.92617784811443,4387.922890914532
-343.92617784811443,4413.918567005183
-344.9261778481142,4413.918567005183
-344.9261778481142,4414.052620422306
-347.4918182514062,4414.052620422306
-347.4918182514062,4414.186673839429
-348.49181825140596,4414.186673839429
-348.49181825140596,4414.320727256552
-349.49181825140573,4414.320727256552
-349.49181825140573,4414.4547806736755
-350.4918182514055,4414.4547806736755
-350.4918182514055,4414.588834090799
-351.4918182514053,4414.588834090799
-351.4918182514053,4414.722887507922
-352.49181825140505,4414.722887507922
-352.49181825140505,4414.856940925045
-353.4918182514048,4414.856940925045
-353.4918182514048,4414.990994342168
-354.4918182514046,4414.990994342168
-354.4918182514046,4415.125047759291
-355.49181825140437,4415.125047759291
-355.49181825140437,4415.259101176414
-356.49181825140414,4415.259101176414
-356.49181825140414,4415.3931545935375
-357.4918182514039,4415.3931545935375
-357.4918182514039,4415.527208010661
-358.4918182514037,4415.527208010661
-358.4918182514037,4415.661261427784
-359.49181825140346,4415.661261427784
-359.49181825140346,4415.795314844907
-360.49181825140323,4415.795314844907
-360.49181825140323,4415.92936826203
-361.491818251403,4415.92936826203
-361.491818251403,4416.063421679153
-362.4918182514028,4416.063421679153
-362.4918182514028,4416.197475096276
-363.49181825140255,4416.197475096276
-363.49181825140255,4416.3315285133995
-364.4918182514023,4416.3315285133995
-364.4918182514023,4416.465581930523
-365.4918182514021,4416.465581930523
-365.4918182514021,4416.599635347646
-366.49181825140187,4416.599635347646
-366.49181825140187,4416.733688764769
-367.49181825140164,4416.733688764769
-367.49181825140164,4416.867742181892
-368.4918182514014,4416.867742181892
-368.4918182514014,4390.905331494015
-372.5796318891877,4390.905331494015
-372.5796318891877,4364.942920806137
-373.57963188918745,4364.942920806137
-373.57963188918745,4338.98051011826
-374.5796318891872,4338.98051011826
-374.5796318891872,4313.018099430383
-375.579631889187,4313.018099430383
-375.579631889187,4287.0556887425055
-376.57963188918677,4287.0556887425055
-376.57963188918677,4261.093278054628
-377.57963188918654,4261.093278054628
-377.57963188918654,4235.130867366751
-378.5796318891863,4235.130867366751
-378.5796318891863,4209.168456678874
-379.5796318891861,4209.168456678874
-379.5796318891861,4183.206045990996
-380.57963188918586,4183.206045990996
-380.57963188918586,4157.243635303119
-381.57963188918563,4157.243635303119
-381.57963188918563,4131.281224615242
-382.5796318891854,4131.281224615242
-382.5796318891854,4105.318813927364
-383.5796318891852,4105.318813927364
-383.5796318891852,4079.356403239487
-384.57963188918495,4079.356403239487
-384.57963188918495,4053.3939925516097
-385.5796318891847,4053.3939925516097
-385.5796318891847,4027.4315818637324
-386.5796318891845,4027.4315818637324
-386.5796318891845,4001.469171175855
-387.57963188918427,4001.469171175855
-387.57963188918427,3975.5067604879778
-388.57963188918404,3975.5067604879778
-388.57963188918404,3949.5443498001005
-389.5796318891838,3949.5443498001005
-389.5796318891838,3923.581939112223
-390.5796318891836,3923.581939112223
-390.5796318891836,3897.619528424346
-391.57963188918336,3897.619528424346
-391.57963188918336,3871.6571177364685
-392.57963188918313,3871.6571177364685
-392.57963188918313,3845.694707048591
-393.5796318891829,3845.694707048591
-393.5796318891829,3819.732296360714
-394.5796318891827,3819.732296360714
-394.5796318891827,3793.7698856728366
-395.57963188918245,3793.7698856728366
-395.57963188918245,3767.8074749849593
-396.5796318891822,3767.8074749849593
-396.5796318891822,3741.845064297082
-397.579631889182,3741.845064297082
-397.579631889182,3715.8826536092047
-398.57963188918177,3715.8826536092047
-398.57963188918177,3689.9202429213274
-399.57963188918154,3689.9202429213274
-399.57963188918154,3663.95783223345
-400.5796318891813,3663.95783223345
-400.5796318891813,3637.9954215455728
-401.5796318891811,3637.9954215455728
-401.5796318891811,3612.0330108576954
-402.57963188918086,3612.0330108576954
-402.57963188918086,3586.070600169818
-403.57963188918063,3586.070600169818
-403.57963188918063,3560.108189481941
-404.5796318891804,3560.108189481941
-404.5796318891804,3534.1457787940635
-405.5796318891802,3534.1457787940635
-405.5796318891802,3508.183368106186
-406.57963188917995,3508.183368106186
-406.57963188917995,3482.220957418309
-407.5796318891797,3482.220957418309
-407.5796318891797,3456.2585467304316
-408.5796318891795,3456.2585467304316
-408.5796318891795,3430.2961360425543
-409.57963188917927,3430.2961360425543
-409.57963188917927,3404.333725354677
-410.57963188917904,3404.333725354677
-410.57963188917904,3378.3713146667997
-411.5796318891788,3378.3713146667997
-411.5796318891788,3352.4089039789224
-412.5796318891786,3352.4089039789224
-412.5796318891786,3326.446493291045
-413.57963188917836,3326.446493291045
-413.57963188917836,3300.4840826031677
-414.57963188917813,3300.4840826031677
-414.57963188917813,3274.5216719152904
-415.5796318891779,3274.5216719152904
-415.5796318891779,3248.559261227413
-416.5796318891777,3248.559261227413
-416.5796318891777,3222.596850539536
-417.57963188917745,3222.596850539536
-417.57963188917745,3196.6344398516585
-418.5796318891772,3196.6344398516585
-418.5796318891772,3170.672029163781
-419.579631889177,3170.672029163781
-419.579631889177,3144.709618475904
-420.57963188917677,3144.709618475904
-420.57963188917677,3118.7472077880266
-421.57963188917654,3118.7472077880266
-421.57963188917654,3092.7847971001493
-422.5796318891763,3092.7847971001493
-422.5796318891763,3066.822386412272
-423.5796318891761,3066.822386412272
-423.5796318891761,3040.8599757243946
-424.57963188917586,3040.8599757243946
-424.57963188917586,3014.8975650365173
-425.57963188917563,3014.8975650365173
-425.57963188917563,2988.93515434864
-426.5796318891754,2988.93515434864
-426.5796318891754,2962.9727436607627
-427.5796318891752,2962.9727436607627
-427.5796318891752,2937.0103329728854
-428.57963188917495,2937.0103329728854
-428.57963188917495,2911.047922285008
-429.5796318891747,2911.047922285008
-429.5796318891747,2885.085511597131
-430.5796318891745,2885.085511597131
-430.5796318891745,2859.1231009092535
-431.57963188917427,2859.1231009092535
-431.57963188917427,2833.160690221376
-432.57963188917404,2833.160690221376
-432.57963188917404,2807.198279533499
-433.5796318891738,2807.198279533499
-433.5796318891738,2781.2358688456216
-434.5796318891736,2781.2358688456216
-434.5796318891736,2755.2734581577442
-435.57963188917336,2755.2734581577442
-435.57963188917336,2729.311047469867
-436.57963188917313,2729.311047469867
-436.57963188917313,2703.3486367819896
-437.5796318891729,2703.3486367819896
-437.5796318891729,2677.3862260941123
-438.5796318891727,2677.3862260941123
-438.5796318891727,2651.423815406235
-439.57963188917245,2651.423815406235
-439.57963188917245,2625.4614047183577
-440.5796318891722,2625.4614047183577
-440.5796318891722,2599.4989940304804
-441.579631889172,2599.4989940304804
-441.579631889172,2573.536583342603
-442.57963188917176,2573.536583342603
-442.57963188917176,2547.5741726547258
-443.57963188917154,2547.5741726547258
-443.57963188917154,2521.6117619668485
-444.5796318891713,2521.6117619668485
-444.5796318891713,2495.649351278971
-445.5796318891711,2495.649351278971
-445.5796318891711,2469.686940591094
-446.57963188917086,2469.686940591094
-446.57963188917086,2443.7245299032165
-447.5796318891706,2443.7245299032165
-447.5796318891706,2417.762119215339
-448.5796318891704,2417.762119215339
-448.5796318891704,2391.799708527462
-449.5796318891702,2391.799708527462
-449.5796318891702,2365.8372978395846
-450.57963188916995,2365.8372978395846
-450.57963188916995,2339.8748871517073
-451.5796318891697,2339.8748871517073
-451.5796318891697,2313.91247646383
-452.5796318891695,2313.91247646383
-452.5796318891695,2287.9500657759527
-453.57963188916926,2287.9500657759527
-453.57963188916926,2261.9876550880754
-454.57963188916904,2261.9876550880754
-454.57963188916904,2236.025244400198
-455.5796318891688,2236.025244400198
-455.5796318891688,2210.0628337123208
-456.5796318891686,2210.0628337123208
-456.5796318891686,2184.1004230244434
-457.57963188916835,2184.1004230244434
-457.57963188916835,2158.138012336566
-458.5796318891681,2158.138012336566
-458.5796318891681,2132.175601648689
-459.5796318891679,2132.175601648689
-459.5796318891679,2106.2131909608115
-460.5796318891677,2106.2131909608115
-460.5796318891677,2080.250780272934
-461.57963188916744,2080.250780272934
-461.57963188916744,2054.288369585057
-462.5796318891672,2054.288369585057
-462.5796318891672,2028.3259588971796
-463.579631889167,2028.3259588971796
-463.579631889167,2002.3635482093023
-464.57963188916676,2002.3635482093023
-464.57963188916676,1976.401137521425
-465.57963188916654,1976.401137521425
-465.57963188916654,1950.4387268335477
-466.5796318891663,1950.4387268335477
-466.5796318891663,1924.4763161456704
-467.5796318891661,1924.4763161456704
-467.5796318891661,1898.513905457793
-468.57963188916585,1898.513905457793
-468.57963188916585,1872.5514947699157
-469.5796318891656,1872.5514947699157
-469.5796318891656,1846.5890840820384
-470.5796318891654,1846.5890840820384
-470.5796318891654,1820.6266733941611
-471.57963188916517,1820.6266733941611
-471.57963188916517,1794.6642627062838
-472.57963188916494,1794.6642627062838
-472.57963188916494,1768.7018520184065
-473.5796318891647,1768.7018520184065
-473.5796318891647,1742.7394413305292
-474.5796318891645,1742.7394413305292
-474.5796318891645,1716.7770306426519
-475.57963188916426,1716.7770306426519
-475.57963188916426,1690.8146199547746
-476.57963188916403,1690.8146199547746
-476.57963188916403,1664.8522092668973
-477.5796318891638,1664.8522092668973
-477.5796318891638,1638.88979857902
-478.5796318891636,1638.88979857902
-478.5796318891636,1612.9273878911426
-479.57963188916335,1612.9273878911426
-479.57963188916335,1586.9649772032653
-480.5796318891631,1586.9649772032653
-480.5796318891631,1561.002566515388
-481.5796318891629,1561.002566515388
-481.5796318891629,1535.0401558275107
-482.57963188916267,1535.0401558275107
-482.57963188916267,1509.0777451396334
-483.57963188916244,1509.0777451396334
-483.57963188916244,1483.115334451756
-484.5796318891622,1483.115334451756
-484.5796318891622,1457.1529237638788
-485.579631889162,1457.1529237638788
-485.579631889162,1431.1905130760015
-486.57963188916176,1431.1905130760015
-486.57963188916176,1405.2281023881242
-487.57963188916153,1405.2281023881242
-487.57963188916153,1379.2656917002469
-488.5796318891613,1379.2656917002469
-488.5796318891613,1353.3032810123696
-489.5796318891611,1353.3032810123696
-489.5796318891611,1327.3408703244922
-490.57963188916085,1327.3408703244922
-490.57963188916085,1301.378459636615
-491.5796318891606,1301.378459636615
-491.5796318891606,1275.4160489487376
-492.5796318891604,1275.4160489487376
-492.5796318891604,1249.4536382608603
-493.57963188916017,1249.4536382608603
-493.57963188916017,1223.491227572983
-494.57963188915994,1223.491227572983
-494.57963188915994,1197.5288168851057
-495.5796318891597,1197.5288168851057
-495.5796318891597,1171.5664061972284
-496.5796318891595,1171.5664061972284
-496.5796318891595,1145.603995509351
-497.57963188915926,1145.603995509351
-497.57963188915926,1119.6415848214738
-498.57963188915903,1119.6415848214738
-498.57963188915903,1093.6791741335965
-499.5796318891588,1093.6791741335965
-499.5796318891588,1067.7167634457192
-500.5796318891586,1067.7167634457192
-500.5796318891586,1041.7543527578418
-501.57963188915835,1041.7543527578418
-501.57963188915835,1015.7919420699645
-502.5796318891581,1015.7919420699645
-502.5796318891581,989.8295313820872
-503.5796318891579,989.8295313820872
-503.5796318891579,963.8671206942099
-504.57963188915767,963.8671206942099
-504.57963188915767,937.9047100063326
-505.57963188915744,937.9047100063326
-505.57963188915744,911.9422993184553
-506.5796318891572,911.9422993184553
-506.5796318891572,885.979888630578
-507.579631889157,885.979888630578
-507.579631889157,860.0174779427007
-508.57963188915676,860.0174779427007
-508.57963188915676,834.0550672548234
-509.57963188915653,834.0550672548234
-509.57963188915653,808.0926565669461
-510.5796318891563,808.0926565669461
-510.5796318891563,782.1302458790688
-511.5796318891561,782.1302458790688
-511.5796318891561,756.1678351911914
-512.5796318891558,756.1678351911914
-512.5796318891558,730.2054245033141
-513.5796318891556,730.2054245033141
-513.5796318891556,704.2430138154368
-514.5796318891554,704.2430138154368
-514.5796318891554,678.2806031275595
-515.5796318891552,678.2806031275595
-515.5796318891552,652.3181924396822
-516.5796318891549,652.3181924396822
-516.5796318891549,626.3557817518049
-517.5796318891547,626.3557817518049
-517.5796318891547,600.3933710639276
-518.5796318891545,600.3933710639276
-518.5796318891545,574.4309603760503
-519.5796318891543,574.4309603760503
-519.5796318891543,548.468549688173
-520.579631889154,548.468549688173
-520.579631889154,522.5061390002957
-700.0,522.5061390002957
-					</series>
-					<series title="robPositionY[0]" type="l" color="0x00ffff" encoding="csv">0.0,0.0
-0.0,500.0
-2.0,500.0
-2.0,482.42602607864603
-3.742215149060318,482.42602607864603
-3.742215149060318,464.85205215729206
-4.742215149060319,464.85205215729206
-4.742215149060319,447.2780782359381
-5.742215149060318,447.2780782359381
-5.742215149060318,429.70410431458413
-6.742215149060318,429.70410431458413
-6.742215149060318,412.13013039323016
-7.742215149060319,412.13013039323016
-7.742215149060319,394.5561564718762
-8.74221514906032,394.5561564718762
-8.74221514906032,376.9821825505222
-9.74221514906032,376.9821825505222
-9.74221514906032,359.40820862916826
-10.742215149060321,359.40820862916826
-10.742215149060321,341.8342347078143
-11.742215149060318,341.8342347078143
-11.742215149060318,324.2602607864603
-12.742215149060318,324.2602607864603
-12.742215149060318,306.68628686510635
-13.742215149060318,306.68628686510635
-13.742215149060318,289.1123129437524
-14.742215149060318,289.1123129437524
-14.742215149060318,271.5383390223984
-15.742215149060318,271.5383390223984
-15.742215149060318,268.046235545279
-19.74908899461584,268.046235545279
-19.74908899461584,264.55413206815956
-20.74908899461584,264.55413206815956
-20.74908899461584,261.06202859104013
-21.74908899461584,261.06202859104013
-21.74908899461584,257.5699251139207
-22.74908899461584,257.5699251139207
-22.74908899461584,254.07782163680125
-23.74908899461584,254.07782163680125
-23.74908899461584,250.5857181596818
-24.74908899461584,250.5857181596818
-24.74908899461584,247.09361468256233
-25.74908899461584,247.09361468256233
-25.74908899461584,243.60151120544288
-26.74908899461584,243.60151120544288
-26.74908899461584,240.10940772832342
-27.74908899461584,240.10940772832342
-27.74908899461584,236.61730425120396
-28.74908899461584,236.61730425120396
-28.74908899461584,233.1252007740845
-29.74908899461584,233.1252007740845
-29.74908899461584,229.63309729696505
-30.74908899461584,229.63309729696505
-30.74908899461584,226.1409938198456
-31.74908899461584,226.1409938198456
-31.74908899461584,222.64889034272613
-32.74908899461584,222.64889034272613
-32.74908899461584,219.15678686560668
-33.74908899461584,219.15678686560668
-33.74908899461584,215.66468338848722
-34.74908899461584,215.66468338848722
-34.74908899461584,212.17257991136776
-35.74908899461584,212.17257991136776
-35.74908899461584,208.6804764342483
-36.74908899461584,208.6804764342483
-36.74908899461584,205.18837295712885
-37.74908899461584,205.18837295712885
-37.74908899461584,201.6962694800094
-38.74908899461584,201.6962694800094
-38.74908899461584,198.20416600288993
-39.74908899461584,198.20416600288993
-39.74908899461584,194.71206252577048
-40.74908899461584,194.71206252577048
-40.74908899461584,191.21995904865102
-41.74908899461584,191.21995904865102
-41.74908899461584,187.72785557153156
-42.74908899461584,187.72785557153156
-42.74908899461584,184.2357520944121
-43.74908899461584,184.2357520944121
-43.74908899461584,180.74364861729265
-44.74908899461584,180.74364861729265
-44.74908899461584,177.2515451401732
-45.74908899461584,177.2515451401732
-45.74908899461584,173.75944166305374
-46.74908899461584,173.75944166305374
-46.74908899461584,170.26733818593428
-47.74908899461584,170.26733818593428
-47.74908899461584,166.77523470881482
-48.74908899461584,166.77523470881482
-48.74908899461584,166.3699963151216
-52.87509492502634,166.3699963151216
-52.87509492502634,165.96475792142837
-53.87509492502634,165.96475792142837
-53.87509492502634,165.55951952773515
-54.87509492502634,165.55951952773515
-54.87509492502634,165.15428113404192
-55.875094925026346,165.15428113404192
-55.875094925026346,164.7490427403487
-56.87509492502634,164.7490427403487
-56.87509492502634,164.34380434665547
-57.87509492502634,164.34380434665547
-57.87509492502634,163.93856595296225
-58.87509492502634,163.93856595296225
-58.87509492502634,163.53332755926903
-59.87509492502634,163.53332755926903
-59.87509492502634,163.1280891655758
-60.87509492502634,163.1280891655758
-60.87509492502634,162.72285077188258
-61.87509492502634,162.72285077188258
-61.87509492502634,162.31761237818935
-62.87509492502634,162.31761237818935
-62.87509492502634,161.91237398449613
-63.87509492502634,161.91237398449613
-63.87509492502634,161.5071355908029
-64.87509492502627,161.5071355908029
-64.87509492502627,161.10189719710968
-65.87509492502627,161.10189719710968
-65.87509492502627,160.69665880341645
-66.87509492502627,160.69665880341645
-66.87509492502627,160.29142040972323
-67.87509492502627,160.29142040972323
-67.87509492502627,159.88618201603
-68.87509492502627,159.88618201603
-68.87509492502627,159.48094362233678
-69.87509492502627,159.48094362233678
-69.87509492502627,159.07570522864356
-70.87509492502627,159.07570522864356
-70.87509492502627,158.67046683495033
-71.87509492502627,158.67046683495033
-71.87509492502627,158.2652284412571
-72.87509492502627,158.2652284412571
-72.87509492502627,157.85999004756388
-73.87509492502627,157.85999004756388
-73.87509492502627,157.45475165387066
-74.87509492502627,157.45475165387066
-74.87509492502627,157.04951326017743
-75.87509492502627,157.04951326017743
-75.87509492502627,156.6442748664842
-76.87509492502627,156.6442748664842
-76.87509492502627,156.23903647279099
-77.87509492502627,156.23903647279099
-77.87509492502627,155.83379807909776
-78.87509492502627,155.83379807909776
-78.87509492502627,155.42855968540454
-79.87509492502627,155.42855968540454
-79.87509492502627,155.0233212917113
-80.87509492502627,155.0233212917113
-80.87509492502627,154.6180828980181
-81.87509492502627,154.6180828980181
-81.87509492502627,154.21284450432486
-82.87509492502627,154.21284450432486
-82.87509492502627,153.80760611063164
-83.87509492502627,153.80760611063164
-83.87509492502627,153.40236771693841
-84.87509492502627,153.40236771693841
-84.87509492502627,152.9971293232452
-85.87509492502627,152.9971293232452
-85.87509492502627,152.59189092955197
-86.87509492502627,152.59189092955197
-86.87509492502627,152.18665253585874
-87.87509492502627,152.18665253585874
-87.87509492502627,151.78141414216552
-88.87509492502627,151.78141414216552
-88.87509492502627,151.3761757484723
-89.87509492502627,151.3761757484723
-89.87509492502627,150.97093735477907
-90.87509492502627,150.97093735477907
-90.87509492502627,150.56569896108584
-91.87509492502627,150.56569896108584
-91.87509492502627,150.16046056739262
-92.87509492502627,150.16046056739262
-92.87509492502627,151.2508619860728
-96.97473675892196,151.2508619860728
-96.97473675892196,152.341263404753
-97.97473675892198,152.341263404753
-97.97473675892198,153.43166482343318
-98.97473675892198,153.43166482343318
-98.97473675892198,154.52206624211337
-99.974736758922,154.52206624211337
-99.974736758922,155.61246766079356
-100.97473675892203,155.61246766079356
-100.97473675892203,156.70286907947374
-101.97473675892209,156.70286907947374
-101.97473675892209,157.79327049815393
-102.97473675892215,157.79327049815393
-102.97473675892215,158.88367191683412
-103.9747367589222,158.88367191683412
-103.9747367589222,159.9740733355143
-104.97473675892226,159.9740733355143
-104.97473675892226,161.0644747541945
-105.97473675892232,161.0644747541945
-105.97473675892232,162.15487617287468
-106.97473675892238,162.15487617287468
-106.97473675892238,163.24527759155487
-107.97473675892243,163.24527759155487
-107.97473675892243,189.24393878769789
-110.55568127747321,189.24393878769789
-110.55568127747321,215.2425999838409
-111.55568127747327,215.2425999838409
-111.55568127747327,241.24126117998392
-112.55568127747333,241.24126117998392
-112.55568127747333,267.23992237612697
-113.55568127747338,267.23992237612697
-113.55568127747338,293.23858357227
-114.55568127747344,293.23858357227
-114.55568127747344,319.237244768413
-115.5556812774735,319.237244768413
-115.5556812774735,345.235905964556
-116.55568127747355,345.235905964556
-116.55568127747355,371.23456716069904
-117.55568127747361,371.23456716069904
-117.55568127747361,397.23322835684206
-118.55568127747367,397.23322835684206
-118.55568127747367,423.2318895529851
-119.55568127747372,423.2318895529851
-119.55568127747372,449.2305507491281
-120.55568127747378,449.2305507491281
-120.55568127747378,475.2292119452711
-121.55568127747384,475.2292119452711
-121.55568127747384,501.22787314141414
-122.5556812774739,501.22787314141414
-122.5556812774739,527.2265343375572
-123.55568127747395,527.2265343375572
-123.55568127747395,553.2251955337002
-124.55568127747401,553.2251955337002
-124.55568127747401,579.2238567298433
-125.55568127747406,579.2238567298433
-125.55568127747406,605.2225179259864
-126.55568127747412,605.2225179259864
-126.55568127747412,631.2211791221295
-127.55568127747418,631.2211791221295
-127.55568127747418,657.2198403182725
-128.55568127747424,657.2198403182725
-128.55568127747424,683.2185015144156
-129.5556812774743,683.2185015144156
-129.5556812774743,709.2171627105587
-130.55568127747435,709.2171627105587
-130.55568127747435,735.2158239067018
-131.5556812774744,735.2158239067018
-131.5556812774744,735.7127685263199
-132.5747956959977,735.7127685263199
-132.5747956959977,736.209713145938
-133.57479569599772,736.209713145938
-133.57479569599772,736.7066577655562
-134.57479569599775,736.7066577655562
-134.57479569599775,737.2036023851743
-135.57479569599778,737.2036023851743
-135.57479569599778,737.7005470047925
-136.5747956959978,737.7005470047925
-136.5747956959978,738.1974916244106
-137.57479569599784,738.1974916244106
-137.57479569599784,738.6944362440288
-138.57479569599786,738.6944362440288
-138.57479569599786,739.1913808636469
-139.5747956959979,739.1913808636469
-139.5747956959979,739.6883254832651
-140.57479569599792,739.6883254832651
-140.57479569599792,740.1852701028832
-141.57479569599795,740.1852701028832
-141.57479569599795,740.6822147225014
-142.57479569599798,740.6822147225014
-142.57479569599798,741.1791593421195
-143.574795695998,741.1791593421195
-143.574795695998,741.6761039617377
-144.57479569599803,741.6761039617377
-144.57479569599803,742.1730485813558
-145.57479569599806,742.1730485813558
-145.57479569599806,742.669993200974
-146.5747956959981,742.669993200974
-146.5747956959981,743.1669378205921
-147.57479569599812,743.1669378205921
-147.57479569599812,743.6638824402103
-148.57479569599815,743.6638824402103
-148.57479569599815,744.1608270598284
-149.57479569599818,744.1608270598284
-149.57479569599818,744.6577716794466
-150.5747956959982,744.6577716794466
-150.5747956959982,745.1547162990647
-151.57479569599823,745.1547162990647
-151.57479569599823,745.6516609186829
-152.57479569599826,745.6516609186829
-152.57479569599826,746.148605538301
-153.5747956959983,746.148605538301
-153.5747956959983,746.6455501579192
-154.57479569599832,746.6455501579192
-154.57479569599832,747.1424947775373
-155.57479569599835,747.1424947775373
-155.57479569599835,747.6394393971555
-156.57479569599838,747.6394393971555
-156.57479569599838,748.1363840167736
-157.5747956959984,748.1363840167736
-157.5747956959984,748.6333286363918
-158.57479569599843,748.6333286363918
-158.57479569599843,749.1302732560099
-159.57479569599846,749.1302732560099
-159.57479569599846,749.627217875628
-160.5747956959985,749.627217875628
-160.5747956959985,750.1241624952462
-161.57479569599852,750.1241624952462
-161.57479569599852,750.6211071148643
-162.57479569599855,750.6211071148643
-162.57479569599855,751.1180517344825
-163.57479569599857,751.1180517344825
-163.57479569599857,751.6149963541006
-164.5747956959986,751.6149963541006
-164.5747956959986,752.1119409737188
-165.57479569599863,752.1119409737188
-165.57479569599863,752.6088855933369
-166.57479569599866,752.6088855933369
-166.57479569599866,753.1058302129551
-167.5747956959987,753.1058302129551
-167.5747956959987,753.6027748325732
-168.57479569599872,753.6027748325732
-168.57479569599872,754.0997194521914
-169.57479569599874,754.0997194521914
-169.57479569599874,754.5966640718095
-170.57479569599877,754.5966640718095
-170.57479569599877,755.0936086914277
-171.5747956959988,755.0936086914277
-171.5747956959988,755.5905533110458
-172.57479569599883,755.5905533110458
-172.57479569599883,756.087497930664
-173.57479569599886,756.087497930664
-173.57479569599886,756.5844425502821
-174.5747956959989,756.5844425502821
-174.5747956959989,757.0813871699003
-175.57479569599892,757.0813871699003
-175.57479569599892,757.5783317895184
-176.57479569599894,757.5783317895184
-176.57479569599894,758.0752764091366
-177.57479569599897,758.0752764091366
-177.57479569599897,758.5722210287547
-178.574795695999,758.5722210287547
-178.574795695999,759.0691656483729
-179.57479569599903,759.0691656483729
-179.57479569599903,759.566110267991
-180.57479569599906,759.566110267991
-180.57479569599906,760.0630548876092
-181.5747956959991,760.0630548876092
-181.5747956959991,760.5599995072273
-182.57479569599911,760.5599995072273
-182.57479569599911,761.0569441268455
-183.57479569599914,761.0569441268455
-183.57479569599914,735.0589826567627
-186.13306956126328,735.0589826567627
-186.13306956126328,709.06102118668
-187.13306956126334,709.06102118668
-187.13306956126334,683.0630597165973
-188.1330695612634,683.0630597165973
-188.1330695612634,657.0650982465146
-189.13306956126345,657.0650982465146
-189.13306956126345,631.0671367764319
-190.1330695612635,631.0671367764319
-190.1330695612635,605.0691753063492
-191.13306956126357,605.0691753063492
-191.13306956126357,579.0712138362665
-192.13306956126362,579.0712138362665
-192.13306956126362,553.0732523661837
-193.13306956126368,553.0732523661837
-193.13306956126368,527.075290896101
-194.13306956126374,527.075290896101
-194.13306956126374,501.0773294260183
-195.1330695612638,501.0773294260183
-195.1330695612638,475.0793679559356
-196.13306956126385,475.0793679559356
-196.13306956126385,449.0814064858529
-197.1330695612639,449.0814064858529
-197.1330695612639,423.08344501577017
-198.13306956126397,423.08344501577017
-198.13306956126397,397.08548354568745
-199.13306956126402,397.08548354568745
-199.13306956126402,371.08752207560474
-200.13306956126408,371.08752207560474
-200.13306956126408,345.089560605522
-201.13306956126414,345.089560605522
-201.13306956126414,319.0915991354393
-202.1330695612642,319.0915991354393
-202.1330695612642,293.0936376653566
-203.13306956126425,293.0936376653566
-203.13306956126425,267.0956761952739
-204.1330695612643,267.0956761952739
-204.1330695612643,241.09771472519114
-205.13306956126436,241.09771472519114
-205.13306956126436,215.0997532551084
-206.13306956126442,215.0997532551084
-206.13306956126442,189.10179178502565
-207.13306956126448,189.10179178502565
-207.13306956126448,191.63188312619144
-208.23053500579013,191.63188312619144
-208.23053500579013,194.16197446735723
-209.23053500579016,194.16197446735723
-209.23053500579016,196.692065808523
-210.2305350057902,196.692065808523
-210.2305350057902,199.2221571496888
-211.23053500579022,199.2221571496888
-211.23053500579022,201.75224849085458
-212.23053500579024,201.75224849085458
-212.23053500579024,204.28233983202037
-213.23053500579027,204.28233983202037
-213.23053500579027,206.81243117318616
-214.2305350057903,206.81243117318616
-214.2305350057903,209.34252251435194
-215.23053500579033,209.34252251435194
-215.23053500579033,211.87261385551773
-216.23053500579036,211.87261385551773
-216.23053500579036,214.4027051966835
-217.2305350057904,214.4027051966835
-217.2305350057904,216.9327965378493
-218.23053500579041,216.9327965378493
-218.23053500579041,219.46288787901508
-219.23053500579044,219.46288787901508
-219.23053500579044,221.99297922018087
-220.23053500579047,221.99297922018087
-220.23053500579047,224.52307056134666
-221.2305350057905,224.52307056134666
-221.2305350057905,227.05316190251244
-222.23053500579053,227.05316190251244
-222.23053500579053,229.58325324367823
-223.23053500579056,229.58325324367823
-223.23053500579056,232.11334458484401
-224.23053500579059,232.11334458484401
-224.23053500579059,234.6434359260098
-225.2305350057906,234.6434359260098
-225.2305350057906,237.1735272671756
-226.23053500579064,237.1735272671756
-226.23053500579064,239.70361860834137
-227.23053500579067,239.70361860834137
-227.23053500579067,242.23370994950716
-228.2305350057907,242.23370994950716
-228.2305350057907,244.76380129067294
-229.23053500579073,244.76380129067294
-229.23053500579073,247.29389263183873
-230.23053500579076,247.29389263183873
-230.23053500579076,249.82398397300452
-231.23053500579078,249.82398397300452
-231.23053500579078,252.3540753141703
-232.2305350057908,252.3540753141703
-232.2305350057908,254.8841666553361
-233.23053500579084,254.8841666553361
-233.23053500579084,257.4142579965019
-234.23053500579087,257.4142579965019
-234.23053500579087,259.94434933766763
-235.2305350057909,259.94434933766763
-235.2305350057909,262.4744406788334
-236.23053500579093,262.4744406788334
-236.23053500579093,265.00453201999915
-237.23053500579095,265.00453201999915
-237.23053500579095,261.865239952488
-238.35157232543375,261.865239952488
-238.35157232543375,258.7259478849769
-239.3515723254338,258.7259478849769
-239.3515723254338,255.5866558174658
-240.35157232543386,255.5866558174658
-240.35157232543386,252.44736374995472
-241.35157232543392,252.44736374995472
-241.35157232543392,249.30807168244363
-242.35157232543398,249.30807168244363
-242.35157232543398,246.16877961493253
-243.35157232543403,246.16877961493253
-243.35157232543403,243.02948754742144
-244.3515723254341,243.02948754742144
-244.3515723254341,239.89019547991035
-245.35157232543415,239.89019547991035
-245.35157232543415,236.75090341239925
-246.3515723254342,236.75090341239925
-246.3515723254342,233.61161134488816
-247.35157232543426,233.61161134488816
-247.35157232543426,230.47231927737707
-248.35157232543432,230.47231927737707
-248.35157232543432,227.33302720986597
-249.35157232543438,227.33302720986597
-249.35157232543438,224.19373514235488
-250.35157232543443,224.19373514235488
-250.35157232543443,221.0544430748438
-251.3515723254345,221.0544430748438
-251.3515723254345,217.9151510073327
-252.35157232543455,217.9151510073327
-252.35157232543455,214.7758589398216
-253.3515723254346,214.7758589398216
-253.3515723254346,211.6365668723105
-254.35157232543466,211.6365668723105
-254.35157232543466,208.49727480479942
-255.35157232543472,208.49727480479942
-255.35157232543472,205.35798273728832
-256.3515723254347,205.35798273728832
-256.3515723254347,202.21869066977723
-257.35157232543446,202.21869066977723
-257.35157232543446,199.07939860226614
-258.35157232543423,199.07939860226614
-258.35157232543423,195.94010653475505
-259.351572325434,195.94010653475505
-259.351572325434,192.80081446724395
-260.3515723254338,192.80081446724395
-260.3515723254338,189.66152239973286
-261.35157232543355,189.66152239973286
-261.35157232543355,186.52223033222177
-262.3515723254333,186.52223033222177
-262.3515723254333,183.38293826471067
-263.3515723254331,183.38293826471067
-263.3515723254331,180.24364619719958
-264.35157232543287,180.24364619719958
-264.35157232543287,177.1043541296885
-265.35157232543264,177.1043541296885
-265.35157232543264,173.9650620621774
-266.3515723254324,173.9650620621774
-266.3515723254324,170.8257699946663
-267.3515723254322,170.8257699946663
-267.3515723254322,167.6864779271552
-268.35157232543196,167.6864779271552
-268.35157232543196,164.54718585964412
-269.35157232543173,164.54718585964412
-269.35157232543173,190.5444795036861
-271.90794004039884,190.5444795036861
-271.90794004039884,216.54177314772807
-272.90794004039856,216.54177314772807
-272.90794004039856,242.53906679177004
-273.9079400403983,242.53906679177004
-273.9079400403983,268.536360435812
-274.907940040398,268.536360435812
-274.907940040398,294.533654079854
-275.9079400403977,294.533654079854
-275.9079400403977,320.53094772389596
-276.9079400403974,320.53094772389596
-276.9079400403974,346.52824136793794
-277.90794004039714,346.52824136793794
-277.90794004039714,372.5255350119799
-278.90794004039685,372.5255350119799
-278.90794004039685,398.5228286560219
-279.90794004039657,398.5228286560219
-279.90794004039657,424.52012230006386
-280.9079400403963,424.52012230006386
-280.9079400403963,450.51741594410584
-281.907940040396,450.51741594410584
-281.907940040396,476.5147095881478
-282.9079400403957,476.5147095881478
-282.9079400403957,502.5120032321898
-283.90794004039543,502.5120032321898
-283.90794004039543,528.5092968762318
-284.90794004039515,528.5092968762318
-284.90794004039515,554.5065905202738
-285.90794004039486,554.5065905202738
-285.90794004039486,580.5038841643158
-286.9079400403946,580.5038841643158
-286.9079400403946,606.5011778083577
-287.9079400403943,606.5011778083577
-287.9079400403943,632.4984714523997
-288.907940040394,632.4984714523997
-288.907940040394,658.4957650964417
-289.9079400403937,658.4957650964417
-289.9079400403937,684.4930587404837
-290.90794004039344,684.4930587404837
-290.90794004039344,710.4903523845256
-291.90794004039316,710.4903523845256
-291.90794004039316,736.4876460285676
-292.9079400403929,736.4876460285676
-292.9079400403929,736.9618027431299
-293.9261778481258,736.9618027431299
-293.9261778481258,737.4359594576921
-294.9261778481256,737.4359594576921
-294.9261778481256,737.9101161722543
-295.92617784812535,737.9101161722543
-295.92617784812535,738.3842728868166
-296.9261778481251,738.3842728868166
-296.9261778481251,738.8584296013788
-297.9261778481249,738.8584296013788
-297.9261778481249,739.3325863159411
-298.92617784812467,739.3325863159411
-298.92617784812467,739.8067430305033
-299.92617784812444,739.8067430305033
-299.92617784812444,740.2808997450655
-300.9261778481242,740.2808997450655
-300.9261778481242,740.7550564596278
-301.926177848124,740.7550564596278
-301.926177848124,741.22921317419
-302.92617784812376,741.22921317419
-302.92617784812376,741.7033698887523
-303.92617784812353,741.7033698887523
-303.92617784812353,742.1775266033145
-304.9261778481233,742.1775266033145
-304.9261778481233,742.6516833178767
-305.9261778481231,742.6516833178767
-305.9261778481231,743.125840032439
-306.92617784812285,743.125840032439
-306.92617784812285,743.5999967470012
-307.9261778481226,743.5999967470012
-307.9261778481226,744.0741534615635
-308.9261778481224,744.0741534615635
-308.9261778481224,744.5483101761257
-309.92617784812217,744.5483101761257
-309.92617784812217,745.022466890688
-310.92617784812194,745.022466890688
-310.92617784812194,745.4966236052502
-311.9261778481217,745.4966236052502
-311.9261778481217,745.9707803198124
-312.9261778481215,745.9707803198124
-312.9261778481215,746.4449370343747
-313.92617784812126,746.4449370343747
-313.92617784812126,746.9190937489369
-314.92617784812103,746.9190937489369
-314.92617784812103,747.3932504634992
-315.9261778481208,747.3932504634992
-315.9261778481208,747.8674071780614
-316.9261778481206,747.8674071780614
-316.9261778481206,748.3415638926236
-317.92617784812035,748.3415638926236
-317.92617784812035,748.8157206071859
-318.9261778481201,748.8157206071859
-318.9261778481201,749.2898773217481
-319.9261778481199,749.2898773217481
-319.9261778481199,749.7640340363104
-320.92617784811966,749.7640340363104
-320.92617784811966,750.2381907508726
-321.92617784811944,750.2381907508726
-321.92617784811944,750.7123474654348
-322.9261778481192,750.7123474654348
-322.9261778481192,751.1865041799971
-323.926177848119,751.1865041799971
-323.926177848119,751.6606608945593
-324.92617784811875,751.6606608945593
-324.92617784811875,752.1348176091216
-325.9261778481185,752.1348176091216
-325.9261778481185,752.6089743236838
-326.9261778481183,752.6089743236838
-326.9261778481183,753.083131038246
-327.9261778481181,753.083131038246
-327.9261778481181,753.5572877528083
-328.92617784811785,753.5572877528083
-328.92617784811785,754.0314444673705
-329.9261778481176,754.0314444673705
-329.9261778481176,754.5056011819328
-330.9261778481174,754.5056011819328
-330.9261778481174,754.979757896495
-331.92617784811716,754.979757896495
-331.92617784811716,755.4539146110573
-332.92617784811694,755.4539146110573
-332.92617784811694,755.9280713256195
-333.9261778481167,755.9280713256195
-333.9261778481167,756.4022280401817
-334.9261778481165,756.4022280401817
-334.9261778481165,756.876384754744
-335.92617784811625,756.876384754744
-335.92617784811625,757.3505414693062
-336.926177848116,757.3505414693062
-336.926177848116,757.8246981838685
-337.9261778481158,757.8246981838685
-337.9261778481158,758.2988548984307
-338.92617784811557,758.2988548984307
-338.92617784811557,758.773011612993
-339.92617784811534,758.773011612993
-339.92617784811534,759.2471683275552
-340.9261778481151,759.2471683275552
-340.9261778481151,759.7213250421174
-341.9261778481149,759.7213250421174
-341.9261778481149,760.1954817566797
-342.92617784811466,760.1954817566797
-342.92617784811466,760.6696384712419
-343.92617784811443,760.6696384712419
-343.92617784811443,761.1437951858042
-344.9261778481142,761.1437951858042
-344.9261778481142,735.1441407711517
-347.4918182514062,735.1441407711517
-347.4918182514062,709.1444863564992
-348.49181825140596,709.1444863564992
-348.49181825140596,683.1448319418467
-349.49181825140573,683.1448319418467
-349.49181825140573,657.1451775271943
-350.4918182514055,657.1451775271943
-350.4918182514055,631.1455231125418
-351.4918182514053,631.1455231125418
-351.4918182514053,605.1458686978893
-352.49181825140505,605.1458686978893
-352.49181825140505,579.1462142832369
-353.4918182514048,579.1462142832369
-353.4918182514048,553.1465598685844
-354.4918182514046,553.1465598685844
-354.4918182514046,527.1469054539319
-355.49181825140437,527.1469054539319
-355.49181825140437,501.14725103927947
-356.49181825140414,501.14725103927947
-356.49181825140414,475.147596624627
-357.4918182514039,475.147596624627
-357.4918182514039,449.14794220997453
-358.4918182514037,449.14794220997453
-358.4918182514037,423.14828779532206
-359.49181825140346,423.14828779532206
-359.49181825140346,397.1486333806696
-360.49181825140323,397.1486333806696
-360.49181825140323,371.1489789660171
-361.491818251403,371.1489789660171
-361.491818251403,345.14932455136466
-362.4918182514028,345.14932455136466
-362.4918182514028,319.1496701367122
-363.49181825140255,319.1496701367122
-363.49181825140255,293.1500157220597
-364.4918182514023,293.1500157220597
-364.4918182514023,267.15036130740725
-365.4918182514021,267.15036130740725
-365.4918182514021,241.15070689275478
-366.49181825140187,241.15070689275478
-366.49181825140187,215.15105247810232
-367.49181825140164,215.15105247810232
-367.49181825140164,189.15139806344985
-368.4918182514014,189.15139806344985
-368.4918182514014,190.54897857061047
-372.5796318891877,190.54897857061047
-372.5796318891877,191.9465590777711
-373.57963188918745,191.9465590777711
-373.57963188918745,193.34413958493172
-374.5796318891872,193.34413958493172
-374.5796318891872,194.74172009209235
-375.579631889187,194.74172009209235
-375.579631889187,196.13930059925298
-376.57963188918677,196.13930059925298
-376.57963188918677,197.5368811064136
-377.57963188918654,197.5368811064136
-377.57963188918654,198.93446161357423
-378.5796318891863,198.93446161357423
-378.5796318891863,200.33204212073485
-379.5796318891861,200.33204212073485
-379.5796318891861,201.72962262789548
-380.57963188918586,201.72962262789548
-380.57963188918586,203.1272031350561
-381.57963188918563,203.1272031350561
-381.57963188918563,204.52478364221673
-382.5796318891854,204.52478364221673
-382.5796318891854,205.92236414937736
-383.5796318891852,205.92236414937736
-383.5796318891852,207.31994465653798
-384.57963188918495,207.31994465653798
-384.57963188918495,208.7175251636986
-385.5796318891847,208.7175251636986
-385.5796318891847,210.11510567085924
-386.5796318891845,210.11510567085924
-386.5796318891845,211.51268617801986
-387.57963188918427,211.51268617801986
-387.57963188918427,212.9102666851805
-388.57963188918404,212.9102666851805
-388.57963188918404,214.30784719234111
-389.5796318891838,214.30784719234111
-389.5796318891838,215.70542769950174
-390.5796318891836,215.70542769950174
-390.5796318891836,217.10300820666237
-391.57963188918336,217.10300820666237
-391.57963188918336,218.500588713823
-392.57963188918313,218.500588713823
-392.57963188918313,219.89816922098362
-393.5796318891829,219.89816922098362
-393.5796318891829,221.29574972814424
-394.5796318891827,221.29574972814424
-394.5796318891827,222.69333023530487
-395.57963188918245,222.69333023530487
-395.57963188918245,224.0909107424655
-396.5796318891822,224.0909107424655
-396.5796318891822,225.48849124962612
-397.579631889182,225.48849124962612
-397.579631889182,226.88607175678675
-398.57963188918177,226.88607175678675
-398.57963188918177,228.28365226394737
-399.57963188918154,228.28365226394737
-399.57963188918154,229.681232771108
-400.5796318891813,229.681232771108
-400.5796318891813,231.07881327826863
-401.5796318891811,231.07881327826863
-401.5796318891811,232.47639378542925
-402.57963188918086,232.47639378542925
-402.57963188918086,233.87397429258988
-403.57963188918063,233.87397429258988
-403.57963188918063,235.2715547997505
-404.5796318891804,235.2715547997505
-404.5796318891804,236.66913530691113
-405.5796318891802,236.66913530691113
-405.5796318891802,238.06671581407176
-406.57963188917995,238.06671581407176
-406.57963188917995,239.46429632123238
-407.5796318891797,239.46429632123238
-407.5796318891797,240.861876828393
-408.5796318891795,240.861876828393
-408.5796318891795,242.25945733555363
-409.57963188917927,242.25945733555363
-409.57963188917927,243.65703784271426
-410.57963188917904,243.65703784271426
-410.57963188917904,245.0546183498749
-411.5796318891788,245.0546183498749
-411.5796318891788,246.4521988570355
-412.5796318891786,246.4521988570355
-412.5796318891786,247.84977936419614
-413.57963188917836,247.84977936419614
-413.57963188917836,249.24735987135676
-414.57963188917813,249.24735987135676
-414.57963188917813,250.6449403785174
-415.5796318891779,250.6449403785174
-415.5796318891779,252.04252088567802
-416.5796318891777,252.04252088567802
-416.5796318891777,253.44010139283864
-417.57963188917745,253.44010139283864
-417.57963188917745,254.83768189999927
-418.5796318891772,254.83768189999927
-418.5796318891772,256.2352624071599
-419.579631889177,256.2352624071599
-419.579631889177,257.6328429143205
-420.57963188917677,257.6328429143205
-420.57963188917677,259.03042342148115
-421.57963188917654,259.03042342148115
-421.57963188917654,260.4280039286418
-422.5796318891763,260.4280039286418
-422.5796318891763,261.8255844358024
-423.5796318891761,261.8255844358024
-423.5796318891761,263.223164942963
-424.57963188917586,263.223164942963
-424.57963188917586,264.62074545012365
-425.57963188917563,264.62074545012365
-425.57963188917563,266.0183259572843
-426.5796318891754,266.0183259572843
-426.5796318891754,267.4159064644449
-427.5796318891752,267.4159064644449
-427.5796318891752,268.8134869716055
-428.57963188917495,268.8134869716055
-428.57963188917495,270.21106747876615
-429.5796318891747,270.21106747876615
-429.5796318891747,271.6086479859268
-430.5796318891745,271.6086479859268
-430.5796318891745,273.0062284930874
-431.57963188917427,273.0062284930874
-431.57963188917427,274.40380900024803
-432.57963188917404,274.40380900024803
-432.57963188917404,275.80138950740866
-433.5796318891738,275.80138950740866
-433.5796318891738,277.1989700145693
-434.5796318891736,277.1989700145693
-434.5796318891736,278.5965505217299
-435.57963188917336,278.5965505217299
-435.57963188917336,279.99413102889054
-436.57963188917313,279.99413102889054
-436.57963188917313,281.39171153605116
-437.5796318891729,281.39171153605116
-437.5796318891729,282.7892920432118
-438.5796318891727,282.7892920432118
-438.5796318891727,284.1868725503724
-439.57963188917245,284.1868725503724
-439.57963188917245,285.58445305753304
-440.5796318891722,285.58445305753304
-440.5796318891722,286.98203356469367
-441.579631889172,286.98203356469367
-441.579631889172,288.3796140718543
-442.57963188917176,288.3796140718543
-442.57963188917176,289.7771945790149
-443.57963188917154,289.7771945790149
-443.57963188917154,291.17477508617554
-444.5796318891713,291.17477508617554
-444.5796318891713,292.57235559333617
-445.5796318891711,292.57235559333617
-445.5796318891711,293.9699361004968
-446.57963188917086,293.9699361004968
-446.57963188917086,295.3675166076574
-447.5796318891706,295.3675166076574
-447.5796318891706,296.76509711481805
-448.5796318891704,296.76509711481805
-448.5796318891704,298.1626776219787
-449.5796318891702,298.1626776219787
-449.5796318891702,299.5602581291393
-450.57963188916995,299.5602581291393
-450.57963188916995,300.9578386362999
-451.5796318891697,300.9578386362999
-451.5796318891697,302.35541914346055
-452.5796318891695,302.35541914346055
-452.5796318891695,303.7529996506212
-453.57963188916926,303.7529996506212
-453.57963188916926,305.1505801577818
-454.57963188916904,305.1505801577818
-454.57963188916904,306.54816066494243
-455.5796318891688,306.54816066494243
-455.5796318891688,307.94574117210306
-456.5796318891686,307.94574117210306
-456.5796318891686,309.3433216792637
-457.57963188916835,309.3433216792637
-457.57963188916835,310.7409021864243
-458.5796318891681,310.7409021864243
-458.5796318891681,312.13848269358493
-459.5796318891679,312.13848269358493
-459.5796318891679,313.53606320074556
-460.5796318891677,313.53606320074556
-460.5796318891677,314.9336437079062
-461.57963188916744,314.9336437079062
-461.57963188916744,316.3312242150668
-462.5796318891672,316.3312242150668
-462.5796318891672,317.72880472222744
-463.579631889167,317.72880472222744
-463.579631889167,319.12638522938806
-464.57963188916676,319.12638522938806
-464.57963188916676,320.5239657365487
-465.57963188916654,320.5239657365487
-465.57963188916654,321.9215462437093
-466.5796318891663,321.9215462437093
-466.5796318891663,323.31912675086994
-467.5796318891661,323.31912675086994
-467.5796318891661,324.71670725803057
-468.57963188916585,324.71670725803057
-468.57963188916585,326.1142877651912
-469.5796318891656,326.1142877651912
-469.5796318891656,327.5118682723518
-470.5796318891654,327.5118682723518
-470.5796318891654,328.90944877951245
-471.57963188916517,328.90944877951245
-471.57963188916517,330.30702928667307
-472.57963188916494,330.30702928667307
-472.57963188916494,331.7046097938337
-473.5796318891647,331.7046097938337
-473.5796318891647,333.1021903009943
-474.5796318891645,333.1021903009943
-474.5796318891645,334.49977080815495
-475.57963188916426,334.49977080815495
-475.57963188916426,335.8973513153156
-476.57963188916403,335.8973513153156
-476.57963188916403,337.2949318224762
-477.5796318891638,337.2949318224762
-477.5796318891638,338.6925123296368
-478.5796318891636,338.6925123296368
-478.5796318891636,340.09009283679745
-479.57963188916335,340.09009283679745
-479.57963188916335,341.4876733439581
-480.5796318891631,341.4876733439581
-480.5796318891631,342.8852538511187
-481.5796318891629,342.8852538511187
-481.5796318891629,344.28283435827933
-482.57963188916267,344.28283435827933
-482.57963188916267,345.68041486543996
-483.57963188916244,345.68041486543996
-483.57963188916244,347.0779953726006
-484.5796318891622,347.0779953726006
-484.5796318891622,348.4755758797612
-485.579631889162,348.4755758797612
-485.579631889162,349.87315638692183
-486.57963188916176,349.87315638692183
-486.57963188916176,351.27073689408246
-487.57963188916153,351.27073689408246
-487.57963188916153,352.6683174012431
-488.5796318891613,352.6683174012431
-488.5796318891613,354.0658979084037
-489.5796318891611,354.0658979084037
-489.5796318891611,355.46347841556434
-490.57963188916085,355.46347841556434
-490.57963188916085,356.86105892272496
-491.5796318891606,356.86105892272496
-491.5796318891606,358.2586394298856
-492.5796318891604,358.2586394298856
-492.5796318891604,359.6562199370462
-493.57963188916017,359.6562199370462
-493.57963188916017,361.05380044420684
-494.57963188915994,361.05380044420684
-494.57963188915994,362.45138095136747
-495.5796318891597,362.45138095136747
-495.5796318891597,363.8489614585281
-496.5796318891595,363.8489614585281
-496.5796318891595,365.2465419656887
-497.57963188915926,365.2465419656887
-497.57963188915926,366.64412247284935
-498.57963188915903,366.64412247284935
-498.57963188915903,368.04170298001
-499.5796318891588,368.04170298001
-499.5796318891588,369.4392834871706
-500.5796318891586,369.4392834871706
-500.5796318891586,370.8368639943312
-501.57963188915835,370.8368639943312
-501.57963188915835,372.23444450149185
-502.5796318891581,372.23444450149185
-502.5796318891581,373.6320250086525
-503.5796318891579,373.6320250086525
-503.5796318891579,375.0296055158131
-504.57963188915767,375.0296055158131
-504.57963188915767,376.42718602297373
-505.57963188915744,376.42718602297373
-505.57963188915744,377.82476653013435
-506.5796318891572,377.82476653013435
-506.5796318891572,379.222347037295
-507.579631889157,379.222347037295
-507.579631889157,380.6199275444556
-508.57963188915676,380.6199275444556
-508.57963188915676,382.01750805161623
-509.57963188915653,382.01750805161623
-509.57963188915653,383.41508855877686
-510.5796318891563,383.41508855877686
-510.5796318891563,384.8126690659375
-511.5796318891561,384.8126690659375
-511.5796318891561,386.2102495730981
-512.5796318891558,386.2102495730981
-512.5796318891558,387.60783008025874
-513.5796318891556,387.60783008025874
-513.5796318891556,389.00541058741936
-514.5796318891554,389.00541058741936
-514.5796318891554,390.40299109458
-515.5796318891552,390.40299109458
-515.5796318891552,391.8005716017406
-516.5796318891549,391.8005716017406
-516.5796318891549,393.19815210890124
-517.5796318891547,393.19815210890124
-517.5796318891547,394.59573261606187
-518.5796318891545,394.59573261606187
-518.5796318891545,395.9933131232225
-519.5796318891543,395.9933131232225
-519.5796318891543,397.3908936303831
-520.579631889154,397.3908936303831
-520.579631889154,398.78847413754374
-700.0,398.78847413754374
-					</series>
-					<series title="Test3.sub_seq_s1 * 100" type="l" color="0x0000ff" encoding="csv">0.0,0.0
-0.0,100.0
-91.87509492502627,100.0
-91.87509492502627,0.0
-700.0,0.0
-					</series>
-					<series title="Test3.end * 100" type="l" color="0xff00ff" encoding="csv">0.0,0.0
-520.579631889154,0.0
-520.579631889154,100.0
-700.0,100.0
-					</series>
-					<comment/>
-				</plot>
-			</result>
 		</query>
+
 	</queries>
 </nta>
