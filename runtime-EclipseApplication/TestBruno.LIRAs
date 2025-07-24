@@ -11,7 +11,12 @@ Human:
 	1: moveTo room1
 
 Robot: 
-	1: pick item1
+	1: moveTo room1
+	pick item1
+	2: moveTo room2
+	deposit item1
+	
+	
 	
 
 	

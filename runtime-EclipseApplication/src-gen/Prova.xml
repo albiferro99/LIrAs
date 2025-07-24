@@ -14,11 +14,19 @@ const int Tpoll = 1;
 const double room1[2] = {400, 150};
 const double room2[2] = {1200, 750};
 const double room3[2] = {500, 400};
+const double office001[2] = {100, 200};
+const double office004[2] = {100, 765};
+const double coffee_room[2] = {1450, 500};
+const double badroom[2] = {100, 200};
+const double kitchen[2] = {4400, 765};
+
 
 // Recources
 const double item1[2] = {415, 165};
 const double item2[2] = {1215, 765};
 const double item3[2] = {515, 415};
+const double coffee[2] = {1450, 500};
+const double object[2] = {100, 200};
 
 /**
 *** STUFF TO BE GENERATED AUTOMATICALLY
@@ -82,6 +90,9 @@ urgent broadcast chan start_r_pick[N_R], stop_r_pick[N_R];
 int robot_res_to_pick[N_R];
 int robot_inventory[N_R][N_ITEMS];
 int old_inventory[N_R][N_ITEMS];
+
+urgent broadcast chan start_r_deposit[N_R], stop_r_deposit[N_R];
+int robot_res_to_deposit[N_R];
 
 /**
 *** Channels
@@ -345,6 +356,7 @@ humanPositionY[0] &gt;= location_Y[0]-30)</label>
 			<source ref="id1"/>
 			<target ref="id7"/>
 			<label kind="synchronisation" x="18" y="333">start_h_moveTo[H-1]!</label>
+			<label kind="assignment" x="18" y="350">t = 0</label>
 		</transition>
 		<transition id="id25">
 			<source ref="id0"/>
@@ -373,6 +385,7 @@ humanPositionY[H-1] &gt;= location_Y[human_loc_target[H-1]]-30</label>
 			<source ref="id8"/>
 			<target ref="id9"/>
 			<label kind="synchronisation" x="418" y="333">start_h_moveTo[H-1]!</label>
+			<label kind="assignment" x="418" y="350">t = 0</label>
 		</transition>
 		<transition id="id29">
 			<source ref="id9"/>
@@ -395,6 +408,7 @@ humanPositionY[H-1] &gt;= location_Y[human_loc_target[H-1]]-30</label>
 			<source ref="id5"/>
 			<target ref="id14"/>
 			<label kind="synchronisation" x="18" y="1733">start_h_moveTo[H-1]!</label>
+			<label kind="assignment" x="18" y="1750">t = 0</label>
 		</transition>
 		<transition id="id32">
 			<source ref="id23"/>
@@ -2315,7 +2329,7 @@ plan_traj()</label>
 		</transition>
 	</template>
 
-	<template>
+<template>
 		<name>Robot_pick</name>
 		<parameter>int id</parameter>
 		<declaration>clock t;
@@ -2328,41 +2342,104 @@ void initRobot(){
     }
 }
 </declaration>
-		<location id="id0" x="-416" y="272">
+		<location id="id138" x="-416" y="272">
 			<name x="-426" y="238">Init</name>
 			<committed/>
 		</location>
-		<location id="id1" x="-204" y="272">
+		<location id="id139" x="-204" y="272">
 			<name x="-246" y="246">idle</name>
 		</location>
-		<location id="id2" x="-8" y="272">
-			<name x="-17" y="238">starting</name>
+		<location id="id140" x="68" y="272">
+			<name x="59" y="238">starting</name>
+			<label kind="invariant" x="59" y="289">t &lt;= 10</label>
 		</location>
-		<location id="id3" x="-8" y="416">
-			<name x="-110" y="407">stopping</name>
+		<location id="id141" x="-76" y="408">
+			<name x="-178" y="399">stopping</name>
 		</location>
-		<init ref="id0"/>
-		<transition id="id4">
-			<source ref="id2"/>
-			<target ref="id3"/>
-			<label kind="guard" x="34" y="314">t &gt;= 5</label>
-			<label kind="assignment" x="34" y="340">robot_inventory[id-1][robot_res_to_pick[id-1]] += 1</label>
+		<init ref="id138"/>
+		<transition id="id142">
+			<source ref="id140"/>
+			<target ref="id139"/>
+			<label kind="synchronisation" x="-127" y="110">stop_r_pick[id-1]?</label>
+			<nail x="-68" y="136"/>
 		</transition>
-		<transition id="id5">
-			<source ref="id3"/>
-			<target ref="id1"/>
+		<transition id="id143">
+			<source ref="id140"/>
+			<target ref="id141"/>
+			<label kind="guard" x="8" y="331">t &gt;= 5 and
+robPositionX[id-1] &lt;= resources_X[robot_res_to_pick[id-1]]+30 and
+robPositionX[id-1] &gt;= resources_X[robot_res_to_pick[id-1]]-30 and
+robPositionY[id-1] &lt;= resources_Y[robot_res_to_pick[id-1]]+30 and
+robPositionY[id-1] &gt;= resources_Y[robot_res_to_pick[id-1]]-30</label>
+			<label kind="assignment" x="8" y="433">robot_inventory[id-1][robot_res_to_pick[id-1]] += 1</label>
+		</transition>
+		<transition id="id144">
+			<source ref="id141"/>
+			<target ref="id139"/>
 			<label kind="synchronisation" x="-246" y="365">stop_r_pick[id-1]?</label>
 		</transition>
-		<transition id="id6">
-			<source ref="id1"/>
-			<target ref="id2"/>
-			<label kind="synchronisation" x="-187" y="238">start_r_pick[id-1]!</label>
+		<transition id="id145">
+			<source ref="id139"/>
+			<target ref="id140"/>
+			<label kind="synchronisation" x="-187" y="238">start_r_pick[id-1]?</label>
 			<label kind="assignment" x="-144" y="272">t=0</label>
 		</transition>
-		<transition id="id7">
-			<source ref="id0"/>
-			<target ref="id1"/>
+		<transition id="id146">
+			<source ref="id138"/>
+			<target ref="id139"/>
 			<label kind="assignment" x="-398" y="272">initRobot()</label>
+		</transition>
+	</template>
+
+	<template>
+		<name>Robot_deposit</name>
+		<parameter>int id</parameter>
+		<declaration>clock t;
+
+
+</declaration>
+		<location id="id147" x="-450" y="34">
+			<name x="-460" y="0">Init</name>
+			<committed/>
+		</location>
+		<location id="id148" x="-238" y="34">
+			<name x="-280" y="8">idle</name>
+		</location>
+		<location id="id149" x="34" y="34">
+			<name x="25" y="0">starting</name>
+			<label kind="invariant" x="25" y="51">t &lt;= 5</label>
+		</location>
+		<location id="id150" x="-110" y="170">
+			<name x="-212" y="161">stopping</name>
+		</location>
+		<init ref="id147"/>
+		<transition id="id151">
+			<source ref="id149"/>
+			<target ref="id148"/>
+			<label kind="synchronisation" x="-161" y="-127">stop_r_deposit[id-1]?</label>
+			<nail x="-102" y="-102"/>
+		</transition>
+		<transition id="id152">
+			<source ref="id149"/>
+			<target ref="id150"/>
+			<label kind="guard" x="-25" y="93">t &gt;= 5 and
+robot_inventory[id-1][robot_res_to_deposit[id-1]] &gt; 0</label>
+			<label kind="assignment" x="-34" y="153">robot_inventory[id-1][robot_res_to_deposit[id-1]] -= 1</label>
+		</transition>
+		<transition id="id153">
+			<source ref="id150"/>
+			<target ref="id148"/>
+			<label kind="synchronisation" x="-331" y="127">stop_r_deposit[id-1]?</label>
+		</transition>
+		<transition id="id154">
+			<source ref="id148"/>
+			<target ref="id149"/>
+			<label kind="synchronisation" x="-187" y="8">start_r_deposit[id-1]?</label>
+			<label kind="assignment" x="-178" y="34">t=0</label>
+		</transition>
+		<transition id="id155">
+			<source ref="id147"/>
+			<target ref="id148"/>
 		</transition>
 	</template>
 
@@ -2380,6 +2457,8 @@ rf_1 = Robot_follow(1, 26.0, 26.0);
 rf_2 = Robot_follow(2, 26.0, 26.0);
 rp_1 = Robot_pick(1);
 rp_2 = Robot_pick(2);
+rd_1 = Robot_deposit(1);
+rd_2 = Robot_deposit(2);
 
 // Pattern Definition
 
@@ -2403,6 +2482,8 @@ rf_1,
 rf_2,
 rp_1,
 rp_2,
+rd_1,
+rd_2,
 
 Prova,
 Prova_human_def,
@@ -2418,8 +2499,12 @@ Prova_robot2_def
 			<comment>Check if the whole pattern ends within 400 time unit</comment>
 		</query>
 		<query>
-			<formula>simulate[&lt;=700]{humanPositionX[0], humanPositionY[0],humanPositionX[1], humanPositionY[1],robPositionX[0], robPositionY[0],robPositionX[1], robPositionY[1], Prova.end*100}</formula>
+			<formula>simulate[&lt;=700]{humanPositionX[0], humanPositionY[0],humanPositionX[1], humanPositionY[1],robPositionX[0], robPositionY[0],robPositionX[1], robPositionY[1],Prova.end}</formula>
 			<comment>Check the position of all the agent in the pattern for 700 time unit</comment>
+		</query>
+		<query>
+			<formula>simulate[&lt;=700]{robot_inventory[0][0], robot_inventory[1][0], Prova.end*2}</formula>
+			<comment>Check quantity of each item for each robot</comment>
 		</query>
 
 	</queries>
