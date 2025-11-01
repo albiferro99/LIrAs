@@ -33,6 +33,7 @@ resources:
     slotted_cells
 
 
+
 Robot1:
 	1: moveTo warehouse
 	pick raw_materials
@@ -70,8 +71,10 @@ Robot1:
 	pick slotted_cells
 	17: moveTo loading_area
 	deposit slotted_cells
-      
-
+	18: 
+	19-22:
+	
+	
 
 Robot2:
 	1: moveTo warehouse
