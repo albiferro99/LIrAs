@@ -2556,27 +2556,42 @@ Prova_robot2_def
 ;
 </system>
 	<queries>
-        		<query>
-			<formula>simulate[&lt;=700]{Prova_human_def.s1_end, Prova_human_def.S2_idle, Prova_human_def.S3_idle, Prova_human_def.S4_idle, Prova_human_def.s5_end, Prova.end}</formula>
-		</query>
-		<query>
-			<formula>simulate[&lt;=700]{Prova_robot_def.S1_idle, Prova_robot_def.s2_end, Prova_robot_def.s5_end, Prova.end}</formula>
-		</query>
-		<query>
-			<formula>simulate[&lt;=700]{Prova_robot2_def.s1_end, Prova_robot2_def.S2_idle, Prova_robot2_def.S3_idle, Prova_robot2_def.S4_idle, Prova_robot2_def.S5_idle, Prova.end}</formula>
-		</query>
-		<query>
-			<formula>Pr[&lt;=400] (&lt;&gt; Prova.end)</formula>
-			<comment>Check if the whole pattern ends within 400 time unit</comment>
-		</query>
-		<query>
-			<formula>simulate[&lt;=700]{humanPositionX[0], humanPositionY[0],humanPositionX[1], humanPositionY[1],robPositionX[0], robPositionY[0],robPositionX[1], robPositionY[1],Prova.end}</formula>
-			<comment>Check the position of all the agent in the pattern for 700 time unit</comment>
-		</query>
-		<query>
-			<formula>simulate[&lt;=700]{robot_inventory[0][0], robot_inventory[1][0], Prova.end*2}</formula>
-			<comment>Check quantity of each item for each robot</comment>
-		</query>
+        <query>
+    <formula>simulate[&lt;=700]{Prova_human_def.s1_end, Prova_human_def.S2_idle, Prova_human_def.S3_idle, Prova_human_def.S4_idle, Prova_human_def.s5_end, Prova.end}</formula>
+</query>
+
+<query>
+    <formula>simulate[&lt;=700]{Prova_robot_def.S1_idle, Prova_robot_def.s2_end, Prova_robot_def.s5_end, Prova.end}</formula>
+</query>
+
+<query>
+    <formula>simulate[&lt;=700]{Prova_robot2_def.s1_end, Prova_robot2_def.S2_idle, Prova_robot2_def.S3_idle, Prova_robot2_def.S4_idle, Prova_robot2_def.S5_idle, Prova.end}</formula>
+</query>
+
+<query>
+    <formula>Pr[&lt;=400] (&lt;&gt; Prova.end)</formula>
+    <comment>Check if the whole pattern ends within 400 time unit</comment>
+</query>
+
+<query>
+    <formula>simulate[&lt;=700]{humanPositionX[0], humanPositionY[0], humanPositionX[1], humanPositionY[1], robPositionX[0], robPositionY[0], batteryCharge[0], robPositionX[1], robPositionY[1], batteryCharge[1], Prova.end}</formula>
+    <comment>Check the position of all the agent in the pattern for 700 time unit</comment>
+</query>
+
+<query>
+    <formula>simulate[&lt;=700]{robot_inventory[0][0], robot_inventory[1][0], Prova.end*2}</formula>
+    <comment>Check quantity of each item for each robot</comment>
+</query>
+
+<query>
+    <formula>simulate[&lt;=700]{room1[0], room1[1], room2[0], room2[1]}</formula>
+    <comment>Plot the position of each location in the pattern</comment>
+</query>
+
+<query>
+    <formula>simulate[&lt;=700]{rm_1.idle, rf_1.idle, rp_1.idle, rd_1.idle, rm_2.idle, rf_2.idle, rp_2.idle, rd_2.idle, Prova.end*2}</formula>
+    <comment></comment>
+</query>
 
 	</queries>
 </nta>
