@@ -1,0 +1,24 @@
+RP_73
+
+agents:
+	humans: Doctor
+	robots: Mobile
+	
+resources: item1
+
+Mobile:
+	1: moveTo item1
+	pick item1
+
+Doctor:
+	1: moveTo item1
+	
+	
+	
+	
+	
+	
+
+	
+	
+	
