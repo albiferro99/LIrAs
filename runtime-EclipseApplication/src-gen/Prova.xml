@@ -206,7 +206,6 @@ const point INTERSECTIONS[N_I] = {{92.5, 163.5},{92.5, 761.2},{1452.0, 761.2},{1
 
 // END LAYOUT 2
 
-
 // used in all the actions
 bool same_area(double sx, double sy, double dx, double dy) {
     int i;
@@ -229,6 +228,32 @@ double pt_dist(double x1, double x2, double y1, double y2) {
     double ydifference = y2-y1;
     return sqrt((xdifference*xdifference)+(ydifference*ydifference));
 }
+
+/**
+ * Checks if the given coordinates (x, y) are inside ANY of the valid floor areas.
+ * Returns true if the position is valid, false if it is in a forbidden area.
+ */
+bool isValidPosition(double x, double y) {
+    // Iterate through all defined areas in the layout
+    for (i : int[0, N_A - 1]) {
+        // Extract boundaries from the rectangle definition
+        // Assuming Point 0 is Bottom-Left (min) and Point 2 is Top-Right (max)
+        double x_min = FLOOR[i][0][0];
+        double y_min = FLOOR[i][0][1];
+        double x_max = FLOOR[i][2][0];
+        double y_max = FLOOR[i][2][1];
+        
+        // Check if the point is strictly inside the current rectangle
+        if (x &gt; x_min &amp;&amp; x &lt; x_max &amp;&amp; y &gt; y_min &amp;&amp; y &lt; y_max) {
+            return true; // The agent is safe, found a valid floor
+        }
+    }
+    
+    // If the loop finishes without returning true, the agent is outside all valid areas
+    return false;
+}
+
+
 	<template>
 		<name>Prova_orchestrator</name>
 		<parameter>int p</parameter>
@@ -2570,7 +2595,7 @@ Prova_robot2_def
 </query>
 
 <query>
-    <formula>Pr[&lt;=400] (&lt;&gt; Prova.end)</formula>
+    <formula>Pr[&lt;=700] (&lt;&gt; Prova.end)</formula>
     <comment>Check if the whole pattern ends within 400 time unit</comment>
 </query>
 
@@ -2590,8 +2615,63 @@ Prova_robot2_def
 </query>
 
 <query>
-    <formula>simulate[&lt;=700]{rm_1.idle, rf_1.idle, rp_1.idle, rd_1.idle, rm_2.idle, rf_2.idle, rp_2.idle, rd_2.idle, Prova.end*2}</formula>
+    <formula>simulate[&lt;=700]{rm_1.idle, rf_1.idle, rp_1.idle, rd_1.idle, rm_2.idle, rf_2.idle, rp_2.idle, rd_2.idle}</formula>
     <comment></comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700](&lt;&gt;!rm_1.idle || !rf_1.idle || !rp_1.idle || !rd_1.idle || !rm_2.idle || !rf_2.idle || !rp_2.idle || !rd_2.idle)</formula>
+    <comment></comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700]([] (Prova.end imply (rm_1.idle &amp;&amp; rf_1.idle &amp;&amp; rp_1.idle &amp;&amp; rd_1.idle &amp;&amp; rm_2.idle &amp;&amp; rf_2.idle &amp;&amp; rp_2.idle &amp;&amp; rd_2.idle)))</formula>
+    <comment></comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(humanPositionX[-1] - room1[0], 2) + pow(humanPositionY[-1] - room1[1], 2) &lt;= 900 )</formula>
+    <comment>Check if human Human reaches room1 (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(humanPositionX[-1] - room2[0], 2) + pow(humanPositionY[-1] - room2[1], 2) &lt;= 900 )</formula>
+    <comment>Check if human Human reaches room2 (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - room1[0], 2) + pow(robPositionY[0] - room1[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot reaches room1 (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - room1[0], 2) + pow(robPositionY[1] - room1[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches room1 (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; !isValidPosition(humanPositionX[0], humanPositionY[0]))</formula>
+    <comment>Check if human Human enters an invalid position (e.g. collision or obstacle)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; !isValidPosition(humanPositionX[1], humanPositionY[1]))</formula>
+    <comment>Check if human Human2 enters an invalid position (e.g. collision or obstacle)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; !isValidPosition(robPositionX[0], robPositionY[0]))</formula>
+    <comment>Check if robot Robot enters an invalid position (e.g. collision or obstacle)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; !isValidPosition(robPositionX[1], robPositionY[1]))</formula>
+    <comment>Check if robot Robot2 enters an invalid position (e.g. collision or obstacle)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; currP > 2)</formula>
+    <comment>Check if pattern is executed more then once</comment>
 </query>
 
 	</queries>

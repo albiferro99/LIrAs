@@ -1,20 +1,26 @@
-TestBruno
+Supermarket
 
 agents:
 	humans: Human
-	robots: Robot, Robot2
-	
-locations: room1, room2
-resources: item1, item2
+	robots: Robot
+locations: l1, l2, l3, l4
+resources: water
+
+Robot:
+	1: moveTo l1
+	   checkItems
+	2: moveTo l2
+	   checkItems
+	3: moveTo l3
+	   checkItems
+	4: moveTo l4
+	   checkItems
+	5: skip if !presence(humans)
+	   colaborativeGrasping(water)
 
 Human:
-	1: moveTo room1
-
-Robot: 
-	1: moveTo room1
-	pick item1
-	2: moveTo room2
-	deposit item1
+	1-4: moveTo l4
+	5:  colaborativeGrasping(water)
 	
 	
 	

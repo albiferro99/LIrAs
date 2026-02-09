@@ -204,7 +204,6 @@ const point INTERSECTIONS[N_I] = {{92.5, 163.5},{92.5, 761.2},{1452.0, 761.2},{1
 
 // END LAYOUT 2
 
-
 // used in all the actions
 bool same_area(double sx, double sy, double dx, double dy) {
     int i;
@@ -227,6 +226,32 @@ double pt_dist(double x1, double x2, double y1, double y2) {
     double ydifference = y2-y1;
     return sqrt((xdifference*xdifference)+(ydifference*ydifference));
 }
+
+/**
+ * Checks if the given coordinates (x, y) are inside ANY of the valid floor areas.
+ * Returns true if the position is valid, false if it is in a forbidden area.
+ */
+bool isValidPosition(double x, double y) {
+    // Iterate through all defined areas in the layout
+    for (i : int[0, N_A - 1]) {
+        // Extract boundaries from the rectangle definition
+        // Assuming Point 0 is Bottom-Left (min) and Point 2 is Top-Right (max)
+        double x_min = FLOOR[i][0][0];
+        double y_min = FLOOR[i][0][1];
+        double x_max = FLOOR[i][2][0];
+        double y_max = FLOOR[i][2][1];
+        
+        // Check if the point is strictly inside the current rectangle
+        if (x &gt; x_min &amp;&amp; x &lt; x_max &amp;&amp; y &gt; y_min &amp;&amp; y &lt; y_max) {
+            return true; // The agent is safe, found a valid floor
+        }
+    }
+    
+    // If the loop finishes without returning true, the agent is outside all valid areas
+    return false;
+}
+
+
 	<template>
 		<name>AMR_photovoltaic_pipeline_orchestrator</name>
 		<parameter>int p</parameter>
@@ -6553,7 +6578,7 @@ AMR_photovoltaic_pipeline_robot4_def
 </query>
 
 <query>
-    <formula>Pr[&lt;=400] (&lt;&gt; AMR_photovoltaic_pipeline.end)</formula>
+    <formula>Pr[&lt;=700] (&lt;&gt; AMR_photovoltaic_pipeline.end)</formula>
     <comment>Check if the whole pattern ends within 400 time unit</comment>
 </query>
 
@@ -6573,8 +6598,403 @@ AMR_photovoltaic_pipeline_robot4_def
 </query>
 
 <query>
-    <formula>simulate[&lt;=700]{rm_1.idle, rf_1.idle, rp_1.idle, rd_1.idle, rm_2.idle, rf_2.idle, rp_2.idle, rd_2.idle, rm_3.idle, rf_3.idle, rp_3.idle, rd_3.idle, rm_4.idle, rf_4.idle, rp_4.idle, rd_4.idle, AMR_photovoltaic_pipeline.end*2}</formula>
+    <formula>simulate[&lt;=700]{rm_1.idle, rf_1.idle, rp_1.idle, rd_1.idle, rm_2.idle, rf_2.idle, rp_2.idle, rd_2.idle, rm_3.idle, rf_3.idle, rp_3.idle, rd_3.idle, rm_4.idle, rf_4.idle, rp_4.idle, rd_4.idle}</formula>
     <comment></comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700](&lt;&gt;!rm_1.idle || !rf_1.idle || !rp_1.idle || !rd_1.idle || !rm_2.idle || !rf_2.idle || !rp_2.idle || !rd_2.idle || !rm_3.idle || !rf_3.idle || !rp_3.idle || !rd_3.idle || !rm_4.idle || !rf_4.idle || !rp_4.idle || !rd_4.idle)</formula>
+    <comment></comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700]([] (AMR_photovoltaic_pipeline.end imply (rm_1.idle &amp;&amp; rf_1.idle &amp;&amp; rp_1.idle &amp;&amp; rd_1.idle &amp;&amp; rm_2.idle &amp;&amp; rf_2.idle &amp;&amp; rp_2.idle &amp;&amp; rd_2.idle &amp;&amp; rm_3.idle &amp;&amp; rf_3.idle &amp;&amp; rp_3.idle &amp;&amp; rd_3.idle &amp;&amp; rm_4.idle &amp;&amp; rf_4.idle &amp;&amp; rp_4.idle &amp;&amp; rd_4.idle)))</formula>
+    <comment></comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - rear_top_paste_start[0], 2) + pow(robPositionY[0] - rear_top_paste_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches rear_top_paste_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - etching_start[0], 2) + pow(robPositionY[0] - etching_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches etching_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - perc_end[0], 2) + pow(robPositionY[0] - perc_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches perc_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - surface_texturization_end[0], 2) + pow(robPositionY[0] - surface_texturization_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches surface_texturization_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - etching_end[0], 2) + pow(robPositionY[0] - etching_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches etching_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - annealing_start[0], 2) + pow(robPositionY[0] - annealing_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches annealing_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - surface_texturization_start[0], 2) + pow(robPositionY[0] - surface_texturization_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches surface_texturization_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - warehouse[0], 2) + pow(robPositionY[0] - warehouse[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches warehouse (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - laser_end[0], 2) + pow(robPositionY[0] - laser_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches laser_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - annealing_end[0], 2) + pow(robPositionY[0] - annealing_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches annealing_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - diffusion_end[0], 2) + pow(robPositionY[0] - diffusion_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches diffusion_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - loading_area[0], 2) + pow(robPositionY[0] - loading_area[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches loading_area (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - laser_slotting_start[0], 2) + pow(robPositionY[0] - laser_slotting_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches laser_slotting_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - laser_slotting_end[0], 2) + pow(robPositionY[0] - laser_slotting_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches laser_slotting_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - diffusion_start[0], 2) + pow(robPositionY[0] - diffusion_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches diffusion_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - perc_start[0], 2) + pow(robPositionY[0] - perc_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches perc_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - laser_start[0], 2) + pow(robPositionY[0] - laser_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches laser_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - rear_top_paste_end[0], 2) + pow(robPositionY[0] - rear_top_paste_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot1 reaches rear_top_paste_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - rear_top_paste_start[0], 2) + pow(robPositionY[1] - rear_top_paste_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches rear_top_paste_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - etching_start[0], 2) + pow(robPositionY[1] - etching_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches etching_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - perc_end[0], 2) + pow(robPositionY[1] - perc_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches perc_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - surface_texturization_end[0], 2) + pow(robPositionY[1] - surface_texturization_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches surface_texturization_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - etching_end[0], 2) + pow(robPositionY[1] - etching_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches etching_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - annealing_start[0], 2) + pow(robPositionY[1] - annealing_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches annealing_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - surface_texturization_start[0], 2) + pow(robPositionY[1] - surface_texturization_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches surface_texturization_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - warehouse[0], 2) + pow(robPositionY[1] - warehouse[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches warehouse (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - laser_end[0], 2) + pow(robPositionY[1] - laser_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches laser_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - annealing_end[0], 2) + pow(robPositionY[1] - annealing_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches annealing_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - diffusion_end[0], 2) + pow(robPositionY[1] - diffusion_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches diffusion_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - loading_area[0], 2) + pow(robPositionY[1] - loading_area[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches loading_area (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - laser_slotting_start[0], 2) + pow(robPositionY[1] - laser_slotting_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches laser_slotting_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - laser_slotting_end[0], 2) + pow(robPositionY[1] - laser_slotting_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches laser_slotting_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - diffusion_start[0], 2) + pow(robPositionY[1] - diffusion_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches diffusion_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - perc_start[0], 2) + pow(robPositionY[1] - perc_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches perc_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - laser_start[0], 2) + pow(robPositionY[1] - laser_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches laser_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[1] - rear_top_paste_end[0], 2) + pow(robPositionY[1] - rear_top_paste_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot2 reaches rear_top_paste_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - rear_top_paste_start[0], 2) + pow(robPositionY[2] - rear_top_paste_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches rear_top_paste_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - etching_start[0], 2) + pow(robPositionY[2] - etching_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches etching_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - perc_end[0], 2) + pow(robPositionY[2] - perc_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches perc_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - surface_texturization_end[0], 2) + pow(robPositionY[2] - surface_texturization_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches surface_texturization_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - etching_end[0], 2) + pow(robPositionY[2] - etching_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches etching_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - annealing_start[0], 2) + pow(robPositionY[2] - annealing_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches annealing_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - surface_texturization_start[0], 2) + pow(robPositionY[2] - surface_texturization_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches surface_texturization_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - warehouse[0], 2) + pow(robPositionY[2] - warehouse[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches warehouse (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - laser_end[0], 2) + pow(robPositionY[2] - laser_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches laser_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - annealing_end[0], 2) + pow(robPositionY[2] - annealing_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches annealing_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - diffusion_end[0], 2) + pow(robPositionY[2] - diffusion_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches diffusion_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - loading_area[0], 2) + pow(robPositionY[2] - loading_area[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches loading_area (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - laser_slotting_start[0], 2) + pow(robPositionY[2] - laser_slotting_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches laser_slotting_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - laser_slotting_end[0], 2) + pow(robPositionY[2] - laser_slotting_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches laser_slotting_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - diffusion_start[0], 2) + pow(robPositionY[2] - diffusion_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches diffusion_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - perc_start[0], 2) + pow(robPositionY[2] - perc_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches perc_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - laser_start[0], 2) + pow(robPositionY[2] - laser_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches laser_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[2] - rear_top_paste_end[0], 2) + pow(robPositionY[2] - rear_top_paste_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot3 reaches rear_top_paste_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - rear_top_paste_start[0], 2) + pow(robPositionY[3] - rear_top_paste_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches rear_top_paste_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - etching_start[0], 2) + pow(robPositionY[3] - etching_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches etching_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - perc_end[0], 2) + pow(robPositionY[3] - perc_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches perc_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - surface_texturization_end[0], 2) + pow(robPositionY[3] - surface_texturization_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches surface_texturization_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - etching_end[0], 2) + pow(robPositionY[3] - etching_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches etching_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - annealing_start[0], 2) + pow(robPositionY[3] - annealing_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches annealing_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - surface_texturization_start[0], 2) + pow(robPositionY[3] - surface_texturization_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches surface_texturization_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - warehouse[0], 2) + pow(robPositionY[3] - warehouse[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches warehouse (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - laser_end[0], 2) + pow(robPositionY[3] - laser_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches laser_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - annealing_end[0], 2) + pow(robPositionY[3] - annealing_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches annealing_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - diffusion_end[0], 2) + pow(robPositionY[3] - diffusion_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches diffusion_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - loading_area[0], 2) + pow(robPositionY[3] - loading_area[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches loading_area (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - laser_slotting_start[0], 2) + pow(robPositionY[3] - laser_slotting_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches laser_slotting_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - laser_slotting_end[0], 2) + pow(robPositionY[3] - laser_slotting_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches laser_slotting_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - diffusion_start[0], 2) + pow(robPositionY[3] - diffusion_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches diffusion_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - perc_start[0], 2) + pow(robPositionY[3] - perc_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches perc_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - laser_start[0], 2) + pow(robPositionY[3] - laser_start[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches laser_start (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[3] - rear_top_paste_end[0], 2) + pow(robPositionY[3] - rear_top_paste_end[1], 2) &lt;= 900 )</formula>
+    <comment>Check if robot Robot4 reaches rear_top_paste_end (within 30 units)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; !isValidPosition(robPositionX[0], robPositionY[0]))</formula>
+    <comment>Check if robot Robot1 enters an invalid position (e.g. collision or obstacle)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; !isValidPosition(robPositionX[1], robPositionY[1]))</formula>
+    <comment>Check if robot Robot2 enters an invalid position (e.g. collision or obstacle)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; !isValidPosition(robPositionX[2], robPositionY[2]))</formula>
+    <comment>Check if robot Robot3 enters an invalid position (e.g. collision or obstacle)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; !isValidPosition(robPositionX[3], robPositionY[3]))</formula>
+    <comment>Check if robot Robot4 enters an invalid position (e.g. collision or obstacle)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; currP > 2)</formula>
+    <comment>Check if pattern is executed more then once</comment>
 </query>
 
 	</queries>
