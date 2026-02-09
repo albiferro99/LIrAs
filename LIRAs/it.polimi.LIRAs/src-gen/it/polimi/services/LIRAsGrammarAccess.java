@@ -828,10 +828,8 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "it.polimi.LIRAs.ActionC");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
-		private final Group cGroup_0_0 = (Group)cAlternatives_0.eContents().get(0);
-		private final Action cActionAction_0_0_0 = (Action)cGroup_0_0.eContents().get(0);
-		private final Assignment cActionTypeAssignment_0_0_1 = (Assignment)cGroup_0_0.eContents().get(1);
-		private final Keyword cActionTypeStopKeyword_0_0_1_0 = (Keyword)cActionTypeAssignment_0_0_1.eContents().get(0);
+		private final Assignment cActionTypeAssignment_0_0 = (Assignment)cAlternatives_0.eContents().get(0);
+		private final Keyword cActionTypeStopKeyword_0_0_0 = (Keyword)cActionTypeAssignment_0_0.eContents().get(0);
 		private final Group cGroup_0_1 = (Group)cAlternatives_0.eContents().get(1);
 		private final Assignment cActionTypeAssignment_0_1_0 = (Assignment)cGroup_0_1.eContents().get(0);
 		private final Keyword cActionTypeMoveToKeyword_0_1_0_0 = (Keyword)cActionTypeAssignment_0_1_0.eContents().get(0);
@@ -870,7 +868,7 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		private final RuleCall cConditionalStatementConditionalStatementParserRuleCall_1_0 = (RuleCall)cConditionalStatementAssignment_1.eContents().get(0);
 		
 		//ActionC:
-		//    ({Action} actionType = 'stop'
+		//    (actionType = 'stop'
 		//    | actionType = 'moveTo' target=Target
 		//    | ((actionType = 'fetch'| actionType = 'pick' | actionType = 'deposit' | actionType = 'deliver' | actionType = 'leave') & resource=Resource)
 		//    | actionType = 'follow' agent=Agent ('(' target=Target ')')?
@@ -878,31 +876,25 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//({Action} actionType = 'stop'
+		//(actionType = 'stop'
 		//| actionType = 'moveTo' target=Target
 		//| ((actionType = 'fetch'| actionType = 'pick' | actionType = 'deposit' | actionType = 'deliver' | actionType = 'leave') & resource=Resource)
 		//| actionType = 'follow' agent=Agent ('(' target=Target ')')?
 		//| actionType = 'receiveFrom' agent=Agent) (conditionalStatement+=ConditionalStatement)?
 		public Group getGroup() { return cGroup; }
 		
-		//({Action} actionType = 'stop'
+		//(actionType = 'stop'
 		//| actionType = 'moveTo' target=Target
 		//| ((actionType = 'fetch'| actionType = 'pick' | actionType = 'deposit' | actionType = 'deliver' | actionType = 'leave') & resource=Resource)
 		//| actionType = 'follow' agent=Agent ('(' target=Target ')')?
 		//| actionType = 'receiveFrom' agent=Agent)
 		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
-		//{Action} actionType = 'stop'
-		public Group getGroup_0_0() { return cGroup_0_0; }
-		
-		//{Action}
-		public Action getActionAction_0_0_0() { return cActionAction_0_0_0; }
-		
 		//actionType = 'stop'
-		public Assignment getActionTypeAssignment_0_0_1() { return cActionTypeAssignment_0_0_1; }
+		public Assignment getActionTypeAssignment_0_0() { return cActionTypeAssignment_0_0; }
 		
 		//'stop'
-		public Keyword getActionTypeStopKeyword_0_0_1_0() { return cActionTypeStopKeyword_0_0_1_0; }
+		public Keyword getActionTypeStopKeyword_0_0_0() { return cActionTypeStopKeyword_0_0_0; }
 		
 		//actionType = 'moveTo' target=Target
 		public Group getGroup_0_1() { return cGroup_0_1; }
@@ -1736,7 +1728,7 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 	}
 	
 	//ActionC:
-	//    ({Action} actionType = 'stop'
+	//    (actionType = 'stop'
 	//    | actionType = 'moveTo' target=Target
 	//    | ((actionType = 'fetch'| actionType = 'pick' | actionType = 'deposit' | actionType = 'deliver' | actionType = 'leave') & resource=Resource)
 	//    | actionType = 'follow' agent=Agent ('(' target=Target ')')?

@@ -585,6 +585,50 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
    * @generated
    */
   @Override
+  public EAttribute getAction_ActionType()
+  {
+    return (EAttribute)actionEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getAction_Target()
+  {
+    return (EReference)actionEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getAction_Resource()
+  {
+    return (EReference)actionEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getAction_Agent()
+  {
+    return (EReference)actionEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getActionC()
   {
     return actionCEClass;
@@ -1001,6 +1045,10 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
     createEAttribute(conditionalStatementEClass, CONDITIONAL_STATEMENT__N);
 
     actionEClass = createEClass(ACTION);
+    createEAttribute(actionEClass, ACTION__ACTION_TYPE);
+    createEReference(actionEClass, ACTION__TARGET);
+    createEReference(actionEClass, ACTION__RESOURCE);
+    createEReference(actionEClass, ACTION__AGENT);
 
     actionCEClass = createEClass(ACTION_C);
     createEAttribute(actionCEClass, ACTION_C__ACTION_TYPE);
@@ -1074,7 +1122,6 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
-    actionEClass.getESuperTypes().add(this.getActionC());
 
     // Initialize classes and features; add operations and parameters
     initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1116,6 +1163,10 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
     initEAttribute(getConditionalStatement_N(), ecorePackage.getEInt(), "n", null, 0, 1, ConditionalStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(actionEClass, Action.class, "Action", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getAction_ActionType(), ecorePackage.getEString(), "actionType", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getAction_Target(), this.getTarget(), null, "target", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getAction_Resource(), this.getResource(), null, "resource", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getAction_Agent(), this.getAgent(), null, "agent", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(actionCEClass, ActionC.class, "ActionC", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getActionC_ActionType(), ecorePackage.getEString(), "actionType", null, 0, 1, ActionC.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

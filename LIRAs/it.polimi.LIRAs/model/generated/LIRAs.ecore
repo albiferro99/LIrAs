@@ -55,7 +55,15 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="cs4" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="n" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Action" eSuperTypes="#//ActionC"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Action">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="actionType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="#//Target"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="resource" eType="#//Resource"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="agent" eType="#//Agent"
+        containment="true"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ActionC">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="actionType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="#//Target"

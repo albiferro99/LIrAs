@@ -1353,40 +1353,31 @@ ruleActionC returns [EObject current=null]
 		(
 			(
 				(
+					lv_actionType_0_0='stop'
 					{
-						$current = forceCreateModelElement(
-							grammarAccess.getActionCAccess().getActionAction_0_0_0(),
-							$current);
+						newLeafNode(lv_actionType_0_0, grammarAccess.getActionCAccess().getActionTypeStopKeyword_0_0_0());
 					}
-				)
-				(
-					(
-						lv_actionType_1_0='stop'
-						{
-							newLeafNode(lv_actionType_1_0, grammarAccess.getActionCAccess().getActionTypeStopKeyword_0_0_1_0());
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getActionCRule());
 						}
-						{
-							if ($current==null) {
-								$current = createModelElement(grammarAccess.getActionCRule());
-							}
-							setWithLastConsumed($current, "actionType", lv_actionType_1_0, "stop");
-						}
-					)
+						setWithLastConsumed($current, "actionType", lv_actionType_0_0, "stop");
+					}
 				)
 			)
 			    |
 			(
 				(
 					(
-						lv_actionType_2_0='moveTo'
+						lv_actionType_1_0='moveTo'
 						{
-							newLeafNode(lv_actionType_2_0, grammarAccess.getActionCAccess().getActionTypeMoveToKeyword_0_1_0_0());
+							newLeafNode(lv_actionType_1_0, grammarAccess.getActionCAccess().getActionTypeMoveToKeyword_0_1_0_0());
 						}
 						{
 							if ($current==null) {
 								$current = createModelElement(grammarAccess.getActionCRule());
 							}
-							setWithLastConsumed($current, "actionType", lv_actionType_2_0, "moveTo");
+							setWithLastConsumed($current, "actionType", lv_actionType_1_0, "moveTo");
 						}
 					)
 				)
@@ -1395,7 +1386,7 @@ ruleActionC returns [EObject current=null]
 						{
 							newCompositeNode(grammarAccess.getActionCAccess().getTargetTargetParserRuleCall_0_1_1_0());
 						}
-						lv_target_3_0=ruleTarget
+						lv_target_2_0=ruleTarget
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getActionCRule());
@@ -1403,7 +1394,7 @@ ruleActionC returns [EObject current=null]
 							set(
 								$current,
 								"target",
-								lv_target_3_0,
+								lv_target_2_0,
 								"it.polimi.LIRAs.Target");
 							afterParserOrEnumRuleCall();
 						}
@@ -1425,75 +1416,75 @@ ruleActionC returns [EObject current=null]
 						}
 									({true}?=>((
 										(
-											lv_actionType_5_0='fetch'
+											lv_actionType_4_0='fetch'
 											{
-												newLeafNode(lv_actionType_5_0, grammarAccess.getActionCAccess().getActionTypeFetchKeyword_0_2_0_0_0());
+												newLeafNode(lv_actionType_4_0, grammarAccess.getActionCAccess().getActionTypeFetchKeyword_0_2_0_0_0());
 											}
 											{
 												if ($current==null) {
 													$current = createModelElement(grammarAccess.getActionCRule());
 												}
-												setWithLastConsumed($current, "actionType", lv_actionType_5_0, "fetch");
+												setWithLastConsumed($current, "actionType", lv_actionType_4_0, "fetch");
 											}
 										)
 									)
 									    |
 									(
 										(
-											lv_actionType_6_0='pick'
+											lv_actionType_5_0='pick'
 											{
-												newLeafNode(lv_actionType_6_0, grammarAccess.getActionCAccess().getActionTypePickKeyword_0_2_0_1_0());
+												newLeafNode(lv_actionType_5_0, grammarAccess.getActionCAccess().getActionTypePickKeyword_0_2_0_1_0());
 											}
 											{
 												if ($current==null) {
 													$current = createModelElement(grammarAccess.getActionCRule());
 												}
-												setWithLastConsumed($current, "actionType", lv_actionType_6_0, "pick");
+												setWithLastConsumed($current, "actionType", lv_actionType_5_0, "pick");
 											}
 										)
 									)
 									    |
 									(
 										(
-											lv_actionType_7_0='deposit'
+											lv_actionType_6_0='deposit'
 											{
-												newLeafNode(lv_actionType_7_0, grammarAccess.getActionCAccess().getActionTypeDepositKeyword_0_2_0_2_0());
+												newLeafNode(lv_actionType_6_0, grammarAccess.getActionCAccess().getActionTypeDepositKeyword_0_2_0_2_0());
 											}
 											{
 												if ($current==null) {
 													$current = createModelElement(grammarAccess.getActionCRule());
 												}
-												setWithLastConsumed($current, "actionType", lv_actionType_7_0, "deposit");
+												setWithLastConsumed($current, "actionType", lv_actionType_6_0, "deposit");
 											}
 										)
 									)
 									    |
 									(
 										(
-											lv_actionType_8_0='deliver'
+											lv_actionType_7_0='deliver'
 											{
-												newLeafNode(lv_actionType_8_0, grammarAccess.getActionCAccess().getActionTypeDeliverKeyword_0_2_0_3_0());
+												newLeafNode(lv_actionType_7_0, grammarAccess.getActionCAccess().getActionTypeDeliverKeyword_0_2_0_3_0());
 											}
 											{
 												if ($current==null) {
 													$current = createModelElement(grammarAccess.getActionCRule());
 												}
-												setWithLastConsumed($current, "actionType", lv_actionType_8_0, "deliver");
+												setWithLastConsumed($current, "actionType", lv_actionType_7_0, "deliver");
 											}
 										)
 									)
 									    |
 									(
 										(
-											lv_actionType_9_0='leave'
+											lv_actionType_8_0='leave'
 											{
-												newLeafNode(lv_actionType_9_0, grammarAccess.getActionCAccess().getActionTypeLeaveKeyword_0_2_0_4_0());
+												newLeafNode(lv_actionType_8_0, grammarAccess.getActionCAccess().getActionTypeLeaveKeyword_0_2_0_4_0());
 											}
 											{
 												if ($current==null) {
 													$current = createModelElement(grammarAccess.getActionCRule());
 												}
-												setWithLastConsumed($current, "actionType", lv_actionType_9_0, "leave");
+												setWithLastConsumed($current, "actionType", lv_actionType_8_0, "leave");
 											}
 										)
 									)
@@ -1512,7 +1503,7 @@ ruleActionC returns [EObject current=null]
 										{
 											newCompositeNode(grammarAccess.getActionCAccess().getResourceResourceParserRuleCall_0_2_1_0());
 										}
-										lv_resource_10_0=ruleResource
+										lv_resource_9_0=ruleResource
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getActionCRule());
@@ -1520,7 +1511,7 @@ ruleActionC returns [EObject current=null]
 											set(
 												$current,
 												"resource",
-												lv_resource_10_0,
+												lv_resource_9_0,
 												"it.polimi.LIRAs.Resource");
 											afterParserOrEnumRuleCall();
 										}
@@ -1543,15 +1534,15 @@ ruleActionC returns [EObject current=null]
 			(
 				(
 					(
-						lv_actionType_11_0='follow'
+						lv_actionType_10_0='follow'
 						{
-							newLeafNode(lv_actionType_11_0, grammarAccess.getActionCAccess().getActionTypeFollowKeyword_0_3_0_0());
+							newLeafNode(lv_actionType_10_0, grammarAccess.getActionCAccess().getActionTypeFollowKeyword_0_3_0_0());
 						}
 						{
 							if ($current==null) {
 								$current = createModelElement(grammarAccess.getActionCRule());
 							}
-							setWithLastConsumed($current, "actionType", lv_actionType_11_0, "follow");
+							setWithLastConsumed($current, "actionType", lv_actionType_10_0, "follow");
 						}
 					)
 				)
@@ -1560,7 +1551,7 @@ ruleActionC returns [EObject current=null]
 						{
 							newCompositeNode(grammarAccess.getActionCAccess().getAgentAgentParserRuleCall_0_3_1_0());
 						}
-						lv_agent_12_0=ruleAgent
+						lv_agent_11_0=ruleAgent
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getActionCRule());
@@ -1568,23 +1559,23 @@ ruleActionC returns [EObject current=null]
 							set(
 								$current,
 								"agent",
-								lv_agent_12_0,
+								lv_agent_11_0,
 								"it.polimi.LIRAs.Agent");
 							afterParserOrEnumRuleCall();
 						}
 					)
 				)
 				(
-					otherlv_13='('
+					otherlv_12='('
 					{
-						newLeafNode(otherlv_13, grammarAccess.getActionCAccess().getLeftParenthesisKeyword_0_3_2_0());
+						newLeafNode(otherlv_12, grammarAccess.getActionCAccess().getLeftParenthesisKeyword_0_3_2_0());
 					}
 					(
 						(
 							{
 								newCompositeNode(grammarAccess.getActionCAccess().getTargetTargetParserRuleCall_0_3_2_1_0());
 							}
-							lv_target_14_0=ruleTarget
+							lv_target_13_0=ruleTarget
 							{
 								if ($current==null) {
 									$current = createModelElementForParent(grammarAccess.getActionCRule());
@@ -1592,15 +1583,15 @@ ruleActionC returns [EObject current=null]
 								set(
 									$current,
 									"target",
-									lv_target_14_0,
+									lv_target_13_0,
 									"it.polimi.LIRAs.Target");
 								afterParserOrEnumRuleCall();
 							}
 						)
 					)
-					otherlv_15=')'
+					otherlv_14=')'
 					{
-						newLeafNode(otherlv_15, grammarAccess.getActionCAccess().getRightParenthesisKeyword_0_3_2_2());
+						newLeafNode(otherlv_14, grammarAccess.getActionCAccess().getRightParenthesisKeyword_0_3_2_2());
 					}
 				)?
 			)
@@ -1608,15 +1599,15 @@ ruleActionC returns [EObject current=null]
 			(
 				(
 					(
-						lv_actionType_16_0='receiveFrom'
+						lv_actionType_15_0='receiveFrom'
 						{
-							newLeafNode(lv_actionType_16_0, grammarAccess.getActionCAccess().getActionTypeReceiveFromKeyword_0_4_0_0());
+							newLeafNode(lv_actionType_15_0, grammarAccess.getActionCAccess().getActionTypeReceiveFromKeyword_0_4_0_0());
 						}
 						{
 							if ($current==null) {
 								$current = createModelElement(grammarAccess.getActionCRule());
 							}
-							setWithLastConsumed($current, "actionType", lv_actionType_16_0, "receiveFrom");
+							setWithLastConsumed($current, "actionType", lv_actionType_15_0, "receiveFrom");
 						}
 					)
 				)
@@ -1625,7 +1616,7 @@ ruleActionC returns [EObject current=null]
 						{
 							newCompositeNode(grammarAccess.getActionCAccess().getAgentAgentParserRuleCall_0_4_1_0());
 						}
-						lv_agent_17_0=ruleAgent
+						lv_agent_16_0=ruleAgent
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getActionCRule());
@@ -1633,7 +1624,7 @@ ruleActionC returns [EObject current=null]
 							set(
 								$current,
 								"agent",
-								lv_agent_17_0,
+								lv_agent_16_0,
 								"it.polimi.LIRAs.Agent");
 							afterParserOrEnumRuleCall();
 						}
@@ -1646,7 +1637,7 @@ ruleActionC returns [EObject current=null]
 				{
 					newCompositeNode(grammarAccess.getActionCAccess().getConditionalStatementConditionalStatementParserRuleCall_1_0());
 				}
-				lv_conditionalStatement_18_0=ruleConditionalStatement
+				lv_conditionalStatement_17_0=ruleConditionalStatement
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getActionCRule());
@@ -1654,7 +1645,7 @@ ruleActionC returns [EObject current=null]
 					add(
 						$current,
 						"conditionalStatement",
-						lv_conditionalStatement_18_0,
+						lv_conditionalStatement_17_0,
 						"it.polimi.LIRAs.ConditionalStatement");
 					afterParserOrEnumRuleCall();
 				}

@@ -49,15 +49,8 @@ public class LIRAsSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 		if (epackage == LIRAsPackage.eINSTANCE)
 			switch (semanticObject.eClass().getClassifierID()) {
 			case LIRAsPackage.ACTION:
-				if (rule == grammarAccess.getActionCRule()) {
-					sequence_ActionC(context, (it.polimi.lIRAs.Action) semanticObject); 
-					return; 
-				}
-				else if (rule == grammarAccess.getActionRule()) {
-					sequence_Action(context, (it.polimi.lIRAs.Action) semanticObject); 
-					return; 
-				}
-				else break;
+				sequence_Action(context, (it.polimi.lIRAs.Action) semanticObject); 
+				return; 
 			case LIRAsPackage.ACTION_C:
 				sequence_ActionC(context, (ActionC) semanticObject); 
 				return; 
@@ -117,25 +110,12 @@ public class LIRAsSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	/**
 	 * <pre>
 	 * Contexts:
-	 *     ActionC returns Action
-	 *
-	 * Constraint:
-	 *     (actionType='stop' conditionalStatement+=ConditionalStatement?)
-	 * </pre>
-	 */
-	protected void sequence_ActionC(ISerializationContext context, it.polimi.lIRAs.Action semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * <pre>
-	 * Contexts:
 	 *     ActionC returns ActionC
 	 *
 	 * Constraint:
 	 *     (
 	 *         (
+	 *             actionType='stop' | 
 	 *             (actionType='moveTo' target=Target) | 
 	 *             (
 	 *                 actionType='fetch' | 

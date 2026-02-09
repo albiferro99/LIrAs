@@ -126,7 +126,6 @@ public class LIRAsSwitch<T> extends Switch<T>
       {
         Action action = (Action)theEObject;
         T result = caseAction(action);
-        if (result == null) result = caseActionC(action);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }

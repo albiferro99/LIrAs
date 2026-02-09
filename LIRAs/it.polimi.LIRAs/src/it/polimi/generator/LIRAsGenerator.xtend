@@ -90,10 +90,23 @@ class LIRAsGenerator extends AbstractGenerator{
         '''
     }
 
+		// To use relatives path use something like this. Be sure that the folder with the template exist in this position
+			//val inputStream = getClass().getResourceAsStream("/it/polimi/generator/template/Pre_Gen.xml")
+	        
+	        //if (inputStream === null) {
+	        //    return "Error: Template not found (Check build.properties includes)"
+	        //}
+	        //val scanner = new java.util.Scanner(inputStream, "UTF-8")
+	        //val content = if (scanner.hasNext()) scanner.useDelimiter("\\A").next() else ""
+	        
+	        //scanner.close()
+	        //inputStream.close()
+	        
+	        //return content
     // Read the basic template file
     def String readTemplate () {
         try{
-            val filePath = "/Users/alberto_tagliaferro/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Pre_Gen.xml"
+            val filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Pre_Gen.xml"
             val lines = Files.readAllLines(Paths.get(filePath))
             return lines.join("\n")
         }catch(IOException e) {
@@ -432,7 +445,8 @@ double resources_Y[«size»] = {«resources.map[name + "[1]"].join(", ")»};
 		
 	}
 	def String readHidle () {
-    	val filePath = "/Users/alberto_tagliaferro/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Human_idle.rtf"
+    	val filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Human_idle.rtf"
+    	
     	try {
      	   val fis = new FileInputStream(filePath)
         	val rtfKit = new RTFEditorKit()
@@ -518,7 +532,7 @@ double resources_Y[«size»] = {«resources.map[name + "[1]"].join(", ")»};
 		
 	// Read and include the moveTo Human template
 	def String readHmoveTo () {
-    	val filePath = "/Users/alberto_tagliaferro/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Human_moveTo.rtf"
+    	val filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Human_moveTo.rtf"
     	try {
      	   val fis = new FileInputStream(filePath)
         	val rtfKit = new RTFEditorKit()
@@ -604,7 +618,7 @@ double resources_Y[«size»] = {«resources.map[name + "[1]"].join(", ")»};
 	}
 	// Read and include the moveTo Robot template
 	def String readRmoveTo () {
-    	val filePath = "/Users/alberto_tagliaferro/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_moveTo.rtf"
+    	val filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_moveTo.rtf"
     	try {
      	   val fis = new FileInputStream(filePath)
         	val rtfKit = new RTFEditorKit()
@@ -665,7 +679,7 @@ double resources_Y[«size»] = {«resources.map[name + "[1]"].join(", ")»};
         }
 	}
 	def String readRfollow () {
-    	val filePath = "/Users/alberto_tagliaferro/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_follow.rtf"
+    	val filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_follow.rtf"
     	try {
      	   val fis = new FileInputStream(filePath)
         	val rtfKit = new RTFEditorKit()
@@ -726,7 +740,7 @@ double resources_Y[«size»] = {«resources.map[name + "[1]"].join(", ")»};
         }
 	}
 	def String readRpick () {
-    	val filePath = "/Users/alberto_tagliaferro/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_pick.rtf"
+    	val filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_pick.rtf"
     	try {
      	   val fis = new FileInputStream(filePath)
         	val rtfKit = new RTFEditorKit()
@@ -777,7 +791,7 @@ double resources_Y[«size»] = {«resources.map[name + "[1]"].join(", ")»};
         }
 	}
 	def String readRdeposit () {
-    	val filePath = "/Users/alberto_tagliaferro/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_deposit.rtf"
+    	val filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_deposit.rtf"
     	try {
      	   val fis = new FileInputStream(filePath)
         	val rtfKit = new RTFEditorKit()

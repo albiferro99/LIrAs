@@ -77,7 +77,6 @@ public class LIRAsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getActionAccess().getGroup_3_2(), "rule__Action__Group_3_2__0");
 			builder.put(grammarAccess.getActionAccess().getGroup_4(), "rule__Action__Group_4__0");
 			builder.put(grammarAccess.getActionCAccess().getGroup(), "rule__ActionC__Group__0");
-			builder.put(grammarAccess.getActionCAccess().getGroup_0_0(), "rule__ActionC__Group_0_0__0");
 			builder.put(grammarAccess.getActionCAccess().getGroup_0_1(), "rule__ActionC__Group_0_1__0");
 			builder.put(grammarAccess.getActionCAccess().getGroup_0_3(), "rule__ActionC__Group_0_3__0");
 			builder.put(grammarAccess.getActionCAccess().getGroup_0_3_2(), "rule__ActionC__Group_0_3_2__0");
@@ -139,7 +138,7 @@ public class LIRAsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getActionAccess().getTargetAssignment_3_2_1(), "rule__Action__TargetAssignment_3_2_1");
 			builder.put(grammarAccess.getActionAccess().getActionTypeAssignment_4_0(), "rule__Action__ActionTypeAssignment_4_0");
 			builder.put(grammarAccess.getActionAccess().getAgentAssignment_4_1(), "rule__Action__AgentAssignment_4_1");
-			builder.put(grammarAccess.getActionCAccess().getActionTypeAssignment_0_0_1(), "rule__ActionC__ActionTypeAssignment_0_0_1");
+			builder.put(grammarAccess.getActionCAccess().getActionTypeAssignment_0_0(), "rule__ActionC__ActionTypeAssignment_0_0");
 			builder.put(grammarAccess.getActionCAccess().getActionTypeAssignment_0_1_0(), "rule__ActionC__ActionTypeAssignment_0_1_0");
 			builder.put(grammarAccess.getActionCAccess().getTargetAssignment_0_1_1(), "rule__ActionC__TargetAssignment_0_1_1");
 			builder.put(grammarAccess.getActionCAccess().getActionTypeAssignment_0_2_0_0(), "rule__ActionC__ActionTypeAssignment_0_2_0_0");

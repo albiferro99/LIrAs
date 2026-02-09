@@ -1,4 +1,4 @@
-Supermarket
+TestBruno
 
 agents:
 	humans: Human
@@ -8,21 +8,9 @@ resources: water
 
 Robot:
 	1: moveTo l1
-	   checkItems
-	2: moveTo l2
-	   checkItems
-	3: moveTo l3
-	   checkItems
-	4: moveTo l4
-	   checkItems
-	5: skip if !presence(humans)
-	   colaborativeGrasping(water)
-
-Human:
-	1-4: moveTo l4
-	5:  colaborativeGrasping(water)
-	
-	
 	
 
+	
+	
+	
 	

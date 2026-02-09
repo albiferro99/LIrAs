@@ -100,7 +100,7 @@ public class LIRAsGenerator extends AbstractGenerator {
 
   public String readTemplate() {
     try {
-      final String filePath = "/Users/alberto_tagliaferro/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Pre_Gen.xml";
+      final String filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Pre_Gen.xml";
       final List<String> lines = Files.readAllLines(Paths.get(filePath));
       return IterableExtensions.join(lines, "\n");
     } catch (final Throwable _t) {
@@ -471,7 +471,7 @@ public class LIRAsGenerator extends AbstractGenerator {
   }
 
   public String readHidle() {
-    final String filePath = "/Users/alberto_tagliaferro/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Human_idle.rtf";
+    final String filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Human_idle.rtf";
     try {
       final FileInputStream fis = new FileInputStream(filePath);
       final RTFEditorKit rtfKit = new RTFEditorKit();
@@ -542,7 +542,7 @@ public class LIRAsGenerator extends AbstractGenerator {
   }
 
   public String readHmoveTo() {
-    final String filePath = "/Users/alberto_tagliaferro/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Human_moveTo.rtf";
+    final String filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Human_moveTo.rtf";
     try {
       final FileInputStream fis = new FileInputStream(filePath);
       final RTFEditorKit rtfKit = new RTFEditorKit();
@@ -613,7 +613,7 @@ public class LIRAsGenerator extends AbstractGenerator {
   }
 
   public String readRmoveTo() {
-    final String filePath = "/Users/alberto_tagliaferro/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_moveTo.rtf";
+    final String filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_moveTo.rtf";
     try {
       final FileInputStream fis = new FileInputStream(filePath);
       final RTFEditorKit rtfKit = new RTFEditorKit();
@@ -676,7 +676,7 @@ public class LIRAsGenerator extends AbstractGenerator {
   }
 
   public String readRfollow() {
-    final String filePath = "/Users/alberto_tagliaferro/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_follow.rtf";
+    final String filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_follow.rtf";
     try {
       final FileInputStream fis = new FileInputStream(filePath);
       final RTFEditorKit rtfKit = new RTFEditorKit();
@@ -745,7 +745,7 @@ public class LIRAsGenerator extends AbstractGenerator {
   }
 
   public String readRpick() {
-    final String filePath = "/Users/alberto_tagliaferro/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_pick.rtf";
+    final String filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_pick.rtf";
     try {
       final FileInputStream fis = new FileInputStream(filePath);
       final RTFEditorKit rtfKit = new RTFEditorKit();
@@ -807,7 +807,7 @@ public class LIRAsGenerator extends AbstractGenerator {
   }
 
   public String readRdeposit() {
-    final String filePath = "/Users/alberto_tagliaferro/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_deposit.rtf";
+    final String filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_deposit.rtf";
     try {
       final FileInputStream fis = new FileInputStream(filePath);
       final RTFEditorKit rtfKit = new RTFEditorKit();

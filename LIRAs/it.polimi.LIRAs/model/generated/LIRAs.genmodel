@@ -44,7 +44,12 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute LIRAs.ecore#//ConditionalStatement/cs4"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute LIRAs.ecore#//ConditionalStatement/n"/>
     </genClasses>
-    <genClasses ecoreClass="LIRAs.ecore#//Action"/>
+    <genClasses ecoreClass="LIRAs.ecore#//Action">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute LIRAs.ecore#//Action/actionType"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference LIRAs.ecore#//Action/target"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference LIRAs.ecore#//Action/resource"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference LIRAs.ecore#//Action/agent"/>
+    </genClasses>
     <genClasses ecoreClass="LIRAs.ecore#//ActionC">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute LIRAs.ecore#//ActionC/actionType"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference LIRAs.ecore#//ActionC/target"/>

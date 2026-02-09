@@ -1,0 +1,1546 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2821
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Bold;\f1\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red255\green255\blue255;}
+{\*\expandedcolortbl;;\cssrgb\c0\c1\c1;\cssrgb\c100000\c100000\c99985\c0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww34000\viewh19140\viewkind0
+\deftab593
+\pard\tx593\pardeftab593\pardirnatural\partightenfactor0
+
+\f0\b\fs24 \cf2 \cb3 <template>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <name>
+\f1\b0 \cf2 \cb3 Human_moveTo
+\f0\b \cf2 \cb3 </name>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <parameter>
+\f1\b0 \cf2 \cb3 int id, double _v
+\f0\b \cf2 \cb3 </parameter>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <declaration>
+\f1\b0 \cf2 \cb3 clock t, F;\
+clock tUpd;\
+clock tExp;\
+int FW_max = 100;\
+double Fp;\
+double lambda, mi;\
+const double passout_th = 1.0;\
+const double iteration_time = 3.0;\
+const double YOUNG_SICK[2] = \{0.001865, 0.005117\};\
+const double YOUNG_SICK_SIGMA[2] = \{0.000719, 0.000001\};\
+\
+// Errors Model\
+int obey, disobey;\
+double freeWillTh;\
+double fw;\
+int TE;\
+double lambda_crit;\
+double hs, crit, non_crit;\
+int FS =100;\
+\
+void updateHealthDangerProb() \{\
+    crit = hs + hs * humanFatigue[id-1];\
+    non_crit = FS - crit;\
+\}\
+\
+// Fatigue Sharing Parameters\
+bool ONCE_FTG = true;\
+bool ONCE_POS = true;\
+\
+meta int v;\
+\
+void updateF(double coeff, bool walking) \{\
+    // if two human instances are the same person,\
+    // residual conditions must be retrieved\
+\
+    if(walking) humanFatigue[id-1] = 1-(1-humanFatigue[id-1])*exp(coeff*Tpoll);\
+    else humanFatigue[id-1] = humanFatigue[id-1]*exp(coeff*Tpoll);\
+\
+    humanFatigue[id-1] = fmax(0, humanFatigue[id-1]);\
+\}\
+\
+trajectory traj = \{\{0.0, 0.0\},\{0.0, 0.0\},\{0.0, 0.0\},\{0.0, 0.0\},\{0.0, 0.0\},\{0.0, 0.0\},\{0.0, 0.0\},\{0.0, 0.0\},\{0.0, 0.0\},\{0.0, 0.0\}\};\
+double ort = 0.0;\
+int curr_traj = 0;\
+\
+void change_orientation(double sx, double sy, double dx, double dy) \{\
+    double cos_alpha, alpha, theta, delta;\
+    double AC, AB;\
+    bool turnLeft, needsTurning = false;\
+\
+    AC = pt_dist(sx, dx, sy, sy);\
+    AB = pt_dist(sx, dx, sy, dy);\
+\
+    if (AB == 0)\
+    \{\
+        return;\
+    \}\
+\
+    cos_alpha = AC / AB;\
+    // angle between destination and hor. line\
+    alpha = acos(cos_alpha);\
+    // angle between robot axis and hor. line\
+    theta = ort * 180 / PI;\
+    // how much the robot should rotate [deg]\
+    delta = 0.0;\
+    turnLeft = false;\
+\
+    if (dx &gt;= sx &amp;&amp; dy &gt;= sy)\
+    \{ // Destination in 1st quadrant\
+        alpha = alpha * (180 / PI);\
+        if (alpha &gt; theta)\
+        \{\
+            delta = alpha - theta;\
+            turnLeft = true;\
+        \}\
+        else\
+        \{\
+            delta = theta - alpha;\
+            turnLeft = false;\
+        \}\
+    \}\
+    else if (dx &gt;= sx &amp;&amp; dy &lt;= sy)\
+    \{ // Destination in 2nd quadrant\
+        alpha = -alpha * (180 / PI);\
+        if (theta &lt; alpha)\
+        \{\
+            delta = alpha - theta;\
+            turnLeft = true;\
+        \}\
+        else\
+        \{\
+            delta = theta - alpha;\
+            turnLeft = false;\
+        \}\
+    \}\
+    else if (dx &lt;= sx &amp;&amp; dy &lt;= sy)\
+    \{ // Destination in 3rd quadrant\
+        alpha = -(180 - alpha * (180 / PI));\
+        if (theta &lt; alpha)\
+        \{\
+            delta = alpha - theta;\
+            turnLeft = true;\
+        \}\
+        else\
+        \{\
+            delta = theta - alpha;\
+            turnLeft = false;\
+        \}\
+    \}\
+    else if (dx &lt;= sx &amp;&amp; dy &gt;= sy)\
+    \{ // Destination in 4th quadrant\
+        alpha = 180 - alpha * (180 / PI);\
+        if (theta &lt; alpha)\
+        \{\
+            delta = alpha - theta;\
+            turnLeft = true;\
+        \}\
+        else\
+        \{\
+            delta = theta - alpha;\
+            turnLeft = false;\
+        \}\
+    \}\
+\
+    needsTurning = delta &gt; 0.0;\
+\
+    if (needsTurning &amp;&amp; turnLeft)\
+    \{\
+        ort = ort * 180 / PI + delta;\
+    \}\
+    else if (needsTurning &amp;&amp; !turnLeft)\
+    \{\
+        ort = ort * 180 / PI - delta;\
+    \}\
+\}\
+\
+point curr, dest;\
+\
+void plan_traj() \{\
+    int i, j, next_inters = -1;\
+    int neigh[5] = \{-1,-1,-1,-1,-1\};\
+    int k = 0;\
+    double dist, min_dist;\
+    bool visited[N_I] = \{false,false,false,false,false,false,false,false,false\};\
+    curr[0] = humanPositionX[id-1]; curr[1] = humanPositionY[id-1];\
+    dest[0] = location_X[human_loc_target[id-1]]; dest[1] = location_Y[human_loc_target[id-1]];\
+    // init trajectory\
+    for (i = 0; i &lt; N_P; i++)\
+    \{\
+        traj[i][0] = 0.0;\
+        traj[i][1] = 0.0;\
+    \}\
+    i = 0;\
+    curr_traj = 0;\
+\
+    // builds trajectory by finding a path among adjacent areas\
+    // (the existence of an intersection point means two areas are adjacent to each other)\
+    // until the destination area is reached\
+    while (!same_area(curr[0], curr[1], dest[0], dest[1]))\
+    \{\
+        for (j = 0; j &lt; N_I; j++)\
+        \{\
+            // find all int. pts which are a neighbor of curr. point\
+            // there are max. 3 in the long left hall\
+            if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) &amp;&amp; !visited[j])\
+            \{\
+                neigh[k] = j;\
+                k++;\
+            \}\
+        \}\
+        if(neigh[0]==-1) return;\
+        // next int. point to add to traj. is the closest to destination\
+        min_dist = pt_dist(INTERSECTIONS[neigh[0]][0], dest[0], INTERSECTIONS[neigh[0]][1], dest[1]);\
+        next_inters = neigh[0];\
+        for (j = 1; j &lt; 5 &amp;&amp; neigh[j] != -1; j++)\
+        \{\
+            dist = pt_dist(INTERSECTIONS[neigh[j]][0], dest[0], INTERSECTIONS[neigh[j]][1], dest[1]);\
+            if (dist &lt; min_dist)\
+            \{\
+                min_dist = dist;\
+                next_inters = neigh[j];\
+            \}\
+        \}\
+        // if trajectory is full, or no next point has been found,\
+        // something has gone wrong, but I cannot raise an exception\
+        if (i == N_P - 1 || next_inters == -1)\
+            return;\
+        // next inters point is set as visited,\
+        visited[next_inters] = true;\
+        // added to the trajectory,\
+        traj[i][0] = INTERSECTIONS[next_inters][0];\
+        traj[i][1] = INTERSECTIONS[next_inters][1];\
+        i++;\
+        // and set as current point\
+        curr[0] = INTERSECTIONS[next_inters][0];\
+        curr[1] = INTERSECTIONS[next_inters][1];\
+        // reset\
+        next_inters = -1;\
+        k = 0;\
+        for(j=0; j&lt;5;j++) neigh[j] = -1;\
+    \}\
+    // destination point is always part of the trajectory\
+    traj[i][0] = dest[0];\
+    traj[i][1] = dest[1];\
+\
+    //sets initial orientation\
+    change_orientation(humanPositionX[id-1], humanPositionY[id-1], traj[0][0], traj[0][1]);\
+\}\
+\
+\
+\
+void updateP() \{\
+    double eps = 0.0;\
+\
+    if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0))\
+    return;\
+\
+    if (pt_dist(humanPositionX[id-1], traj[curr_traj][0], humanPositionY[id-1], traj[curr_traj][1]) &lt; v) \{\
+        curr_traj++;\
+        if (curr_traj &gt;= N_P)\
+        return;\
+        change_orientation(humanPositionX[id-1], humanPositionY[id-1], traj[curr_traj][0], traj[curr_traj][1]);\
+    \}\
+    \
+    humanPositionX[id-1] = humanPositionX[id-1] + v*Tpoll*cos(ort*PI/180);\
+    humanPositionY[id-1] = humanPositionY[id-1] + v*Tpoll*sin(ort*PI/180);\
+\}\
+\
+bool is_crit = false;\
+bool ignore_crit = false;\
+\
+\
+void check_crit()\{\
+\
+     if(is_crit) v = fint(_v*0.6);\
+     else v = fint(_v);\
+\}\
+\
+\
+double crit_prob;\
+void update_crit() \{\
+    double dice = random(100);\
+    crit_prob = 1-exp(-lambda_crit*t);\
+\
+    if(dice&lt;=crit_prob*100) \{\
+        is_crit = false;\
+        v = fint(_v);\
+    \}\
+\}\
+\
+int e_obey=100, e_disobey=0;\
+int e_FW_th = 101;\
+int e_delta_x100 = 9999;\
+int e_lambda_inv = 9999;\
+int e_crit = 0;\
+\
+\
+void initHuman() \{\
+\
+    t = 0;\
+    tUpd = 0;\
+    F = 0;\
+    Fp = 0;\
+    v = fint(_v);\
+\
+    humanPositionX[id - 1] = h_startX[id-1];\
+    humanPositionY[id - 1] = h_startY[id-1];\
+\
+    humanPositionX[id-1] = humanPositionX[id-1];\
+    humanPositionY[id-1] = humanPositionY[id-1];\
+    \
+    lambda = random_normal(YOUNG_SICK[0], YOUNG_SICK_SIGMA[0]);\
+    mi = random_normal(YOUNG_SICK[1], YOUNG_SICK_SIGMA[1]);\
+\
+    obey = e_obey;\
+    disobey = e_disobey;\
+    freeWillTh = e_FW_th;\
+    lambda_crit = 1/e_lambda_inv;\
+    hs = e_crit;\
+    crit = 1.0;\
+    non_crit = 999.0;\
+\}\
+    
+\f0\b \cf2 \cb3 </declaration>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <location 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id63"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-977"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-255"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <name 
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-1028"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-289"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 inactive
+\f0\b \cf2 \cb3 </name>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </location>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <location 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id64"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-51"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-255"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <name 
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-34"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-280"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 busy
+\f0\b \cf2 \cb3 </name>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "invariant"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-34"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-340"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 F &lt;= passout_th\
+&amp;&amp; F' == Fp*lambda*exp(-lambda*t)\
+&amp;&amp; tUpd&lt;=Tpoll
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </location>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <location 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id65"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-1215"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-255"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <name 
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-1266"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-272"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 Init
+\f0\b \cf2 \cb3 </name>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <committed/>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </location>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <location 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id66"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "459"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-255"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 color
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "#ff0000"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <name 
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "374"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-331"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 passed_out
+\f0\b \cf2 \cb3 </name>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "invariant"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "374"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-314"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 t' == 0 &amp;&amp;\
+F' == 0 &amp;&amp;\
+tExp'==0
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "exponentialrate"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "451"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-238"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 1
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </location>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <location 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id67"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-722"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-255"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <name 
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-732"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-289"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 c1
+\f0\b \cf2 \cb3 </name>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <committed/>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </location>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <location 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id68"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-297"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-255"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <name 
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-289"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-280"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 c2
+\f0\b \cf2 \cb3 </name>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <committed/>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </location>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <location 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id69"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "51"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-25"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <name 
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-8"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-51"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 pub_3
+\f0\b \cf2 \cb3 </name>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <committed/>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </location>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <location 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id70"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "527"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-25"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <committed/>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </location>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <location 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id71"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-722"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-195"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "invariant"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-866"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-187"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 t&lt;=iteration_time
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </location>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <branchpoint 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id72"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "289"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-25"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <branchpoint 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id73"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-492"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-255"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <init 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id65"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <transition 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id74"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <source 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id71"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <target 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id67"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "guard"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-875"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-238"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 t&gt;=iteration_time
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </transition>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <transition 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id75"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <source 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id70"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <target 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id66"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "synchronisation"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "476"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-280"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 hm_fail!
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <nail 
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "527"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-255"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </transition>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <transition 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id76"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 color
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "#ff0000"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <source 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id72"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <target 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id70"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "probability"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "391"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-25"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 crit
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </transition>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <transition 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id77"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <source 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id72"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <target 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id69"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "probability"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "204"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-25"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 non_crit
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </transition>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <transition 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id78"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <source 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id67"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <target 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id73"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </transition>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <transition 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id79"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 color
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "#ff0000"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <source 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id73"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <target 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id71"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "probability"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-645"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-221"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 disobey
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <nail 
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-492"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-195"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </transition>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <transition 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id80"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <source 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id73"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <target 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id68"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "synchronisation"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-484"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-280"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 obey_h_moveTo[id-1]!
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "assignment"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-696"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-340"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 t = 0,\
+tExp=0,\
+tUpd=0,\
+F = humanFatigue[id-1]
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "probability"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-484"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-297"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 obey
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </transition>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <transition 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id81"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <source 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id64"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <target 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id72"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "guard"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "306"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-127"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 tUpd &gt;= Tpoll
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "assignment"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "306"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-110"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 updateF(-lambda, 1),\
+updateP(), tUpd=0,\
+fw = random(FW_max),\
+updateHealthDangerProb()
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <nail 
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "289"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-136"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </transition>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <transition 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id82"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <source 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id69"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <target 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id64"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "assignment"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "17"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-135"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 check_crit(),\
+update_crit()
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </transition>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <transition 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id83"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <source 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id68"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <target 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id64"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "guard"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-272"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-255"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 F&lt;=0 &amp;&amp; F&gt;=-0.05
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "assignment"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-272"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-238"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 Fp=1, F=0, plan_traj()
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </transition>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <transition 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id84"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <source 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id68"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <target 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id64"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "guard"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-221"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-408"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 F&gt;0
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "assignment"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-221"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-391"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 Fp=1-F,\
+plan_traj()
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <nail 
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-297"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-348"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <nail 
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-51"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-348"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </transition>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <transition 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id85"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <source 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id64"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <target 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id63"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "synchronisation"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-586"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-17"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 obey_h_moveTo[id-1]?
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <nail 
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-51"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-25"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <nail 
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-977"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-25"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </transition>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <transition 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id86"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <source 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id63"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <target 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id67"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "synchronisation"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-943"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-280"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 start_h_moveTo[id-1]?
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </transition>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <transition 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id87"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <source 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id64"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <target 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id66"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "guard"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "178"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-280"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 F &gt;= passout_th
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "synchronisation"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "212"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-255"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 hm_fail!
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "assignment"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "221"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-238"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 t = 0
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </transition>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <transition 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id88"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <source 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id66"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <target 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id66"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <nail 
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "434"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-204"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <nail 
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "476"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-204"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </transition>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 <transition 
+\f1\b0 \cf2 \cb3 id
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id89"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <source 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id65"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <target 
+\f1\b0 \cf2 \cb3 ref
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "id63"
+\f0\b \cf2 \cb3 />
+\f1\b0 \cf2 \cb3 \
+			
+\f0\b \cf2 \cb3 <label 
+\f1\b0 \cf2 \cb3 kind
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "assignment"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 x
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-1164"
+\f0\b \cf2 \cb3  
+\f1\b0 \cf2 \cb3 y
+\f0\b \cf2 \cb3 =
+\f1\b0 \cf2 \cb3 "-255"
+\f0\b \cf2 \cb3 >
+\f1\b0 \cf2 \cb3 initHuman()
+\f0\b \cf2 \cb3 </label>
+\f1\b0 \cf2 \cb3 \
+		
+\f0\b \cf2 \cb3 </transition>
+\f1\b0 \cf2 \cb3 \
+	
+\f0\b \cf2 \cb3 </template>}

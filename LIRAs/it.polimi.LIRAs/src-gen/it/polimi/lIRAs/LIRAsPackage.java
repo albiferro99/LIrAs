@@ -407,6 +407,61 @@ public interface LIRAsPackage extends EPackage
   int CONDITIONAL_STATEMENT_FEATURE_COUNT = 7;
 
   /**
+   * The meta object id for the '{@link it.polimi.lIRAs.impl.ActionImpl <em>Action</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see it.polimi.lIRAs.impl.ActionImpl
+   * @see it.polimi.lIRAs.impl.LIRAsPackageImpl#getAction()
+   * @generated
+   */
+  int ACTION = 7;
+
+  /**
+   * The feature id for the '<em><b>Action Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTION__ACTION_TYPE = 0;
+
+  /**
+   * The feature id for the '<em><b>Target</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTION__TARGET = 1;
+
+  /**
+   * The feature id for the '<em><b>Resource</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTION__RESOURCE = 2;
+
+  /**
+   * The feature id for the '<em><b>Agent</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTION__AGENT = 3;
+
+  /**
+   * The number of structural features of the '<em>Action</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTION_FEATURE_COUNT = 4;
+
+  /**
    * The meta object id for the '{@link it.polimi.lIRAs.impl.ActionCImpl <em>Action C</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -469,70 +524,6 @@ public interface LIRAsPackage extends EPackage
    * @ordered
    */
   int ACTION_C_FEATURE_COUNT = 5;
-
-  /**
-   * The meta object id for the '{@link it.polimi.lIRAs.impl.ActionImpl <em>Action</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see it.polimi.lIRAs.impl.ActionImpl
-   * @see it.polimi.lIRAs.impl.LIRAsPackageImpl#getAction()
-   * @generated
-   */
-  int ACTION = 7;
-
-  /**
-   * The feature id for the '<em><b>Action Type</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTION__ACTION_TYPE = ACTION_C__ACTION_TYPE;
-
-  /**
-   * The feature id for the '<em><b>Target</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTION__TARGET = ACTION_C__TARGET;
-
-  /**
-   * The feature id for the '<em><b>Resource</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTION__RESOURCE = ACTION_C__RESOURCE;
-
-  /**
-   * The feature id for the '<em><b>Agent</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTION__AGENT = ACTION_C__AGENT;
-
-  /**
-   * The feature id for the '<em><b>Conditional Statement</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTION__CONDITIONAL_STATEMENT = ACTION_C__CONDITIONAL_STATEMENT;
-
-  /**
-   * The number of structural features of the '<em>Action</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int ACTION_FEATURE_COUNT = ACTION_C_FEATURE_COUNT + 0;
 
   /**
    * The meta object id for the '{@link it.polimi.lIRAs.impl.ConditionImpl <em>Condition</em>}' class.
@@ -1204,6 +1195,50 @@ public interface LIRAsPackage extends EPackage
   EClass getAction();
 
   /**
+   * Returns the meta object for the attribute '{@link it.polimi.lIRAs.Action#getActionType <em>Action Type</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Action Type</em>'.
+   * @see it.polimi.lIRAs.Action#getActionType()
+   * @see #getAction()
+   * @generated
+   */
+  EAttribute getAction_ActionType();
+
+  /**
+   * Returns the meta object for the containment reference '{@link it.polimi.lIRAs.Action#getTarget <em>Target</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Target</em>'.
+   * @see it.polimi.lIRAs.Action#getTarget()
+   * @see #getAction()
+   * @generated
+   */
+  EReference getAction_Target();
+
+  /**
+   * Returns the meta object for the containment reference '{@link it.polimi.lIRAs.Action#getResource <em>Resource</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Resource</em>'.
+   * @see it.polimi.lIRAs.Action#getResource()
+   * @see #getAction()
+   * @generated
+   */
+  EReference getAction_Resource();
+
+  /**
+   * Returns the meta object for the containment reference '{@link it.polimi.lIRAs.Action#getAgent <em>Agent</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Agent</em>'.
+   * @see it.polimi.lIRAs.Action#getAgent()
+   * @see #getAction()
+   * @generated
+   */
+  EReference getAction_Agent();
+
+  /**
    * Returns the meta object for class '{@link it.polimi.lIRAs.ActionC <em>Action C</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1839,6 +1874,38 @@ public interface LIRAsPackage extends EPackage
      * @generated
      */
     EClass ACTION = eINSTANCE.getAction();
+
+    /**
+     * The meta object literal for the '<em><b>Action Type</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ACTION__ACTION_TYPE = eINSTANCE.getAction_ActionType();
+
+    /**
+     * The meta object literal for the '<em><b>Target</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ACTION__TARGET = eINSTANCE.getAction_Target();
+
+    /**
+     * The meta object literal for the '<em><b>Resource</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ACTION__RESOURCE = eINSTANCE.getAction_Resource();
+
+    /**
+     * The meta object literal for the '<em><b>Agent</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ACTION__AGENT = eINSTANCE.getAction_Agent();
 
     /**
      * The meta object literal for the '{@link it.polimi.lIRAs.impl.ActionCImpl <em>Action C</em>}' class.

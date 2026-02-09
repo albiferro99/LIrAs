@@ -3457,45 +3457,45 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleActionC"
-    // InternalLIRAs.g:1345:1: ruleActionC returns [EObject current=null] : ( ( ( () ( (lv_actionType_1_0= 'stop' ) ) ) | ( ( (lv_actionType_2_0= 'moveTo' ) ) ( (lv_target_3_0= ruleTarget ) ) ) | ( ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) ) ) )+ {...}?) ) ) | ( ( (lv_actionType_11_0= 'follow' ) ) ( (lv_agent_12_0= ruleAgent ) ) (otherlv_13= '(' ( (lv_target_14_0= ruleTarget ) ) otherlv_15= ')' )? ) | ( ( (lv_actionType_16_0= 'receiveFrom' ) ) ( (lv_agent_17_0= ruleAgent ) ) ) ) ( (lv_conditionalStatement_18_0= ruleConditionalStatement ) )? ) ;
+    // InternalLIRAs.g:1345:1: ruleActionC returns [EObject current=null] : ( ( ( (lv_actionType_0_0= 'stop' ) ) | ( ( (lv_actionType_1_0= 'moveTo' ) ) ( (lv_target_2_0= ruleTarget ) ) ) | ( ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) ) ) )+ {...}?) ) ) | ( ( (lv_actionType_10_0= 'follow' ) ) ( (lv_agent_11_0= ruleAgent ) ) (otherlv_12= '(' ( (lv_target_13_0= ruleTarget ) ) otherlv_14= ')' )? ) | ( ( (lv_actionType_15_0= 'receiveFrom' ) ) ( (lv_agent_16_0= ruleAgent ) ) ) ) ( (lv_conditionalStatement_17_0= ruleConditionalStatement ) )? ) ;
     public final EObject ruleActionC() throws RecognitionException {
         EObject current = null;
 
+        Token lv_actionType_0_0=null;
         Token lv_actionType_1_0=null;
-        Token lv_actionType_2_0=null;
+        Token lv_actionType_4_0=null;
         Token lv_actionType_5_0=null;
         Token lv_actionType_6_0=null;
         Token lv_actionType_7_0=null;
         Token lv_actionType_8_0=null;
-        Token lv_actionType_9_0=null;
-        Token lv_actionType_11_0=null;
-        Token otherlv_13=null;
-        Token otherlv_15=null;
-        Token lv_actionType_16_0=null;
-        EObject lv_target_3_0 = null;
+        Token lv_actionType_10_0=null;
+        Token otherlv_12=null;
+        Token otherlv_14=null;
+        Token lv_actionType_15_0=null;
+        EObject lv_target_2_0 = null;
 
-        EObject lv_resource_10_0 = null;
+        EObject lv_resource_9_0 = null;
 
-        EObject lv_agent_12_0 = null;
+        EObject lv_agent_11_0 = null;
 
-        EObject lv_target_14_0 = null;
+        EObject lv_target_13_0 = null;
 
-        EObject lv_agent_17_0 = null;
+        EObject lv_agent_16_0 = null;
 
-        EObject lv_conditionalStatement_18_0 = null;
+        EObject lv_conditionalStatement_17_0 = null;
 
 
 
         	enterRule();
 
         try {
-            // InternalLIRAs.g:1351:2: ( ( ( ( () ( (lv_actionType_1_0= 'stop' ) ) ) | ( ( (lv_actionType_2_0= 'moveTo' ) ) ( (lv_target_3_0= ruleTarget ) ) ) | ( ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) ) ) )+ {...}?) ) ) | ( ( (lv_actionType_11_0= 'follow' ) ) ( (lv_agent_12_0= ruleAgent ) ) (otherlv_13= '(' ( (lv_target_14_0= ruleTarget ) ) otherlv_15= ')' )? ) | ( ( (lv_actionType_16_0= 'receiveFrom' ) ) ( (lv_agent_17_0= ruleAgent ) ) ) ) ( (lv_conditionalStatement_18_0= ruleConditionalStatement ) )? ) )
-            // InternalLIRAs.g:1352:2: ( ( ( () ( (lv_actionType_1_0= 'stop' ) ) ) | ( ( (lv_actionType_2_0= 'moveTo' ) ) ( (lv_target_3_0= ruleTarget ) ) ) | ( ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) ) ) )+ {...}?) ) ) | ( ( (lv_actionType_11_0= 'follow' ) ) ( (lv_agent_12_0= ruleAgent ) ) (otherlv_13= '(' ( (lv_target_14_0= ruleTarget ) ) otherlv_15= ')' )? ) | ( ( (lv_actionType_16_0= 'receiveFrom' ) ) ( (lv_agent_17_0= ruleAgent ) ) ) ) ( (lv_conditionalStatement_18_0= ruleConditionalStatement ) )? )
+            // InternalLIRAs.g:1351:2: ( ( ( ( (lv_actionType_0_0= 'stop' ) ) | ( ( (lv_actionType_1_0= 'moveTo' ) ) ( (lv_target_2_0= ruleTarget ) ) ) | ( ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) ) ) )+ {...}?) ) ) | ( ( (lv_actionType_10_0= 'follow' ) ) ( (lv_agent_11_0= ruleAgent ) ) (otherlv_12= '(' ( (lv_target_13_0= ruleTarget ) ) otherlv_14= ')' )? ) | ( ( (lv_actionType_15_0= 'receiveFrom' ) ) ( (lv_agent_16_0= ruleAgent ) ) ) ) ( (lv_conditionalStatement_17_0= ruleConditionalStatement ) )? ) )
+            // InternalLIRAs.g:1352:2: ( ( ( (lv_actionType_0_0= 'stop' ) ) | ( ( (lv_actionType_1_0= 'moveTo' ) ) ( (lv_target_2_0= ruleTarget ) ) ) | ( ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) ) ) )+ {...}?) ) ) | ( ( (lv_actionType_10_0= 'follow' ) ) ( (lv_agent_11_0= ruleAgent ) ) (otherlv_12= '(' ( (lv_target_13_0= ruleTarget ) ) otherlv_14= ')' )? ) | ( ( (lv_actionType_15_0= 'receiveFrom' ) ) ( (lv_agent_16_0= ruleAgent ) ) ) ) ( (lv_conditionalStatement_17_0= ruleConditionalStatement ) )? )
             {
-            // InternalLIRAs.g:1352:2: ( ( ( () ( (lv_actionType_1_0= 'stop' ) ) ) | ( ( (lv_actionType_2_0= 'moveTo' ) ) ( (lv_target_3_0= ruleTarget ) ) ) | ( ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) ) ) )+ {...}?) ) ) | ( ( (lv_actionType_11_0= 'follow' ) ) ( (lv_agent_12_0= ruleAgent ) ) (otherlv_13= '(' ( (lv_target_14_0= ruleTarget ) ) otherlv_15= ')' )? ) | ( ( (lv_actionType_16_0= 'receiveFrom' ) ) ( (lv_agent_17_0= ruleAgent ) ) ) ) ( (lv_conditionalStatement_18_0= ruleConditionalStatement ) )? )
-            // InternalLIRAs.g:1353:3: ( ( () ( (lv_actionType_1_0= 'stop' ) ) ) | ( ( (lv_actionType_2_0= 'moveTo' ) ) ( (lv_target_3_0= ruleTarget ) ) ) | ( ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) ) ) )+ {...}?) ) ) | ( ( (lv_actionType_11_0= 'follow' ) ) ( (lv_agent_12_0= ruleAgent ) ) (otherlv_13= '(' ( (lv_target_14_0= ruleTarget ) ) otherlv_15= ')' )? ) | ( ( (lv_actionType_16_0= 'receiveFrom' ) ) ( (lv_agent_17_0= ruleAgent ) ) ) ) ( (lv_conditionalStatement_18_0= ruleConditionalStatement ) )?
+            // InternalLIRAs.g:1352:2: ( ( ( (lv_actionType_0_0= 'stop' ) ) | ( ( (lv_actionType_1_0= 'moveTo' ) ) ( (lv_target_2_0= ruleTarget ) ) ) | ( ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) ) ) )+ {...}?) ) ) | ( ( (lv_actionType_10_0= 'follow' ) ) ( (lv_agent_11_0= ruleAgent ) ) (otherlv_12= '(' ( (lv_target_13_0= ruleTarget ) ) otherlv_14= ')' )? ) | ( ( (lv_actionType_15_0= 'receiveFrom' ) ) ( (lv_agent_16_0= ruleAgent ) ) ) ) ( (lv_conditionalStatement_17_0= ruleConditionalStatement ) )? )
+            // InternalLIRAs.g:1353:3: ( ( (lv_actionType_0_0= 'stop' ) ) | ( ( (lv_actionType_1_0= 'moveTo' ) ) ( (lv_target_2_0= ruleTarget ) ) ) | ( ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) ) ) )+ {...}?) ) ) | ( ( (lv_actionType_10_0= 'follow' ) ) ( (lv_agent_11_0= ruleAgent ) ) (otherlv_12= '(' ( (lv_target_13_0= ruleTarget ) ) otherlv_14= ')' )? ) | ( ( (lv_actionType_15_0= 'receiveFrom' ) ) ( (lv_agent_16_0= ruleAgent ) ) ) ) ( (lv_conditionalStatement_17_0= ruleConditionalStatement ) )?
             {
-            // InternalLIRAs.g:1353:3: ( ( () ( (lv_actionType_1_0= 'stop' ) ) ) | ( ( (lv_actionType_2_0= 'moveTo' ) ) ( (lv_target_3_0= ruleTarget ) ) ) | ( ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) ) ) )+ {...}?) ) ) | ( ( (lv_actionType_11_0= 'follow' ) ) ( (lv_agent_12_0= ruleAgent ) ) (otherlv_13= '(' ( (lv_target_14_0= ruleTarget ) ) otherlv_15= ')' )? ) | ( ( (lv_actionType_16_0= 'receiveFrom' ) ) ( (lv_agent_17_0= ruleAgent ) ) ) )
+            // InternalLIRAs.g:1353:3: ( ( (lv_actionType_0_0= 'stop' ) ) | ( ( (lv_actionType_1_0= 'moveTo' ) ) ( (lv_target_2_0= ruleTarget ) ) ) | ( ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) ) ) )+ {...}?) ) ) | ( ( (lv_actionType_10_0= 'follow' ) ) ( (lv_agent_11_0= ruleAgent ) ) (otherlv_12= '(' ( (lv_target_13_0= ruleTarget ) ) otherlv_14= ')' )? ) | ( ( (lv_actionType_15_0= 'receiveFrom' ) ) ( (lv_agent_16_0= ruleAgent ) ) ) )
             int alt40=5;
             switch ( input.LA(1) ) {
             case 30:
@@ -3537,41 +3537,24 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
             switch (alt40) {
                 case 1 :
-                    // InternalLIRAs.g:1354:4: ( () ( (lv_actionType_1_0= 'stop' ) ) )
+                    // InternalLIRAs.g:1354:4: ( (lv_actionType_0_0= 'stop' ) )
                     {
-                    // InternalLIRAs.g:1354:4: ( () ( (lv_actionType_1_0= 'stop' ) ) )
-                    // InternalLIRAs.g:1355:5: () ( (lv_actionType_1_0= 'stop' ) )
+                    // InternalLIRAs.g:1354:4: ( (lv_actionType_0_0= 'stop' ) )
+                    // InternalLIRAs.g:1355:5: (lv_actionType_0_0= 'stop' )
                     {
-                    // InternalLIRAs.g:1355:5: ()
-                    // InternalLIRAs.g:1356:6: 
+                    // InternalLIRAs.g:1355:5: (lv_actionType_0_0= 'stop' )
+                    // InternalLIRAs.g:1356:6: lv_actionType_0_0= 'stop'
                     {
+                    lv_actionType_0_0=(Token)match(input,30,FOLLOW_30); 
 
-                    						current = forceCreateModelElement(
-                    							grammarAccess.getActionCAccess().getActionAction_0_0_0(),
-                    							current);
+                    						newLeafNode(lv_actionType_0_0, grammarAccess.getActionCAccess().getActionTypeStopKeyword_0_0_0());
                     					
 
-                    }
-
-                    // InternalLIRAs.g:1362:5: ( (lv_actionType_1_0= 'stop' ) )
-                    // InternalLIRAs.g:1363:6: (lv_actionType_1_0= 'stop' )
-                    {
-                    // InternalLIRAs.g:1363:6: (lv_actionType_1_0= 'stop' )
-                    // InternalLIRAs.g:1364:7: lv_actionType_1_0= 'stop'
-                    {
-                    lv_actionType_1_0=(Token)match(input,30,FOLLOW_30); 
-
-                    							newLeafNode(lv_actionType_1_0, grammarAccess.getActionCAccess().getActionTypeStopKeyword_0_0_1_0());
-                    						
-
-                    							if (current==null) {
-                    								current = createModelElement(grammarAccess.getActionCRule());
-                    							}
-                    							setWithLastConsumed(current, "actionType", lv_actionType_1_0, "stop");
-                    						
-
-                    }
-
+                    						if (current==null) {
+                    							current = createModelElement(grammarAccess.getActionCRule());
+                    						}
+                    						setWithLastConsumed(current, "actionType", lv_actionType_0_0, "stop");
+                    					
 
                     }
 
@@ -3582,26 +3565,26 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalLIRAs.g:1378:4: ( ( (lv_actionType_2_0= 'moveTo' ) ) ( (lv_target_3_0= ruleTarget ) ) )
+                    // InternalLIRAs.g:1369:4: ( ( (lv_actionType_1_0= 'moveTo' ) ) ( (lv_target_2_0= ruleTarget ) ) )
                     {
-                    // InternalLIRAs.g:1378:4: ( ( (lv_actionType_2_0= 'moveTo' ) ) ( (lv_target_3_0= ruleTarget ) ) )
-                    // InternalLIRAs.g:1379:5: ( (lv_actionType_2_0= 'moveTo' ) ) ( (lv_target_3_0= ruleTarget ) )
+                    // InternalLIRAs.g:1369:4: ( ( (lv_actionType_1_0= 'moveTo' ) ) ( (lv_target_2_0= ruleTarget ) ) )
+                    // InternalLIRAs.g:1370:5: ( (lv_actionType_1_0= 'moveTo' ) ) ( (lv_target_2_0= ruleTarget ) )
                     {
-                    // InternalLIRAs.g:1379:5: ( (lv_actionType_2_0= 'moveTo' ) )
-                    // InternalLIRAs.g:1380:6: (lv_actionType_2_0= 'moveTo' )
+                    // InternalLIRAs.g:1370:5: ( (lv_actionType_1_0= 'moveTo' ) )
+                    // InternalLIRAs.g:1371:6: (lv_actionType_1_0= 'moveTo' )
                     {
-                    // InternalLIRAs.g:1380:6: (lv_actionType_2_0= 'moveTo' )
-                    // InternalLIRAs.g:1381:7: lv_actionType_2_0= 'moveTo'
+                    // InternalLIRAs.g:1371:6: (lv_actionType_1_0= 'moveTo' )
+                    // InternalLIRAs.g:1372:7: lv_actionType_1_0= 'moveTo'
                     {
-                    lv_actionType_2_0=(Token)match(input,31,FOLLOW_9); 
+                    lv_actionType_1_0=(Token)match(input,31,FOLLOW_9); 
 
-                    							newLeafNode(lv_actionType_2_0, grammarAccess.getActionCAccess().getActionTypeMoveToKeyword_0_1_0_0());
+                    							newLeafNode(lv_actionType_1_0, grammarAccess.getActionCAccess().getActionTypeMoveToKeyword_0_1_0_0());
                     						
 
                     							if (current==null) {
                     								current = createModelElement(grammarAccess.getActionCRule());
                     							}
-                    							setWithLastConsumed(current, "actionType", lv_actionType_2_0, "moveTo");
+                    							setWithLastConsumed(current, "actionType", lv_actionType_1_0, "moveTo");
                     						
 
                     }
@@ -3609,17 +3592,17 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalLIRAs.g:1393:5: ( (lv_target_3_0= ruleTarget ) )
-                    // InternalLIRAs.g:1394:6: (lv_target_3_0= ruleTarget )
+                    // InternalLIRAs.g:1384:5: ( (lv_target_2_0= ruleTarget ) )
+                    // InternalLIRAs.g:1385:6: (lv_target_2_0= ruleTarget )
                     {
-                    // InternalLIRAs.g:1394:6: (lv_target_3_0= ruleTarget )
-                    // InternalLIRAs.g:1395:7: lv_target_3_0= ruleTarget
+                    // InternalLIRAs.g:1385:6: (lv_target_2_0= ruleTarget )
+                    // InternalLIRAs.g:1386:7: lv_target_2_0= ruleTarget
                     {
 
                     							newCompositeNode(grammarAccess.getActionCAccess().getTargetTargetParserRuleCall_0_1_1_0());
                     						
                     pushFollow(FOLLOW_30);
-                    lv_target_3_0=ruleTarget();
+                    lv_target_2_0=ruleTarget();
 
                     state._fsp--;
 
@@ -3630,7 +3613,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     							set(
                     								current,
                     								"target",
-                    								lv_target_3_0,
+                    								lv_target_2_0,
                     								"it.polimi.LIRAs.Target");
                     							afterParserOrEnumRuleCall();
                     						
@@ -3647,21 +3630,21 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalLIRAs.g:1414:4: ( ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) ) ) )+ {...}?) ) )
+                    // InternalLIRAs.g:1405:4: ( ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) ) ) )+ {...}?) ) )
                     {
-                    // InternalLIRAs.g:1414:4: ( ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) ) ) )+ {...}?) ) )
-                    // InternalLIRAs.g:1415:5: ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) ) ) )+ {...}?) )
+                    // InternalLIRAs.g:1405:4: ( ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) ) ) )+ {...}?) ) )
+                    // InternalLIRAs.g:1406:5: ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) ) ) )+ {...}?) )
                     {
-                    // InternalLIRAs.g:1415:5: ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) ) ) )+ {...}?) )
-                    // InternalLIRAs.g:1416:6: ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) ) ) )+ {...}?)
+                    // InternalLIRAs.g:1406:5: ( ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) ) ) )+ {...}?) )
+                    // InternalLIRAs.g:1407:6: ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) ) ) )+ {...}?)
                     {
                      
                     					  getUnorderedGroupHelper().enter(grammarAccess.getActionCAccess().getUnorderedGroup_0_2());
                     					
-                    // InternalLIRAs.g:1419:6: ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) ) ) )+ {...}?)
-                    // InternalLIRAs.g:1420:7: ( ({...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) ) ) )+ {...}?
+                    // InternalLIRAs.g:1410:6: ( ( ({...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) ) ) )+ {...}?)
+                    // InternalLIRAs.g:1411:7: ( ({...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) ) ) )+ {...}?
                     {
-                    // InternalLIRAs.g:1420:7: ( ({...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) ) ) )+
+                    // InternalLIRAs.g:1411:7: ( ({...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) ) ) | ({...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) ) ) )+
                     int cnt38=0;
                     loop38:
                     do {
@@ -3678,27 +3661,27 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                         switch (alt38) {
                     	case 1 :
-                    	    // InternalLIRAs.g:1421:5: ({...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) ) )
+                    	    // InternalLIRAs.g:1412:5: ({...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) ) )
                     	    {
-                    	    // InternalLIRAs.g:1421:5: ({...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) ) )
-                    	    // InternalLIRAs.g:1422:6: {...}? => ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) )
+                    	    // InternalLIRAs.g:1412:5: ({...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) ) )
+                    	    // InternalLIRAs.g:1413:6: {...}? => ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) )
                     	    {
                     	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getActionCAccess().getUnorderedGroup_0_2(), 0) ) {
                     	        throw new FailedPredicateException(input, "ruleActionC", "getUnorderedGroupHelper().canSelect(grammarAccess.getActionCAccess().getUnorderedGroup_0_2(), 0)");
                     	    }
-                    	    // InternalLIRAs.g:1422:107: ( ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) ) )
-                    	    // InternalLIRAs.g:1423:7: ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) )
+                    	    // InternalLIRAs.g:1413:107: ( ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) ) )
+                    	    // InternalLIRAs.g:1414:7: ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) )
                     	    {
 
                     	    							getUnorderedGroupHelper().select(grammarAccess.getActionCAccess().getUnorderedGroup_0_2(), 0);
                     	    						
-                    	    // InternalLIRAs.g:1426:10: ({...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) ) )
-                    	    // InternalLIRAs.g:1426:11: {...}? => ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) )
+                    	    // InternalLIRAs.g:1417:10: ({...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) ) )
+                    	    // InternalLIRAs.g:1417:11: {...}? => ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) )
                     	    {
                     	    if ( !((true)) ) {
                     	        throw new FailedPredicateException(input, "ruleActionC", "true");
                     	    }
-                    	    // InternalLIRAs.g:1426:20: ( ( (lv_actionType_5_0= 'fetch' ) ) | ( (lv_actionType_6_0= 'pick' ) ) | ( (lv_actionType_7_0= 'deposit' ) ) | ( (lv_actionType_8_0= 'deliver' ) ) | ( (lv_actionType_9_0= 'leave' ) ) )
+                    	    // InternalLIRAs.g:1417:20: ( ( (lv_actionType_4_0= 'fetch' ) ) | ( (lv_actionType_5_0= 'pick' ) ) | ( (lv_actionType_6_0= 'deposit' ) ) | ( (lv_actionType_7_0= 'deliver' ) ) | ( (lv_actionType_8_0= 'leave' ) ) )
                     	    int alt37=5;
                     	    switch ( input.LA(1) ) {
                     	    case 32:
@@ -3735,23 +3718,23 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     	    switch (alt37) {
                     	        case 1 :
-                    	            // InternalLIRAs.g:1426:21: ( (lv_actionType_5_0= 'fetch' ) )
+                    	            // InternalLIRAs.g:1417:21: ( (lv_actionType_4_0= 'fetch' ) )
                     	            {
-                    	            // InternalLIRAs.g:1426:21: ( (lv_actionType_5_0= 'fetch' ) )
-                    	            // InternalLIRAs.g:1427:11: (lv_actionType_5_0= 'fetch' )
+                    	            // InternalLIRAs.g:1417:21: ( (lv_actionType_4_0= 'fetch' ) )
+                    	            // InternalLIRAs.g:1418:11: (lv_actionType_4_0= 'fetch' )
                     	            {
-                    	            // InternalLIRAs.g:1427:11: (lv_actionType_5_0= 'fetch' )
-                    	            // InternalLIRAs.g:1428:12: lv_actionType_5_0= 'fetch'
+                    	            // InternalLIRAs.g:1418:11: (lv_actionType_4_0= 'fetch' )
+                    	            // InternalLIRAs.g:1419:12: lv_actionType_4_0= 'fetch'
                     	            {
-                    	            lv_actionType_5_0=(Token)match(input,32,FOLLOW_31); 
+                    	            lv_actionType_4_0=(Token)match(input,32,FOLLOW_31); 
 
-                    	            												newLeafNode(lv_actionType_5_0, grammarAccess.getActionCAccess().getActionTypeFetchKeyword_0_2_0_0_0());
+                    	            												newLeafNode(lv_actionType_4_0, grammarAccess.getActionCAccess().getActionTypeFetchKeyword_0_2_0_0_0());
                     	            											
 
                     	            												if (current==null) {
                     	            													current = createModelElement(grammarAccess.getActionCRule());
                     	            												}
-                    	            												setWithLastConsumed(current, "actionType", lv_actionType_5_0, "fetch");
+                    	            												setWithLastConsumed(current, "actionType", lv_actionType_4_0, "fetch");
                     	            											
 
                     	            }
@@ -3763,23 +3746,23 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     	            }
                     	            break;
                     	        case 2 :
-                    	            // InternalLIRAs.g:1441:10: ( (lv_actionType_6_0= 'pick' ) )
+                    	            // InternalLIRAs.g:1432:10: ( (lv_actionType_5_0= 'pick' ) )
                     	            {
-                    	            // InternalLIRAs.g:1441:10: ( (lv_actionType_6_0= 'pick' ) )
-                    	            // InternalLIRAs.g:1442:11: (lv_actionType_6_0= 'pick' )
+                    	            // InternalLIRAs.g:1432:10: ( (lv_actionType_5_0= 'pick' ) )
+                    	            // InternalLIRAs.g:1433:11: (lv_actionType_5_0= 'pick' )
                     	            {
-                    	            // InternalLIRAs.g:1442:11: (lv_actionType_6_0= 'pick' )
-                    	            // InternalLIRAs.g:1443:12: lv_actionType_6_0= 'pick'
+                    	            // InternalLIRAs.g:1433:11: (lv_actionType_5_0= 'pick' )
+                    	            // InternalLIRAs.g:1434:12: lv_actionType_5_0= 'pick'
                     	            {
-                    	            lv_actionType_6_0=(Token)match(input,33,FOLLOW_31); 
+                    	            lv_actionType_5_0=(Token)match(input,33,FOLLOW_31); 
 
-                    	            												newLeafNode(lv_actionType_6_0, grammarAccess.getActionCAccess().getActionTypePickKeyword_0_2_0_1_0());
+                    	            												newLeafNode(lv_actionType_5_0, grammarAccess.getActionCAccess().getActionTypePickKeyword_0_2_0_1_0());
                     	            											
 
                     	            												if (current==null) {
                     	            													current = createModelElement(grammarAccess.getActionCRule());
                     	            												}
-                    	            												setWithLastConsumed(current, "actionType", lv_actionType_6_0, "pick");
+                    	            												setWithLastConsumed(current, "actionType", lv_actionType_5_0, "pick");
                     	            											
 
                     	            }
@@ -3791,23 +3774,23 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     	            }
                     	            break;
                     	        case 3 :
-                    	            // InternalLIRAs.g:1456:10: ( (lv_actionType_7_0= 'deposit' ) )
+                    	            // InternalLIRAs.g:1447:10: ( (lv_actionType_6_0= 'deposit' ) )
                     	            {
-                    	            // InternalLIRAs.g:1456:10: ( (lv_actionType_7_0= 'deposit' ) )
-                    	            // InternalLIRAs.g:1457:11: (lv_actionType_7_0= 'deposit' )
+                    	            // InternalLIRAs.g:1447:10: ( (lv_actionType_6_0= 'deposit' ) )
+                    	            // InternalLIRAs.g:1448:11: (lv_actionType_6_0= 'deposit' )
                     	            {
-                    	            // InternalLIRAs.g:1457:11: (lv_actionType_7_0= 'deposit' )
-                    	            // InternalLIRAs.g:1458:12: lv_actionType_7_0= 'deposit'
+                    	            // InternalLIRAs.g:1448:11: (lv_actionType_6_0= 'deposit' )
+                    	            // InternalLIRAs.g:1449:12: lv_actionType_6_0= 'deposit'
                     	            {
-                    	            lv_actionType_7_0=(Token)match(input,40,FOLLOW_31); 
+                    	            lv_actionType_6_0=(Token)match(input,40,FOLLOW_31); 
 
-                    	            												newLeafNode(lv_actionType_7_0, grammarAccess.getActionCAccess().getActionTypeDepositKeyword_0_2_0_2_0());
+                    	            												newLeafNode(lv_actionType_6_0, grammarAccess.getActionCAccess().getActionTypeDepositKeyword_0_2_0_2_0());
                     	            											
 
                     	            												if (current==null) {
                     	            													current = createModelElement(grammarAccess.getActionCRule());
                     	            												}
-                    	            												setWithLastConsumed(current, "actionType", lv_actionType_7_0, "deposit");
+                    	            												setWithLastConsumed(current, "actionType", lv_actionType_6_0, "deposit");
                     	            											
 
                     	            }
@@ -3819,23 +3802,23 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     	            }
                     	            break;
                     	        case 4 :
-                    	            // InternalLIRAs.g:1471:10: ( (lv_actionType_8_0= 'deliver' ) )
+                    	            // InternalLIRAs.g:1462:10: ( (lv_actionType_7_0= 'deliver' ) )
                     	            {
-                    	            // InternalLIRAs.g:1471:10: ( (lv_actionType_8_0= 'deliver' ) )
-                    	            // InternalLIRAs.g:1472:11: (lv_actionType_8_0= 'deliver' )
+                    	            // InternalLIRAs.g:1462:10: ( (lv_actionType_7_0= 'deliver' ) )
+                    	            // InternalLIRAs.g:1463:11: (lv_actionType_7_0= 'deliver' )
                     	            {
-                    	            // InternalLIRAs.g:1472:11: (lv_actionType_8_0= 'deliver' )
-                    	            // InternalLIRAs.g:1473:12: lv_actionType_8_0= 'deliver'
+                    	            // InternalLIRAs.g:1463:11: (lv_actionType_7_0= 'deliver' )
+                    	            // InternalLIRAs.g:1464:12: lv_actionType_7_0= 'deliver'
                     	            {
-                    	            lv_actionType_8_0=(Token)match(input,34,FOLLOW_31); 
+                    	            lv_actionType_7_0=(Token)match(input,34,FOLLOW_31); 
 
-                    	            												newLeafNode(lv_actionType_8_0, grammarAccess.getActionCAccess().getActionTypeDeliverKeyword_0_2_0_3_0());
+                    	            												newLeafNode(lv_actionType_7_0, grammarAccess.getActionCAccess().getActionTypeDeliverKeyword_0_2_0_3_0());
                     	            											
 
                     	            												if (current==null) {
                     	            													current = createModelElement(grammarAccess.getActionCRule());
                     	            												}
-                    	            												setWithLastConsumed(current, "actionType", lv_actionType_8_0, "deliver");
+                    	            												setWithLastConsumed(current, "actionType", lv_actionType_7_0, "deliver");
                     	            											
 
                     	            }
@@ -3847,23 +3830,23 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     	            }
                     	            break;
                     	        case 5 :
-                    	            // InternalLIRAs.g:1486:10: ( (lv_actionType_9_0= 'leave' ) )
+                    	            // InternalLIRAs.g:1477:10: ( (lv_actionType_8_0= 'leave' ) )
                     	            {
-                    	            // InternalLIRAs.g:1486:10: ( (lv_actionType_9_0= 'leave' ) )
-                    	            // InternalLIRAs.g:1487:11: (lv_actionType_9_0= 'leave' )
+                    	            // InternalLIRAs.g:1477:10: ( (lv_actionType_8_0= 'leave' ) )
+                    	            // InternalLIRAs.g:1478:11: (lv_actionType_8_0= 'leave' )
                     	            {
-                    	            // InternalLIRAs.g:1487:11: (lv_actionType_9_0= 'leave' )
-                    	            // InternalLIRAs.g:1488:12: lv_actionType_9_0= 'leave'
+                    	            // InternalLIRAs.g:1478:11: (lv_actionType_8_0= 'leave' )
+                    	            // InternalLIRAs.g:1479:12: lv_actionType_8_0= 'leave'
                     	            {
-                    	            lv_actionType_9_0=(Token)match(input,35,FOLLOW_31); 
+                    	            lv_actionType_8_0=(Token)match(input,35,FOLLOW_31); 
 
-                    	            												newLeafNode(lv_actionType_9_0, grammarAccess.getActionCAccess().getActionTypeLeaveKeyword_0_2_0_4_0());
+                    	            												newLeafNode(lv_actionType_8_0, grammarAccess.getActionCAccess().getActionTypeLeaveKeyword_0_2_0_4_0());
                     	            											
 
                     	            												if (current==null) {
                     	            													current = createModelElement(grammarAccess.getActionCRule());
                     	            												}
-                    	            												setWithLastConsumed(current, "actionType", lv_actionType_9_0, "leave");
+                    	            												setWithLastConsumed(current, "actionType", lv_actionType_8_0, "leave");
                     	            											
 
                     	            }
@@ -3893,37 +3876,37 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalLIRAs.g:1506:5: ({...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) ) )
+                    	    // InternalLIRAs.g:1497:5: ({...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) ) )
                     	    {
-                    	    // InternalLIRAs.g:1506:5: ({...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) ) )
-                    	    // InternalLIRAs.g:1507:6: {...}? => ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) )
+                    	    // InternalLIRAs.g:1497:5: ({...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) ) )
+                    	    // InternalLIRAs.g:1498:6: {...}? => ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) )
                     	    {
                     	    if ( ! getUnorderedGroupHelper().canSelect(grammarAccess.getActionCAccess().getUnorderedGroup_0_2(), 1) ) {
                     	        throw new FailedPredicateException(input, "ruleActionC", "getUnorderedGroupHelper().canSelect(grammarAccess.getActionCAccess().getUnorderedGroup_0_2(), 1)");
                     	    }
-                    	    // InternalLIRAs.g:1507:107: ( ({...}? => ( (lv_resource_10_0= ruleResource ) ) ) )
-                    	    // InternalLIRAs.g:1508:7: ({...}? => ( (lv_resource_10_0= ruleResource ) ) )
+                    	    // InternalLIRAs.g:1498:107: ( ({...}? => ( (lv_resource_9_0= ruleResource ) ) ) )
+                    	    // InternalLIRAs.g:1499:7: ({...}? => ( (lv_resource_9_0= ruleResource ) ) )
                     	    {
 
                     	    							getUnorderedGroupHelper().select(grammarAccess.getActionCAccess().getUnorderedGroup_0_2(), 1);
                     	    						
-                    	    // InternalLIRAs.g:1511:10: ({...}? => ( (lv_resource_10_0= ruleResource ) ) )
-                    	    // InternalLIRAs.g:1511:11: {...}? => ( (lv_resource_10_0= ruleResource ) )
+                    	    // InternalLIRAs.g:1502:10: ({...}? => ( (lv_resource_9_0= ruleResource ) ) )
+                    	    // InternalLIRAs.g:1502:11: {...}? => ( (lv_resource_9_0= ruleResource ) )
                     	    {
                     	    if ( !((true)) ) {
                     	        throw new FailedPredicateException(input, "ruleActionC", "true");
                     	    }
-                    	    // InternalLIRAs.g:1511:20: ( (lv_resource_10_0= ruleResource ) )
-                    	    // InternalLIRAs.g:1511:21: (lv_resource_10_0= ruleResource )
+                    	    // InternalLIRAs.g:1502:20: ( (lv_resource_9_0= ruleResource ) )
+                    	    // InternalLIRAs.g:1502:21: (lv_resource_9_0= ruleResource )
                     	    {
-                    	    // InternalLIRAs.g:1511:21: (lv_resource_10_0= ruleResource )
-                    	    // InternalLIRAs.g:1512:11: lv_resource_10_0= ruleResource
+                    	    // InternalLIRAs.g:1502:21: (lv_resource_9_0= ruleResource )
+                    	    // InternalLIRAs.g:1503:11: lv_resource_9_0= ruleResource
                     	    {
 
                     	    											newCompositeNode(grammarAccess.getActionCAccess().getResourceResourceParserRuleCall_0_2_1_0());
                     	    										
                     	    pushFollow(FOLLOW_31);
-                    	    lv_resource_10_0=ruleResource();
+                    	    lv_resource_9_0=ruleResource();
 
                     	    state._fsp--;
 
@@ -3934,7 +3917,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     	    											set(
                     	    												current,
                     	    												"resource",
-                    	    												lv_resource_10_0,
+                    	    												lv_resource_9_0,
                     	    												"it.polimi.LIRAs.Resource");
                     	    											afterParserOrEnumRuleCall();
                     	    										
@@ -3988,26 +3971,26 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalLIRAs.g:1543:4: ( ( (lv_actionType_11_0= 'follow' ) ) ( (lv_agent_12_0= ruleAgent ) ) (otherlv_13= '(' ( (lv_target_14_0= ruleTarget ) ) otherlv_15= ')' )? )
+                    // InternalLIRAs.g:1534:4: ( ( (lv_actionType_10_0= 'follow' ) ) ( (lv_agent_11_0= ruleAgent ) ) (otherlv_12= '(' ( (lv_target_13_0= ruleTarget ) ) otherlv_14= ')' )? )
                     {
-                    // InternalLIRAs.g:1543:4: ( ( (lv_actionType_11_0= 'follow' ) ) ( (lv_agent_12_0= ruleAgent ) ) (otherlv_13= '(' ( (lv_target_14_0= ruleTarget ) ) otherlv_15= ')' )? )
-                    // InternalLIRAs.g:1544:5: ( (lv_actionType_11_0= 'follow' ) ) ( (lv_agent_12_0= ruleAgent ) ) (otherlv_13= '(' ( (lv_target_14_0= ruleTarget ) ) otherlv_15= ')' )?
+                    // InternalLIRAs.g:1534:4: ( ( (lv_actionType_10_0= 'follow' ) ) ( (lv_agent_11_0= ruleAgent ) ) (otherlv_12= '(' ( (lv_target_13_0= ruleTarget ) ) otherlv_14= ')' )? )
+                    // InternalLIRAs.g:1535:5: ( (lv_actionType_10_0= 'follow' ) ) ( (lv_agent_11_0= ruleAgent ) ) (otherlv_12= '(' ( (lv_target_13_0= ruleTarget ) ) otherlv_14= ')' )?
                     {
-                    // InternalLIRAs.g:1544:5: ( (lv_actionType_11_0= 'follow' ) )
-                    // InternalLIRAs.g:1545:6: (lv_actionType_11_0= 'follow' )
+                    // InternalLIRAs.g:1535:5: ( (lv_actionType_10_0= 'follow' ) )
+                    // InternalLIRAs.g:1536:6: (lv_actionType_10_0= 'follow' )
                     {
-                    // InternalLIRAs.g:1545:6: (lv_actionType_11_0= 'follow' )
-                    // InternalLIRAs.g:1546:7: lv_actionType_11_0= 'follow'
+                    // InternalLIRAs.g:1536:6: (lv_actionType_10_0= 'follow' )
+                    // InternalLIRAs.g:1537:7: lv_actionType_10_0= 'follow'
                     {
-                    lv_actionType_11_0=(Token)match(input,36,FOLLOW_9); 
+                    lv_actionType_10_0=(Token)match(input,36,FOLLOW_9); 
 
-                    							newLeafNode(lv_actionType_11_0, grammarAccess.getActionCAccess().getActionTypeFollowKeyword_0_3_0_0());
+                    							newLeafNode(lv_actionType_10_0, grammarAccess.getActionCAccess().getActionTypeFollowKeyword_0_3_0_0());
                     						
 
                     							if (current==null) {
                     								current = createModelElement(grammarAccess.getActionCRule());
                     							}
-                    							setWithLastConsumed(current, "actionType", lv_actionType_11_0, "follow");
+                    							setWithLastConsumed(current, "actionType", lv_actionType_10_0, "follow");
                     						
 
                     }
@@ -4015,17 +3998,17 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalLIRAs.g:1558:5: ( (lv_agent_12_0= ruleAgent ) )
-                    // InternalLIRAs.g:1559:6: (lv_agent_12_0= ruleAgent )
+                    // InternalLIRAs.g:1549:5: ( (lv_agent_11_0= ruleAgent ) )
+                    // InternalLIRAs.g:1550:6: (lv_agent_11_0= ruleAgent )
                     {
-                    // InternalLIRAs.g:1559:6: (lv_agent_12_0= ruleAgent )
-                    // InternalLIRAs.g:1560:7: lv_agent_12_0= ruleAgent
+                    // InternalLIRAs.g:1550:6: (lv_agent_11_0= ruleAgent )
+                    // InternalLIRAs.g:1551:7: lv_agent_11_0= ruleAgent
                     {
 
                     							newCompositeNode(grammarAccess.getActionCAccess().getAgentAgentParserRuleCall_0_3_1_0());
                     						
                     pushFollow(FOLLOW_32);
-                    lv_agent_12_0=ruleAgent();
+                    lv_agent_11_0=ruleAgent();
 
                     state._fsp--;
 
@@ -4036,7 +4019,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     							set(
                     								current,
                     								"agent",
-                    								lv_agent_12_0,
+                    								lv_agent_11_0,
                     								"it.polimi.LIRAs.Agent");
                     							afterParserOrEnumRuleCall();
                     						
@@ -4046,7 +4029,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalLIRAs.g:1577:5: (otherlv_13= '(' ( (lv_target_14_0= ruleTarget ) ) otherlv_15= ')' )?
+                    // InternalLIRAs.g:1568:5: (otherlv_12= '(' ( (lv_target_13_0= ruleTarget ) ) otherlv_14= ')' )?
                     int alt39=2;
                     int LA39_0 = input.LA(1);
 
@@ -4055,23 +4038,23 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt39) {
                         case 1 :
-                            // InternalLIRAs.g:1578:6: otherlv_13= '(' ( (lv_target_14_0= ruleTarget ) ) otherlv_15= ')'
+                            // InternalLIRAs.g:1569:6: otherlv_12= '(' ( (lv_target_13_0= ruleTarget ) ) otherlv_14= ')'
                             {
-                            otherlv_13=(Token)match(input,37,FOLLOW_9); 
+                            otherlv_12=(Token)match(input,37,FOLLOW_9); 
 
-                            						newLeafNode(otherlv_13, grammarAccess.getActionCAccess().getLeftParenthesisKeyword_0_3_2_0());
+                            						newLeafNode(otherlv_12, grammarAccess.getActionCAccess().getLeftParenthesisKeyword_0_3_2_0());
                             					
-                            // InternalLIRAs.g:1582:6: ( (lv_target_14_0= ruleTarget ) )
-                            // InternalLIRAs.g:1583:7: (lv_target_14_0= ruleTarget )
+                            // InternalLIRAs.g:1573:6: ( (lv_target_13_0= ruleTarget ) )
+                            // InternalLIRAs.g:1574:7: (lv_target_13_0= ruleTarget )
                             {
-                            // InternalLIRAs.g:1583:7: (lv_target_14_0= ruleTarget )
-                            // InternalLIRAs.g:1584:8: lv_target_14_0= ruleTarget
+                            // InternalLIRAs.g:1574:7: (lv_target_13_0= ruleTarget )
+                            // InternalLIRAs.g:1575:8: lv_target_13_0= ruleTarget
                             {
 
                             								newCompositeNode(grammarAccess.getActionCAccess().getTargetTargetParserRuleCall_0_3_2_1_0());
                             							
                             pushFollow(FOLLOW_29);
-                            lv_target_14_0=ruleTarget();
+                            lv_target_13_0=ruleTarget();
 
                             state._fsp--;
 
@@ -4082,7 +4065,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                             								set(
                             									current,
                             									"target",
-                            									lv_target_14_0,
+                            									lv_target_13_0,
                             									"it.polimi.LIRAs.Target");
                             								afterParserOrEnumRuleCall();
                             							
@@ -4092,9 +4075,9 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                             }
 
-                            otherlv_15=(Token)match(input,38,FOLLOW_30); 
+                            otherlv_14=(Token)match(input,38,FOLLOW_30); 
 
-                            						newLeafNode(otherlv_15, grammarAccess.getActionCAccess().getRightParenthesisKeyword_0_3_2_2());
+                            						newLeafNode(otherlv_14, grammarAccess.getActionCAccess().getRightParenthesisKeyword_0_3_2_2());
                             					
 
                             }
@@ -4109,26 +4092,26 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 5 :
-                    // InternalLIRAs.g:1608:4: ( ( (lv_actionType_16_0= 'receiveFrom' ) ) ( (lv_agent_17_0= ruleAgent ) ) )
+                    // InternalLIRAs.g:1599:4: ( ( (lv_actionType_15_0= 'receiveFrom' ) ) ( (lv_agent_16_0= ruleAgent ) ) )
                     {
-                    // InternalLIRAs.g:1608:4: ( ( (lv_actionType_16_0= 'receiveFrom' ) ) ( (lv_agent_17_0= ruleAgent ) ) )
-                    // InternalLIRAs.g:1609:5: ( (lv_actionType_16_0= 'receiveFrom' ) ) ( (lv_agent_17_0= ruleAgent ) )
+                    // InternalLIRAs.g:1599:4: ( ( (lv_actionType_15_0= 'receiveFrom' ) ) ( (lv_agent_16_0= ruleAgent ) ) )
+                    // InternalLIRAs.g:1600:5: ( (lv_actionType_15_0= 'receiveFrom' ) ) ( (lv_agent_16_0= ruleAgent ) )
                     {
-                    // InternalLIRAs.g:1609:5: ( (lv_actionType_16_0= 'receiveFrom' ) )
-                    // InternalLIRAs.g:1610:6: (lv_actionType_16_0= 'receiveFrom' )
+                    // InternalLIRAs.g:1600:5: ( (lv_actionType_15_0= 'receiveFrom' ) )
+                    // InternalLIRAs.g:1601:6: (lv_actionType_15_0= 'receiveFrom' )
                     {
-                    // InternalLIRAs.g:1610:6: (lv_actionType_16_0= 'receiveFrom' )
-                    // InternalLIRAs.g:1611:7: lv_actionType_16_0= 'receiveFrom'
+                    // InternalLIRAs.g:1601:6: (lv_actionType_15_0= 'receiveFrom' )
+                    // InternalLIRAs.g:1602:7: lv_actionType_15_0= 'receiveFrom'
                     {
-                    lv_actionType_16_0=(Token)match(input,39,FOLLOW_9); 
+                    lv_actionType_15_0=(Token)match(input,39,FOLLOW_9); 
 
-                    							newLeafNode(lv_actionType_16_0, grammarAccess.getActionCAccess().getActionTypeReceiveFromKeyword_0_4_0_0());
+                    							newLeafNode(lv_actionType_15_0, grammarAccess.getActionCAccess().getActionTypeReceiveFromKeyword_0_4_0_0());
                     						
 
                     							if (current==null) {
                     								current = createModelElement(grammarAccess.getActionCRule());
                     							}
-                    							setWithLastConsumed(current, "actionType", lv_actionType_16_0, "receiveFrom");
+                    							setWithLastConsumed(current, "actionType", lv_actionType_15_0, "receiveFrom");
                     						
 
                     }
@@ -4136,17 +4119,17 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalLIRAs.g:1623:5: ( (lv_agent_17_0= ruleAgent ) )
-                    // InternalLIRAs.g:1624:6: (lv_agent_17_0= ruleAgent )
+                    // InternalLIRAs.g:1614:5: ( (lv_agent_16_0= ruleAgent ) )
+                    // InternalLIRAs.g:1615:6: (lv_agent_16_0= ruleAgent )
                     {
-                    // InternalLIRAs.g:1624:6: (lv_agent_17_0= ruleAgent )
-                    // InternalLIRAs.g:1625:7: lv_agent_17_0= ruleAgent
+                    // InternalLIRAs.g:1615:6: (lv_agent_16_0= ruleAgent )
+                    // InternalLIRAs.g:1616:7: lv_agent_16_0= ruleAgent
                     {
 
                     							newCompositeNode(grammarAccess.getActionCAccess().getAgentAgentParserRuleCall_0_4_1_0());
                     						
                     pushFollow(FOLLOW_30);
-                    lv_agent_17_0=ruleAgent();
+                    lv_agent_16_0=ruleAgent();
 
                     state._fsp--;
 
@@ -4157,7 +4140,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     							set(
                     								current,
                     								"agent",
-                    								lv_agent_17_0,
+                    								lv_agent_16_0,
                     								"it.polimi.LIRAs.Agent");
                     							afterParserOrEnumRuleCall();
                     						
@@ -4176,7 +4159,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalLIRAs.g:1644:3: ( (lv_conditionalStatement_18_0= ruleConditionalStatement ) )?
+            // InternalLIRAs.g:1635:3: ( (lv_conditionalStatement_17_0= ruleConditionalStatement ) )?
             int alt41=2;
             int LA41_0 = input.LA(1);
 
@@ -4185,16 +4168,16 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
             }
             switch (alt41) {
                 case 1 :
-                    // InternalLIRAs.g:1645:4: (lv_conditionalStatement_18_0= ruleConditionalStatement )
+                    // InternalLIRAs.g:1636:4: (lv_conditionalStatement_17_0= ruleConditionalStatement )
                     {
-                    // InternalLIRAs.g:1645:4: (lv_conditionalStatement_18_0= ruleConditionalStatement )
-                    // InternalLIRAs.g:1646:5: lv_conditionalStatement_18_0= ruleConditionalStatement
+                    // InternalLIRAs.g:1636:4: (lv_conditionalStatement_17_0= ruleConditionalStatement )
+                    // InternalLIRAs.g:1637:5: lv_conditionalStatement_17_0= ruleConditionalStatement
                     {
 
                     					newCompositeNode(grammarAccess.getActionCAccess().getConditionalStatementConditionalStatementParserRuleCall_1_0());
                     				
                     pushFollow(FOLLOW_2);
-                    lv_conditionalStatement_18_0=ruleConditionalStatement();
+                    lv_conditionalStatement_17_0=ruleConditionalStatement();
 
                     state._fsp--;
 
@@ -4205,7 +4188,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     					add(
                     						current,
                     						"conditionalStatement",
-                    						lv_conditionalStatement_18_0,
+                    						lv_conditionalStatement_17_0,
                     						"it.polimi.LIRAs.ConditionalStatement");
                     					afterParserOrEnumRuleCall();
                     				
@@ -4241,7 +4224,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleCondition"
-    // InternalLIRAs.g:1667:1: entryRuleCondition returns [EObject current=null] : iv_ruleCondition= ruleCondition EOF ;
+    // InternalLIRAs.g:1658:1: entryRuleCondition returns [EObject current=null] : iv_ruleCondition= ruleCondition EOF ;
     public final EObject entryRuleCondition() throws RecognitionException {
         EObject current = null;
 
@@ -4249,8 +4232,8 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLIRAs.g:1667:50: (iv_ruleCondition= ruleCondition EOF )
-            // InternalLIRAs.g:1668:2: iv_ruleCondition= ruleCondition EOF
+            // InternalLIRAs.g:1658:50: (iv_ruleCondition= ruleCondition EOF )
+            // InternalLIRAs.g:1659:2: iv_ruleCondition= ruleCondition EOF
             {
              newCompositeNode(grammarAccess.getConditionRule()); 
             pushFollow(FOLLOW_1);
@@ -4277,7 +4260,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleCondition"
-    // InternalLIRAs.g:1674:1: ruleCondition returns [EObject current=null] : ( ( (lv_atomicPredicate_0_0= ruleAtomicPredicate ) ) ( ( ( (lv_op_1_0= '&&' ) ) | ( (lv_op_2_0= '||' ) ) ) ( (lv_atomicPredicate_3_0= ruleAtomicPredicate ) ) )* ) ;
+    // InternalLIRAs.g:1665:1: ruleCondition returns [EObject current=null] : ( ( (lv_atomicPredicate_0_0= ruleAtomicPredicate ) ) ( ( ( (lv_op_1_0= '&&' ) ) | ( (lv_op_2_0= '||' ) ) ) ( (lv_atomicPredicate_3_0= ruleAtomicPredicate ) ) )* ) ;
     public final EObject ruleCondition() throws RecognitionException {
         EObject current = null;
 
@@ -4292,17 +4275,17 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalLIRAs.g:1680:2: ( ( ( (lv_atomicPredicate_0_0= ruleAtomicPredicate ) ) ( ( ( (lv_op_1_0= '&&' ) ) | ( (lv_op_2_0= '||' ) ) ) ( (lv_atomicPredicate_3_0= ruleAtomicPredicate ) ) )* ) )
-            // InternalLIRAs.g:1681:2: ( ( (lv_atomicPredicate_0_0= ruleAtomicPredicate ) ) ( ( ( (lv_op_1_0= '&&' ) ) | ( (lv_op_2_0= '||' ) ) ) ( (lv_atomicPredicate_3_0= ruleAtomicPredicate ) ) )* )
+            // InternalLIRAs.g:1671:2: ( ( ( (lv_atomicPredicate_0_0= ruleAtomicPredicate ) ) ( ( ( (lv_op_1_0= '&&' ) ) | ( (lv_op_2_0= '||' ) ) ) ( (lv_atomicPredicate_3_0= ruleAtomicPredicate ) ) )* ) )
+            // InternalLIRAs.g:1672:2: ( ( (lv_atomicPredicate_0_0= ruleAtomicPredicate ) ) ( ( ( (lv_op_1_0= '&&' ) ) | ( (lv_op_2_0= '||' ) ) ) ( (lv_atomicPredicate_3_0= ruleAtomicPredicate ) ) )* )
             {
-            // InternalLIRAs.g:1681:2: ( ( (lv_atomicPredicate_0_0= ruleAtomicPredicate ) ) ( ( ( (lv_op_1_0= '&&' ) ) | ( (lv_op_2_0= '||' ) ) ) ( (lv_atomicPredicate_3_0= ruleAtomicPredicate ) ) )* )
-            // InternalLIRAs.g:1682:3: ( (lv_atomicPredicate_0_0= ruleAtomicPredicate ) ) ( ( ( (lv_op_1_0= '&&' ) ) | ( (lv_op_2_0= '||' ) ) ) ( (lv_atomicPredicate_3_0= ruleAtomicPredicate ) ) )*
+            // InternalLIRAs.g:1672:2: ( ( (lv_atomicPredicate_0_0= ruleAtomicPredicate ) ) ( ( ( (lv_op_1_0= '&&' ) ) | ( (lv_op_2_0= '||' ) ) ) ( (lv_atomicPredicate_3_0= ruleAtomicPredicate ) ) )* )
+            // InternalLIRAs.g:1673:3: ( (lv_atomicPredicate_0_0= ruleAtomicPredicate ) ) ( ( ( (lv_op_1_0= '&&' ) ) | ( (lv_op_2_0= '||' ) ) ) ( (lv_atomicPredicate_3_0= ruleAtomicPredicate ) ) )*
             {
-            // InternalLIRAs.g:1682:3: ( (lv_atomicPredicate_0_0= ruleAtomicPredicate ) )
-            // InternalLIRAs.g:1683:4: (lv_atomicPredicate_0_0= ruleAtomicPredicate )
+            // InternalLIRAs.g:1673:3: ( (lv_atomicPredicate_0_0= ruleAtomicPredicate ) )
+            // InternalLIRAs.g:1674:4: (lv_atomicPredicate_0_0= ruleAtomicPredicate )
             {
-            // InternalLIRAs.g:1683:4: (lv_atomicPredicate_0_0= ruleAtomicPredicate )
-            // InternalLIRAs.g:1684:5: lv_atomicPredicate_0_0= ruleAtomicPredicate
+            // InternalLIRAs.g:1674:4: (lv_atomicPredicate_0_0= ruleAtomicPredicate )
+            // InternalLIRAs.g:1675:5: lv_atomicPredicate_0_0= ruleAtomicPredicate
             {
 
             					newCompositeNode(grammarAccess.getConditionAccess().getAtomicPredicateAtomicPredicateParserRuleCall_0_0());
@@ -4329,7 +4312,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalLIRAs.g:1701:3: ( ( ( (lv_op_1_0= '&&' ) ) | ( (lv_op_2_0= '||' ) ) ) ( (lv_atomicPredicate_3_0= ruleAtomicPredicate ) ) )*
+            // InternalLIRAs.g:1692:3: ( ( ( (lv_op_1_0= '&&' ) ) | ( (lv_op_2_0= '||' ) ) ) ( (lv_atomicPredicate_3_0= ruleAtomicPredicate ) ) )*
             loop43:
             do {
                 int alt43=2;
@@ -4342,9 +4325,9 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                 switch (alt43) {
             	case 1 :
-            	    // InternalLIRAs.g:1702:4: ( ( (lv_op_1_0= '&&' ) ) | ( (lv_op_2_0= '||' ) ) ) ( (lv_atomicPredicate_3_0= ruleAtomicPredicate ) )
+            	    // InternalLIRAs.g:1693:4: ( ( (lv_op_1_0= '&&' ) ) | ( (lv_op_2_0= '||' ) ) ) ( (lv_atomicPredicate_3_0= ruleAtomicPredicate ) )
             	    {
-            	    // InternalLIRAs.g:1702:4: ( ( (lv_op_1_0= '&&' ) ) | ( (lv_op_2_0= '||' ) ) )
+            	    // InternalLIRAs.g:1693:4: ( ( (lv_op_1_0= '&&' ) ) | ( (lv_op_2_0= '||' ) ) )
             	    int alt42=2;
             	    int LA42_0 = input.LA(1);
 
@@ -4362,13 +4345,13 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
             	    }
             	    switch (alt42) {
             	        case 1 :
-            	            // InternalLIRAs.g:1703:5: ( (lv_op_1_0= '&&' ) )
+            	            // InternalLIRAs.g:1694:5: ( (lv_op_1_0= '&&' ) )
             	            {
-            	            // InternalLIRAs.g:1703:5: ( (lv_op_1_0= '&&' ) )
-            	            // InternalLIRAs.g:1704:6: (lv_op_1_0= '&&' )
+            	            // InternalLIRAs.g:1694:5: ( (lv_op_1_0= '&&' ) )
+            	            // InternalLIRAs.g:1695:6: (lv_op_1_0= '&&' )
             	            {
-            	            // InternalLIRAs.g:1704:6: (lv_op_1_0= '&&' )
-            	            // InternalLIRAs.g:1705:7: lv_op_1_0= '&&'
+            	            // InternalLIRAs.g:1695:6: (lv_op_1_0= '&&' )
+            	            // InternalLIRAs.g:1696:7: lv_op_1_0= '&&'
             	            {
             	            lv_op_1_0=(Token)match(input,41,FOLLOW_20); 
 
@@ -4390,13 +4373,13 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
             	            }
             	            break;
             	        case 2 :
-            	            // InternalLIRAs.g:1718:5: ( (lv_op_2_0= '||' ) )
+            	            // InternalLIRAs.g:1709:5: ( (lv_op_2_0= '||' ) )
             	            {
-            	            // InternalLIRAs.g:1718:5: ( (lv_op_2_0= '||' ) )
-            	            // InternalLIRAs.g:1719:6: (lv_op_2_0= '||' )
+            	            // InternalLIRAs.g:1709:5: ( (lv_op_2_0= '||' ) )
+            	            // InternalLIRAs.g:1710:6: (lv_op_2_0= '||' )
             	            {
-            	            // InternalLIRAs.g:1719:6: (lv_op_2_0= '||' )
-            	            // InternalLIRAs.g:1720:7: lv_op_2_0= '||'
+            	            // InternalLIRAs.g:1710:6: (lv_op_2_0= '||' )
+            	            // InternalLIRAs.g:1711:7: lv_op_2_0= '||'
             	            {
             	            lv_op_2_0=(Token)match(input,42,FOLLOW_20); 
 
@@ -4420,11 +4403,11 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
             	    }
 
-            	    // InternalLIRAs.g:1733:4: ( (lv_atomicPredicate_3_0= ruleAtomicPredicate ) )
-            	    // InternalLIRAs.g:1734:5: (lv_atomicPredicate_3_0= ruleAtomicPredicate )
+            	    // InternalLIRAs.g:1724:4: ( (lv_atomicPredicate_3_0= ruleAtomicPredicate ) )
+            	    // InternalLIRAs.g:1725:5: (lv_atomicPredicate_3_0= ruleAtomicPredicate )
             	    {
-            	    // InternalLIRAs.g:1734:5: (lv_atomicPredicate_3_0= ruleAtomicPredicate )
-            	    // InternalLIRAs.g:1735:6: lv_atomicPredicate_3_0= ruleAtomicPredicate
+            	    // InternalLIRAs.g:1725:5: (lv_atomicPredicate_3_0= ruleAtomicPredicate )
+            	    // InternalLIRAs.g:1726:6: lv_atomicPredicate_3_0= ruleAtomicPredicate
             	    {
 
             	    						newCompositeNode(grammarAccess.getConditionAccess().getAtomicPredicateAtomicPredicateParserRuleCall_1_1_0());
@@ -4483,7 +4466,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAtomicPredicate"
-    // InternalLIRAs.g:1757:1: entryRuleAtomicPredicate returns [EObject current=null] : iv_ruleAtomicPredicate= ruleAtomicPredicate EOF ;
+    // InternalLIRAs.g:1748:1: entryRuleAtomicPredicate returns [EObject current=null] : iv_ruleAtomicPredicate= ruleAtomicPredicate EOF ;
     public final EObject entryRuleAtomicPredicate() throws RecognitionException {
         EObject current = null;
 
@@ -4491,8 +4474,8 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLIRAs.g:1757:56: (iv_ruleAtomicPredicate= ruleAtomicPredicate EOF )
-            // InternalLIRAs.g:1758:2: iv_ruleAtomicPredicate= ruleAtomicPredicate EOF
+            // InternalLIRAs.g:1748:56: (iv_ruleAtomicPredicate= ruleAtomicPredicate EOF )
+            // InternalLIRAs.g:1749:2: iv_ruleAtomicPredicate= ruleAtomicPredicate EOF
             {
              newCompositeNode(grammarAccess.getAtomicPredicateRule()); 
             pushFollow(FOLLOW_1);
@@ -4519,7 +4502,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAtomicPredicate"
-    // InternalLIRAs.g:1764:1: ruleAtomicPredicate returns [EObject current=null] : ( () ( (lv_negated_1_0= '!' ) )? ( ( (lv_ap_2_0= 'tired' ) ) | ( ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')' ) | ( ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')' ) | ( ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')' ) | ( ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')' ) | ( ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')' ) | ( (lv_relation_27_0= ruleRelation ) ) ) ) ;
+    // InternalLIRAs.g:1755:1: ruleAtomicPredicate returns [EObject current=null] : ( () ( (lv_negated_1_0= '!' ) )? ( ( (lv_ap_2_0= 'tired' ) ) | ( ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')' ) | ( ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')' ) | ( ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')' ) | ( ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')' ) | ( ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')' ) | ( (lv_relation_27_0= ruleRelation ) ) ) ) ;
     public final EObject ruleAtomicPredicate() throws RecognitionException {
         EObject current = null;
 
@@ -4562,14 +4545,14 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalLIRAs.g:1770:2: ( ( () ( (lv_negated_1_0= '!' ) )? ( ( (lv_ap_2_0= 'tired' ) ) | ( ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')' ) | ( ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')' ) | ( ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')' ) | ( ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')' ) | ( ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')' ) | ( (lv_relation_27_0= ruleRelation ) ) ) ) )
-            // InternalLIRAs.g:1771:2: ( () ( (lv_negated_1_0= '!' ) )? ( ( (lv_ap_2_0= 'tired' ) ) | ( ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')' ) | ( ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')' ) | ( ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')' ) | ( ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')' ) | ( ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')' ) | ( (lv_relation_27_0= ruleRelation ) ) ) )
+            // InternalLIRAs.g:1761:2: ( ( () ( (lv_negated_1_0= '!' ) )? ( ( (lv_ap_2_0= 'tired' ) ) | ( ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')' ) | ( ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')' ) | ( ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')' ) | ( ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')' ) | ( ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')' ) | ( (lv_relation_27_0= ruleRelation ) ) ) ) )
+            // InternalLIRAs.g:1762:2: ( () ( (lv_negated_1_0= '!' ) )? ( ( (lv_ap_2_0= 'tired' ) ) | ( ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')' ) | ( ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')' ) | ( ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')' ) | ( ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')' ) | ( ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')' ) | ( (lv_relation_27_0= ruleRelation ) ) ) )
             {
-            // InternalLIRAs.g:1771:2: ( () ( (lv_negated_1_0= '!' ) )? ( ( (lv_ap_2_0= 'tired' ) ) | ( ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')' ) | ( ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')' ) | ( ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')' ) | ( ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')' ) | ( ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')' ) | ( (lv_relation_27_0= ruleRelation ) ) ) )
-            // InternalLIRAs.g:1772:3: () ( (lv_negated_1_0= '!' ) )? ( ( (lv_ap_2_0= 'tired' ) ) | ( ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')' ) | ( ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')' ) | ( ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')' ) | ( ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')' ) | ( ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')' ) | ( (lv_relation_27_0= ruleRelation ) ) )
+            // InternalLIRAs.g:1762:2: ( () ( (lv_negated_1_0= '!' ) )? ( ( (lv_ap_2_0= 'tired' ) ) | ( ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')' ) | ( ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')' ) | ( ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')' ) | ( ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')' ) | ( ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')' ) | ( (lv_relation_27_0= ruleRelation ) ) ) )
+            // InternalLIRAs.g:1763:3: () ( (lv_negated_1_0= '!' ) )? ( ( (lv_ap_2_0= 'tired' ) ) | ( ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')' ) | ( ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')' ) | ( ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')' ) | ( ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')' ) | ( ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')' ) | ( (lv_relation_27_0= ruleRelation ) ) )
             {
-            // InternalLIRAs.g:1772:3: ()
-            // InternalLIRAs.g:1773:4: 
+            // InternalLIRAs.g:1763:3: ()
+            // InternalLIRAs.g:1764:4: 
             {
 
             				current = forceCreateModelElement(
@@ -4579,7 +4562,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalLIRAs.g:1779:3: ( (lv_negated_1_0= '!' ) )?
+            // InternalLIRAs.g:1770:3: ( (lv_negated_1_0= '!' ) )?
             int alt44=2;
             int LA44_0 = input.LA(1);
 
@@ -4588,10 +4571,10 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
             }
             switch (alt44) {
                 case 1 :
-                    // InternalLIRAs.g:1780:4: (lv_negated_1_0= '!' )
+                    // InternalLIRAs.g:1771:4: (lv_negated_1_0= '!' )
                     {
-                    // InternalLIRAs.g:1780:4: (lv_negated_1_0= '!' )
-                    // InternalLIRAs.g:1781:5: lv_negated_1_0= '!'
+                    // InternalLIRAs.g:1771:4: (lv_negated_1_0= '!' )
+                    // InternalLIRAs.g:1772:5: lv_negated_1_0= '!'
                     {
                     lv_negated_1_0=(Token)match(input,43,FOLLOW_20); 
 
@@ -4612,7 +4595,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalLIRAs.g:1793:3: ( ( (lv_ap_2_0= 'tired' ) ) | ( ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')' ) | ( ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')' ) | ( ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')' ) | ( ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')' ) | ( ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')' ) | ( (lv_relation_27_0= ruleRelation ) ) )
+            // InternalLIRAs.g:1784:3: ( ( (lv_ap_2_0= 'tired' ) ) | ( ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')' ) | ( ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')' ) | ( ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')' ) | ( ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')' ) | ( ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')' ) | ( (lv_relation_27_0= ruleRelation ) ) )
             int alt45=7;
             switch ( input.LA(1) ) {
             case 44:
@@ -4660,13 +4643,13 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
             switch (alt45) {
                 case 1 :
-                    // InternalLIRAs.g:1794:4: ( (lv_ap_2_0= 'tired' ) )
+                    // InternalLIRAs.g:1785:4: ( (lv_ap_2_0= 'tired' ) )
                     {
-                    // InternalLIRAs.g:1794:4: ( (lv_ap_2_0= 'tired' ) )
-                    // InternalLIRAs.g:1795:5: (lv_ap_2_0= 'tired' )
+                    // InternalLIRAs.g:1785:4: ( (lv_ap_2_0= 'tired' ) )
+                    // InternalLIRAs.g:1786:5: (lv_ap_2_0= 'tired' )
                     {
-                    // InternalLIRAs.g:1795:5: (lv_ap_2_0= 'tired' )
-                    // InternalLIRAs.g:1796:6: lv_ap_2_0= 'tired'
+                    // InternalLIRAs.g:1786:5: (lv_ap_2_0= 'tired' )
+                    // InternalLIRAs.g:1787:6: lv_ap_2_0= 'tired'
                     {
                     lv_ap_2_0=(Token)match(input,44,FOLLOW_2); 
 
@@ -4688,16 +4671,16 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalLIRAs.g:1809:4: ( ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')' )
+                    // InternalLIRAs.g:1800:4: ( ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')' )
                     {
-                    // InternalLIRAs.g:1809:4: ( ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')' )
-                    // InternalLIRAs.g:1810:5: ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')'
+                    // InternalLIRAs.g:1800:4: ( ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')' )
+                    // InternalLIRAs.g:1801:5: ( (lv_ap_3_0= 'time' ) ) otherlv_4= '(' ( (lv_n_5_0= RULE_INT ) ) otherlv_6= ')'
                     {
-                    // InternalLIRAs.g:1810:5: ( (lv_ap_3_0= 'time' ) )
-                    // InternalLIRAs.g:1811:6: (lv_ap_3_0= 'time' )
+                    // InternalLIRAs.g:1801:5: ( (lv_ap_3_0= 'time' ) )
+                    // InternalLIRAs.g:1802:6: (lv_ap_3_0= 'time' )
                     {
-                    // InternalLIRAs.g:1811:6: (lv_ap_3_0= 'time' )
-                    // InternalLIRAs.g:1812:7: lv_ap_3_0= 'time'
+                    // InternalLIRAs.g:1802:6: (lv_ap_3_0= 'time' )
+                    // InternalLIRAs.g:1803:7: lv_ap_3_0= 'time'
                     {
                     lv_ap_3_0=(Token)match(input,45,FOLLOW_34); 
 
@@ -4719,11 +4702,11 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     					newLeafNode(otherlv_4, grammarAccess.getAtomicPredicateAccess().getLeftParenthesisKeyword_2_1_1());
                     				
-                    // InternalLIRAs.g:1828:5: ( (lv_n_5_0= RULE_INT ) )
-                    // InternalLIRAs.g:1829:6: (lv_n_5_0= RULE_INT )
+                    // InternalLIRAs.g:1819:5: ( (lv_n_5_0= RULE_INT ) )
+                    // InternalLIRAs.g:1820:6: (lv_n_5_0= RULE_INT )
                     {
-                    // InternalLIRAs.g:1829:6: (lv_n_5_0= RULE_INT )
-                    // InternalLIRAs.g:1830:7: lv_n_5_0= RULE_INT
+                    // InternalLIRAs.g:1820:6: (lv_n_5_0= RULE_INT )
+                    // InternalLIRAs.g:1821:7: lv_n_5_0= RULE_INT
                     {
                     lv_n_5_0=(Token)match(input,RULE_INT,FOLLOW_29); 
 
@@ -4756,16 +4739,16 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 3 :
-                    // InternalLIRAs.g:1852:4: ( ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')' )
+                    // InternalLIRAs.g:1843:4: ( ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')' )
                     {
-                    // InternalLIRAs.g:1852:4: ( ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')' )
-                    // InternalLIRAs.g:1853:5: ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')'
+                    // InternalLIRAs.g:1843:4: ( ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')' )
+                    // InternalLIRAs.g:1844:5: ( (lv_ap_7_0= 'position' ) ) otherlv_8= '(' ( (lv_agent_9_0= ruleAgent ) ) otherlv_10= ',' ( (lv_location_11_0= ruleLocation ) ) otherlv_12= ')'
                     {
-                    // InternalLIRAs.g:1853:5: ( (lv_ap_7_0= 'position' ) )
-                    // InternalLIRAs.g:1854:6: (lv_ap_7_0= 'position' )
+                    // InternalLIRAs.g:1844:5: ( (lv_ap_7_0= 'position' ) )
+                    // InternalLIRAs.g:1845:6: (lv_ap_7_0= 'position' )
                     {
-                    // InternalLIRAs.g:1854:6: (lv_ap_7_0= 'position' )
-                    // InternalLIRAs.g:1855:7: lv_ap_7_0= 'position'
+                    // InternalLIRAs.g:1845:6: (lv_ap_7_0= 'position' )
+                    // InternalLIRAs.g:1846:7: lv_ap_7_0= 'position'
                     {
                     lv_ap_7_0=(Token)match(input,46,FOLLOW_34); 
 
@@ -4787,11 +4770,11 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     					newLeafNode(otherlv_8, grammarAccess.getAtomicPredicateAccess().getLeftParenthesisKeyword_2_2_1());
                     				
-                    // InternalLIRAs.g:1871:5: ( (lv_agent_9_0= ruleAgent ) )
-                    // InternalLIRAs.g:1872:6: (lv_agent_9_0= ruleAgent )
+                    // InternalLIRAs.g:1862:5: ( (lv_agent_9_0= ruleAgent ) )
+                    // InternalLIRAs.g:1863:6: (lv_agent_9_0= ruleAgent )
                     {
-                    // InternalLIRAs.g:1872:6: (lv_agent_9_0= ruleAgent )
-                    // InternalLIRAs.g:1873:7: lv_agent_9_0= ruleAgent
+                    // InternalLIRAs.g:1863:6: (lv_agent_9_0= ruleAgent )
+                    // InternalLIRAs.g:1864:7: lv_agent_9_0= ruleAgent
                     {
 
                     							newCompositeNode(grammarAccess.getAtomicPredicateAccess().getAgentAgentParserRuleCall_2_2_2_0());
@@ -4822,11 +4805,11 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     					newLeafNode(otherlv_10, grammarAccess.getAtomicPredicateAccess().getCommaKeyword_2_2_3());
                     				
-                    // InternalLIRAs.g:1894:5: ( (lv_location_11_0= ruleLocation ) )
-                    // InternalLIRAs.g:1895:6: (lv_location_11_0= ruleLocation )
+                    // InternalLIRAs.g:1885:5: ( (lv_location_11_0= ruleLocation ) )
+                    // InternalLIRAs.g:1886:6: (lv_location_11_0= ruleLocation )
                     {
-                    // InternalLIRAs.g:1895:6: (lv_location_11_0= ruleLocation )
-                    // InternalLIRAs.g:1896:7: lv_location_11_0= ruleLocation
+                    // InternalLIRAs.g:1886:6: (lv_location_11_0= ruleLocation )
+                    // InternalLIRAs.g:1887:7: lv_location_11_0= ruleLocation
                     {
 
                     							newCompositeNode(grammarAccess.getAtomicPredicateAccess().getLocationLocationParserRuleCall_2_2_4_0());
@@ -4864,16 +4847,16 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 4 :
-                    // InternalLIRAs.g:1919:4: ( ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')' )
+                    // InternalLIRAs.g:1910:4: ( ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')' )
                     {
-                    // InternalLIRAs.g:1919:4: ( ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')' )
-                    // InternalLIRAs.g:1920:5: ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')'
+                    // InternalLIRAs.g:1910:4: ( ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')' )
+                    // InternalLIRAs.g:1911:5: ( (lv_ap_13_0= 'possess' ) ) otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ',' ( (lv_resource_17_0= ruleResource ) ) otherlv_18= ')'
                     {
-                    // InternalLIRAs.g:1920:5: ( (lv_ap_13_0= 'possess' ) )
-                    // InternalLIRAs.g:1921:6: (lv_ap_13_0= 'possess' )
+                    // InternalLIRAs.g:1911:5: ( (lv_ap_13_0= 'possess' ) )
+                    // InternalLIRAs.g:1912:6: (lv_ap_13_0= 'possess' )
                     {
-                    // InternalLIRAs.g:1921:6: (lv_ap_13_0= 'possess' )
-                    // InternalLIRAs.g:1922:7: lv_ap_13_0= 'possess'
+                    // InternalLIRAs.g:1912:6: (lv_ap_13_0= 'possess' )
+                    // InternalLIRAs.g:1913:7: lv_ap_13_0= 'possess'
                     {
                     lv_ap_13_0=(Token)match(input,47,FOLLOW_34); 
 
@@ -4895,11 +4878,11 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     					newLeafNode(otherlv_14, grammarAccess.getAtomicPredicateAccess().getLeftParenthesisKeyword_2_3_1());
                     				
-                    // InternalLIRAs.g:1938:5: ( (lv_agent_15_0= ruleAgent ) )
-                    // InternalLIRAs.g:1939:6: (lv_agent_15_0= ruleAgent )
+                    // InternalLIRAs.g:1929:5: ( (lv_agent_15_0= ruleAgent ) )
+                    // InternalLIRAs.g:1930:6: (lv_agent_15_0= ruleAgent )
                     {
-                    // InternalLIRAs.g:1939:6: (lv_agent_15_0= ruleAgent )
-                    // InternalLIRAs.g:1940:7: lv_agent_15_0= ruleAgent
+                    // InternalLIRAs.g:1930:6: (lv_agent_15_0= ruleAgent )
+                    // InternalLIRAs.g:1931:7: lv_agent_15_0= ruleAgent
                     {
 
                     							newCompositeNode(grammarAccess.getAtomicPredicateAccess().getAgentAgentParserRuleCall_2_3_2_0());
@@ -4930,11 +4913,11 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     					newLeafNode(otherlv_16, grammarAccess.getAtomicPredicateAccess().getCommaKeyword_2_3_3());
                     				
-                    // InternalLIRAs.g:1961:5: ( (lv_resource_17_0= ruleResource ) )
-                    // InternalLIRAs.g:1962:6: (lv_resource_17_0= ruleResource )
+                    // InternalLIRAs.g:1952:5: ( (lv_resource_17_0= ruleResource ) )
+                    // InternalLIRAs.g:1953:6: (lv_resource_17_0= ruleResource )
                     {
-                    // InternalLIRAs.g:1962:6: (lv_resource_17_0= ruleResource )
-                    // InternalLIRAs.g:1963:7: lv_resource_17_0= ruleResource
+                    // InternalLIRAs.g:1953:6: (lv_resource_17_0= ruleResource )
+                    // InternalLIRAs.g:1954:7: lv_resource_17_0= ruleResource
                     {
 
                     							newCompositeNode(grammarAccess.getAtomicPredicateAccess().getResourceResourceParserRuleCall_2_3_4_0());
@@ -4972,16 +4955,16 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 5 :
-                    // InternalLIRAs.g:1986:4: ( ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')' )
+                    // InternalLIRAs.g:1977:4: ( ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')' )
                     {
-                    // InternalLIRAs.g:1986:4: ( ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')' )
-                    // InternalLIRAs.g:1987:5: ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')'
+                    // InternalLIRAs.g:1977:4: ( ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')' )
+                    // InternalLIRAs.g:1978:5: ( (lv_ap_19_0= 'busy' ) ) otherlv_20= '(' ( (lv_agent_21_0= ruleAgent ) ) otherlv_22= ')'
                     {
-                    // InternalLIRAs.g:1987:5: ( (lv_ap_19_0= 'busy' ) )
-                    // InternalLIRAs.g:1988:6: (lv_ap_19_0= 'busy' )
+                    // InternalLIRAs.g:1978:5: ( (lv_ap_19_0= 'busy' ) )
+                    // InternalLIRAs.g:1979:6: (lv_ap_19_0= 'busy' )
                     {
-                    // InternalLIRAs.g:1988:6: (lv_ap_19_0= 'busy' )
-                    // InternalLIRAs.g:1989:7: lv_ap_19_0= 'busy'
+                    // InternalLIRAs.g:1979:6: (lv_ap_19_0= 'busy' )
+                    // InternalLIRAs.g:1980:7: lv_ap_19_0= 'busy'
                     {
                     lv_ap_19_0=(Token)match(input,48,FOLLOW_34); 
 
@@ -5003,11 +4986,11 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     					newLeafNode(otherlv_20, grammarAccess.getAtomicPredicateAccess().getLeftParenthesisKeyword_2_4_1());
                     				
-                    // InternalLIRAs.g:2005:5: ( (lv_agent_21_0= ruleAgent ) )
-                    // InternalLIRAs.g:2006:6: (lv_agent_21_0= ruleAgent )
+                    // InternalLIRAs.g:1996:5: ( (lv_agent_21_0= ruleAgent ) )
+                    // InternalLIRAs.g:1997:6: (lv_agent_21_0= ruleAgent )
                     {
-                    // InternalLIRAs.g:2006:6: (lv_agent_21_0= ruleAgent )
-                    // InternalLIRAs.g:2007:7: lv_agent_21_0= ruleAgent
+                    // InternalLIRAs.g:1997:6: (lv_agent_21_0= ruleAgent )
+                    // InternalLIRAs.g:1998:7: lv_agent_21_0= ruleAgent
                     {
 
                     							newCompositeNode(grammarAccess.getAtomicPredicateAccess().getAgentAgentParserRuleCall_2_4_2_0());
@@ -5045,16 +5028,16 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 6 :
-                    // InternalLIRAs.g:2030:4: ( ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')' )
+                    // InternalLIRAs.g:2021:4: ( ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')' )
                     {
-                    // InternalLIRAs.g:2030:4: ( ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')' )
-                    // InternalLIRAs.g:2031:5: ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')'
+                    // InternalLIRAs.g:2021:4: ( ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')' )
+                    // InternalLIRAs.g:2022:5: ( (lv_ap_23_0= 'still' ) ) otherlv_24= '(' ( (lv_agent_25_0= ruleAgent ) ) otherlv_26= ')'
                     {
-                    // InternalLIRAs.g:2031:5: ( (lv_ap_23_0= 'still' ) )
-                    // InternalLIRAs.g:2032:6: (lv_ap_23_0= 'still' )
+                    // InternalLIRAs.g:2022:5: ( (lv_ap_23_0= 'still' ) )
+                    // InternalLIRAs.g:2023:6: (lv_ap_23_0= 'still' )
                     {
-                    // InternalLIRAs.g:2032:6: (lv_ap_23_0= 'still' )
-                    // InternalLIRAs.g:2033:7: lv_ap_23_0= 'still'
+                    // InternalLIRAs.g:2023:6: (lv_ap_23_0= 'still' )
+                    // InternalLIRAs.g:2024:7: lv_ap_23_0= 'still'
                     {
                     lv_ap_23_0=(Token)match(input,49,FOLLOW_34); 
 
@@ -5076,11 +5059,11 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     					newLeafNode(otherlv_24, grammarAccess.getAtomicPredicateAccess().getLeftParenthesisKeyword_2_5_1());
                     				
-                    // InternalLIRAs.g:2049:5: ( (lv_agent_25_0= ruleAgent ) )
-                    // InternalLIRAs.g:2050:6: (lv_agent_25_0= ruleAgent )
+                    // InternalLIRAs.g:2040:5: ( (lv_agent_25_0= ruleAgent ) )
+                    // InternalLIRAs.g:2041:6: (lv_agent_25_0= ruleAgent )
                     {
-                    // InternalLIRAs.g:2050:6: (lv_agent_25_0= ruleAgent )
-                    // InternalLIRAs.g:2051:7: lv_agent_25_0= ruleAgent
+                    // InternalLIRAs.g:2041:6: (lv_agent_25_0= ruleAgent )
+                    // InternalLIRAs.g:2042:7: lv_agent_25_0= ruleAgent
                     {
 
                     							newCompositeNode(grammarAccess.getAtomicPredicateAccess().getAgentAgentParserRuleCall_2_5_2_0());
@@ -5118,13 +5101,13 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 7 :
-                    // InternalLIRAs.g:2074:4: ( (lv_relation_27_0= ruleRelation ) )
+                    // InternalLIRAs.g:2065:4: ( (lv_relation_27_0= ruleRelation ) )
                     {
-                    // InternalLIRAs.g:2074:4: ( (lv_relation_27_0= ruleRelation ) )
-                    // InternalLIRAs.g:2075:5: (lv_relation_27_0= ruleRelation )
+                    // InternalLIRAs.g:2065:4: ( (lv_relation_27_0= ruleRelation ) )
+                    // InternalLIRAs.g:2066:5: (lv_relation_27_0= ruleRelation )
                     {
-                    // InternalLIRAs.g:2075:5: (lv_relation_27_0= ruleRelation )
-                    // InternalLIRAs.g:2076:6: lv_relation_27_0= ruleRelation
+                    // InternalLIRAs.g:2066:5: (lv_relation_27_0= ruleRelation )
+                    // InternalLIRAs.g:2067:6: lv_relation_27_0= ruleRelation
                     {
 
                     						newCompositeNode(grammarAccess.getAtomicPredicateAccess().getRelationRelationParserRuleCall_2_6_0());
@@ -5180,7 +5163,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleRelation"
-    // InternalLIRAs.g:2098:1: entryRuleRelation returns [EObject current=null] : iv_ruleRelation= ruleRelation EOF ;
+    // InternalLIRAs.g:2089:1: entryRuleRelation returns [EObject current=null] : iv_ruleRelation= ruleRelation EOF ;
     public final EObject entryRuleRelation() throws RecognitionException {
         EObject current = null;
 
@@ -5188,8 +5171,8 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLIRAs.g:2098:49: (iv_ruleRelation= ruleRelation EOF )
-            // InternalLIRAs.g:2099:2: iv_ruleRelation= ruleRelation EOF
+            // InternalLIRAs.g:2089:49: (iv_ruleRelation= ruleRelation EOF )
+            // InternalLIRAs.g:2090:2: iv_ruleRelation= ruleRelation EOF
             {
              newCompositeNode(grammarAccess.getRelationRule()); 
             pushFollow(FOLLOW_1);
@@ -5216,7 +5199,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleRelation"
-    // InternalLIRAs.g:2105:1: ruleRelation returns [EObject current=null] : ( (otherlv_0= 'dist' otherlv_1= '(' ( (lv_agent_2_0= ruleAgent ) ) otherlv_3= ',' ( (lv_agent_4_0= ruleAgent ) ) otherlv_5= ')' (otherlv_6= '>' | otherlv_7= '<' | otherlv_8= '>=' | otherlv_9= '<=' | otherlv_10= '==' | otherlv_11= '!=' ) ( (lv_th_12_0= RULE_INT ) ) ) | (otherlv_13= 'soc' otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ')' (otherlv_17= '>' | otherlv_18= '<' | otherlv_19= '>=' | otherlv_20= '<=' | otherlv_21= '==' | otherlv_22= '!=' ) ( (lv_th_23_0= RULE_INT ) ) ) ) ;
+    // InternalLIRAs.g:2096:1: ruleRelation returns [EObject current=null] : ( (otherlv_0= 'dist' otherlv_1= '(' ( (lv_agent_2_0= ruleAgent ) ) otherlv_3= ',' ( (lv_agent_4_0= ruleAgent ) ) otherlv_5= ')' (otherlv_6= '>' | otherlv_7= '<' | otherlv_8= '>=' | otherlv_9= '<=' | otherlv_10= '==' | otherlv_11= '!=' ) ( (lv_th_12_0= RULE_INT ) ) ) | (otherlv_13= 'soc' otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ')' (otherlv_17= '>' | otherlv_18= '<' | otherlv_19= '>=' | otherlv_20= '<=' | otherlv_21= '==' | otherlv_22= '!=' ) ( (lv_th_23_0= RULE_INT ) ) ) ) ;
     public final EObject ruleRelation() throws RecognitionException {
         EObject current = null;
 
@@ -5252,10 +5235,10 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalLIRAs.g:2111:2: ( ( (otherlv_0= 'dist' otherlv_1= '(' ( (lv_agent_2_0= ruleAgent ) ) otherlv_3= ',' ( (lv_agent_4_0= ruleAgent ) ) otherlv_5= ')' (otherlv_6= '>' | otherlv_7= '<' | otherlv_8= '>=' | otherlv_9= '<=' | otherlv_10= '==' | otherlv_11= '!=' ) ( (lv_th_12_0= RULE_INT ) ) ) | (otherlv_13= 'soc' otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ')' (otherlv_17= '>' | otherlv_18= '<' | otherlv_19= '>=' | otherlv_20= '<=' | otherlv_21= '==' | otherlv_22= '!=' ) ( (lv_th_23_0= RULE_INT ) ) ) ) )
-            // InternalLIRAs.g:2112:2: ( (otherlv_0= 'dist' otherlv_1= '(' ( (lv_agent_2_0= ruleAgent ) ) otherlv_3= ',' ( (lv_agent_4_0= ruleAgent ) ) otherlv_5= ')' (otherlv_6= '>' | otherlv_7= '<' | otherlv_8= '>=' | otherlv_9= '<=' | otherlv_10= '==' | otherlv_11= '!=' ) ( (lv_th_12_0= RULE_INT ) ) ) | (otherlv_13= 'soc' otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ')' (otherlv_17= '>' | otherlv_18= '<' | otherlv_19= '>=' | otherlv_20= '<=' | otherlv_21= '==' | otherlv_22= '!=' ) ( (lv_th_23_0= RULE_INT ) ) ) )
+            // InternalLIRAs.g:2102:2: ( ( (otherlv_0= 'dist' otherlv_1= '(' ( (lv_agent_2_0= ruleAgent ) ) otherlv_3= ',' ( (lv_agent_4_0= ruleAgent ) ) otherlv_5= ')' (otherlv_6= '>' | otherlv_7= '<' | otherlv_8= '>=' | otherlv_9= '<=' | otherlv_10= '==' | otherlv_11= '!=' ) ( (lv_th_12_0= RULE_INT ) ) ) | (otherlv_13= 'soc' otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ')' (otherlv_17= '>' | otherlv_18= '<' | otherlv_19= '>=' | otherlv_20= '<=' | otherlv_21= '==' | otherlv_22= '!=' ) ( (lv_th_23_0= RULE_INT ) ) ) ) )
+            // InternalLIRAs.g:2103:2: ( (otherlv_0= 'dist' otherlv_1= '(' ( (lv_agent_2_0= ruleAgent ) ) otherlv_3= ',' ( (lv_agent_4_0= ruleAgent ) ) otherlv_5= ')' (otherlv_6= '>' | otherlv_7= '<' | otherlv_8= '>=' | otherlv_9= '<=' | otherlv_10= '==' | otherlv_11= '!=' ) ( (lv_th_12_0= RULE_INT ) ) ) | (otherlv_13= 'soc' otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ')' (otherlv_17= '>' | otherlv_18= '<' | otherlv_19= '>=' | otherlv_20= '<=' | otherlv_21= '==' | otherlv_22= '!=' ) ( (lv_th_23_0= RULE_INT ) ) ) )
             {
-            // InternalLIRAs.g:2112:2: ( (otherlv_0= 'dist' otherlv_1= '(' ( (lv_agent_2_0= ruleAgent ) ) otherlv_3= ',' ( (lv_agent_4_0= ruleAgent ) ) otherlv_5= ')' (otherlv_6= '>' | otherlv_7= '<' | otherlv_8= '>=' | otherlv_9= '<=' | otherlv_10= '==' | otherlv_11= '!=' ) ( (lv_th_12_0= RULE_INT ) ) ) | (otherlv_13= 'soc' otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ')' (otherlv_17= '>' | otherlv_18= '<' | otherlv_19= '>=' | otherlv_20= '<=' | otherlv_21= '==' | otherlv_22= '!=' ) ( (lv_th_23_0= RULE_INT ) ) ) )
+            // InternalLIRAs.g:2103:2: ( (otherlv_0= 'dist' otherlv_1= '(' ( (lv_agent_2_0= ruleAgent ) ) otherlv_3= ',' ( (lv_agent_4_0= ruleAgent ) ) otherlv_5= ')' (otherlv_6= '>' | otherlv_7= '<' | otherlv_8= '>=' | otherlv_9= '<=' | otherlv_10= '==' | otherlv_11= '!=' ) ( (lv_th_12_0= RULE_INT ) ) ) | (otherlv_13= 'soc' otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ')' (otherlv_17= '>' | otherlv_18= '<' | otherlv_19= '>=' | otherlv_20= '<=' | otherlv_21= '==' | otherlv_22= '!=' ) ( (lv_th_23_0= RULE_INT ) ) ) )
             int alt48=2;
             int LA48_0 = input.LA(1);
 
@@ -5273,10 +5256,10 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
             }
             switch (alt48) {
                 case 1 :
-                    // InternalLIRAs.g:2113:3: (otherlv_0= 'dist' otherlv_1= '(' ( (lv_agent_2_0= ruleAgent ) ) otherlv_3= ',' ( (lv_agent_4_0= ruleAgent ) ) otherlv_5= ')' (otherlv_6= '>' | otherlv_7= '<' | otherlv_8= '>=' | otherlv_9= '<=' | otherlv_10= '==' | otherlv_11= '!=' ) ( (lv_th_12_0= RULE_INT ) ) )
+                    // InternalLIRAs.g:2104:3: (otherlv_0= 'dist' otherlv_1= '(' ( (lv_agent_2_0= ruleAgent ) ) otherlv_3= ',' ( (lv_agent_4_0= ruleAgent ) ) otherlv_5= ')' (otherlv_6= '>' | otherlv_7= '<' | otherlv_8= '>=' | otherlv_9= '<=' | otherlv_10= '==' | otherlv_11= '!=' ) ( (lv_th_12_0= RULE_INT ) ) )
                     {
-                    // InternalLIRAs.g:2113:3: (otherlv_0= 'dist' otherlv_1= '(' ( (lv_agent_2_0= ruleAgent ) ) otherlv_3= ',' ( (lv_agent_4_0= ruleAgent ) ) otherlv_5= ')' (otherlv_6= '>' | otherlv_7= '<' | otherlv_8= '>=' | otherlv_9= '<=' | otherlv_10= '==' | otherlv_11= '!=' ) ( (lv_th_12_0= RULE_INT ) ) )
-                    // InternalLIRAs.g:2114:4: otherlv_0= 'dist' otherlv_1= '(' ( (lv_agent_2_0= ruleAgent ) ) otherlv_3= ',' ( (lv_agent_4_0= ruleAgent ) ) otherlv_5= ')' (otherlv_6= '>' | otherlv_7= '<' | otherlv_8= '>=' | otherlv_9= '<=' | otherlv_10= '==' | otherlv_11= '!=' ) ( (lv_th_12_0= RULE_INT ) )
+                    // InternalLIRAs.g:2104:3: (otherlv_0= 'dist' otherlv_1= '(' ( (lv_agent_2_0= ruleAgent ) ) otherlv_3= ',' ( (lv_agent_4_0= ruleAgent ) ) otherlv_5= ')' (otherlv_6= '>' | otherlv_7= '<' | otherlv_8= '>=' | otherlv_9= '<=' | otherlv_10= '==' | otherlv_11= '!=' ) ( (lv_th_12_0= RULE_INT ) ) )
+                    // InternalLIRAs.g:2105:4: otherlv_0= 'dist' otherlv_1= '(' ( (lv_agent_2_0= ruleAgent ) ) otherlv_3= ',' ( (lv_agent_4_0= ruleAgent ) ) otherlv_5= ')' (otherlv_6= '>' | otherlv_7= '<' | otherlv_8= '>=' | otherlv_9= '<=' | otherlv_10= '==' | otherlv_11= '!=' ) ( (lv_th_12_0= RULE_INT ) )
                     {
                     otherlv_0=(Token)match(input,50,FOLLOW_34); 
 
@@ -5286,11 +5269,11 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_1, grammarAccess.getRelationAccess().getLeftParenthesisKeyword_0_1());
                     			
-                    // InternalLIRAs.g:2122:4: ( (lv_agent_2_0= ruleAgent ) )
-                    // InternalLIRAs.g:2123:5: (lv_agent_2_0= ruleAgent )
+                    // InternalLIRAs.g:2113:4: ( (lv_agent_2_0= ruleAgent ) )
+                    // InternalLIRAs.g:2114:5: (lv_agent_2_0= ruleAgent )
                     {
-                    // InternalLIRAs.g:2123:5: (lv_agent_2_0= ruleAgent )
-                    // InternalLIRAs.g:2124:6: lv_agent_2_0= ruleAgent
+                    // InternalLIRAs.g:2114:5: (lv_agent_2_0= ruleAgent )
+                    // InternalLIRAs.g:2115:6: lv_agent_2_0= ruleAgent
                     {
 
                     						newCompositeNode(grammarAccess.getRelationAccess().getAgentAgentParserRuleCall_0_2_0());
@@ -5321,11 +5304,11 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_3, grammarAccess.getRelationAccess().getCommaKeyword_0_3());
                     			
-                    // InternalLIRAs.g:2145:4: ( (lv_agent_4_0= ruleAgent ) )
-                    // InternalLIRAs.g:2146:5: (lv_agent_4_0= ruleAgent )
+                    // InternalLIRAs.g:2136:4: ( (lv_agent_4_0= ruleAgent ) )
+                    // InternalLIRAs.g:2137:5: (lv_agent_4_0= ruleAgent )
                     {
-                    // InternalLIRAs.g:2146:5: (lv_agent_4_0= ruleAgent )
-                    // InternalLIRAs.g:2147:6: lv_agent_4_0= ruleAgent
+                    // InternalLIRAs.g:2137:5: (lv_agent_4_0= ruleAgent )
+                    // InternalLIRAs.g:2138:6: lv_agent_4_0= ruleAgent
                     {
 
                     						newCompositeNode(grammarAccess.getRelationAccess().getAgentAgentParserRuleCall_0_4_0());
@@ -5356,7 +5339,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_5, grammarAccess.getRelationAccess().getRightParenthesisKeyword_0_5());
                     			
-                    // InternalLIRAs.g:2168:4: (otherlv_6= '>' | otherlv_7= '<' | otherlv_8= '>=' | otherlv_9= '<=' | otherlv_10= '==' | otherlv_11= '!=' )
+                    // InternalLIRAs.g:2159:4: (otherlv_6= '>' | otherlv_7= '<' | otherlv_8= '>=' | otherlv_9= '<=' | otherlv_10= '==' | otherlv_11= '!=' )
                     int alt46=6;
                     switch ( input.LA(1) ) {
                     case 51:
@@ -5398,7 +5381,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     switch (alt46) {
                         case 1 :
-                            // InternalLIRAs.g:2169:5: otherlv_6= '>'
+                            // InternalLIRAs.g:2160:5: otherlv_6= '>'
                             {
                             otherlv_6=(Token)match(input,51,FOLLOW_17); 
 
@@ -5408,7 +5391,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 2 :
-                            // InternalLIRAs.g:2174:5: otherlv_7= '<'
+                            // InternalLIRAs.g:2165:5: otherlv_7= '<'
                             {
                             otherlv_7=(Token)match(input,52,FOLLOW_17); 
 
@@ -5418,7 +5401,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 3 :
-                            // InternalLIRAs.g:2179:5: otherlv_8= '>='
+                            // InternalLIRAs.g:2170:5: otherlv_8= '>='
                             {
                             otherlv_8=(Token)match(input,53,FOLLOW_17); 
 
@@ -5428,7 +5411,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 4 :
-                            // InternalLIRAs.g:2184:5: otherlv_9= '<='
+                            // InternalLIRAs.g:2175:5: otherlv_9= '<='
                             {
                             otherlv_9=(Token)match(input,54,FOLLOW_17); 
 
@@ -5438,7 +5421,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 5 :
-                            // InternalLIRAs.g:2189:5: otherlv_10= '=='
+                            // InternalLIRAs.g:2180:5: otherlv_10= '=='
                             {
                             otherlv_10=(Token)match(input,55,FOLLOW_17); 
 
@@ -5448,7 +5431,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 6 :
-                            // InternalLIRAs.g:2194:5: otherlv_11= '!='
+                            // InternalLIRAs.g:2185:5: otherlv_11= '!='
                             {
                             otherlv_11=(Token)match(input,56,FOLLOW_17); 
 
@@ -5460,11 +5443,11 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalLIRAs.g:2199:4: ( (lv_th_12_0= RULE_INT ) )
-                    // InternalLIRAs.g:2200:5: (lv_th_12_0= RULE_INT )
+                    // InternalLIRAs.g:2190:4: ( (lv_th_12_0= RULE_INT ) )
+                    // InternalLIRAs.g:2191:5: (lv_th_12_0= RULE_INT )
                     {
-                    // InternalLIRAs.g:2200:5: (lv_th_12_0= RULE_INT )
-                    // InternalLIRAs.g:2201:6: lv_th_12_0= RULE_INT
+                    // InternalLIRAs.g:2191:5: (lv_th_12_0= RULE_INT )
+                    // InternalLIRAs.g:2192:6: lv_th_12_0= RULE_INT
                     {
                     lv_th_12_0=(Token)match(input,RULE_INT,FOLLOW_2); 
 
@@ -5493,10 +5476,10 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // InternalLIRAs.g:2219:3: (otherlv_13= 'soc' otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ')' (otherlv_17= '>' | otherlv_18= '<' | otherlv_19= '>=' | otherlv_20= '<=' | otherlv_21= '==' | otherlv_22= '!=' ) ( (lv_th_23_0= RULE_INT ) ) )
+                    // InternalLIRAs.g:2210:3: (otherlv_13= 'soc' otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ')' (otherlv_17= '>' | otherlv_18= '<' | otherlv_19= '>=' | otherlv_20= '<=' | otherlv_21= '==' | otherlv_22= '!=' ) ( (lv_th_23_0= RULE_INT ) ) )
                     {
-                    // InternalLIRAs.g:2219:3: (otherlv_13= 'soc' otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ')' (otherlv_17= '>' | otherlv_18= '<' | otherlv_19= '>=' | otherlv_20= '<=' | otherlv_21= '==' | otherlv_22= '!=' ) ( (lv_th_23_0= RULE_INT ) ) )
-                    // InternalLIRAs.g:2220:4: otherlv_13= 'soc' otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ')' (otherlv_17= '>' | otherlv_18= '<' | otherlv_19= '>=' | otherlv_20= '<=' | otherlv_21= '==' | otherlv_22= '!=' ) ( (lv_th_23_0= RULE_INT ) )
+                    // InternalLIRAs.g:2210:3: (otherlv_13= 'soc' otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ')' (otherlv_17= '>' | otherlv_18= '<' | otherlv_19= '>=' | otherlv_20= '<=' | otherlv_21= '==' | otherlv_22= '!=' ) ( (lv_th_23_0= RULE_INT ) ) )
+                    // InternalLIRAs.g:2211:4: otherlv_13= 'soc' otherlv_14= '(' ( (lv_agent_15_0= ruleAgent ) ) otherlv_16= ')' (otherlv_17= '>' | otherlv_18= '<' | otherlv_19= '>=' | otherlv_20= '<=' | otherlv_21= '==' | otherlv_22= '!=' ) ( (lv_th_23_0= RULE_INT ) )
                     {
                     otherlv_13=(Token)match(input,57,FOLLOW_34); 
 
@@ -5506,11 +5489,11 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_14, grammarAccess.getRelationAccess().getLeftParenthesisKeyword_1_1());
                     			
-                    // InternalLIRAs.g:2228:4: ( (lv_agent_15_0= ruleAgent ) )
-                    // InternalLIRAs.g:2229:5: (lv_agent_15_0= ruleAgent )
+                    // InternalLIRAs.g:2219:4: ( (lv_agent_15_0= ruleAgent ) )
+                    // InternalLIRAs.g:2220:5: (lv_agent_15_0= ruleAgent )
                     {
-                    // InternalLIRAs.g:2229:5: (lv_agent_15_0= ruleAgent )
-                    // InternalLIRAs.g:2230:6: lv_agent_15_0= ruleAgent
+                    // InternalLIRAs.g:2220:5: (lv_agent_15_0= ruleAgent )
+                    // InternalLIRAs.g:2221:6: lv_agent_15_0= ruleAgent
                     {
 
                     						newCompositeNode(grammarAccess.getRelationAccess().getAgentAgentParserRuleCall_1_2_0());
@@ -5541,7 +5524,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     				newLeafNode(otherlv_16, grammarAccess.getRelationAccess().getRightParenthesisKeyword_1_3());
                     			
-                    // InternalLIRAs.g:2251:4: (otherlv_17= '>' | otherlv_18= '<' | otherlv_19= '>=' | otherlv_20= '<=' | otherlv_21= '==' | otherlv_22= '!=' )
+                    // InternalLIRAs.g:2242:4: (otherlv_17= '>' | otherlv_18= '<' | otherlv_19= '>=' | otherlv_20= '<=' | otherlv_21= '==' | otherlv_22= '!=' )
                     int alt47=6;
                     switch ( input.LA(1) ) {
                     case 51:
@@ -5583,7 +5566,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     switch (alt47) {
                         case 1 :
-                            // InternalLIRAs.g:2252:5: otherlv_17= '>'
+                            // InternalLIRAs.g:2243:5: otherlv_17= '>'
                             {
                             otherlv_17=(Token)match(input,51,FOLLOW_17); 
 
@@ -5593,7 +5576,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 2 :
-                            // InternalLIRAs.g:2257:5: otherlv_18= '<'
+                            // InternalLIRAs.g:2248:5: otherlv_18= '<'
                             {
                             otherlv_18=(Token)match(input,52,FOLLOW_17); 
 
@@ -5603,7 +5586,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 3 :
-                            // InternalLIRAs.g:2262:5: otherlv_19= '>='
+                            // InternalLIRAs.g:2253:5: otherlv_19= '>='
                             {
                             otherlv_19=(Token)match(input,53,FOLLOW_17); 
 
@@ -5613,7 +5596,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 4 :
-                            // InternalLIRAs.g:2267:5: otherlv_20= '<='
+                            // InternalLIRAs.g:2258:5: otherlv_20= '<='
                             {
                             otherlv_20=(Token)match(input,54,FOLLOW_17); 
 
@@ -5623,7 +5606,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 5 :
-                            // InternalLIRAs.g:2272:5: otherlv_21= '=='
+                            // InternalLIRAs.g:2263:5: otherlv_21= '=='
                             {
                             otherlv_21=(Token)match(input,55,FOLLOW_17); 
 
@@ -5633,7 +5616,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 6 :
-                            // InternalLIRAs.g:2277:5: otherlv_22= '!='
+                            // InternalLIRAs.g:2268:5: otherlv_22= '!='
                             {
                             otherlv_22=(Token)match(input,56,FOLLOW_17); 
 
@@ -5645,11 +5628,11 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // InternalLIRAs.g:2282:4: ( (lv_th_23_0= RULE_INT ) )
-                    // InternalLIRAs.g:2283:5: (lv_th_23_0= RULE_INT )
+                    // InternalLIRAs.g:2273:4: ( (lv_th_23_0= RULE_INT ) )
+                    // InternalLIRAs.g:2274:5: (lv_th_23_0= RULE_INT )
                     {
-                    // InternalLIRAs.g:2283:5: (lv_th_23_0= RULE_INT )
-                    // InternalLIRAs.g:2284:6: lv_th_23_0= RULE_INT
+                    // InternalLIRAs.g:2274:5: (lv_th_23_0= RULE_INT )
+                    // InternalLIRAs.g:2275:6: lv_th_23_0= RULE_INT
                     {
                     lv_th_23_0=(Token)match(input,RULE_INT,FOLLOW_2); 
 
@@ -5700,7 +5683,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleTarget"
-    // InternalLIRAs.g:2305:1: entryRuleTarget returns [EObject current=null] : iv_ruleTarget= ruleTarget EOF ;
+    // InternalLIRAs.g:2296:1: entryRuleTarget returns [EObject current=null] : iv_ruleTarget= ruleTarget EOF ;
     public final EObject entryRuleTarget() throws RecognitionException {
         EObject current = null;
 
@@ -5708,8 +5691,8 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLIRAs.g:2305:47: (iv_ruleTarget= ruleTarget EOF )
-            // InternalLIRAs.g:2306:2: iv_ruleTarget= ruleTarget EOF
+            // InternalLIRAs.g:2296:47: (iv_ruleTarget= ruleTarget EOF )
+            // InternalLIRAs.g:2297:2: iv_ruleTarget= ruleTarget EOF
             {
              newCompositeNode(grammarAccess.getTargetRule()); 
             pushFollow(FOLLOW_1);
@@ -5736,7 +5719,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTarget"
-    // InternalLIRAs.g:2312:1: ruleTarget returns [EObject current=null] : ( (lv_name_0_0= RULE_ID ) ) ;
+    // InternalLIRAs.g:2303:1: ruleTarget returns [EObject current=null] : ( (lv_name_0_0= RULE_ID ) ) ;
     public final EObject ruleTarget() throws RecognitionException {
         EObject current = null;
 
@@ -5746,14 +5729,14 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalLIRAs.g:2318:2: ( ( (lv_name_0_0= RULE_ID ) ) )
-            // InternalLIRAs.g:2319:2: ( (lv_name_0_0= RULE_ID ) )
+            // InternalLIRAs.g:2309:2: ( ( (lv_name_0_0= RULE_ID ) ) )
+            // InternalLIRAs.g:2310:2: ( (lv_name_0_0= RULE_ID ) )
             {
-            // InternalLIRAs.g:2319:2: ( (lv_name_0_0= RULE_ID ) )
-            // InternalLIRAs.g:2320:3: (lv_name_0_0= RULE_ID )
+            // InternalLIRAs.g:2310:2: ( (lv_name_0_0= RULE_ID ) )
+            // InternalLIRAs.g:2311:3: (lv_name_0_0= RULE_ID )
             {
-            // InternalLIRAs.g:2320:3: (lv_name_0_0= RULE_ID )
-            // InternalLIRAs.g:2321:4: lv_name_0_0= RULE_ID
+            // InternalLIRAs.g:2311:3: (lv_name_0_0= RULE_ID )
+            // InternalLIRAs.g:2312:4: lv_name_0_0= RULE_ID
             {
             lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -5795,7 +5778,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleAgent"
-    // InternalLIRAs.g:2340:1: entryRuleAgent returns [EObject current=null] : iv_ruleAgent= ruleAgent EOF ;
+    // InternalLIRAs.g:2331:1: entryRuleAgent returns [EObject current=null] : iv_ruleAgent= ruleAgent EOF ;
     public final EObject entryRuleAgent() throws RecognitionException {
         EObject current = null;
 
@@ -5803,8 +5786,8 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLIRAs.g:2340:46: (iv_ruleAgent= ruleAgent EOF )
-            // InternalLIRAs.g:2341:2: iv_ruleAgent= ruleAgent EOF
+            // InternalLIRAs.g:2331:46: (iv_ruleAgent= ruleAgent EOF )
+            // InternalLIRAs.g:2332:2: iv_ruleAgent= ruleAgent EOF
             {
              newCompositeNode(grammarAccess.getAgentRule()); 
             pushFollow(FOLLOW_1);
@@ -5831,7 +5814,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleAgent"
-    // InternalLIRAs.g:2347:1: ruleAgent returns [EObject current=null] : ( (lv_name_0_0= RULE_ID ) ) ;
+    // InternalLIRAs.g:2338:1: ruleAgent returns [EObject current=null] : ( (lv_name_0_0= RULE_ID ) ) ;
     public final EObject ruleAgent() throws RecognitionException {
         EObject current = null;
 
@@ -5841,14 +5824,14 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalLIRAs.g:2353:2: ( ( (lv_name_0_0= RULE_ID ) ) )
-            // InternalLIRAs.g:2354:2: ( (lv_name_0_0= RULE_ID ) )
+            // InternalLIRAs.g:2344:2: ( ( (lv_name_0_0= RULE_ID ) ) )
+            // InternalLIRAs.g:2345:2: ( (lv_name_0_0= RULE_ID ) )
             {
-            // InternalLIRAs.g:2354:2: ( (lv_name_0_0= RULE_ID ) )
-            // InternalLIRAs.g:2355:3: (lv_name_0_0= RULE_ID )
+            // InternalLIRAs.g:2345:2: ( (lv_name_0_0= RULE_ID ) )
+            // InternalLIRAs.g:2346:3: (lv_name_0_0= RULE_ID )
             {
-            // InternalLIRAs.g:2355:3: (lv_name_0_0= RULE_ID )
-            // InternalLIRAs.g:2356:4: lv_name_0_0= RULE_ID
+            // InternalLIRAs.g:2346:3: (lv_name_0_0= RULE_ID )
+            // InternalLIRAs.g:2347:4: lv_name_0_0= RULE_ID
             {
             lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -5890,7 +5873,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleHuman"
-    // InternalLIRAs.g:2375:1: entryRuleHuman returns [EObject current=null] : iv_ruleHuman= ruleHuman EOF ;
+    // InternalLIRAs.g:2366:1: entryRuleHuman returns [EObject current=null] : iv_ruleHuman= ruleHuman EOF ;
     public final EObject entryRuleHuman() throws RecognitionException {
         EObject current = null;
 
@@ -5898,8 +5881,8 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLIRAs.g:2375:46: (iv_ruleHuman= ruleHuman EOF )
-            // InternalLIRAs.g:2376:2: iv_ruleHuman= ruleHuman EOF
+            // InternalLIRAs.g:2366:46: (iv_ruleHuman= ruleHuman EOF )
+            // InternalLIRAs.g:2367:2: iv_ruleHuman= ruleHuman EOF
             {
              newCompositeNode(grammarAccess.getHumanRule()); 
             pushFollow(FOLLOW_1);
@@ -5926,7 +5909,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleHuman"
-    // InternalLIRAs.g:2382:1: ruleHuman returns [EObject current=null] : ( (lv_name_0_0= RULE_ID ) ) ;
+    // InternalLIRAs.g:2373:1: ruleHuman returns [EObject current=null] : ( (lv_name_0_0= RULE_ID ) ) ;
     public final EObject ruleHuman() throws RecognitionException {
         EObject current = null;
 
@@ -5936,14 +5919,14 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalLIRAs.g:2388:2: ( ( (lv_name_0_0= RULE_ID ) ) )
-            // InternalLIRAs.g:2389:2: ( (lv_name_0_0= RULE_ID ) )
+            // InternalLIRAs.g:2379:2: ( ( (lv_name_0_0= RULE_ID ) ) )
+            // InternalLIRAs.g:2380:2: ( (lv_name_0_0= RULE_ID ) )
             {
-            // InternalLIRAs.g:2389:2: ( (lv_name_0_0= RULE_ID ) )
-            // InternalLIRAs.g:2390:3: (lv_name_0_0= RULE_ID )
+            // InternalLIRAs.g:2380:2: ( (lv_name_0_0= RULE_ID ) )
+            // InternalLIRAs.g:2381:3: (lv_name_0_0= RULE_ID )
             {
-            // InternalLIRAs.g:2390:3: (lv_name_0_0= RULE_ID )
-            // InternalLIRAs.g:2391:4: lv_name_0_0= RULE_ID
+            // InternalLIRAs.g:2381:3: (lv_name_0_0= RULE_ID )
+            // InternalLIRAs.g:2382:4: lv_name_0_0= RULE_ID
             {
             lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -5985,7 +5968,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleRobot"
-    // InternalLIRAs.g:2410:1: entryRuleRobot returns [EObject current=null] : iv_ruleRobot= ruleRobot EOF ;
+    // InternalLIRAs.g:2401:1: entryRuleRobot returns [EObject current=null] : iv_ruleRobot= ruleRobot EOF ;
     public final EObject entryRuleRobot() throws RecognitionException {
         EObject current = null;
 
@@ -5993,8 +5976,8 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLIRAs.g:2410:46: (iv_ruleRobot= ruleRobot EOF )
-            // InternalLIRAs.g:2411:2: iv_ruleRobot= ruleRobot EOF
+            // InternalLIRAs.g:2401:46: (iv_ruleRobot= ruleRobot EOF )
+            // InternalLIRAs.g:2402:2: iv_ruleRobot= ruleRobot EOF
             {
              newCompositeNode(grammarAccess.getRobotRule()); 
             pushFollow(FOLLOW_1);
@@ -6021,7 +6004,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleRobot"
-    // InternalLIRAs.g:2417:1: ruleRobot returns [EObject current=null] : ( (lv_name_0_0= RULE_ID ) ) ;
+    // InternalLIRAs.g:2408:1: ruleRobot returns [EObject current=null] : ( (lv_name_0_0= RULE_ID ) ) ;
     public final EObject ruleRobot() throws RecognitionException {
         EObject current = null;
 
@@ -6031,14 +6014,14 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalLIRAs.g:2423:2: ( ( (lv_name_0_0= RULE_ID ) ) )
-            // InternalLIRAs.g:2424:2: ( (lv_name_0_0= RULE_ID ) )
+            // InternalLIRAs.g:2414:2: ( ( (lv_name_0_0= RULE_ID ) ) )
+            // InternalLIRAs.g:2415:2: ( (lv_name_0_0= RULE_ID ) )
             {
-            // InternalLIRAs.g:2424:2: ( (lv_name_0_0= RULE_ID ) )
-            // InternalLIRAs.g:2425:3: (lv_name_0_0= RULE_ID )
+            // InternalLIRAs.g:2415:2: ( (lv_name_0_0= RULE_ID ) )
+            // InternalLIRAs.g:2416:3: (lv_name_0_0= RULE_ID )
             {
-            // InternalLIRAs.g:2425:3: (lv_name_0_0= RULE_ID )
-            // InternalLIRAs.g:2426:4: lv_name_0_0= RULE_ID
+            // InternalLIRAs.g:2416:3: (lv_name_0_0= RULE_ID )
+            // InternalLIRAs.g:2417:4: lv_name_0_0= RULE_ID
             {
             lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -6080,7 +6063,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleLocation"
-    // InternalLIRAs.g:2445:1: entryRuleLocation returns [EObject current=null] : iv_ruleLocation= ruleLocation EOF ;
+    // InternalLIRAs.g:2436:1: entryRuleLocation returns [EObject current=null] : iv_ruleLocation= ruleLocation EOF ;
     public final EObject entryRuleLocation() throws RecognitionException {
         EObject current = null;
 
@@ -6088,8 +6071,8 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLIRAs.g:2445:49: (iv_ruleLocation= ruleLocation EOF )
-            // InternalLIRAs.g:2446:2: iv_ruleLocation= ruleLocation EOF
+            // InternalLIRAs.g:2436:49: (iv_ruleLocation= ruleLocation EOF )
+            // InternalLIRAs.g:2437:2: iv_ruleLocation= ruleLocation EOF
             {
              newCompositeNode(grammarAccess.getLocationRule()); 
             pushFollow(FOLLOW_1);
@@ -6116,7 +6099,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleLocation"
-    // InternalLIRAs.g:2452:1: ruleLocation returns [EObject current=null] : ( (lv_name_0_0= RULE_ID ) ) ;
+    // InternalLIRAs.g:2443:1: ruleLocation returns [EObject current=null] : ( (lv_name_0_0= RULE_ID ) ) ;
     public final EObject ruleLocation() throws RecognitionException {
         EObject current = null;
 
@@ -6126,14 +6109,14 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalLIRAs.g:2458:2: ( ( (lv_name_0_0= RULE_ID ) ) )
-            // InternalLIRAs.g:2459:2: ( (lv_name_0_0= RULE_ID ) )
+            // InternalLIRAs.g:2449:2: ( ( (lv_name_0_0= RULE_ID ) ) )
+            // InternalLIRAs.g:2450:2: ( (lv_name_0_0= RULE_ID ) )
             {
-            // InternalLIRAs.g:2459:2: ( (lv_name_0_0= RULE_ID ) )
-            // InternalLIRAs.g:2460:3: (lv_name_0_0= RULE_ID )
+            // InternalLIRAs.g:2450:2: ( (lv_name_0_0= RULE_ID ) )
+            // InternalLIRAs.g:2451:3: (lv_name_0_0= RULE_ID )
             {
-            // InternalLIRAs.g:2460:3: (lv_name_0_0= RULE_ID )
-            // InternalLIRAs.g:2461:4: lv_name_0_0= RULE_ID
+            // InternalLIRAs.g:2451:3: (lv_name_0_0= RULE_ID )
+            // InternalLIRAs.g:2452:4: lv_name_0_0= RULE_ID
             {
             lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 
@@ -6175,7 +6158,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "entryRuleResource"
-    // InternalLIRAs.g:2480:1: entryRuleResource returns [EObject current=null] : iv_ruleResource= ruleResource EOF ;
+    // InternalLIRAs.g:2471:1: entryRuleResource returns [EObject current=null] : iv_ruleResource= ruleResource EOF ;
     public final EObject entryRuleResource() throws RecognitionException {
         EObject current = null;
 
@@ -6183,8 +6166,8 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
         try {
-            // InternalLIRAs.g:2480:49: (iv_ruleResource= ruleResource EOF )
-            // InternalLIRAs.g:2481:2: iv_ruleResource= ruleResource EOF
+            // InternalLIRAs.g:2471:49: (iv_ruleResource= ruleResource EOF )
+            // InternalLIRAs.g:2472:2: iv_ruleResource= ruleResource EOF
             {
              newCompositeNode(grammarAccess.getResourceRule()); 
             pushFollow(FOLLOW_1);
@@ -6211,7 +6194,7 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleResource"
-    // InternalLIRAs.g:2487:1: ruleResource returns [EObject current=null] : ( (lv_name_0_0= RULE_ID ) ) ;
+    // InternalLIRAs.g:2478:1: ruleResource returns [EObject current=null] : ( (lv_name_0_0= RULE_ID ) ) ;
     public final EObject ruleResource() throws RecognitionException {
         EObject current = null;
 
@@ -6221,14 +6204,14 @@ public class InternalLIRAsParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalLIRAs.g:2493:2: ( ( (lv_name_0_0= RULE_ID ) ) )
-            // InternalLIRAs.g:2494:2: ( (lv_name_0_0= RULE_ID ) )
+            // InternalLIRAs.g:2484:2: ( ( (lv_name_0_0= RULE_ID ) ) )
+            // InternalLIRAs.g:2485:2: ( (lv_name_0_0= RULE_ID ) )
             {
-            // InternalLIRAs.g:2494:2: ( (lv_name_0_0= RULE_ID ) )
-            // InternalLIRAs.g:2495:3: (lv_name_0_0= RULE_ID )
+            // InternalLIRAs.g:2485:2: ( (lv_name_0_0= RULE_ID ) )
+            // InternalLIRAs.g:2486:3: (lv_name_0_0= RULE_ID )
             {
-            // InternalLIRAs.g:2495:3: (lv_name_0_0= RULE_ID )
-            // InternalLIRAs.g:2496:4: lv_name_0_0= RULE_ID
+            // InternalLIRAs.g:2486:3: (lv_name_0_0= RULE_ID )
+            // InternalLIRAs.g:2487:4: lv_name_0_0= RULE_ID
             {
             lv_name_0_0=(Token)match(input,RULE_ID,FOLLOW_2); 
 

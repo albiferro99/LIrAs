@@ -1044,10 +1044,10 @@ public class InternalLIRAsLexer extends Lexer {
         try {
             int _type = RULE_NL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLIRAs.g:6817:9: ( ( ( ' ' )* ( '\\r' )? '\\n' ( '\\t' )* )+ )
-            // InternalLIRAs.g:6817:11: ( ( ' ' )* ( '\\r' )? '\\n' ( '\\t' )* )+
+            // InternalLIRAs.g:6763:9: ( ( ( ' ' )* ( '\\r' )? '\\n' ( '\\t' )* )+ )
+            // InternalLIRAs.g:6763:11: ( ( ' ' )* ( '\\r' )? '\\n' ( '\\t' )* )+
             {
-            // InternalLIRAs.g:6817:11: ( ( ' ' )* ( '\\r' )? '\\n' ( '\\t' )* )+
+            // InternalLIRAs.g:6763:11: ( ( ' ' )* ( '\\r' )? '\\n' ( '\\t' )* )+
             int cnt4=0;
             loop4:
             do {
@@ -1061,9 +1061,9 @@ public class InternalLIRAsLexer extends Lexer {
 
                 switch (alt4) {
             	case 1 :
-            	    // InternalLIRAs.g:6817:12: ( ' ' )* ( '\\r' )? '\\n' ( '\\t' )*
+            	    // InternalLIRAs.g:6763:12: ( ' ' )* ( '\\r' )? '\\n' ( '\\t' )*
             	    {
-            	    // InternalLIRAs.g:6817:12: ( ' ' )*
+            	    // InternalLIRAs.g:6763:12: ( ' ' )*
             	    loop1:
             	    do {
             	        int alt1=2;
@@ -1076,7 +1076,7 @@ public class InternalLIRAsLexer extends Lexer {
 
             	        switch (alt1) {
             	    	case 1 :
-            	    	    // InternalLIRAs.g:6817:12: ' '
+            	    	    // InternalLIRAs.g:6763:12: ' '
             	    	    {
             	    	    match(' '); 
 
@@ -1088,7 +1088,7 @@ public class InternalLIRAsLexer extends Lexer {
             	        }
             	    } while (true);
 
-            	    // InternalLIRAs.g:6817:17: ( '\\r' )?
+            	    // InternalLIRAs.g:6763:17: ( '\\r' )?
             	    int alt2=2;
             	    int LA2_0 = input.LA(1);
 
@@ -1097,7 +1097,7 @@ public class InternalLIRAsLexer extends Lexer {
             	    }
             	    switch (alt2) {
             	        case 1 :
-            	            // InternalLIRAs.g:6817:17: '\\r'
+            	            // InternalLIRAs.g:6763:17: '\\r'
             	            {
             	            match('\r'); 
 
@@ -1107,7 +1107,7 @@ public class InternalLIRAsLexer extends Lexer {
             	    }
 
             	    match('\n'); 
-            	    // InternalLIRAs.g:6817:28: ( '\\t' )*
+            	    // InternalLIRAs.g:6763:28: ( '\\t' )*
             	    loop3:
             	    do {
             	        int alt3=2;
@@ -1120,7 +1120,7 @@ public class InternalLIRAsLexer extends Lexer {
 
             	        switch (alt3) {
             	    	case 1 :
-            	    	    // InternalLIRAs.g:6817:28: '\\t'
+            	    	    // InternalLIRAs.g:6763:28: '\\t'
             	    	    {
             	    	    match('\t'); 
 
@@ -1161,10 +1161,10 @@ public class InternalLIRAsLexer extends Lexer {
         try {
             int _type = RULE_ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLIRAs.g:6819:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
-            // InternalLIRAs.g:6819:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalLIRAs.g:6765:9: ( ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )* )
+            // InternalLIRAs.g:6765:11: ( '^' )? ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             {
-            // InternalLIRAs.g:6819:11: ( '^' )?
+            // InternalLIRAs.g:6765:11: ( '^' )?
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -1173,7 +1173,7 @@ public class InternalLIRAsLexer extends Lexer {
             }
             switch (alt5) {
                 case 1 :
-                    // InternalLIRAs.g:6819:11: '^'
+                    // InternalLIRAs.g:6765:11: '^'
                     {
                     match('^'); 
 
@@ -1191,7 +1191,7 @@ public class InternalLIRAsLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // InternalLIRAs.g:6819:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
+            // InternalLIRAs.g:6765:40: ( 'a' .. 'z' | 'A' .. 'Z' | '_' | '0' .. '9' )*
             loop6:
             do {
                 int alt6=2;
@@ -1240,10 +1240,10 @@ public class InternalLIRAsLexer extends Lexer {
         try {
             int _type = RULE_INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLIRAs.g:6821:10: ( ( '0' .. '9' )+ )
-            // InternalLIRAs.g:6821:12: ( '0' .. '9' )+
+            // InternalLIRAs.g:6767:10: ( ( '0' .. '9' )+ )
+            // InternalLIRAs.g:6767:12: ( '0' .. '9' )+
             {
-            // InternalLIRAs.g:6821:12: ( '0' .. '9' )+
+            // InternalLIRAs.g:6767:12: ( '0' .. '9' )+
             int cnt7=0;
             loop7:
             do {
@@ -1257,7 +1257,7 @@ public class InternalLIRAsLexer extends Lexer {
 
                 switch (alt7) {
             	case 1 :
-            	    // InternalLIRAs.g:6821:13: '0' .. '9'
+            	    // InternalLIRAs.g:6767:13: '0' .. '9'
             	    {
             	    matchRange('0','9'); 
 
@@ -1289,10 +1289,10 @@ public class InternalLIRAsLexer extends Lexer {
         try {
             int _type = RULE_STRING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLIRAs.g:6823:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
-            // InternalLIRAs.g:6823:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalLIRAs.g:6769:13: ( ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' ) )
+            // InternalLIRAs.g:6769:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             {
-            // InternalLIRAs.g:6823:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
+            // InternalLIRAs.g:6769:15: ( '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"' | '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\'' )
             int alt10=2;
             int LA10_0 = input.LA(1);
 
@@ -1310,10 +1310,10 @@ public class InternalLIRAsLexer extends Lexer {
             }
             switch (alt10) {
                 case 1 :
-                    // InternalLIRAs.g:6823:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
+                    // InternalLIRAs.g:6769:16: '\"' ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )* '\"'
                     {
                     match('\"'); 
-                    // InternalLIRAs.g:6823:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
+                    // InternalLIRAs.g:6769:20: ( '\\\\' . | ~ ( ( '\\\\' | '\"' ) ) )*
                     loop8:
                     do {
                         int alt8=3;
@@ -1329,7 +1329,7 @@ public class InternalLIRAsLexer extends Lexer {
 
                         switch (alt8) {
                     	case 1 :
-                    	    // InternalLIRAs.g:6823:21: '\\\\' .
+                    	    // InternalLIRAs.g:6769:21: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -1337,7 +1337,7 @@ public class InternalLIRAsLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalLIRAs.g:6823:28: ~ ( ( '\\\\' | '\"' ) )
+                    	    // InternalLIRAs.g:6769:28: ~ ( ( '\\\\' | '\"' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='!')||(input.LA(1)>='#' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -1362,10 +1362,10 @@ public class InternalLIRAsLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // InternalLIRAs.g:6823:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
+                    // InternalLIRAs.g:6769:48: '\\'' ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )* '\\''
                     {
                     match('\''); 
-                    // InternalLIRAs.g:6823:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
+                    // InternalLIRAs.g:6769:53: ( '\\\\' . | ~ ( ( '\\\\' | '\\'' ) ) )*
                     loop9:
                     do {
                         int alt9=3;
@@ -1381,7 +1381,7 @@ public class InternalLIRAsLexer extends Lexer {
 
                         switch (alt9) {
                     	case 1 :
-                    	    // InternalLIRAs.g:6823:54: '\\\\' .
+                    	    // InternalLIRAs.g:6769:54: '\\\\' .
                     	    {
                     	    match('\\'); 
                     	    matchAny(); 
@@ -1389,7 +1389,7 @@ public class InternalLIRAsLexer extends Lexer {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // InternalLIRAs.g:6823:61: ~ ( ( '\\\\' | '\\'' ) )
+                    	    // InternalLIRAs.g:6769:61: ~ ( ( '\\\\' | '\\'' ) )
                     	    {
                     	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='&')||(input.LA(1)>='(' && input.LA(1)<='[')||(input.LA(1)>=']' && input.LA(1)<='\uFFFF') ) {
                     	        input.consume();
@@ -1432,12 +1432,12 @@ public class InternalLIRAsLexer extends Lexer {
         try {
             int _type = RULE_ML_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLIRAs.g:6825:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
-            // InternalLIRAs.g:6825:19: '/*' ( options {greedy=false; } : . )* '*/'
+            // InternalLIRAs.g:6771:17: ( '/*' ( options {greedy=false; } : . )* '*/' )
+            // InternalLIRAs.g:6771:19: '/*' ( options {greedy=false; } : . )* '*/'
             {
             match("/*"); 
 
-            // InternalLIRAs.g:6825:24: ( options {greedy=false; } : . )*
+            // InternalLIRAs.g:6771:24: ( options {greedy=false; } : . )*
             loop11:
             do {
                 int alt11=2;
@@ -1462,7 +1462,7 @@ public class InternalLIRAsLexer extends Lexer {
 
                 switch (alt11) {
             	case 1 :
-            	    // InternalLIRAs.g:6825:52: .
+            	    // InternalLIRAs.g:6771:52: .
             	    {
             	    matchAny(); 
 
@@ -1492,12 +1492,12 @@ public class InternalLIRAsLexer extends Lexer {
         try {
             int _type = RULE_SL_COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLIRAs.g:6827:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
-            // InternalLIRAs.g:6827:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
+            // InternalLIRAs.g:6773:17: ( '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )? )
+            // InternalLIRAs.g:6773:19: '//' (~ ( ( '\\n' | '\\r' ) ) )* ( ( '\\r' )? '\\n' )?
             {
             match("//"); 
 
-            // InternalLIRAs.g:6827:24: (~ ( ( '\\n' | '\\r' ) ) )*
+            // InternalLIRAs.g:6773:24: (~ ( ( '\\n' | '\\r' ) ) )*
             loop12:
             do {
                 int alt12=2;
@@ -1510,7 +1510,7 @@ public class InternalLIRAsLexer extends Lexer {
 
                 switch (alt12) {
             	case 1 :
-            	    // InternalLIRAs.g:6827:24: ~ ( ( '\\n' | '\\r' ) )
+            	    // InternalLIRAs.g:6773:24: ~ ( ( '\\n' | '\\r' ) )
             	    {
             	    if ( (input.LA(1)>='\u0000' && input.LA(1)<='\t')||(input.LA(1)>='\u000B' && input.LA(1)<='\f')||(input.LA(1)>='\u000E' && input.LA(1)<='\uFFFF') ) {
             	        input.consume();
@@ -1530,7 +1530,7 @@ public class InternalLIRAsLexer extends Lexer {
                 }
             } while (true);
 
-            // InternalLIRAs.g:6827:40: ( ( '\\r' )? '\\n' )?
+            // InternalLIRAs.g:6773:40: ( ( '\\r' )? '\\n' )?
             int alt14=2;
             int LA14_0 = input.LA(1);
 
@@ -1539,9 +1539,9 @@ public class InternalLIRAsLexer extends Lexer {
             }
             switch (alt14) {
                 case 1 :
-                    // InternalLIRAs.g:6827:41: ( '\\r' )? '\\n'
+                    // InternalLIRAs.g:6773:41: ( '\\r' )? '\\n'
                     {
-                    // InternalLIRAs.g:6827:41: ( '\\r' )?
+                    // InternalLIRAs.g:6773:41: ( '\\r' )?
                     int alt13=2;
                     int LA13_0 = input.LA(1);
 
@@ -1550,7 +1550,7 @@ public class InternalLIRAsLexer extends Lexer {
                     }
                     switch (alt13) {
                         case 1 :
-                            // InternalLIRAs.g:6827:41: '\\r'
+                            // InternalLIRAs.g:6773:41: '\\r'
                             {
                             match('\r'); 
 
@@ -1582,10 +1582,10 @@ public class InternalLIRAsLexer extends Lexer {
         try {
             int _type = RULE_WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLIRAs.g:6829:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
-            // InternalLIRAs.g:6829:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalLIRAs.g:6775:9: ( ( ' ' | '\\t' | '\\r' | '\\n' )+ )
+            // InternalLIRAs.g:6775:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             {
-            // InternalLIRAs.g:6829:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
+            // InternalLIRAs.g:6775:11: ( ' ' | '\\t' | '\\r' | '\\n' )+
             int cnt15=0;
             loop15:
             do {
@@ -1639,8 +1639,8 @@ public class InternalLIRAsLexer extends Lexer {
         try {
             int _type = RULE_ANY_OTHER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // InternalLIRAs.g:6831:16: ( . )
-            // InternalLIRAs.g:6831:18: .
+            // InternalLIRAs.g:6777:16: ( . )
+            // InternalLIRAs.g:6777:18: .
             {
             matchAny(); 
 
