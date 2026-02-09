@@ -22,12 +22,8 @@ import org.eclipse.xtext.serializer.sequencer.AbstractSyntacticSequencer;
 public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected LIRAsGrammarAccess grammarAccess;
-	protected AbstractElementAlias match_Action_StopKeyword_0_or___DeliverKeyword_2_0_1_or_FetchKeyword_2_0_0_or_LeaveKeyword_2_0_2__p;
-	protected AbstractElementAlias match_Action___DeliverKeyword_2_0_1_or_FetchKeyword_2_0_0_or_LeaveKeyword_2_0_2__a;
-	protected AbstractElementAlias match_Action___DeliverKeyword_2_0_1_or_FetchKeyword_2_0_0_or_LeaveKeyword_2_0_2__p;
 	protected AbstractElementAlias match_Conclusion_NLTerminalRuleCall_2_a;
 	protected AbstractElementAlias match_Conclusion_NLTerminalRuleCall_5_a;
-	protected AbstractElementAlias match_Condition_AmpersandAmpersandKeyword_1_0_0_or_VerticalLineVerticalLineKeyword_1_0_1;
 	protected AbstractElementAlias match_Loop_AllKeyword_0_1_q;
 	protected AbstractElementAlias match_Loop_AllKeyword_1_1_q;
 	protected AbstractElementAlias match_Model_NLTerminalRuleCall_0_a;
@@ -79,12 +75,8 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (LIRAsGrammarAccess) access;
-		match_Action_StopKeyword_0_or___DeliverKeyword_2_0_1_or_FetchKeyword_2_0_0_or_LeaveKeyword_2_0_2__p = new AlternativeAlias(false, false, new AlternativeAlias(true, false, new TokenAlias(false, false, grammarAccess.getActionAccess().getDeliverKeyword_2_0_1()), new TokenAlias(false, false, grammarAccess.getActionAccess().getFetchKeyword_2_0_0()), new TokenAlias(false, false, grammarAccess.getActionAccess().getLeaveKeyword_2_0_2())), new TokenAlias(false, false, grammarAccess.getActionAccess().getStopKeyword_0()));
-		match_Action___DeliverKeyword_2_0_1_or_FetchKeyword_2_0_0_or_LeaveKeyword_2_0_2__a = new AlternativeAlias(true, true, new TokenAlias(false, false, grammarAccess.getActionAccess().getDeliverKeyword_2_0_1()), new TokenAlias(false, false, grammarAccess.getActionAccess().getFetchKeyword_2_0_0()), new TokenAlias(false, false, grammarAccess.getActionAccess().getLeaveKeyword_2_0_2()));
-		match_Action___DeliverKeyword_2_0_1_or_FetchKeyword_2_0_0_or_LeaveKeyword_2_0_2__p = new AlternativeAlias(true, false, new TokenAlias(false, false, grammarAccess.getActionAccess().getDeliverKeyword_2_0_1()), new TokenAlias(false, false, grammarAccess.getActionAccess().getFetchKeyword_2_0_0()), new TokenAlias(false, false, grammarAccess.getActionAccess().getLeaveKeyword_2_0_2()));
 		match_Conclusion_NLTerminalRuleCall_2_a = new TokenAlias(true, true, grammarAccess.getConclusionAccess().getNLTerminalRuleCall_2());
 		match_Conclusion_NLTerminalRuleCall_5_a = new TokenAlias(true, true, grammarAccess.getConclusionAccess().getNLTerminalRuleCall_5());
-		match_Condition_AmpersandAmpersandKeyword_1_0_0_or_VerticalLineVerticalLineKeyword_1_0_1 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getConditionAccess().getAmpersandAmpersandKeyword_1_0_0()), new TokenAlias(false, false, grammarAccess.getConditionAccess().getVerticalLineVerticalLineKeyword_1_0_1()));
 		match_Loop_AllKeyword_0_1_q = new TokenAlias(false, true, grammarAccess.getLoopAccess().getAllKeyword_0_1());
 		match_Loop_AllKeyword_1_1_q = new TokenAlias(false, true, grammarAccess.getLoopAccess().getAllKeyword_1_1());
 		match_Model_NLTerminalRuleCall_0_a = new TokenAlias(true, true, grammarAccess.getModelAccess().getNLTerminalRuleCall_0());
@@ -158,18 +150,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 		List<INode> transitionNodes = collectNodes(fromNode, toNode);
 		for (AbstractElementAlias syntax : transition.getAmbiguousSyntaxes()) {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
-			if (match_Action_StopKeyword_0_or___DeliverKeyword_2_0_1_or_FetchKeyword_2_0_0_or_LeaveKeyword_2_0_2__p.equals(syntax))
-				emit_Action_StopKeyword_0_or___DeliverKeyword_2_0_1_or_FetchKeyword_2_0_0_or_LeaveKeyword_2_0_2__p(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_Action___DeliverKeyword_2_0_1_or_FetchKeyword_2_0_0_or_LeaveKeyword_2_0_2__a.equals(syntax))
-				emit_Action___DeliverKeyword_2_0_1_or_FetchKeyword_2_0_0_or_LeaveKeyword_2_0_2__a(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_Action___DeliverKeyword_2_0_1_or_FetchKeyword_2_0_0_or_LeaveKeyword_2_0_2__p.equals(syntax))
-				emit_Action___DeliverKeyword_2_0_1_or_FetchKeyword_2_0_0_or_LeaveKeyword_2_0_2__p(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_Conclusion_NLTerminalRuleCall_2_a.equals(syntax))
+			if (match_Conclusion_NLTerminalRuleCall_2_a.equals(syntax))
 				emit_Conclusion_NLTerminalRuleCall_2_a(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Conclusion_NLTerminalRuleCall_5_a.equals(syntax))
 				emit_Conclusion_NLTerminalRuleCall_5_a(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_Condition_AmpersandAmpersandKeyword_1_0_0_or_VerticalLineVerticalLineKeyword_1_0_1.equals(syntax))
-				emit_Condition_AmpersandAmpersandKeyword_1_0_0_or_VerticalLineVerticalLineKeyword_1_0_1(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Loop_AllKeyword_0_1_q.equals(syntax))
 				emit_Loop_AllKeyword_0_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Loop_AllKeyword_1_1_q.equals(syntax))
@@ -271,50 +255,6 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     'stop' | ('fetch' | 'deliver' | 'leave')+
-	 *
-	 * This ambiguous syntax occurs at:
-	 *     (rule start) (ambiguity) (rule start)
-	 
-	 * </pre>
-	 */
-	protected void emit_Action_StopKeyword_0_or___DeliverKeyword_2_0_1_or_FetchKeyword_2_0_0_or_LeaveKeyword_2_0_2__p(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
-		acceptNodes(transition, nodes);
-	}
-	
-	/**
-	 * <pre>
-	 * Ambiguous syntax:
-	 *     ('fetch' | 'deliver' | 'leave')*
-	 *
-	 * This ambiguous syntax occurs at:
-	 *     (rule start) (ambiguity) resource=Resource
-	 *     resource=Resource (ambiguity) (rule end)
-	 *     resource=Resource (ambiguity) resource=Resource
-	 
-	 * </pre>
-	 */
-	protected void emit_Action___DeliverKeyword_2_0_1_or_FetchKeyword_2_0_0_or_LeaveKeyword_2_0_2__a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
-		acceptNodes(transition, nodes);
-	}
-	
-	/**
-	 * <pre>
-	 * Ambiguous syntax:
-	 *     ('fetch' | 'deliver' | 'leave')+
-	 *
-	 * This ambiguous syntax occurs at:
-	 *     (rule start) (ambiguity) (rule start)
-	 
-	 * </pre>
-	 */
-	protected void emit_Action___DeliverKeyword_2_0_1_or_FetchKeyword_2_0_0_or_LeaveKeyword_2_0_2__p(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
-		acceptNodes(transition, nodes);
-	}
-	
-	/**
-	 * <pre>
-	 * Ambiguous syntax:
 	 *     NL*
 	 *
 	 * This ambiguous syntax occurs at:
@@ -337,21 +277,6 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 * </pre>
 	 */
 	protected void emit_Conclusion_NLTerminalRuleCall_5_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
-		acceptNodes(transition, nodes);
-	}
-	
-	/**
-	 * <pre>
-	 * Ambiguous syntax:
-	 *     '&&' | '||'
-	 *
-	 * This ambiguous syntax occurs at:
-	 *     atomicPredicate+=AtomicPredicate (ambiguity) '!' atomicPredicate+=AtomicPredicate
-	 *     atomicPredicate+=AtomicPredicate (ambiguity) atomicPredicate+=AtomicPredicate
-	 
-	 * </pre>
-	 */
-	protected void emit_Condition_AmpersandAmpersandKeyword_1_0_0_or_VerticalLineVerticalLineKeyword_1_0_1(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	
@@ -406,29 +331,29 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     (
 	 *         name=ID 
 	 *         (ambiguity) 
-	 *         (('locations:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+ 
+	 *         (('locations:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+ 
 	 *         'resources:' 
-	 *         (NL+ (('locations:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+ 'resources:')* 
+	 *         (NL+ (('locations:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+ 'resources:')* 
 	 *         resources+=Resource
 	 *     )
 	 *     (
 	 *         name=ID 
 	 *         (ambiguity) 
-	 *         (('resources:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+ 
+	 *         (('resources:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+ 
 	 *         'locations:' 
-	 *         (NL+ (('resources:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+ 'locations:')* 
-	 *         locations+=Location
+	 *         (NL+ (('resources:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+ 'locations:')* 
+	 *         location+=Location
 	 *     )
 	 *     (
 	 *         name=ID 
 	 *         (ambiguity) 
-	 *         ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('Humans:' NL+)?)+ 
-	 *         'Robots:' 
-	 *         (NL+ ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('Humans:' NL+)?)+ 'Robots:')* 
+	 *         ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('humans:' NL+)?)+ 
+	 *         'robots:' 
+	 *         (NL+ ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('humans:' NL+)?)+ 'robots:')* 
 	 *         robot+=Robot
 	 *     )
-	 *     name=ID (ambiguity) (('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ (('Humans:' NL+)? ('Robots:' NL+)? (('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+)* 'Humans:' human+=Human
-	 *     name=ID (ambiguity) ((('locations:' NL+) | ('resources:' NL+))? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+ (rule end)
+	 *     name=ID (ambiguity) (('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ (('humans:' NL+)? ('robots:' NL+)? (('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+)* 'humans:' human+=Human
+	 *     name=ID (ambiguity) ((('locations:' NL+) | ('resources:' NL+))? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+ (rule end)
 	 
 	 * </pre>
 	 */
@@ -443,13 +368,13 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     (
-	 *         locations+=Location 
+	 *         location+=Location 
 	 *         NL+ 
 	 *         (('resources:' NL+)? ('locations:' NL+)?)+ 
 	 *         'agents:' 
 	 *         (ambiguity) 
-	 *         (('Humans:' NL+)? ('Robots:' NL+)? (('resources:' NL+)? ('locations:' NL+)?)+ 'agents:' (ambiguity))* 
-	 *         'Humans:' 
+	 *         (('humans:' NL+)? ('robots:' NL+)? (('resources:' NL+)? ('locations:' NL+)?)+ 'agents:' (ambiguity))* 
+	 *         'humans:' 
 	 *         human+=Human
 	 *     )
 	 *     (
@@ -458,11 +383,11 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *         (('locations:' NL+)? ('resources:' NL+)?)+ 
 	 *         'agents:' 
 	 *         (ambiguity) 
-	 *         (('Humans:' NL+)? ('Robots:' NL+)? (('locations:' NL+)? ('resources:' NL+)?)+ 'agents:' (ambiguity))* 
-	 *         'Humans:' 
+	 *         (('humans:' NL+)? ('robots:' NL+)? (('locations:' NL+)? ('resources:' NL+)?)+ 'agents:' (ambiguity))* 
+	 *         'humans:' 
 	 *         human+=Human
 	 *     )
-	 *     name=ID NL+ (('locations:' NL+) | ('resources:' NL+))* 'agents:' (ambiguity) (('Humans:' NL+)? ('Robots:' NL+)? (('locations:' NL+) | ('resources:' NL+))* 'agents:' (ambiguity))* 'Humans:' human+=Human
+	 *     name=ID NL+ (('locations:' NL+) | ('resources:' NL+))* 'agents:' (ambiguity) (('humans:' NL+)? ('robots:' NL+)? (('locations:' NL+) | ('resources:' NL+))* 'agents:' (ambiguity))* 'humans:' human+=Human
 	 
 	 * </pre>
 	 */
@@ -480,12 +405,12 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *         human+=Human 
 	 *         (ambiguity) 
 	 *         (
-	 *             'Robots:' | 
+	 *             'robots:' | 
 	 *             (
-	 *                 ('Robots:' NL+)? 
-	 *                 ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('Robots:' NL+)?)+ 
-	 *                 ('Humans:' (ambiguity) ('Robots:' NL+)? ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('Robots:' NL+)?)+)* 
-	 *                 (('Humans:' (ambiguity) 'Robots:') | 'Robots:')
+	 *                 ('robots:' NL+)? 
+	 *                 ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('robots:' NL+)?)+ 
+	 *                 ('humans:' (ambiguity) ('robots:' NL+)? ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('robots:' NL+)?)+)* 
+	 *                 (('humans:' (ambiguity) 'robots:') | 'robots:')
 	 *             )
 	 *         ) 
 	 *         robot+=Robot
@@ -493,22 +418,22 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     (
 	 *         human+=Human 
 	 *         (ambiguity) 
-	 *         ('Robots:' NL+)? 
+	 *         ('robots:' NL+)? 
 	 *         (('locations:' NL+)? ('resources:' NL+)?)+ 
-	 *         ('agents:' NL+ ('Humans:' (ambiguity))? ('Robots:' NL+)? (('locations:' NL+)? ('resources:' NL+)?)+)* 
+	 *         ('agents:' NL+ ('humans:' (ambiguity))? ('robots:' NL+)? (('locations:' NL+)? ('resources:' NL+)?)+)* 
 	 *         'resources:' 
 	 *         resources+=Resource
 	 *     )
 	 *     (
 	 *         human+=Human 
 	 *         (ambiguity) 
-	 *         ('Robots:' NL+)? 
+	 *         ('robots:' NL+)? 
 	 *         (('resources:' NL+)? ('locations:' NL+)?)+ 
-	 *         ('agents:' NL+ ('Humans:' (ambiguity))? ('Robots:' NL+)? (('resources:' NL+)? ('locations:' NL+)?)+)* 
+	 *         ('agents:' NL+ ('humans:' (ambiguity))? ('robots:' NL+)? (('resources:' NL+)? ('locations:' NL+)?)+)* 
 	 *         'locations:' 
-	 *         locations+=Location
+	 *         location+=Location
 	 *     )
-	 *     human+=Human (ambiguity) ('Robots:' NL+)? (('locations:' NL+) | ('resources:' NL+))* ('agents:' NL+ ('Humans:' (ambiguity))? ('Robots:' NL+)? (('locations:' NL+) | ('resources:' NL+))*)* (rule end)
+	 *     human+=Human (ambiguity) ('robots:' NL+)? (('locations:' NL+) | ('resources:' NL+))* ('agents:' NL+ ('humans:' (ambiguity))? ('robots:' NL+)? (('locations:' NL+) | ('resources:' NL+))*)* (rule end)
 	 
 	 * </pre>
 	 */
@@ -525,13 +450,13 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     (
 	 *         robot+=Robot 
 	 *         (ambiguity) 
-	 *         ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('Humans:' NL+)?)+ 
-	 *         ((('Humans:' NL+ 'Robots:') | 'Robots:') (ambiguity) ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('Humans:' NL+)?)+)* 
-	 *         'Humans:' 
+	 *         ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('humans:' NL+)?)+ 
+	 *         ((('humans:' NL+ 'robots:') | 'robots:') (ambiguity) ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('humans:' NL+)?)+)* 
+	 *         'humans:' 
 	 *         human+=Human
 	 *     )
-	 *     robot+=Robot (ambiguity) (('locations:' NL+)? ('agents:' NL+ ('Humans:' NL+)?)?)+ 'resources:'
-	 *     robot+=Robot (ambiguity) (('resources:' NL+)? ('agents:' NL+ ('Humans:' NL+)?)?)+ 'locations:'
+	 *     robot+=Robot (ambiguity) (('locations:' NL+)? ('agents:' NL+ ('humans:' NL+)?)?)+ 'resources:'
+	 *     robot+=Robot (ambiguity) (('resources:' NL+)? ('agents:' NL+ ('humans:' NL+)?)?)+ 'locations:'
 	 
 	 * </pre>
 	 */
@@ -546,31 +471,31 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     (
-	 *         locations+=Location 
+	 *         location+=Location 
 	 *         (ambiguity) 
-	 *         (('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)? ('resources:' NL+)?)+ 
-	 *         ('locations:' (ambiguity) (('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)? ('resources:' NL+)?)+)* 
+	 *         (('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)? ('resources:' NL+)?)+ 
+	 *         ('locations:' (ambiguity) (('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)? ('resources:' NL+)?)+)* 
 	 *         'resources:' 
 	 *         resources+=Resource
 	 *     )
 	 *     (
-	 *         locations+=Location 
+	 *         location+=Location 
 	 *         (ambiguity) 
-	 *         (('resources:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+ 
-	 *         ('locations:' (ambiguity) (('resources:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+)* 
+	 *         (('resources:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+ 
+	 *         ('locations:' (ambiguity) (('resources:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+)* 
 	 *         (rule end)
 	 *     )
 	 *     (
-	 *         locations+=Location 
+	 *         location+=Location 
 	 *         (ambiguity) 
 	 *         (('resources:' NL+)? ('locations:' (ambiguity))?)+ 
 	 *         'agents:' 
 	 *         NL+ 
-	 *         (('Humans:' NL+)? ('Robots:' NL+)? (('resources:' NL+)? ('locations:' (ambiguity))?)+ 'agents:' NL+)* 
-	 *         'Humans:' 
+	 *         (('humans:' NL+)? ('robots:' NL+)? (('resources:' NL+)? ('locations:' (ambiguity))?)+ 'agents:' NL+)* 
+	 *         'humans:' 
 	 *         human+=Human
 	 *     )
-	 *     locations+=Location (ambiguity)
+	 *     location+=Location (ambiguity)
 	 
 	 * </pre>
 	 */
@@ -587,16 +512,16 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     (
 	 *         resources+=Resource 
 	 *         (ambiguity) 
-	 *         (('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)? ('locations:' NL+)?)+ 
-	 *         ('resources:' (ambiguity) (('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)? ('locations:' NL+)?)+)* 
+	 *         (('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)? ('locations:' NL+)?)+ 
+	 *         ('resources:' (ambiguity) (('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)? ('locations:' NL+)?)+)* 
 	 *         'locations:' 
-	 *         locations+=Location
+	 *         location+=Location
 	 *     )
 	 *     (
 	 *         resources+=Resource 
 	 *         (ambiguity) 
-	 *         (('locations:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+ 
-	 *         ('resources:' (ambiguity) (('locations:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+)* 
+	 *         (('locations:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+ 
+	 *         ('resources:' (ambiguity) (('locations:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+)* 
 	 *         (rule end)
 	 *     )
 	 *     (
@@ -605,8 +530,8 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *         (('locations:' NL+)? ('resources:' (ambiguity))?)+ 
 	 *         'agents:' 
 	 *         NL+ 
-	 *         (('Humans:' NL+)? ('Robots:' NL+)? (('locations:' NL+)? ('resources:' (ambiguity))?)+ 'agents:' NL+)* 
-	 *         'Humans:' 
+	 *         (('humans:' NL+)? ('robots:' NL+)? (('locations:' NL+)? ('resources:' (ambiguity))?)+ 'agents:' NL+)* 
+	 *         'humans:' 
 	 *         human+=Human
 	 *     )
 	 *     resources+=Resource (ambiguity)
@@ -649,12 +574,12 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 * <pre>
 	 * Ambiguous syntax:
 	 *     (
-	  *         'Robots:' | 
+	  *         'robots:' | 
 	  *         (
-	  *             ('Robots:' NL+)? 
-	  *             ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('Robots:' NL+)?)+ 
-	  *             ('Humans:' NL+ ('Robots:' NL+)? ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('Robots:' NL+)?)+)* 
-	  *             (('Humans:' NL+ 'Robots:') | 'Robots:')
+	  *             ('robots:' NL+)? 
+	  *             ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('robots:' NL+)?)+ 
+	  *             ('humans:' NL+ ('robots:' NL+)? ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('robots:' NL+)?)+)* 
+	  *             (('humans:' NL+ 'robots:') | 'robots:')
 	  *         )
 	  *     )
 	 *
@@ -670,10 +595,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)? (('locations:' NL+) | ('resources:' NL+))*)*
+	 *     ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)? (('locations:' NL+) | ('resources:' NL+))*)*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     human+=Human NL+ ('Robots:' NL+)? (('locations:' NL+) | ('resources:' NL+))* (ambiguity) (rule end)
+	 *     human+=Human NL+ ('robots:' NL+)? (('locations:' NL+) | ('resources:' NL+))* (ambiguity) (rule end)
 	 
 	 * </pre>
 	 */
@@ -684,10 +609,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)? (('locations:' NL+)? ('resources:' NL+)?)+)*
+	 *     ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)? (('locations:' NL+)? ('resources:' NL+)?)+)*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     human+=Human NL+ ('Robots:' NL+)? (('locations:' NL+)? ('resources:' NL+)?)+ (ambiguity) 'resources:' resources+=Resource
+	 *     human+=Human NL+ ('robots:' NL+)? (('locations:' NL+)? ('resources:' NL+)?)+ (ambiguity) 'resources:' resources+=Resource
 	 
 	 * </pre>
 	 */
@@ -698,10 +623,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)? (('resources:' NL+)? ('locations:' NL+)?)+)*
+	 *     ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)? (('resources:' NL+)? ('locations:' NL+)?)+)*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     human+=Human NL+ ('Robots:' NL+)? (('resources:' NL+)? ('locations:' NL+)?)+ (ambiguity) 'locations:' locations+=Location
+	 *     human+=Human NL+ ('robots:' NL+)? (('resources:' NL+)? ('locations:' NL+)?)+ (ambiguity) 'locations:' location+=Location
 	 
 	 * </pre>
 	 */
@@ -712,10 +637,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     ('locations:' NL+ (('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)? ('resources:' NL+)?)+)*
+	 *     ('locations:' NL+ (('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)? ('resources:' NL+)?)+)*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     locations+=Location NL+ (('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)? ('resources:' NL+)?)+ (ambiguity) 'resources:' resources+=Resource
+	 *     location+=Location NL+ (('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)? ('resources:' NL+)?)+ (ambiguity) 'resources:' resources+=Resource
 	 
 	 * </pre>
 	 */
@@ -726,10 +651,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     ('locations:' NL+ (('resources:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+)*
+	 *     ('locations:' NL+ (('resources:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+)*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     locations+=Location NL+ (('resources:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+ (ambiguity) (rule end)
+	 *     location+=Location NL+ (('resources:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+ (ambiguity) (rule end)
 	 
 	 * </pre>
 	 */
@@ -740,7 +665,7 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     (NL+ (('Robots:' NL+)? (('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+)+ 'Humans:')+
+	 *     (NL+ (('robots:' NL+)? (('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+)+ 'humans:')+
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     human+=Human (ambiguity) human+=Human
@@ -754,10 +679,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     (NL+ ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('Humans:' NL+)?)+ 'Robots:')*
+	 *     (NL+ ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('humans:' NL+)?)+ 'robots:')*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     name=ID NL+ ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('Humans:' NL+)?)+ 'Robots:' (ambiguity) robot+=Robot
+	 *     name=ID NL+ ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('humans:' NL+)?)+ 'robots:' (ambiguity) robot+=Robot
 	 
 	 * </pre>
 	 */
@@ -768,7 +693,7 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     (NL+ ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('Humans:' NL+)?)+ 'Robots:')+
+	 *     (NL+ ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('humans:' NL+)?)+ 'robots:')+
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     robot+=Robot (ambiguity) robot+=Robot
@@ -782,10 +707,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     (NL+ (('resources:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+ 'locations:')*
+	 *     (NL+ (('resources:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+ 'locations:')*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     name=ID NL+ (('resources:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+ 'locations:' (ambiguity) locations+=Location
+	 *     name=ID NL+ (('resources:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+ 'locations:' (ambiguity) location+=Location
 	 
 	 * </pre>
 	 */
@@ -796,10 +721,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     (NL+ (('resources:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+ 'locations:')+
+	 *     (NL+ (('resources:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+ 'locations:')+
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     locations+=Location (ambiguity) locations+=Location
+	 *     location+=Location (ambiguity) location+=Location
 	 
 	 * </pre>
 	 */
@@ -810,10 +735,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     (NL+ (('locations:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+ 'resources:')*
+	 *     (NL+ (('locations:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+ 'resources:')*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     name=ID NL+ (('locations:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+ 'resources:' (ambiguity) resources+=Resource
+	 *     name=ID NL+ (('locations:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+ 'resources:' (ambiguity) resources+=Resource
 	 
 	 * </pre>
 	 */
@@ -824,7 +749,7 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     (NL+ (('locations:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+ 'resources:')+
+	 *     (NL+ (('locations:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+ 'resources:')+
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     resources+=Resource (ambiguity) resources+=Resource
@@ -838,10 +763,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     ('resources:' NL+ (('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)? ('locations:' NL+)?)+)*
+	 *     ('resources:' NL+ (('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)? ('locations:' NL+)?)+)*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     resources+=Resource NL+ (('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)? ('locations:' NL+)?)+ (ambiguity) 'locations:' locations+=Location
+	 *     resources+=Resource NL+ (('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)? ('locations:' NL+)?)+ (ambiguity) 'locations:' location+=Location
 	 
 	 * </pre>
 	 */
@@ -852,10 +777,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     ('resources:' NL+ (('locations:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+)*
+	 *     ('resources:' NL+ (('locations:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+)*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     resources+=Resource NL+ (('locations:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+ (ambiguity) (rule end)
+	 *     resources+=Resource NL+ (('locations:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+ (ambiguity) (rule end)
 	 
 	 * </pre>
 	 */
@@ -866,12 +791,12 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     ('Robots:' NL+)?
+	 *     ('robots:' NL+)?
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     human+=Human NL+ (ambiguity) (('locations:' NL+) | ('resources:' NL+))* ('agents:' NL+ ('Humans:' NL+)? (ambiguity) (('locations:' NL+) | ('resources:' NL+))*)* (rule end)
-	 *     human+=Human NL+ (ambiguity) (('locations:' NL+)? ('resources:' NL+)?)+ ('agents:' NL+ ('Humans:' NL+)? (ambiguity) (('locations:' NL+)? ('resources:' NL+)?)+)* 'resources:' resources+=Resource
-	 *     human+=Human NL+ (ambiguity) (('resources:' NL+)? ('locations:' NL+)?)+ ('agents:' NL+ ('Humans:' NL+)? (ambiguity) (('resources:' NL+)? ('locations:' NL+)?)+)* 'locations:' locations+=Location
+	 *     human+=Human NL+ (ambiguity) (('locations:' NL+) | ('resources:' NL+))* ('agents:' NL+ ('humans:' NL+)? (ambiguity) (('locations:' NL+) | ('resources:' NL+))*)* (rule end)
+	 *     human+=Human NL+ (ambiguity) (('locations:' NL+)? ('resources:' NL+)?)+ ('agents:' NL+ ('humans:' NL+)? (ambiguity) (('locations:' NL+)? ('resources:' NL+)?)+)* 'resources:' resources+=Resource
+	 *     human+=Human NL+ (ambiguity) (('resources:' NL+)? ('locations:' NL+)?)+ ('agents:' NL+ ('humans:' NL+)? (ambiguity) (('resources:' NL+)? ('locations:' NL+)?)+)* 'locations:' location+=Location
 	 
 	 * </pre>
 	 */
@@ -882,10 +807,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     (('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)? ('locations:' NL+)?)+
+	 *     (('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)? ('locations:' NL+)?)+
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     resources+=Resource NL+ (ambiguity) ('resources:' NL+ (ambiguity))* 'locations:' locations+=Location
+	 *     resources+=Resource NL+ (ambiguity) ('resources:' NL+ (ambiguity))* 'locations:' location+=Location
 	 
 	 * </pre>
 	 */
@@ -896,10 +821,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     (('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)? ('resources:' NL+)?)+
+	 *     (('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)? ('resources:' NL+)?)+
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     locations+=Location NL+ (ambiguity) ('locations:' NL+ (ambiguity))* 'resources:' resources+=Resource
+	 *     location+=Location NL+ (ambiguity) ('locations:' NL+ (ambiguity))* 'resources:' resources+=Resource
 	 
 	 * </pre>
 	 */
@@ -910,10 +835,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     (('Humans:' NL+)? ('Robots:' NL+)? (('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+)*
+	 *     (('humans:' NL+)? ('robots:' NL+)? (('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+)*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     name=ID NL+ (('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ (ambiguity) 'Humans:' human+=Human
+	 *     name=ID NL+ (('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ (ambiguity) 'humans:' human+=Human
 	 
 	 * </pre>
 	 */
@@ -924,10 +849,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     (('Humans:' NL+)? ('Robots:' NL+)? (('locations:' NL+)? ('resources:' NL+)?)+ 'agents:' NL+)*
+	 *     (('humans:' NL+)? ('robots:' NL+)? (('locations:' NL+)? ('resources:' NL+)?)+ 'agents:' NL+)*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     resources+=Resource NL+ (('locations:' NL+)? ('resources:' NL+)?)+ 'agents:' NL+ (ambiguity) 'Humans:' human+=Human
+	 *     resources+=Resource NL+ (('locations:' NL+)? ('resources:' NL+)?)+ 'agents:' NL+ (ambiguity) 'humans:' human+=Human
 	 
 	 * </pre>
 	 */
@@ -938,10 +863,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     (('Humans:' NL+)? ('Robots:' NL+)? (('resources:' NL+)? ('locations:' NL+)?)+ 'agents:' NL+)*
+	 *     (('humans:' NL+)? ('robots:' NL+)? (('resources:' NL+)? ('locations:' NL+)?)+ 'agents:' NL+)*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     locations+=Location NL+ (('resources:' NL+)? ('locations:' NL+)?)+ 'agents:' NL+ (ambiguity) 'Humans:' human+=Human
+	 *     location+=Location NL+ (('resources:' NL+)? ('locations:' NL+)?)+ 'agents:' NL+ (ambiguity) 'humans:' human+=Human
 	 
 	 * </pre>
 	 */
@@ -955,8 +880,8 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     (('locations:' NL+) | ('resources:' NL+))*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     human+=Human NL+ ('Robots:' NL+)? (ambiguity) ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)? (ambiguity))* (rule end)
-	 *     name=ID NL+ (ambiguity) 'agents:' NL+ (('Humans:' NL+)? ('Robots:' NL+)? (ambiguity) 'agents:' NL+)* 'Humans:' human+=Human
+	 *     human+=Human NL+ ('robots:' NL+)? (ambiguity) ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)? (ambiguity))* (rule end)
+	 *     name=ID NL+ (ambiguity) 'agents:' NL+ (('humans:' NL+)? ('robots:' NL+)? (ambiguity) 'agents:' NL+)* 'humans:' human+=Human
 	 
 	 * </pre>
 	 */
@@ -967,7 +892,7 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     (('locations:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+
+	 *     (('locations:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     name=ID NL+ (ambiguity) 'resources:' (NL+ (ambiguity) 'resources:')* resources+=Resource
@@ -982,7 +907,7 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     (('locations:' NL+)? ('agents:' NL+ ('Humans:' NL+)?)?)+
+	 *     (('locations:' NL+)? ('agents:' NL+ ('humans:' NL+)?)?)+
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     robot+=Robot NL+ (ambiguity) 'resources:'
@@ -999,8 +924,8 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     (('locations:' NL+)? ('resources:' NL+)?)+
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     human+=Human NL+ ('Robots:' NL+)? (ambiguity) ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)? (ambiguity))* 'resources:' resources+=Resource
-	 *     resources+=Resource NL+ (ambiguity) 'agents:' NL+ (('Humans:' NL+)? ('Robots:' NL+)? (ambiguity) 'agents:' NL+)* 'Humans:' human+=Human
+	 *     human+=Human NL+ ('robots:' NL+)? (ambiguity) ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)? (ambiguity))* 'resources:' resources+=Resource
+	 *     resources+=Resource NL+ (ambiguity) 'agents:' NL+ (('humans:' NL+)? ('robots:' NL+)? (ambiguity) 'agents:' NL+)* 'humans:' human+=Human
 	 
 	 * </pre>
 	 */
@@ -1011,11 +936,11 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     (('resources:' NL+)? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+
+	 *     (('resources:' NL+)? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     locations+=Location NL+ (ambiguity) ('locations:' NL+ (ambiguity))* (rule end)
-	 *     name=ID NL+ (ambiguity) 'locations:' (NL+ (ambiguity) 'locations:')* locations+=Location
+	 *     location+=Location NL+ (ambiguity) ('locations:' NL+ (ambiguity))* (rule end)
+	 *     name=ID NL+ (ambiguity) 'locations:' (NL+ (ambiguity) 'locations:')* location+=Location
 	 
 	 * </pre>
 	 */
@@ -1026,7 +951,7 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     (('resources:' NL+)? ('agents:' NL+ ('Humans:' NL+)?)?)+
+	 *     (('resources:' NL+)? ('agents:' NL+ ('humans:' NL+)?)?)+
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     robot+=Robot NL+ (ambiguity) 'locations:'
@@ -1043,8 +968,8 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     (('resources:' NL+)? ('locations:' NL+)?)+
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     human+=Human NL+ ('Robots:' NL+)? (ambiguity) ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)? (ambiguity))* 'locations:' locations+=Location
-	 *     locations+=Location NL+ (ambiguity) 'agents:' NL+ (('Humans:' NL+)? ('Robots:' NL+)? (ambiguity) 'agents:' NL+)* 'Humans:' human+=Human
+	 *     human+=Human NL+ ('robots:' NL+)? (ambiguity) ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)? (ambiguity))* 'locations:' location+=Location
+	 *     location+=Location NL+ (ambiguity) 'agents:' NL+ (('humans:' NL+)? ('robots:' NL+)? (ambiguity) 'agents:' NL+)* 'humans:' human+=Human
 	 
 	 * </pre>
 	 */
@@ -1055,10 +980,10 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     ((('Humans:' NL+ 'Robots:') | 'Robots:') NL+ ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('Humans:' NL+)?)+)*
+	 *     ((('humans:' NL+ 'robots:') | 'robots:') NL+ ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('humans:' NL+)?)+)*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     robot+=Robot NL+ ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('Humans:' NL+)?)+ (ambiguity) 'Humans:' human+=Human
+	 *     robot+=Robot NL+ ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('humans:' NL+)?)+ (ambiguity) 'humans:' human+=Human
 	 
 	 * </pre>
 	 */
@@ -1069,11 +994,11 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('Humans:' NL+)?)+
+	 *     ((('locations:' NL+) | ('resources:' NL+))* 'agents:' NL+ ('humans:' NL+)?)+
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     name=ID NL+ (ambiguity) 'Robots:' (NL+ (ambiguity) 'Robots:')* robot+=Robot
-	 *     robot+=Robot NL+ (ambiguity) ((('Humans:' NL+ 'Robots:') | 'Robots:') NL+ (ambiguity))* 'Humans:' human+=Human
+	 *     name=ID NL+ (ambiguity) 'robots:' (NL+ (ambiguity) 'robots:')* robot+=Robot
+	 *     robot+=Robot NL+ (ambiguity) ((('humans:' NL+ 'robots:') | 'robots:') NL+ (ambiguity))* 'humans:' human+=Human
 	 
 	 * </pre>
 	 */
@@ -1084,7 +1009,7 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	/**
 	 * <pre>
 	 * Ambiguous syntax:
-	 *     ((('locations:' NL+) | ('resources:' NL+))? ('agents:' NL+ ('Humans:' NL+)? ('Robots:' NL+)?)?)+
+	 *     ((('locations:' NL+) | ('resources:' NL+))? ('agents:' NL+ ('humans:' NL+)? ('robots:' NL+)?)?)+
 	 *
 	 * This ambiguous syntax occurs at:
 	 *     name=ID NL+ (ambiguity) (rule end)
@@ -1160,9 +1085,9 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     NL*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     i=INT ':' (ambiguity) action+=Action
+	 *     i=INT ':' (ambiguity) actionC+=ActionC
 	 *     i=INT ':' (ambiguity) loop+=Loop
-	 *     j=INT ':' (ambiguity) action+=Action
+	 *     j=INT ':' (ambiguity) actionC+=ActionC
 	 *     j=INT ':' (ambiguity) loop+=Loop
 	 
 	 * </pre>
@@ -1177,16 +1102,13 @@ public class LIRAsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     NL+
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     action+=Action (ambiguity) (rule end)
-	 *     action+=Action (ambiguity) action+=Action
-	 *     action+=Action (ambiguity) loop+=Loop
-	 *     conditionalStatement+=ConditionalStatement (ambiguity) (rule end)
-	 *     conditionalStatement+=ConditionalStatement (ambiguity) action+=Action
-	 *     conditionalStatement+=ConditionalStatement (ambiguity) loop+=Loop
+	 *     actionC+=ActionC (ambiguity) (rule end)
+	 *     actionC+=ActionC (ambiguity) actionC+=ActionC
+	 *     actionC+=ActionC (ambiguity) loop+=Loop
 	 *     i=INT ':' (ambiguity) (rule end)
 	 *     j=INT ':' (ambiguity) (rule end)
 	 *     loop+=Loop (ambiguity) (rule end)
-	 *     loop+=Loop (ambiguity) action+=Action
+	 *     loop+=Loop (ambiguity) actionC+=ActionC
 	 *     loop+=Loop (ambiguity) loop+=Loop
 	 
 	 * </pre>

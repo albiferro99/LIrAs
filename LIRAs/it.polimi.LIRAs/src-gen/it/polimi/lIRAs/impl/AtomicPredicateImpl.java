@@ -27,6 +27,8 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link it.polimi.lIRAs.impl.AtomicPredicateImpl#isNegated <em>Negated</em>}</li>
+ *   <li>{@link it.polimi.lIRAs.impl.AtomicPredicateImpl#getAp <em>Ap</em>}</li>
  *   <li>{@link it.polimi.lIRAs.impl.AtomicPredicateImpl#getN <em>N</em>}</li>
  *   <li>{@link it.polimi.lIRAs.impl.AtomicPredicateImpl#getAgent <em>Agent</em>}</li>
  *   <li>{@link it.polimi.lIRAs.impl.AtomicPredicateImpl#getLocation <em>Location</em>}</li>
@@ -38,6 +40,46 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  */
 public class AtomicPredicateImpl extends MinimalEObjectImpl.Container implements AtomicPredicate
 {
+  /**
+   * The default value of the '{@link #isNegated() <em>Negated</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isNegated()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean NEGATED_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isNegated() <em>Negated</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isNegated()
+   * @generated
+   * @ordered
+   */
+  protected boolean negated = NEGATED_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getAp() <em>Ap</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAp()
+   * @generated
+   * @ordered
+   */
+  protected static final String AP_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getAp() <em>Ap</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAp()
+   * @generated
+   * @ordered
+   */
+  protected String ap = AP_EDEFAULT;
+
   /**
    * The default value of the '{@link #getN() <em>N</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -117,6 +159,56 @@ public class AtomicPredicateImpl extends MinimalEObjectImpl.Container implements
   protected EClass eStaticClass()
   {
     return LIRAsPackage.Literals.ATOMIC_PREDICATE;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isNegated()
+  {
+    return negated;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setNegated(boolean newNegated)
+  {
+    boolean oldNegated = negated;
+    negated = newNegated;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, LIRAsPackage.ATOMIC_PREDICATE__NEGATED, oldNegated, negated));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getAp()
+  {
+    return ap;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setAp(String newAp)
+  {
+    String oldAp = ap;
+    ap = newAp;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, LIRAsPackage.ATOMIC_PREDICATE__AP, oldAp, ap));
   }
 
   /**
@@ -376,6 +468,10 @@ public class AtomicPredicateImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case LIRAsPackage.ATOMIC_PREDICATE__NEGATED:
+        return isNegated();
+      case LIRAsPackage.ATOMIC_PREDICATE__AP:
+        return getAp();
       case LIRAsPackage.ATOMIC_PREDICATE__N:
         return getN();
       case LIRAsPackage.ATOMIC_PREDICATE__AGENT:
@@ -400,6 +496,12 @@ public class AtomicPredicateImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case LIRAsPackage.ATOMIC_PREDICATE__NEGATED:
+        setNegated((Boolean)newValue);
+        return;
+      case LIRAsPackage.ATOMIC_PREDICATE__AP:
+        setAp((String)newValue);
+        return;
       case LIRAsPackage.ATOMIC_PREDICATE__N:
         setN((Integer)newValue);
         return;
@@ -429,6 +531,12 @@ public class AtomicPredicateImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case LIRAsPackage.ATOMIC_PREDICATE__NEGATED:
+        setNegated(NEGATED_EDEFAULT);
+        return;
+      case LIRAsPackage.ATOMIC_PREDICATE__AP:
+        setAp(AP_EDEFAULT);
+        return;
       case LIRAsPackage.ATOMIC_PREDICATE__N:
         setN(N_EDEFAULT);
         return;
@@ -458,6 +566,10 @@ public class AtomicPredicateImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
+      case LIRAsPackage.ATOMIC_PREDICATE__NEGATED:
+        return negated != NEGATED_EDEFAULT;
+      case LIRAsPackage.ATOMIC_PREDICATE__AP:
+        return AP_EDEFAULT == null ? ap != null : !AP_EDEFAULT.equals(ap);
       case LIRAsPackage.ATOMIC_PREDICATE__N:
         return n != N_EDEFAULT;
       case LIRAsPackage.ATOMIC_PREDICATE__AGENT:
@@ -483,7 +595,11 @@ public class AtomicPredicateImpl extends MinimalEObjectImpl.Container implements
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (n: ");
+    result.append(" (negated: ");
+    result.append(negated);
+    result.append(", ap: ");
+    result.append(ap);
+    result.append(", n: ");
     result.append(n);
     result.append(')');
     return result.toString();

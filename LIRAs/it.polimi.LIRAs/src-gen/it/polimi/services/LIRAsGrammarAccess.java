@@ -6,6 +6,7 @@ package it.polimi.services;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import java.util.List;
+import org.eclipse.xtext.Action;
 import org.eclipse.xtext.Alternatives;
 import org.eclipse.xtext.Assignment;
 import org.eclipse.xtext.Grammar;
@@ -106,12 +107,12 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		private final Group cGroup_2_1 = (Group)cAlternatives_2.eContents().get(1);
 		private final Keyword cLocationsKeyword_2_1_0 = (Keyword)cGroup_2_1.eContents().get(0);
 		private final Group cGroup_2_1_1 = (Group)cGroup_2_1.eContents().get(1);
-		private final Assignment cLocationsAssignment_2_1_1_0 = (Assignment)cGroup_2_1_1.eContents().get(0);
-		private final RuleCall cLocationsLocationParserRuleCall_2_1_1_0_0 = (RuleCall)cLocationsAssignment_2_1_1_0.eContents().get(0);
+		private final Assignment cLocationAssignment_2_1_1_0 = (Assignment)cGroup_2_1_1.eContents().get(0);
+		private final RuleCall cLocationLocationParserRuleCall_2_1_1_0_0 = (RuleCall)cLocationAssignment_2_1_1_0.eContents().get(0);
 		private final Group cGroup_2_1_1_1 = (Group)cGroup_2_1_1.eContents().get(1);
 		private final Keyword cCommaKeyword_2_1_1_1_0 = (Keyword)cGroup_2_1_1_1.eContents().get(0);
-		private final Assignment cLocationsAssignment_2_1_1_1_1 = (Assignment)cGroup_2_1_1_1.eContents().get(1);
-		private final RuleCall cLocationsLocationParserRuleCall_2_1_1_1_1_0 = (RuleCall)cLocationsAssignment_2_1_1_1_1.eContents().get(0);
+		private final Assignment cLocationAssignment_2_1_1_1_1 = (Assignment)cGroup_2_1_1_1.eContents().get(1);
+		private final RuleCall cLocationLocationParserRuleCall_2_1_1_1_1_0 = (RuleCall)cLocationAssignment_2_1_1_1_1.eContents().get(0);
 		private final RuleCall cNLTerminalRuleCall_2_1_2 = (RuleCall)cGroup_2_1.eContents().get(2);
 		private final Group cGroup_2_2 = (Group)cAlternatives_2.eContents().get(2);
 		private final Keyword cResourcesKeyword_2_2_0 = (Keyword)cGroup_2_2.eContents().get(0);
@@ -128,18 +129,18 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		//Pattern:
 		//    name=ID NL+
 		//    (('agents:'  NL+
-		//    ('Humans:' (human+=Human (',' human+=Human)*)? NL+)?
-		//    ('Robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)? )
-		//    | 'locations:' (locations+=Location (',' locations+=Location)*)? NL+
+		//    ('humans:' (human+=Human (',' human+=Human)*)? NL+)?
+		//    ('robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)? )
+		//    | 'locations:' (location+=Location (',' location+=Location)*)? NL+
 		//    | 'resources:' (resources+=Resource (',' resources+=Resource)*)? NL+)*
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//name=ID NL+
 		//(('agents:'  NL+
-		//('Humans:' (human+=Human (',' human+=Human)*)? NL+)?
-		//('Robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)? )
-		//| 'locations:' (locations+=Location (',' locations+=Location)*)? NL+
+		//('humans:' (human+=Human (',' human+=Human)*)? NL+)?
+		//('robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)? )
+		//| 'locations:' (location+=Location (',' location+=Location)*)? NL+
 		//| 'resources:' (resources+=Resource (',' resources+=Resource)*)? NL+)*
 		public Group getGroup() { return cGroup; }
 		
@@ -153,15 +154,15 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		public RuleCall getNLTerminalRuleCall_1() { return cNLTerminalRuleCall_1; }
 		
 		//(('agents:'  NL+
-		//('Humans:' (human+=Human (',' human+=Human)*)? NL+)?
-		//('Robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)? )
-		//| 'locations:' (locations+=Location (',' locations+=Location)*)? NL+
+		//('humans:' (human+=Human (',' human+=Human)*)? NL+)?
+		//('robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)? )
+		//| 'locations:' (location+=Location (',' location+=Location)*)? NL+
 		//| 'resources:' (resources+=Resource (',' resources+=Resource)*)? NL+)*
 		public Alternatives getAlternatives_2() { return cAlternatives_2; }
 		
 		//('agents:'  NL+
-		//    ('Humans:' (human+=Human (',' human+=Human)*)? NL+)?
-		//    ('Robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)? )
+		//    ('humans:' (human+=Human (',' human+=Human)*)? NL+)?
+		//    ('robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)? )
 		public Group getGroup_2_0() { return cGroup_2_0; }
 		
 		//'agents:'
@@ -170,10 +171,10 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		//NL+
 		public RuleCall getNLTerminalRuleCall_2_0_1() { return cNLTerminalRuleCall_2_0_1; }
 		
-		//('Humans:' (human+=Human (',' human+=Human)*)? NL+)?
+		//('humans:' (human+=Human (',' human+=Human)*)? NL+)?
 		public Group getGroup_2_0_2() { return cGroup_2_0_2; }
 		
-		//'Humans:'
+		//'humans:'
 		public Keyword getHumansKeyword_2_0_2_0() { return cHumansKeyword_2_0_2_0; }
 		
 		//(human+=Human (',' human+=Human)*)?
@@ -200,10 +201,10 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		//NL+
 		public RuleCall getNLTerminalRuleCall_2_0_2_2() { return cNLTerminalRuleCall_2_0_2_2; }
 		
-		//('Robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)?
+		//('robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)?
 		public Group getGroup_2_0_3() { return cGroup_2_0_3; }
 		
-		//'Robots:'
+		//'robots:'
 		public Keyword getRobotsKeyword_2_0_3_0() { return cRobotsKeyword_2_0_3_0; }
 		
 		//(robot+=Robot (',' robot+=Robot)*)?
@@ -230,32 +231,32 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		//NL+
 		public RuleCall getNLTerminalRuleCall_2_0_3_2() { return cNLTerminalRuleCall_2_0_3_2; }
 		
-		//'locations:' (locations+=Location (',' locations+=Location)*)? NL+
+		//'locations:' (location+=Location (',' location+=Location)*)? NL+
 		public Group getGroup_2_1() { return cGroup_2_1; }
 		
 		//'locations:'
 		public Keyword getLocationsKeyword_2_1_0() { return cLocationsKeyword_2_1_0; }
 		
-		//(locations+=Location (',' locations+=Location)*)?
+		//(location+=Location (',' location+=Location)*)?
 		public Group getGroup_2_1_1() { return cGroup_2_1_1; }
 		
-		//locations+=Location
-		public Assignment getLocationsAssignment_2_1_1_0() { return cLocationsAssignment_2_1_1_0; }
+		//location+=Location
+		public Assignment getLocationAssignment_2_1_1_0() { return cLocationAssignment_2_1_1_0; }
 		
 		//Location
-		public RuleCall getLocationsLocationParserRuleCall_2_1_1_0_0() { return cLocationsLocationParserRuleCall_2_1_1_0_0; }
+		public RuleCall getLocationLocationParserRuleCall_2_1_1_0_0() { return cLocationLocationParserRuleCall_2_1_1_0_0; }
 		
-		//(',' locations+=Location)*
+		//(',' location+=Location)*
 		public Group getGroup_2_1_1_1() { return cGroup_2_1_1_1; }
 		
 		//','
 		public Keyword getCommaKeyword_2_1_1_1_0() { return cCommaKeyword_2_1_1_1_0; }
 		
-		//locations+=Location
-		public Assignment getLocationsAssignment_2_1_1_1_1() { return cLocationsAssignment_2_1_1_1_1; }
+		//location+=Location
+		public Assignment getLocationAssignment_2_1_1_1_1() { return cLocationAssignment_2_1_1_1_1; }
 		
 		//Location
-		public RuleCall getLocationsLocationParserRuleCall_2_1_1_1_1_0() { return cLocationsLocationParserRuleCall_2_1_1_1_1_0; }
+		public RuleCall getLocationLocationParserRuleCall_2_1_1_1_1_0() { return cLocationLocationParserRuleCall_2_1_1_1_1_0; }
 		
 		//NL+
 		public RuleCall getNLTerminalRuleCall_2_1_2() { return cNLTerminalRuleCall_2_1_2; }
@@ -359,20 +360,17 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		private final Alternatives cAlternatives_3_0 = (Alternatives)cGroup_3.eContents().get(0);
 		private final Assignment cLoopAssignment_3_0_0 = (Assignment)cAlternatives_3_0.eContents().get(0);
 		private final RuleCall cLoopLoopParserRuleCall_3_0_0_0 = (RuleCall)cLoopAssignment_3_0_0.eContents().get(0);
-		private final Group cGroup_3_0_1 = (Group)cAlternatives_3_0.eContents().get(1);
-		private final Assignment cActionAssignment_3_0_1_0 = (Assignment)cGroup_3_0_1.eContents().get(0);
-		private final RuleCall cActionActionParserRuleCall_3_0_1_0_0 = (RuleCall)cActionAssignment_3_0_1_0.eContents().get(0);
-		private final Assignment cConditionalStatementAssignment_3_0_1_1 = (Assignment)cGroup_3_0_1.eContents().get(1);
-		private final RuleCall cConditionalStatementConditionalStatementParserRuleCall_3_0_1_1_0 = (RuleCall)cConditionalStatementAssignment_3_0_1_1.eContents().get(0);
+		private final Assignment cActionCAssignment_3_0_1 = (Assignment)cAlternatives_3_0.eContents().get(1);
+		private final RuleCall cActionCActionCParserRuleCall_3_0_1_0 = (RuleCall)cActionCAssignment_3_0_1.eContents().get(0);
 		private final RuleCall cNLTerminalRuleCall_3_1 = (RuleCall)cGroup_3.eContents().get(1);
 		
 		//// SubSequence rule defines the structure of a subsequence within a sequence
 		//SubSequence:
-		//    i=INT ('-' j=INT)? ':' ( ( ( loop+=Loop) | ((action+=Action) (conditionalStatement+=ConditionalStatement)?) )? NL )+
+		//    i=INT ('-' j=INT)? ':' ( ( ( loop+=Loop) | ((actionC+=ActionC) ) )? NL )+
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//i=INT ('-' j=INT)? ':' ( ( ( loop+=Loop) | ((action+=Action) (conditionalStatement+=ConditionalStatement)?) )? NL )+
+		//i=INT ('-' j=INT)? ':' ( ( ( loop+=Loop) | ((actionC+=ActionC) ) )? NL )+
 		public Group getGroup() { return cGroup; }
 		
 		//i=INT
@@ -396,10 +394,10 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		//':'
 		public Keyword getColonKeyword_2() { return cColonKeyword_2; }
 		
-		//( ( ( loop+=Loop) | ((action+=Action) (conditionalStatement+=ConditionalStatement)?) )? NL )+
+		//( ( ( loop+=Loop) | ((actionC+=ActionC) ) )? NL )+
 		public Group getGroup_3() { return cGroup_3; }
 		
-		//( ( loop+=Loop) | ((action+=Action) (conditionalStatement+=ConditionalStatement)?) )?
+		//( ( loop+=Loop) | ((actionC+=ActionC) ) )?
 		public Alternatives getAlternatives_3_0() { return cAlternatives_3_0; }
 		
 		//( loop+=Loop)
@@ -408,20 +406,11 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		//Loop
 		public RuleCall getLoopLoopParserRuleCall_3_0_0_0() { return cLoopLoopParserRuleCall_3_0_0_0; }
 		
-		//((action+=Action) (conditionalStatement+=ConditionalStatement)?)
-		public Group getGroup_3_0_1() { return cGroup_3_0_1; }
+		//((actionC+=ActionC) )
+		public Assignment getActionCAssignment_3_0_1() { return cActionCAssignment_3_0_1; }
 		
-		//(action+=Action)
-		public Assignment getActionAssignment_3_0_1_0() { return cActionAssignment_3_0_1_0; }
-		
-		//Action
-		public RuleCall getActionActionParserRuleCall_3_0_1_0_0() { return cActionActionParserRuleCall_3_0_1_0_0; }
-		
-		//(conditionalStatement+=ConditionalStatement)?
-		public Assignment getConditionalStatementAssignment_3_0_1_1() { return cConditionalStatementAssignment_3_0_1_1; }
-		
-		//ConditionalStatement
-		public RuleCall getConditionalStatementConditionalStatementParserRuleCall_3_0_1_1_0() { return cConditionalStatementConditionalStatementParserRuleCall_3_0_1_1_0; }
+		//ActionC
+		public RuleCall getActionCActionCParserRuleCall_3_0_1_0() { return cActionCActionCParserRuleCall_3_0_1_0; }
 		
 		//NL
 		public RuleCall getNLTerminalRuleCall_3_1() { return cNLTerminalRuleCall_3_1; }
@@ -536,18 +525,22 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "it.polimi.LIRAs.ConditionalStatement");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
-		private final Keyword cUntilKeyword_0_0 = (Keyword)cGroup_0.eContents().get(0);
-		private final Assignment cConditionAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
-		private final RuleCall cConditionConditionParserRuleCall_0_1_0 = (RuleCall)cConditionAssignment_0_1.eContents().get(0);
+		private final Action cConditionalStatementAction_0_0 = (Action)cGroup_0.eContents().get(0);
+		private final Assignment cCs1Assignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
+		private final Keyword cCs1UntilKeyword_0_1_0 = (Keyword)cCs1Assignment_0_1.eContents().get(0);
+		private final Assignment cConditionAssignment_0_2 = (Assignment)cGroup_0.eContents().get(2);
+		private final RuleCall cConditionConditionParserRuleCall_0_2_0 = (RuleCall)cConditionAssignment_0_2.eContents().get(0);
 		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
-		private final Keyword cIfKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cCs2Assignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
+		private final Keyword cCs2IfKeyword_1_0_0 = (Keyword)cCs2Assignment_1_0.eContents().get(0);
 		private final Assignment cConditionAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cConditionConditionParserRuleCall_1_1_0 = (RuleCall)cConditionAssignment_1_1.eContents().get(0);
 		private final Keyword cElseKeyword_1_2 = (Keyword)cGroup_1.eContents().get(2);
 		private final Assignment cActionAssignment_1_3 = (Assignment)cGroup_1.eContents().get(3);
 		private final RuleCall cActionActionParserRuleCall_1_3_0 = (RuleCall)cActionAssignment_1_3.eContents().get(0);
 		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
-		private final Keyword cIfKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final Assignment cCs3Assignment_2_0 = (Assignment)cGroup_2.eContents().get(0);
+		private final Keyword cCs3IfKeyword_2_0_0 = (Keyword)cCs3Assignment_2_0.eContents().get(0);
 		private final Assignment cConditionAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
 		private final RuleCall cConditionConditionParserRuleCall_2_1_0 = (RuleCall)cConditionAssignment_2_1.eContents().get(0);
 		private final Keyword cElseKeyword_2_2 = (Keyword)cGroup_2.eContents().get(2);
@@ -557,41 +550,51 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		private final Assignment cConditionAssignment_2_5 = (Assignment)cGroup_2.eContents().get(5);
 		private final RuleCall cConditionConditionParserRuleCall_2_5_0 = (RuleCall)cConditionAssignment_2_5.eContents().get(0);
 		private final Group cGroup_3 = (Group)cAlternatives.eContents().get(3);
-		private final Keyword cWaitKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
+		private final Assignment cCs4Assignment_3_0 = (Assignment)cGroup_3.eContents().get(0);
+		private final Keyword cCs4WaitKeyword_3_0_0 = (Keyword)cCs4Assignment_3_0.eContents().get(0);
 		private final Assignment cNAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
 		private final RuleCall cNINTTerminalRuleCall_3_1_0 = (RuleCall)cNAssignment_3_1.eContents().get(0);
 		
 		//ConditionalStatement:
-		//    'until' condition+=Condition
-		//    | 'if' condition+=Condition 'else' action=Action
-		//    | 'if' condition+=Condition 'else' action=Action 'until' condition+=Condition
-		//    | 'wait' n=INT
+		//    {ConditionalStatement} cs1 = 'until' condition+=Condition
+		//    | cs2 = 'if' condition+=Condition 'else' action=Action
+		//    | cs3 = 'if' condition+=Condition 'else' action=Action 'until' condition+=Condition
+		//    | cs4 = 'wait' n=INT
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'until' condition+=Condition
-		//| 'if' condition+=Condition 'else' action=Action
-		//| 'if' condition+=Condition 'else' action=Action 'until' condition+=Condition
-		//| 'wait' n=INT
+		//{ConditionalStatement} cs1 = 'until' condition+=Condition
+		//| cs2 = 'if' condition+=Condition 'else' action=Action
+		//| cs3 = 'if' condition+=Condition 'else' action=Action 'until' condition+=Condition
+		//| cs4 = 'wait' n=INT
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//'until' condition+=Condition
+		//{ConditionalStatement} cs1 = 'until' condition+=Condition
 		public Group getGroup_0() { return cGroup_0; }
 		
+		//{ConditionalStatement}
+		public Action getConditionalStatementAction_0_0() { return cConditionalStatementAction_0_0; }
+		
+		//cs1 = 'until'
+		public Assignment getCs1Assignment_0_1() { return cCs1Assignment_0_1; }
+		
 		//'until'
-		public Keyword getUntilKeyword_0_0() { return cUntilKeyword_0_0; }
+		public Keyword getCs1UntilKeyword_0_1_0() { return cCs1UntilKeyword_0_1_0; }
 		
 		//condition+=Condition
-		public Assignment getConditionAssignment_0_1() { return cConditionAssignment_0_1; }
+		public Assignment getConditionAssignment_0_2() { return cConditionAssignment_0_2; }
 		
 		//Condition
-		public RuleCall getConditionConditionParserRuleCall_0_1_0() { return cConditionConditionParserRuleCall_0_1_0; }
+		public RuleCall getConditionConditionParserRuleCall_0_2_0() { return cConditionConditionParserRuleCall_0_2_0; }
 		
-		//'if' condition+=Condition 'else' action=Action
+		//cs2 = 'if' condition+=Condition 'else' action=Action
 		public Group getGroup_1() { return cGroup_1; }
 		
+		//cs2 = 'if'
+		public Assignment getCs2Assignment_1_0() { return cCs2Assignment_1_0; }
+		
 		//'if'
-		public Keyword getIfKeyword_1_0() { return cIfKeyword_1_0; }
+		public Keyword getCs2IfKeyword_1_0_0() { return cCs2IfKeyword_1_0_0; }
 		
 		//condition+=Condition
 		public Assignment getConditionAssignment_1_1() { return cConditionAssignment_1_1; }
@@ -608,11 +611,14 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		//Action
 		public RuleCall getActionActionParserRuleCall_1_3_0() { return cActionActionParserRuleCall_1_3_0; }
 		
-		//'if' condition+=Condition 'else' action=Action 'until' condition+=Condition
+		//cs3 = 'if' condition+=Condition 'else' action=Action 'until' condition+=Condition
 		public Group getGroup_2() { return cGroup_2; }
 		
+		//cs3 = 'if'
+		public Assignment getCs3Assignment_2_0() { return cCs3Assignment_2_0; }
+		
 		//'if'
-		public Keyword getIfKeyword_2_0() { return cIfKeyword_2_0; }
+		public Keyword getCs3IfKeyword_2_0_0() { return cCs3IfKeyword_2_0_0; }
 		
 		//condition+=Condition
 		public Assignment getConditionAssignment_2_1() { return cConditionAssignment_2_1; }
@@ -638,11 +644,14 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		//Condition
 		public RuleCall getConditionConditionParserRuleCall_2_5_0() { return cConditionConditionParserRuleCall_2_5_0; }
 		
-		//'wait' n=INT
+		//cs4 = 'wait' n=INT
 		public Group getGroup_3() { return cGroup_3; }
 		
+		//cs4 = 'wait'
+		public Assignment getCs4Assignment_3_0() { return cCs4Assignment_3_0; }
+		
 		//'wait'
-		public Keyword getWaitKeyword_3_0() { return cWaitKeyword_3_0; }
+		public Keyword getCs4WaitKeyword_3_0_0() { return cCs4WaitKeyword_3_0_0; }
 		
 		//n=INT
 		public Assignment getNAssignment_3_1() { return cNAssignment_3_1; }
@@ -653,20 +662,30 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 	public class ActionElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "it.polimi.LIRAs.Action");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Keyword cStopKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
+		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
+		private final Action cActionAction_0_0 = (Action)cGroup_0.eContents().get(0);
+		private final Assignment cActionTypeAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
+		private final Keyword cActionTypeStopKeyword_0_1_0 = (Keyword)cActionTypeAssignment_0_1.eContents().get(0);
 		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
-		private final Keyword cMoveToKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
+		private final Assignment cActionTypeAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
+		private final Keyword cActionTypeMoveToKeyword_1_0_0 = (Keyword)cActionTypeAssignment_1_0.eContents().get(0);
 		private final Assignment cTargetAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cTargetTargetParserRuleCall_1_1_0 = (RuleCall)cTargetAssignment_1_1.eContents().get(0);
 		private final UnorderedGroup cUnorderedGroup_2 = (UnorderedGroup)cAlternatives.eContents().get(2);
 		private final Alternatives cAlternatives_2_0 = (Alternatives)cUnorderedGroup_2.eContents().get(0);
-		private final Keyword cFetchKeyword_2_0_0 = (Keyword)cAlternatives_2_0.eContents().get(0);
-		private final Keyword cDeliverKeyword_2_0_1 = (Keyword)cAlternatives_2_0.eContents().get(1);
-		private final Keyword cLeaveKeyword_2_0_2 = (Keyword)cAlternatives_2_0.eContents().get(2);
+		private final Assignment cActionTypeAssignment_2_0_0 = (Assignment)cAlternatives_2_0.eContents().get(0);
+		private final Keyword cActionTypeFetchKeyword_2_0_0_0 = (Keyword)cActionTypeAssignment_2_0_0.eContents().get(0);
+		private final Assignment cActionTypeAssignment_2_0_1 = (Assignment)cAlternatives_2_0.eContents().get(1);
+		private final Keyword cActionTypePickKeyword_2_0_1_0 = (Keyword)cActionTypeAssignment_2_0_1.eContents().get(0);
+		private final Assignment cActionTypeAssignment_2_0_2 = (Assignment)cAlternatives_2_0.eContents().get(2);
+		private final Keyword cActionTypeDeliverKeyword_2_0_2_0 = (Keyword)cActionTypeAssignment_2_0_2.eContents().get(0);
+		private final Assignment cActionTypeAssignment_2_0_3 = (Assignment)cAlternatives_2_0.eContents().get(3);
+		private final Keyword cActionTypeLeaveKeyword_2_0_3_0 = (Keyword)cActionTypeAssignment_2_0_3.eContents().get(0);
 		private final Assignment cResourceAssignment_2_1 = (Assignment)cUnorderedGroup_2.eContents().get(1);
 		private final RuleCall cResourceResourceParserRuleCall_2_1_0 = (RuleCall)cResourceAssignment_2_1.eContents().get(0);
 		private final Group cGroup_3 = (Group)cAlternatives.eContents().get(3);
-		private final Keyword cFollowKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
+		private final Assignment cActionTypeAssignment_3_0 = (Assignment)cGroup_3.eContents().get(0);
+		private final Keyword cActionTypeFollowKeyword_3_0_0 = (Keyword)cActionTypeAssignment_3_0.eContents().get(0);
 		private final Assignment cAgentAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
 		private final RuleCall cAgentAgentParserRuleCall_3_1_0 = (RuleCall)cAgentAssignment_3_1.eContents().get(0);
 		private final Group cGroup_3_2 = (Group)cGroup_3.eContents().get(2);
@@ -675,35 +694,48 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		private final RuleCall cTargetTargetParserRuleCall_3_2_1_0 = (RuleCall)cTargetAssignment_3_2_1.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_3_2_2 = (Keyword)cGroup_3_2.eContents().get(2);
 		private final Group cGroup_4 = (Group)cAlternatives.eContents().get(4);
-		private final Keyword cReceiveFromKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
+		private final Assignment cActionTypeAssignment_4_0 = (Assignment)cGroup_4.eContents().get(0);
+		private final Keyword cActionTypeReceiveFromKeyword_4_0_0 = (Keyword)cActionTypeAssignment_4_0.eContents().get(0);
 		private final Assignment cAgentAssignment_4_1 = (Assignment)cGroup_4.eContents().get(1);
 		private final RuleCall cAgentAgentParserRuleCall_4_1_0 = (RuleCall)cAgentAssignment_4_1.eContents().get(0);
 		
 		//// Action rule defines the various actions that can be performed
 		//Action:
-		//    ('stop'
-		//    | 'moveTo' target=Target
-		//    | (('fetch' | 'deliver' | 'leave') & resource=Resource)
-		//    | 'follow' agent=Agent ('(' target=Target ')')?
-		//    | 'receiveFrom' agent=Agent)
+		//    ({Action} actionType = 'stop'
+		//    | actionType = 'moveTo' target=Target
+		//    | ((actionType = 'fetch'| actionType = 'pick' | actionType = 'deliver' | actionType = 'leave') & resource=Resource)
+		//    | actionType = 'follow' agent=Agent ('(' target=Target ')')?
+		//    | actionType = 'receiveFrom' agent=Agent)
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//('stop'
-		//| 'moveTo' target=Target
-		//| (('fetch' | 'deliver' | 'leave') & resource=Resource)
-		//| 'follow' agent=Agent ('(' target=Target ')')?
-		//| 'receiveFrom' agent=Agent)
+		//({Action} actionType = 'stop'
+		//| actionType = 'moveTo' target=Target
+		//| ((actionType = 'fetch'| actionType = 'pick' | actionType = 'deliver' | actionType = 'leave') & resource=Resource)
+		//| actionType = 'follow' agent=Agent ('(' target=Target ')')?
+		//| actionType = 'receiveFrom' agent=Agent)
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//'stop'
-		public Keyword getStopKeyword_0() { return cStopKeyword_0; }
+		//{Action} actionType = 'stop'
+		public Group getGroup_0() { return cGroup_0; }
 		
-		//'moveTo' target=Target
+		//{Action}
+		public Action getActionAction_0_0() { return cActionAction_0_0; }
+		
+		//actionType = 'stop'
+		public Assignment getActionTypeAssignment_0_1() { return cActionTypeAssignment_0_1; }
+		
+		//'stop'
+		public Keyword getActionTypeStopKeyword_0_1_0() { return cActionTypeStopKeyword_0_1_0; }
+		
+		//actionType = 'moveTo' target=Target
 		public Group getGroup_1() { return cGroup_1; }
 		
+		//actionType = 'moveTo'
+		public Assignment getActionTypeAssignment_1_0() { return cActionTypeAssignment_1_0; }
+		
 		//'moveTo'
-		public Keyword getMoveToKeyword_1_0() { return cMoveToKeyword_1_0; }
+		public Keyword getActionTypeMoveToKeyword_1_0_0() { return cActionTypeMoveToKeyword_1_0_0; }
 		
 		//target=Target
 		public Assignment getTargetAssignment_1_1() { return cTargetAssignment_1_1; }
@@ -711,20 +743,35 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		//Target
 		public RuleCall getTargetTargetParserRuleCall_1_1_0() { return cTargetTargetParserRuleCall_1_1_0; }
 		
-		//(('fetch' | 'deliver' | 'leave') & resource=Resource)
+		//((actionType = 'fetch'| actionType = 'pick' | actionType = 'deliver' | actionType = 'leave') & resource=Resource)
 		public UnorderedGroup getUnorderedGroup_2() { return cUnorderedGroup_2; }
 		
-		//('fetch' | 'deliver' | 'leave')
+		//(actionType = 'fetch'| actionType = 'pick' | actionType = 'deliver' | actionType = 'leave')
 		public Alternatives getAlternatives_2_0() { return cAlternatives_2_0; }
 		
+		//actionType = 'fetch'
+		public Assignment getActionTypeAssignment_2_0_0() { return cActionTypeAssignment_2_0_0; }
+		
 		//'fetch'
-		public Keyword getFetchKeyword_2_0_0() { return cFetchKeyword_2_0_0; }
+		public Keyword getActionTypeFetchKeyword_2_0_0_0() { return cActionTypeFetchKeyword_2_0_0_0; }
+		
+		//actionType = 'pick'
+		public Assignment getActionTypeAssignment_2_0_1() { return cActionTypeAssignment_2_0_1; }
+		
+		//'pick'
+		public Keyword getActionTypePickKeyword_2_0_1_0() { return cActionTypePickKeyword_2_0_1_0; }
+		
+		//actionType = 'deliver'
+		public Assignment getActionTypeAssignment_2_0_2() { return cActionTypeAssignment_2_0_2; }
 		
 		//'deliver'
-		public Keyword getDeliverKeyword_2_0_1() { return cDeliverKeyword_2_0_1; }
+		public Keyword getActionTypeDeliverKeyword_2_0_2_0() { return cActionTypeDeliverKeyword_2_0_2_0; }
+		
+		//actionType = 'leave'
+		public Assignment getActionTypeAssignment_2_0_3() { return cActionTypeAssignment_2_0_3; }
 		
 		//'leave'
-		public Keyword getLeaveKeyword_2_0_2() { return cLeaveKeyword_2_0_2; }
+		public Keyword getActionTypeLeaveKeyword_2_0_3_0() { return cActionTypeLeaveKeyword_2_0_3_0; }
 		
 		//resource=Resource
 		public Assignment getResourceAssignment_2_1() { return cResourceAssignment_2_1; }
@@ -732,11 +779,14 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		//Resource
 		public RuleCall getResourceResourceParserRuleCall_2_1_0() { return cResourceResourceParserRuleCall_2_1_0; }
 		
-		//'follow' agent=Agent ('(' target=Target ')')?
+		//actionType = 'follow' agent=Agent ('(' target=Target ')')?
 		public Group getGroup_3() { return cGroup_3; }
 		
+		//actionType = 'follow'
+		public Assignment getActionTypeAssignment_3_0() { return cActionTypeAssignment_3_0; }
+		
 		//'follow'
-		public Keyword getFollowKeyword_3_0() { return cFollowKeyword_3_0; }
+		public Keyword getActionTypeFollowKeyword_3_0_0() { return cActionTypeFollowKeyword_3_0_0; }
 		
 		//agent=Agent
 		public Assignment getAgentAssignment_3_1() { return cAgentAssignment_3_1; }
@@ -759,11 +809,14 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		//')'
 		public Keyword getRightParenthesisKeyword_3_2_2() { return cRightParenthesisKeyword_3_2_2; }
 		
-		//'receiveFrom' agent=Agent
+		//actionType = 'receiveFrom' agent=Agent
 		public Group getGroup_4() { return cGroup_4; }
 		
+		//actionType = 'receiveFrom'
+		public Assignment getActionTypeAssignment_4_0() { return cActionTypeAssignment_4_0; }
+		
 		//'receiveFrom'
-		public Keyword getReceiveFromKeyword_4_0() { return cReceiveFromKeyword_4_0; }
+		public Keyword getActionTypeReceiveFromKeyword_4_0_0() { return cActionTypeReceiveFromKeyword_4_0_0; }
 		
 		//agent=Agent
 		public Assignment getAgentAssignment_4_1() { return cAgentAssignment_4_1; }
@@ -771,271 +824,478 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		//Agent
 		public RuleCall getAgentAgentParserRuleCall_4_1_0() { return cAgentAgentParserRuleCall_4_1_0; }
 	}
-	public class ConditionElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "it.polimi.LIRAs.Condition");
+	public class ActionCElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "it.polimi.LIRAs.ActionC");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
-		private final Assignment cAtomicPredicateAssignment_0_0 = (Assignment)cAlternatives_0.eContents().get(0);
-		private final RuleCall cAtomicPredicateAtomicPredicateParserRuleCall_0_0_0 = (RuleCall)cAtomicPredicateAssignment_0_0.eContents().get(0);
+		private final Group cGroup_0_0 = (Group)cAlternatives_0.eContents().get(0);
+		private final Action cActionAction_0_0_0 = (Action)cGroup_0_0.eContents().get(0);
+		private final Assignment cActionTypeAssignment_0_0_1 = (Assignment)cGroup_0_0.eContents().get(1);
+		private final Keyword cActionTypeStopKeyword_0_0_1_0 = (Keyword)cActionTypeAssignment_0_0_1.eContents().get(0);
 		private final Group cGroup_0_1 = (Group)cAlternatives_0.eContents().get(1);
-		private final Keyword cExclamationMarkKeyword_0_1_0 = (Keyword)cGroup_0_1.eContents().get(0);
-		private final Assignment cAtomicPredicateAssignment_0_1_1 = (Assignment)cGroup_0_1.eContents().get(1);
-		private final RuleCall cAtomicPredicateAtomicPredicateParserRuleCall_0_1_1_0 = (RuleCall)cAtomicPredicateAssignment_0_1_1.eContents().get(0);
-		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Alternatives cAlternatives_1_0 = (Alternatives)cGroup_1.eContents().get(0);
-		private final Keyword cAmpersandAmpersandKeyword_1_0_0 = (Keyword)cAlternatives_1_0.eContents().get(0);
-		private final Keyword cVerticalLineVerticalLineKeyword_1_0_1 = (Keyword)cAlternatives_1_0.eContents().get(1);
-		private final Alternatives cAlternatives_1_1 = (Alternatives)cGroup_1.eContents().get(1);
-		private final Assignment cAtomicPredicateAssignment_1_1_0 = (Assignment)cAlternatives_1_1.eContents().get(0);
-		private final RuleCall cAtomicPredicateAtomicPredicateParserRuleCall_1_1_0_0 = (RuleCall)cAtomicPredicateAssignment_1_1_0.eContents().get(0);
-		private final Group cGroup_1_1_1 = (Group)cAlternatives_1_1.eContents().get(1);
-		private final Keyword cExclamationMarkKeyword_1_1_1_0 = (Keyword)cGroup_1_1_1.eContents().get(0);
-		private final Assignment cAtomicPredicateAssignment_1_1_1_1 = (Assignment)cGroup_1_1_1.eContents().get(1);
-		private final RuleCall cAtomicPredicateAtomicPredicateParserRuleCall_1_1_1_1_0 = (RuleCall)cAtomicPredicateAssignment_1_1_1_1.eContents().get(0);
+		private final Assignment cActionTypeAssignment_0_1_0 = (Assignment)cGroup_0_1.eContents().get(0);
+		private final Keyword cActionTypeMoveToKeyword_0_1_0_0 = (Keyword)cActionTypeAssignment_0_1_0.eContents().get(0);
+		private final Assignment cTargetAssignment_0_1_1 = (Assignment)cGroup_0_1.eContents().get(1);
+		private final RuleCall cTargetTargetParserRuleCall_0_1_1_0 = (RuleCall)cTargetAssignment_0_1_1.eContents().get(0);
+		private final UnorderedGroup cUnorderedGroup_0_2 = (UnorderedGroup)cAlternatives_0.eContents().get(2);
+		private final Alternatives cAlternatives_0_2_0 = (Alternatives)cUnorderedGroup_0_2.eContents().get(0);
+		private final Assignment cActionTypeAssignment_0_2_0_0 = (Assignment)cAlternatives_0_2_0.eContents().get(0);
+		private final Keyword cActionTypeFetchKeyword_0_2_0_0_0 = (Keyword)cActionTypeAssignment_0_2_0_0.eContents().get(0);
+		private final Assignment cActionTypeAssignment_0_2_0_1 = (Assignment)cAlternatives_0_2_0.eContents().get(1);
+		private final Keyword cActionTypePickKeyword_0_2_0_1_0 = (Keyword)cActionTypeAssignment_0_2_0_1.eContents().get(0);
+		private final Assignment cActionTypeAssignment_0_2_0_2 = (Assignment)cAlternatives_0_2_0.eContents().get(2);
+		private final Keyword cActionTypeDepositKeyword_0_2_0_2_0 = (Keyword)cActionTypeAssignment_0_2_0_2.eContents().get(0);
+		private final Assignment cActionTypeAssignment_0_2_0_3 = (Assignment)cAlternatives_0_2_0.eContents().get(3);
+		private final Keyword cActionTypeDeliverKeyword_0_2_0_3_0 = (Keyword)cActionTypeAssignment_0_2_0_3.eContents().get(0);
+		private final Assignment cActionTypeAssignment_0_2_0_4 = (Assignment)cAlternatives_0_2_0.eContents().get(4);
+		private final Keyword cActionTypeLeaveKeyword_0_2_0_4_0 = (Keyword)cActionTypeAssignment_0_2_0_4.eContents().get(0);
+		private final Assignment cResourceAssignment_0_2_1 = (Assignment)cUnorderedGroup_0_2.eContents().get(1);
+		private final RuleCall cResourceResourceParserRuleCall_0_2_1_0 = (RuleCall)cResourceAssignment_0_2_1.eContents().get(0);
+		private final Group cGroup_0_3 = (Group)cAlternatives_0.eContents().get(3);
+		private final Assignment cActionTypeAssignment_0_3_0 = (Assignment)cGroup_0_3.eContents().get(0);
+		private final Keyword cActionTypeFollowKeyword_0_3_0_0 = (Keyword)cActionTypeAssignment_0_3_0.eContents().get(0);
+		private final Assignment cAgentAssignment_0_3_1 = (Assignment)cGroup_0_3.eContents().get(1);
+		private final RuleCall cAgentAgentParserRuleCall_0_3_1_0 = (RuleCall)cAgentAssignment_0_3_1.eContents().get(0);
+		private final Group cGroup_0_3_2 = (Group)cGroup_0_3.eContents().get(2);
+		private final Keyword cLeftParenthesisKeyword_0_3_2_0 = (Keyword)cGroup_0_3_2.eContents().get(0);
+		private final Assignment cTargetAssignment_0_3_2_1 = (Assignment)cGroup_0_3_2.eContents().get(1);
+		private final RuleCall cTargetTargetParserRuleCall_0_3_2_1_0 = (RuleCall)cTargetAssignment_0_3_2_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_0_3_2_2 = (Keyword)cGroup_0_3_2.eContents().get(2);
+		private final Group cGroup_0_4 = (Group)cAlternatives_0.eContents().get(4);
+		private final Assignment cActionTypeAssignment_0_4_0 = (Assignment)cGroup_0_4.eContents().get(0);
+		private final Keyword cActionTypeReceiveFromKeyword_0_4_0_0 = (Keyword)cActionTypeAssignment_0_4_0.eContents().get(0);
+		private final Assignment cAgentAssignment_0_4_1 = (Assignment)cGroup_0_4.eContents().get(1);
+		private final RuleCall cAgentAgentParserRuleCall_0_4_1_0 = (RuleCall)cAgentAssignment_0_4_1.eContents().get(0);
+		private final Assignment cConditionalStatementAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cConditionalStatementConditionalStatementParserRuleCall_1_0 = (RuleCall)cConditionalStatementAssignment_1.eContents().get(0);
 		
-		//Condition:
-		//    ( atomicPredicate+=AtomicPredicate | ('!' atomicPredicate+=AtomicPredicate) )
-		//    ( ('&&' | '||') ( atomicPredicate+=AtomicPredicate | ('!' atomicPredicate+=AtomicPredicate) ) )*
+		//ActionC:
+		//    ({Action} actionType = 'stop'
+		//    | actionType = 'moveTo' target=Target
+		//    | ((actionType = 'fetch'| actionType = 'pick' | actionType = 'deposit' | actionType = 'deliver' | actionType = 'leave') & resource=Resource)
+		//    | actionType = 'follow' agent=Agent ('(' target=Target ')')?
+		//    | actionType = 'receiveFrom' agent=Agent) (conditionalStatement+=ConditionalStatement)?
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//( atomicPredicate+=AtomicPredicate | ('!' atomicPredicate+=AtomicPredicate) )
-		//( ('&&' | '||') ( atomicPredicate+=AtomicPredicate | ('!' atomicPredicate+=AtomicPredicate) ) )*
+		//({Action} actionType = 'stop'
+		//| actionType = 'moveTo' target=Target
+		//| ((actionType = 'fetch'| actionType = 'pick' | actionType = 'deposit' | actionType = 'deliver' | actionType = 'leave') & resource=Resource)
+		//| actionType = 'follow' agent=Agent ('(' target=Target ')')?
+		//| actionType = 'receiveFrom' agent=Agent) (conditionalStatement+=ConditionalStatement)?
 		public Group getGroup() { return cGroup; }
 		
-		//( atomicPredicate+=AtomicPredicate | ('!' atomicPredicate+=AtomicPredicate) )
+		//({Action} actionType = 'stop'
+		//| actionType = 'moveTo' target=Target
+		//| ((actionType = 'fetch'| actionType = 'pick' | actionType = 'deposit' | actionType = 'deliver' | actionType = 'leave') & resource=Resource)
+		//| actionType = 'follow' agent=Agent ('(' target=Target ')')?
+		//| actionType = 'receiveFrom' agent=Agent)
 		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
-		//atomicPredicate+=AtomicPredicate
-		public Assignment getAtomicPredicateAssignment_0_0() { return cAtomicPredicateAssignment_0_0; }
+		//{Action} actionType = 'stop'
+		public Group getGroup_0_0() { return cGroup_0_0; }
 		
-		//AtomicPredicate
-		public RuleCall getAtomicPredicateAtomicPredicateParserRuleCall_0_0_0() { return cAtomicPredicateAtomicPredicateParserRuleCall_0_0_0; }
+		//{Action}
+		public Action getActionAction_0_0_0() { return cActionAction_0_0_0; }
 		
-		//('!' atomicPredicate+=AtomicPredicate)
+		//actionType = 'stop'
+		public Assignment getActionTypeAssignment_0_0_1() { return cActionTypeAssignment_0_0_1; }
+		
+		//'stop'
+		public Keyword getActionTypeStopKeyword_0_0_1_0() { return cActionTypeStopKeyword_0_0_1_0; }
+		
+		//actionType = 'moveTo' target=Target
 		public Group getGroup_0_1() { return cGroup_0_1; }
 		
-		//'!'
-		public Keyword getExclamationMarkKeyword_0_1_0() { return cExclamationMarkKeyword_0_1_0; }
+		//actionType = 'moveTo'
+		public Assignment getActionTypeAssignment_0_1_0() { return cActionTypeAssignment_0_1_0; }
 		
-		//atomicPredicate+=AtomicPredicate
-		public Assignment getAtomicPredicateAssignment_0_1_1() { return cAtomicPredicateAssignment_0_1_1; }
+		//'moveTo'
+		public Keyword getActionTypeMoveToKeyword_0_1_0_0() { return cActionTypeMoveToKeyword_0_1_0_0; }
+		
+		//target=Target
+		public Assignment getTargetAssignment_0_1_1() { return cTargetAssignment_0_1_1; }
+		
+		//Target
+		public RuleCall getTargetTargetParserRuleCall_0_1_1_0() { return cTargetTargetParserRuleCall_0_1_1_0; }
+		
+		//((actionType = 'fetch'| actionType = 'pick' | actionType = 'deposit' | actionType = 'deliver' | actionType = 'leave') & resource=Resource)
+		public UnorderedGroup getUnorderedGroup_0_2() { return cUnorderedGroup_0_2; }
+		
+		//(actionType = 'fetch'| actionType = 'pick' | actionType = 'deposit' | actionType = 'deliver' | actionType = 'leave')
+		public Alternatives getAlternatives_0_2_0() { return cAlternatives_0_2_0; }
+		
+		//actionType = 'fetch'
+		public Assignment getActionTypeAssignment_0_2_0_0() { return cActionTypeAssignment_0_2_0_0; }
+		
+		//'fetch'
+		public Keyword getActionTypeFetchKeyword_0_2_0_0_0() { return cActionTypeFetchKeyword_0_2_0_0_0; }
+		
+		//actionType = 'pick'
+		public Assignment getActionTypeAssignment_0_2_0_1() { return cActionTypeAssignment_0_2_0_1; }
+		
+		//'pick'
+		public Keyword getActionTypePickKeyword_0_2_0_1_0() { return cActionTypePickKeyword_0_2_0_1_0; }
+		
+		//actionType = 'deposit'
+		public Assignment getActionTypeAssignment_0_2_0_2() { return cActionTypeAssignment_0_2_0_2; }
+		
+		//'deposit'
+		public Keyword getActionTypeDepositKeyword_0_2_0_2_0() { return cActionTypeDepositKeyword_0_2_0_2_0; }
+		
+		//actionType = 'deliver'
+		public Assignment getActionTypeAssignment_0_2_0_3() { return cActionTypeAssignment_0_2_0_3; }
+		
+		//'deliver'
+		public Keyword getActionTypeDeliverKeyword_0_2_0_3_0() { return cActionTypeDeliverKeyword_0_2_0_3_0; }
+		
+		//actionType = 'leave'
+		public Assignment getActionTypeAssignment_0_2_0_4() { return cActionTypeAssignment_0_2_0_4; }
+		
+		//'leave'
+		public Keyword getActionTypeLeaveKeyword_0_2_0_4_0() { return cActionTypeLeaveKeyword_0_2_0_4_0; }
+		
+		//resource=Resource
+		public Assignment getResourceAssignment_0_2_1() { return cResourceAssignment_0_2_1; }
+		
+		//Resource
+		public RuleCall getResourceResourceParserRuleCall_0_2_1_0() { return cResourceResourceParserRuleCall_0_2_1_0; }
+		
+		//actionType = 'follow' agent=Agent ('(' target=Target ')')?
+		public Group getGroup_0_3() { return cGroup_0_3; }
+		
+		//actionType = 'follow'
+		public Assignment getActionTypeAssignment_0_3_0() { return cActionTypeAssignment_0_3_0; }
+		
+		//'follow'
+		public Keyword getActionTypeFollowKeyword_0_3_0_0() { return cActionTypeFollowKeyword_0_3_0_0; }
+		
+		//agent=Agent
+		public Assignment getAgentAssignment_0_3_1() { return cAgentAssignment_0_3_1; }
+		
+		//Agent
+		public RuleCall getAgentAgentParserRuleCall_0_3_1_0() { return cAgentAgentParserRuleCall_0_3_1_0; }
+		
+		//('(' target=Target ')')?
+		public Group getGroup_0_3_2() { return cGroup_0_3_2; }
+		
+		//'('
+		public Keyword getLeftParenthesisKeyword_0_3_2_0() { return cLeftParenthesisKeyword_0_3_2_0; }
+		
+		//target=Target
+		public Assignment getTargetAssignment_0_3_2_1() { return cTargetAssignment_0_3_2_1; }
+		
+		//Target
+		public RuleCall getTargetTargetParserRuleCall_0_3_2_1_0() { return cTargetTargetParserRuleCall_0_3_2_1_0; }
+		
+		//')'
+		public Keyword getRightParenthesisKeyword_0_3_2_2() { return cRightParenthesisKeyword_0_3_2_2; }
+		
+		//actionType = 'receiveFrom' agent=Agent
+		public Group getGroup_0_4() { return cGroup_0_4; }
+		
+		//actionType = 'receiveFrom'
+		public Assignment getActionTypeAssignment_0_4_0() { return cActionTypeAssignment_0_4_0; }
+		
+		//'receiveFrom'
+		public Keyword getActionTypeReceiveFromKeyword_0_4_0_0() { return cActionTypeReceiveFromKeyword_0_4_0_0; }
+		
+		//agent=Agent
+		public Assignment getAgentAssignment_0_4_1() { return cAgentAssignment_0_4_1; }
+		
+		//Agent
+		public RuleCall getAgentAgentParserRuleCall_0_4_1_0() { return cAgentAgentParserRuleCall_0_4_1_0; }
+		
+		//(conditionalStatement+=ConditionalStatement)?
+		public Assignment getConditionalStatementAssignment_1() { return cConditionalStatementAssignment_1; }
+		
+		//ConditionalStatement
+		public RuleCall getConditionalStatementConditionalStatementParserRuleCall_1_0() { return cConditionalStatementConditionalStatementParserRuleCall_1_0; }
+	}
+	public class ConditionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "it.polimi.LIRAs.Condition");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cAtomicPredicateAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final RuleCall cAtomicPredicateAtomicPredicateParserRuleCall_0_0 = (RuleCall)cAtomicPredicateAssignment_0.eContents().get(0);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Alternatives cAlternatives_1_0 = (Alternatives)cGroup_1.eContents().get(0);
+		private final Assignment cOpAssignment_1_0_0 = (Assignment)cAlternatives_1_0.eContents().get(0);
+		private final Keyword cOpAmpersandAmpersandKeyword_1_0_0_0 = (Keyword)cOpAssignment_1_0_0.eContents().get(0);
+		private final Assignment cOpAssignment_1_0_1 = (Assignment)cAlternatives_1_0.eContents().get(1);
+		private final Keyword cOpVerticalLineVerticalLineKeyword_1_0_1_0 = (Keyword)cOpAssignment_1_0_1.eContents().get(0);
+		private final Assignment cAtomicPredicateAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cAtomicPredicateAtomicPredicateParserRuleCall_1_1_0 = (RuleCall)cAtomicPredicateAssignment_1_1.eContents().get(0);
+		
+		//Condition:
+		//    ( atomicPredicate+=AtomicPredicate)
+		//    ( (op += '&&' | op += '||') ( atomicPredicate+=AtomicPredicate) )*
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//( atomicPredicate+=AtomicPredicate)
+		//( (op += '&&' | op += '||') ( atomicPredicate+=AtomicPredicate) )*
+		public Group getGroup() { return cGroup; }
+		
+		//( atomicPredicate+=AtomicPredicate)
+		public Assignment getAtomicPredicateAssignment_0() { return cAtomicPredicateAssignment_0; }
 		
 		//AtomicPredicate
-		public RuleCall getAtomicPredicateAtomicPredicateParserRuleCall_0_1_1_0() { return cAtomicPredicateAtomicPredicateParserRuleCall_0_1_1_0; }
+		public RuleCall getAtomicPredicateAtomicPredicateParserRuleCall_0_0() { return cAtomicPredicateAtomicPredicateParserRuleCall_0_0; }
 		
-		//( ('&&' | '||') ( atomicPredicate+=AtomicPredicate | ('!' atomicPredicate+=AtomicPredicate) ) )*
+		//( (op += '&&' | op += '||') ( atomicPredicate+=AtomicPredicate) )*
 		public Group getGroup_1() { return cGroup_1; }
 		
-		//('&&' | '||')
+		//(op += '&&' | op += '||')
 		public Alternatives getAlternatives_1_0() { return cAlternatives_1_0; }
 		
+		//op += '&&'
+		public Assignment getOpAssignment_1_0_0() { return cOpAssignment_1_0_0; }
+		
 		//'&&'
-		public Keyword getAmpersandAmpersandKeyword_1_0_0() { return cAmpersandAmpersandKeyword_1_0_0; }
+		public Keyword getOpAmpersandAmpersandKeyword_1_0_0_0() { return cOpAmpersandAmpersandKeyword_1_0_0_0; }
+		
+		//op += '||'
+		public Assignment getOpAssignment_1_0_1() { return cOpAssignment_1_0_1; }
 		
 		//'||'
-		public Keyword getVerticalLineVerticalLineKeyword_1_0_1() { return cVerticalLineVerticalLineKeyword_1_0_1; }
+		public Keyword getOpVerticalLineVerticalLineKeyword_1_0_1_0() { return cOpVerticalLineVerticalLineKeyword_1_0_1_0; }
 		
-		//( atomicPredicate+=AtomicPredicate | ('!' atomicPredicate+=AtomicPredicate) )
-		public Alternatives getAlternatives_1_1() { return cAlternatives_1_1; }
-		
-		//atomicPredicate+=AtomicPredicate
-		public Assignment getAtomicPredicateAssignment_1_1_0() { return cAtomicPredicateAssignment_1_1_0; }
+		//( atomicPredicate+=AtomicPredicate)
+		public Assignment getAtomicPredicateAssignment_1_1() { return cAtomicPredicateAssignment_1_1; }
 		
 		//AtomicPredicate
-		public RuleCall getAtomicPredicateAtomicPredicateParserRuleCall_1_1_0_0() { return cAtomicPredicateAtomicPredicateParserRuleCall_1_1_0_0; }
-		
-		//('!' atomicPredicate+=AtomicPredicate)
-		public Group getGroup_1_1_1() { return cGroup_1_1_1; }
-		
-		//'!'
-		public Keyword getExclamationMarkKeyword_1_1_1_0() { return cExclamationMarkKeyword_1_1_1_0; }
-		
-		//atomicPredicate+=AtomicPredicate
-		public Assignment getAtomicPredicateAssignment_1_1_1_1() { return cAtomicPredicateAssignment_1_1_1_1; }
-		
-		//AtomicPredicate
-		public RuleCall getAtomicPredicateAtomicPredicateParserRuleCall_1_1_1_1_0() { return cAtomicPredicateAtomicPredicateParserRuleCall_1_1_1_1_0; }
+		public RuleCall getAtomicPredicateAtomicPredicateParserRuleCall_1_1_0() { return cAtomicPredicateAtomicPredicateParserRuleCall_1_1_0; }
 	}
 	public class AtomicPredicateElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "it.polimi.LIRAs.AtomicPredicate");
-		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Keyword cTiredKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
-		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
-		private final Keyword cTimeKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final Keyword cLeftParenthesisKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
-		private final Assignment cNAssignment_1_2 = (Assignment)cGroup_1.eContents().get(2);
-		private final RuleCall cNINTTerminalRuleCall_1_2_0 = (RuleCall)cNAssignment_1_2.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_1_3 = (Keyword)cGroup_1.eContents().get(3);
-		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
-		private final Keyword cPositionKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
-		private final Keyword cLeftParenthesisKeyword_2_1 = (Keyword)cGroup_2.eContents().get(1);
-		private final Assignment cAgentAssignment_2_2 = (Assignment)cGroup_2.eContents().get(2);
-		private final RuleCall cAgentAgentParserRuleCall_2_2_0 = (RuleCall)cAgentAssignment_2_2.eContents().get(0);
-		private final Keyword cCommaKeyword_2_3 = (Keyword)cGroup_2.eContents().get(3);
-		private final Assignment cLocationAssignment_2_4 = (Assignment)cGroup_2.eContents().get(4);
-		private final RuleCall cLocationLocationParserRuleCall_2_4_0 = (RuleCall)cLocationAssignment_2_4.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_2_5 = (Keyword)cGroup_2.eContents().get(5);
-		private final Group cGroup_3 = (Group)cAlternatives.eContents().get(3);
-		private final Keyword cPossessKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
-		private final Keyword cLeftParenthesisKeyword_3_1 = (Keyword)cGroup_3.eContents().get(1);
-		private final Assignment cAgentAssignment_3_2 = (Assignment)cGroup_3.eContents().get(2);
-		private final RuleCall cAgentAgentParserRuleCall_3_2_0 = (RuleCall)cAgentAssignment_3_2.eContents().get(0);
-		private final Keyword cCommaKeyword_3_3 = (Keyword)cGroup_3.eContents().get(3);
-		private final Assignment cResourceAssignment_3_4 = (Assignment)cGroup_3.eContents().get(4);
-		private final RuleCall cResourceResourceParserRuleCall_3_4_0 = (RuleCall)cResourceAssignment_3_4.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_3_5 = (Keyword)cGroup_3.eContents().get(5);
-		private final Group cGroup_4 = (Group)cAlternatives.eContents().get(4);
-		private final Keyword cBusyKeyword_4_0 = (Keyword)cGroup_4.eContents().get(0);
-		private final Keyword cLeftParenthesisKeyword_4_1 = (Keyword)cGroup_4.eContents().get(1);
-		private final Assignment cAgentAssignment_4_2 = (Assignment)cGroup_4.eContents().get(2);
-		private final RuleCall cAgentAgentParserRuleCall_4_2_0 = (RuleCall)cAgentAssignment_4_2.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_4_3 = (Keyword)cGroup_4.eContents().get(3);
-		private final Group cGroup_5 = (Group)cAlternatives.eContents().get(5);
-		private final Keyword cStillKeyword_5_0 = (Keyword)cGroup_5.eContents().get(0);
-		private final Keyword cLeftParenthesisKeyword_5_1 = (Keyword)cGroup_5.eContents().get(1);
-		private final Assignment cAgentAssignment_5_2 = (Assignment)cGroup_5.eContents().get(2);
-		private final RuleCall cAgentAgentParserRuleCall_5_2_0 = (RuleCall)cAgentAssignment_5_2.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_5_3 = (Keyword)cGroup_5.eContents().get(3);
-		private final Assignment cRelationAssignment_6 = (Assignment)cAlternatives.eContents().get(6);
-		private final RuleCall cRelationRelationParserRuleCall_6_0 = (RuleCall)cRelationAssignment_6.eContents().get(0);
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Action cAtomicPredicateAction_0 = (Action)cGroup.eContents().get(0);
+		private final Assignment cNegatedAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final Keyword cNegatedExclamationMarkKeyword_1_0 = (Keyword)cNegatedAssignment_1.eContents().get(0);
+		private final Alternatives cAlternatives_2 = (Alternatives)cGroup.eContents().get(2);
+		private final Assignment cApAssignment_2_0 = (Assignment)cAlternatives_2.eContents().get(0);
+		private final Keyword cApTiredKeyword_2_0_0 = (Keyword)cApAssignment_2_0.eContents().get(0);
+		private final Group cGroup_2_1 = (Group)cAlternatives_2.eContents().get(1);
+		private final Assignment cApAssignment_2_1_0 = (Assignment)cGroup_2_1.eContents().get(0);
+		private final Keyword cApTimeKeyword_2_1_0_0 = (Keyword)cApAssignment_2_1_0.eContents().get(0);
+		private final Keyword cLeftParenthesisKeyword_2_1_1 = (Keyword)cGroup_2_1.eContents().get(1);
+		private final Assignment cNAssignment_2_1_2 = (Assignment)cGroup_2_1.eContents().get(2);
+		private final RuleCall cNINTTerminalRuleCall_2_1_2_0 = (RuleCall)cNAssignment_2_1_2.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_2_1_3 = (Keyword)cGroup_2_1.eContents().get(3);
+		private final Group cGroup_2_2 = (Group)cAlternatives_2.eContents().get(2);
+		private final Assignment cApAssignment_2_2_0 = (Assignment)cGroup_2_2.eContents().get(0);
+		private final Keyword cApPositionKeyword_2_2_0_0 = (Keyword)cApAssignment_2_2_0.eContents().get(0);
+		private final Keyword cLeftParenthesisKeyword_2_2_1 = (Keyword)cGroup_2_2.eContents().get(1);
+		private final Assignment cAgentAssignment_2_2_2 = (Assignment)cGroup_2_2.eContents().get(2);
+		private final RuleCall cAgentAgentParserRuleCall_2_2_2_0 = (RuleCall)cAgentAssignment_2_2_2.eContents().get(0);
+		private final Keyword cCommaKeyword_2_2_3 = (Keyword)cGroup_2_2.eContents().get(3);
+		private final Assignment cLocationAssignment_2_2_4 = (Assignment)cGroup_2_2.eContents().get(4);
+		private final RuleCall cLocationLocationParserRuleCall_2_2_4_0 = (RuleCall)cLocationAssignment_2_2_4.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_2_2_5 = (Keyword)cGroup_2_2.eContents().get(5);
+		private final Group cGroup_2_3 = (Group)cAlternatives_2.eContents().get(3);
+		private final Assignment cApAssignment_2_3_0 = (Assignment)cGroup_2_3.eContents().get(0);
+		private final Keyword cApPossessKeyword_2_3_0_0 = (Keyword)cApAssignment_2_3_0.eContents().get(0);
+		private final Keyword cLeftParenthesisKeyword_2_3_1 = (Keyword)cGroup_2_3.eContents().get(1);
+		private final Assignment cAgentAssignment_2_3_2 = (Assignment)cGroup_2_3.eContents().get(2);
+		private final RuleCall cAgentAgentParserRuleCall_2_3_2_0 = (RuleCall)cAgentAssignment_2_3_2.eContents().get(0);
+		private final Keyword cCommaKeyword_2_3_3 = (Keyword)cGroup_2_3.eContents().get(3);
+		private final Assignment cResourceAssignment_2_3_4 = (Assignment)cGroup_2_3.eContents().get(4);
+		private final RuleCall cResourceResourceParserRuleCall_2_3_4_0 = (RuleCall)cResourceAssignment_2_3_4.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_2_3_5 = (Keyword)cGroup_2_3.eContents().get(5);
+		private final Group cGroup_2_4 = (Group)cAlternatives_2.eContents().get(4);
+		private final Assignment cApAssignment_2_4_0 = (Assignment)cGroup_2_4.eContents().get(0);
+		private final Keyword cApBusyKeyword_2_4_0_0 = (Keyword)cApAssignment_2_4_0.eContents().get(0);
+		private final Keyword cLeftParenthesisKeyword_2_4_1 = (Keyword)cGroup_2_4.eContents().get(1);
+		private final Assignment cAgentAssignment_2_4_2 = (Assignment)cGroup_2_4.eContents().get(2);
+		private final RuleCall cAgentAgentParserRuleCall_2_4_2_0 = (RuleCall)cAgentAssignment_2_4_2.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_2_4_3 = (Keyword)cGroup_2_4.eContents().get(3);
+		private final Group cGroup_2_5 = (Group)cAlternatives_2.eContents().get(5);
+		private final Assignment cApAssignment_2_5_0 = (Assignment)cGroup_2_5.eContents().get(0);
+		private final Keyword cApStillKeyword_2_5_0_0 = (Keyword)cApAssignment_2_5_0.eContents().get(0);
+		private final Keyword cLeftParenthesisKeyword_2_5_1 = (Keyword)cGroup_2_5.eContents().get(1);
+		private final Assignment cAgentAssignment_2_5_2 = (Assignment)cGroup_2_5.eContents().get(2);
+		private final RuleCall cAgentAgentParserRuleCall_2_5_2_0 = (RuleCall)cAgentAssignment_2_5_2.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_2_5_3 = (Keyword)cGroup_2_5.eContents().get(3);
+		private final Assignment cRelationAssignment_2_6 = (Assignment)cAlternatives_2.eContents().get(6);
+		private final RuleCall cRelationRelationParserRuleCall_2_6_0 = (RuleCall)cRelationAssignment_2_6.eContents().get(0);
 		
 		//AtomicPredicate:
-		//    'tired'
-		//    | 'time' '(' n=INT ')'
-		//    | 'position' '(' agent=Agent',' location=Location')'
-		//    | 'possess' '(' agent=Agent',' resource=Resource')'
-		//    | 'busy' '(' agent=Agent')'
-		//    | 'still' '(' agent=Agent')'
+		//    {AtomicPredicate} (negated?='!')?
+		//    (ap = 'tired'
+		//    | ap = 'time' '(' n=INT ')'
+		//    | ap = 'position' '(' agent=Agent',' location=Location')'
+		//    | ap = 'possess' '(' agent=Agent',' resource=Resource')'
+		//    | ap = 'busy' '(' agent=Agent')'
+		//    | ap = 'still' '(' agent=Agent')'
 		//    | relation=Relation
-		//    ;
+		//    )
+		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'tired'
-		//| 'time' '(' n=INT ')'
-		//| 'position' '(' agent=Agent',' location=Location')'
-		//| 'possess' '(' agent=Agent',' resource=Resource')'
-		//| 'busy' '(' agent=Agent')'
-		//| 'still' '(' agent=Agent')'
+		//{AtomicPredicate} (negated?='!')?
+		//(ap = 'tired'
+		//| ap = 'time' '(' n=INT ')'
+		//| ap = 'position' '(' agent=Agent',' location=Location')'
+		//| ap = 'possess' '(' agent=Agent',' resource=Resource')'
+		//| ap = 'busy' '(' agent=Agent')'
+		//| ap = 'still' '(' agent=Agent')'
 		//| relation=Relation
-		public Alternatives getAlternatives() { return cAlternatives; }
+		//)
+		public Group getGroup() { return cGroup; }
+		
+		//{AtomicPredicate}
+		public Action getAtomicPredicateAction_0() { return cAtomicPredicateAction_0; }
+		
+		//(negated?='!')?
+		public Assignment getNegatedAssignment_1() { return cNegatedAssignment_1; }
+		
+		//'!'
+		public Keyword getNegatedExclamationMarkKeyword_1_0() { return cNegatedExclamationMarkKeyword_1_0; }
+		
+		//(ap = 'tired'
+		//| ap = 'time' '(' n=INT ')'
+		//| ap = 'position' '(' agent=Agent',' location=Location')'
+		//| ap = 'possess' '(' agent=Agent',' resource=Resource')'
+		//| ap = 'busy' '(' agent=Agent')'
+		//| ap = 'still' '(' agent=Agent')'
+		//| relation=Relation
+		//)
+		public Alternatives getAlternatives_2() { return cAlternatives_2; }
+		
+		//ap = 'tired'
+		public Assignment getApAssignment_2_0() { return cApAssignment_2_0; }
 		
 		//'tired'
-		public Keyword getTiredKeyword_0() { return cTiredKeyword_0; }
+		public Keyword getApTiredKeyword_2_0_0() { return cApTiredKeyword_2_0_0; }
 		
-		//'time' '(' n=INT ')'
-		public Group getGroup_1() { return cGroup_1; }
+		//ap = 'time' '(' n=INT ')'
+		public Group getGroup_2_1() { return cGroup_2_1; }
+		
+		//ap = 'time'
+		public Assignment getApAssignment_2_1_0() { return cApAssignment_2_1_0; }
 		
 		//'time'
-		public Keyword getTimeKeyword_1_0() { return cTimeKeyword_1_0; }
+		public Keyword getApTimeKeyword_2_1_0_0() { return cApTimeKeyword_2_1_0_0; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_1_1() { return cLeftParenthesisKeyword_1_1; }
+		public Keyword getLeftParenthesisKeyword_2_1_1() { return cLeftParenthesisKeyword_2_1_1; }
 		
 		//n=INT
-		public Assignment getNAssignment_1_2() { return cNAssignment_1_2; }
+		public Assignment getNAssignment_2_1_2() { return cNAssignment_2_1_2; }
 		
 		//INT
-		public RuleCall getNINTTerminalRuleCall_1_2_0() { return cNINTTerminalRuleCall_1_2_0; }
+		public RuleCall getNINTTerminalRuleCall_2_1_2_0() { return cNINTTerminalRuleCall_2_1_2_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_1_3() { return cRightParenthesisKeyword_1_3; }
+		public Keyword getRightParenthesisKeyword_2_1_3() { return cRightParenthesisKeyword_2_1_3; }
 		
-		//'position' '(' agent=Agent',' location=Location')'
-		public Group getGroup_2() { return cGroup_2; }
+		//ap = 'position' '(' agent=Agent',' location=Location')'
+		public Group getGroup_2_2() { return cGroup_2_2; }
+		
+		//ap = 'position'
+		public Assignment getApAssignment_2_2_0() { return cApAssignment_2_2_0; }
 		
 		//'position'
-		public Keyword getPositionKeyword_2_0() { return cPositionKeyword_2_0; }
+		public Keyword getApPositionKeyword_2_2_0_0() { return cApPositionKeyword_2_2_0_0; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_2_1() { return cLeftParenthesisKeyword_2_1; }
+		public Keyword getLeftParenthesisKeyword_2_2_1() { return cLeftParenthesisKeyword_2_2_1; }
 		
 		//agent=Agent
-		public Assignment getAgentAssignment_2_2() { return cAgentAssignment_2_2; }
+		public Assignment getAgentAssignment_2_2_2() { return cAgentAssignment_2_2_2; }
 		
 		//Agent
-		public RuleCall getAgentAgentParserRuleCall_2_2_0() { return cAgentAgentParserRuleCall_2_2_0; }
+		public RuleCall getAgentAgentParserRuleCall_2_2_2_0() { return cAgentAgentParserRuleCall_2_2_2_0; }
 		
 		//','
-		public Keyword getCommaKeyword_2_3() { return cCommaKeyword_2_3; }
+		public Keyword getCommaKeyword_2_2_3() { return cCommaKeyword_2_2_3; }
 		
 		//location=Location
-		public Assignment getLocationAssignment_2_4() { return cLocationAssignment_2_4; }
+		public Assignment getLocationAssignment_2_2_4() { return cLocationAssignment_2_2_4; }
 		
 		//Location
-		public RuleCall getLocationLocationParserRuleCall_2_4_0() { return cLocationLocationParserRuleCall_2_4_0; }
+		public RuleCall getLocationLocationParserRuleCall_2_2_4_0() { return cLocationLocationParserRuleCall_2_2_4_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_2_5() { return cRightParenthesisKeyword_2_5; }
+		public Keyword getRightParenthesisKeyword_2_2_5() { return cRightParenthesisKeyword_2_2_5; }
 		
-		//'possess' '(' agent=Agent',' resource=Resource')'
-		public Group getGroup_3() { return cGroup_3; }
+		//ap = 'possess' '(' agent=Agent',' resource=Resource')'
+		public Group getGroup_2_3() { return cGroup_2_3; }
+		
+		//ap = 'possess'
+		public Assignment getApAssignment_2_3_0() { return cApAssignment_2_3_0; }
 		
 		//'possess'
-		public Keyword getPossessKeyword_3_0() { return cPossessKeyword_3_0; }
+		public Keyword getApPossessKeyword_2_3_0_0() { return cApPossessKeyword_2_3_0_0; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_3_1() { return cLeftParenthesisKeyword_3_1; }
+		public Keyword getLeftParenthesisKeyword_2_3_1() { return cLeftParenthesisKeyword_2_3_1; }
 		
 		//agent=Agent
-		public Assignment getAgentAssignment_3_2() { return cAgentAssignment_3_2; }
+		public Assignment getAgentAssignment_2_3_2() { return cAgentAssignment_2_3_2; }
 		
 		//Agent
-		public RuleCall getAgentAgentParserRuleCall_3_2_0() { return cAgentAgentParserRuleCall_3_2_0; }
+		public RuleCall getAgentAgentParserRuleCall_2_3_2_0() { return cAgentAgentParserRuleCall_2_3_2_0; }
 		
 		//','
-		public Keyword getCommaKeyword_3_3() { return cCommaKeyword_3_3; }
+		public Keyword getCommaKeyword_2_3_3() { return cCommaKeyword_2_3_3; }
 		
 		//resource=Resource
-		public Assignment getResourceAssignment_3_4() { return cResourceAssignment_3_4; }
+		public Assignment getResourceAssignment_2_3_4() { return cResourceAssignment_2_3_4; }
 		
 		//Resource
-		public RuleCall getResourceResourceParserRuleCall_3_4_0() { return cResourceResourceParserRuleCall_3_4_0; }
+		public RuleCall getResourceResourceParserRuleCall_2_3_4_0() { return cResourceResourceParserRuleCall_2_3_4_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_3_5() { return cRightParenthesisKeyword_3_5; }
+		public Keyword getRightParenthesisKeyword_2_3_5() { return cRightParenthesisKeyword_2_3_5; }
 		
-		//'busy' '(' agent=Agent')'
-		public Group getGroup_4() { return cGroup_4; }
+		//ap = 'busy' '(' agent=Agent')'
+		public Group getGroup_2_4() { return cGroup_2_4; }
+		
+		//ap = 'busy'
+		public Assignment getApAssignment_2_4_0() { return cApAssignment_2_4_0; }
 		
 		//'busy'
-		public Keyword getBusyKeyword_4_0() { return cBusyKeyword_4_0; }
+		public Keyword getApBusyKeyword_2_4_0_0() { return cApBusyKeyword_2_4_0_0; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_4_1() { return cLeftParenthesisKeyword_4_1; }
+		public Keyword getLeftParenthesisKeyword_2_4_1() { return cLeftParenthesisKeyword_2_4_1; }
 		
 		//agent=Agent
-		public Assignment getAgentAssignment_4_2() { return cAgentAssignment_4_2; }
+		public Assignment getAgentAssignment_2_4_2() { return cAgentAssignment_2_4_2; }
 		
 		//Agent
-		public RuleCall getAgentAgentParserRuleCall_4_2_0() { return cAgentAgentParserRuleCall_4_2_0; }
+		public RuleCall getAgentAgentParserRuleCall_2_4_2_0() { return cAgentAgentParserRuleCall_2_4_2_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_4_3() { return cRightParenthesisKeyword_4_3; }
+		public Keyword getRightParenthesisKeyword_2_4_3() { return cRightParenthesisKeyword_2_4_3; }
 		
-		//'still' '(' agent=Agent')'
-		public Group getGroup_5() { return cGroup_5; }
+		//ap = 'still' '(' agent=Agent')'
+		public Group getGroup_2_5() { return cGroup_2_5; }
+		
+		//ap = 'still'
+		public Assignment getApAssignment_2_5_0() { return cApAssignment_2_5_0; }
 		
 		//'still'
-		public Keyword getStillKeyword_5_0() { return cStillKeyword_5_0; }
+		public Keyword getApStillKeyword_2_5_0_0() { return cApStillKeyword_2_5_0_0; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_5_1() { return cLeftParenthesisKeyword_5_1; }
+		public Keyword getLeftParenthesisKeyword_2_5_1() { return cLeftParenthesisKeyword_2_5_1; }
 		
 		//agent=Agent
-		public Assignment getAgentAssignment_5_2() { return cAgentAssignment_5_2; }
+		public Assignment getAgentAssignment_2_5_2() { return cAgentAssignment_2_5_2; }
 		
 		//Agent
-		public RuleCall getAgentAgentParserRuleCall_5_2_0() { return cAgentAgentParserRuleCall_5_2_0; }
+		public RuleCall getAgentAgentParserRuleCall_2_5_2_0() { return cAgentAgentParserRuleCall_2_5_2_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_5_3() { return cRightParenthesisKeyword_5_3; }
+		public Keyword getRightParenthesisKeyword_2_5_3() { return cRightParenthesisKeyword_2_5_3; }
 		
 		//relation=Relation
-		public Assignment getRelationAssignment_6() { return cRelationAssignment_6; }
+		public Assignment getRelationAssignment_2_6() { return cRelationAssignment_2_6; }
 		
 		//Relation
-		public RuleCall getRelationRelationParserRuleCall_6_0() { return cRelationRelationParserRuleCall_6_0; }
+		public RuleCall getRelationRelationParserRuleCall_2_6_0() { return cRelationRelationParserRuleCall_2_6_0; }
 	}
 	public class RelationElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "it.polimi.LIRAs.Relation");
@@ -1293,6 +1553,7 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 	private final LoopElements pLoop;
 	private final ConditionalStatementElements pConditionalStatement;
 	private final ActionElements pAction;
+	private final ActionCElements pActionC;
 	private final ConditionElements pCondition;
 	private final AtomicPredicateElements pAtomicPredicate;
 	private final RelationElements pRelation;
@@ -1321,6 +1582,7 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		this.pLoop = new LoopElements();
 		this.pConditionalStatement = new ConditionalStatementElements();
 		this.pAction = new ActionElements();
+		this.pActionC = new ActionCElements();
 		this.pCondition = new ConditionElements();
 		this.pAtomicPredicate = new AtomicPredicateElements();
 		this.pRelation = new RelationElements();
@@ -1382,9 +1644,9 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 	//Pattern:
 	//    name=ID NL+
 	//    (('agents:'  NL+
-	//    ('Humans:' (human+=Human (',' human+=Human)*)? NL+)?
-	//    ('Robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)? )
-	//    | 'locations:' (locations+=Location (',' locations+=Location)*)? NL+
+	//    ('humans:' (human+=Human (',' human+=Human)*)? NL+)?
+	//    ('robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)? )
+	//    | 'locations:' (location+=Location (',' location+=Location)*)? NL+
 	//    | 'resources:' (resources+=Resource (',' resources+=Resource)*)? NL+)*
 	//;
 	public PatternElements getPatternAccess() {
@@ -1410,7 +1672,7 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 	
 	//// SubSequence rule defines the structure of a subsequence within a sequence
 	//SubSequence:
-	//    i=INT ('-' j=INT)? ':' ( ( ( loop+=Loop) | ((action+=Action) (conditionalStatement+=ConditionalStatement)?) )? NL )+
+	//    i=INT ('-' j=INT)? ':' ( ( ( loop+=Loop) | ((actionC+=ActionC) ) )? NL )+
 	//;
 	public SubSequenceElements getSubSequenceAccess() {
 		return pSubSequence;
@@ -1444,10 +1706,10 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 	}
 	
 	//ConditionalStatement:
-	//    'until' condition+=Condition
-	//    | 'if' condition+=Condition 'else' action=Action
-	//    | 'if' condition+=Condition 'else' action=Action 'until' condition+=Condition
-	//    | 'wait' n=INT
+	//    {ConditionalStatement} cs1 = 'until' condition+=Condition
+	//    | cs2 = 'if' condition+=Condition 'else' action=Action
+	//    | cs3 = 'if' condition+=Condition 'else' action=Action 'until' condition+=Condition
+	//    | cs4 = 'wait' n=INT
 	//;
 	public ConditionalStatementElements getConditionalStatementAccess() {
 		return pConditionalStatement;
@@ -1459,11 +1721,11 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 	
 	//// Action rule defines the various actions that can be performed
 	//Action:
-	//    ('stop'
-	//    | 'moveTo' target=Target
-	//    | (('fetch' | 'deliver' | 'leave') & resource=Resource)
-	//    | 'follow' agent=Agent ('(' target=Target ')')?
-	//    | 'receiveFrom' agent=Agent)
+	//    ({Action} actionType = 'stop'
+	//    | actionType = 'moveTo' target=Target
+	//    | ((actionType = 'fetch'| actionType = 'pick' | actionType = 'deliver' | actionType = 'leave') & resource=Resource)
+	//    | actionType = 'follow' agent=Agent ('(' target=Target ')')?
+	//    | actionType = 'receiveFrom' agent=Agent)
 	//;
 	public ActionElements getActionAccess() {
 		return pAction;
@@ -1473,9 +1735,24 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 		return getActionAccess().getRule();
 	}
 	
+	//ActionC:
+	//    ({Action} actionType = 'stop'
+	//    | actionType = 'moveTo' target=Target
+	//    | ((actionType = 'fetch'| actionType = 'pick' | actionType = 'deposit' | actionType = 'deliver' | actionType = 'leave') & resource=Resource)
+	//    | actionType = 'follow' agent=Agent ('(' target=Target ')')?
+	//    | actionType = 'receiveFrom' agent=Agent) (conditionalStatement+=ConditionalStatement)?
+	//;
+	public ActionCElements getActionCAccess() {
+		return pActionC;
+	}
+	
+	public ParserRule getActionCRule() {
+		return getActionCAccess().getRule();
+	}
+	
 	//Condition:
-	//    ( atomicPredicate+=AtomicPredicate | ('!' atomicPredicate+=AtomicPredicate) )
-	//    ( ('&&' | '||') ( atomicPredicate+=AtomicPredicate | ('!' atomicPredicate+=AtomicPredicate) ) )*
+	//    ( atomicPredicate+=AtomicPredicate)
+	//    ( (op += '&&' | op += '||') ( atomicPredicate+=AtomicPredicate) )*
 	//;
 	public ConditionElements getConditionAccess() {
 		return pCondition;
@@ -1486,14 +1763,16 @@ public class LIRAsGrammarAccess extends AbstractElementFinder.AbstractGrammarEle
 	}
 	
 	//AtomicPredicate:
-	//    'tired'
-	//    | 'time' '(' n=INT ')'
-	//    | 'position' '(' agent=Agent',' location=Location')'
-	//    | 'possess' '(' agent=Agent',' resource=Resource')'
-	//    | 'busy' '(' agent=Agent')'
-	//    | 'still' '(' agent=Agent')'
+	//    {AtomicPredicate} (negated?='!')?
+	//    (ap = 'tired'
+	//    | ap = 'time' '(' n=INT ')'
+	//    | ap = 'position' '(' agent=Agent',' location=Location')'
+	//    | ap = 'possess' '(' agent=Agent',' resource=Resource')'
+	//    | ap = 'busy' '(' agent=Agent')'
+	//    | ap = 'still' '(' agent=Agent')'
 	//    | relation=Relation
-	//    ;
+	//    )
+	//;
 	public AtomicPredicateElements getAtomicPredicateAccess() {
 		return pAtomicPredicate;
 	}

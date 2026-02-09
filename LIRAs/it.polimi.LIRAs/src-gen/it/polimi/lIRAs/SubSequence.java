@@ -19,8 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link it.polimi.lIRAs.SubSequence#getI <em>I</em>}</li>
  *   <li>{@link it.polimi.lIRAs.SubSequence#getJ <em>J</em>}</li>
  *   <li>{@link it.polimi.lIRAs.SubSequence#getLoop <em>Loop</em>}</li>
- *   <li>{@link it.polimi.lIRAs.SubSequence#getAction <em>Action</em>}</li>
- *   <li>{@link it.polimi.lIRAs.SubSequence#getConditionalStatement <em>Conditional Statement</em>}</li>
+ *   <li>{@link it.polimi.lIRAs.SubSequence#getActionC <em>Action C</em>}</li>
  * </ul>
  *
  * @see it.polimi.lIRAs.LIRAsPackage#getSubSequence()
@@ -86,27 +85,15 @@ public interface SubSequence extends EObject
   EList<Loop> getLoop();
 
   /**
-   * Returns the value of the '<em><b>Action</b></em>' containment reference list.
-   * The list contents are of type {@link it.polimi.lIRAs.Action}.
+   * Returns the value of the '<em><b>Action C</b></em>' containment reference list.
+   * The list contents are of type {@link it.polimi.lIRAs.ActionC}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Action</em>' containment reference list.
-   * @see it.polimi.lIRAs.LIRAsPackage#getSubSequence_Action()
+   * @return the value of the '<em>Action C</em>' containment reference list.
+   * @see it.polimi.lIRAs.LIRAsPackage#getSubSequence_ActionC()
    * @model containment="true"
    * @generated
    */
-  EList<Action> getAction();
-
-  /**
-   * Returns the value of the '<em><b>Conditional Statement</b></em>' containment reference list.
-   * The list contents are of type {@link it.polimi.lIRAs.ConditionalStatement}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Conditional Statement</em>' containment reference list.
-   * @see it.polimi.lIRAs.LIRAsPackage#getSubSequence_ConditionalStatement()
-   * @model containment="true"
-   * @generated
-   */
-  EList<ConditionalStatement> getConditionalStatement();
+  EList<ActionC> getActionC();
 
 } // SubSequence

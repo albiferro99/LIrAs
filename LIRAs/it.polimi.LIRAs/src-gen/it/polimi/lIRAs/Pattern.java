@@ -19,7 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link it.polimi.lIRAs.Pattern#getName <em>Name</em>}</li>
  *   <li>{@link it.polimi.lIRAs.Pattern#getHuman <em>Human</em>}</li>
  *   <li>{@link it.polimi.lIRAs.Pattern#getRobot <em>Robot</em>}</li>
- *   <li>{@link it.polimi.lIRAs.Pattern#getLocations <em>Locations</em>}</li>
+ *   <li>{@link it.polimi.lIRAs.Pattern#getLocation <em>Location</em>}</li>
  *   <li>{@link it.polimi.lIRAs.Pattern#getResources <em>Resources</em>}</li>
  * </ul>
  *
@@ -76,16 +76,16 @@ public interface Pattern extends EObject
   EList<Robot> getRobot();
 
   /**
-   * Returns the value of the '<em><b>Locations</b></em>' containment reference list.
+   * Returns the value of the '<em><b>Location</b></em>' containment reference list.
    * The list contents are of type {@link it.polimi.lIRAs.Location}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Locations</em>' containment reference list.
-   * @see it.polimi.lIRAs.LIRAsPackage#getPattern_Locations()
+   * @return the value of the '<em>Location</em>' containment reference list.
+   * @see it.polimi.lIRAs.LIRAsPackage#getPattern_Location()
    * @model containment="true"
    * @generated
    */
-  EList<Location> getLocations();
+  EList<Location> getLocation();
 
   /**
    * Returns the value of the '<em><b>Resources</b></em>' containment reference list.

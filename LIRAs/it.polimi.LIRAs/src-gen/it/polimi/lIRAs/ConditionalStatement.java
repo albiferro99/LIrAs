@@ -16,8 +16,12 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link it.polimi.lIRAs.ConditionalStatement#getCs1 <em>Cs1</em>}</li>
  *   <li>{@link it.polimi.lIRAs.ConditionalStatement#getCondition <em>Condition</em>}</li>
+ *   <li>{@link it.polimi.lIRAs.ConditionalStatement#getCs2 <em>Cs2</em>}</li>
  *   <li>{@link it.polimi.lIRAs.ConditionalStatement#getAction <em>Action</em>}</li>
+ *   <li>{@link it.polimi.lIRAs.ConditionalStatement#getCs3 <em>Cs3</em>}</li>
+ *   <li>{@link it.polimi.lIRAs.ConditionalStatement#getCs4 <em>Cs4</em>}</li>
  *   <li>{@link it.polimi.lIRAs.ConditionalStatement#getN <em>N</em>}</li>
  * </ul>
  *
@@ -27,6 +31,28 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface ConditionalStatement extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Cs1</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Cs1</em>' attribute.
+   * @see #setCs1(String)
+   * @see it.polimi.lIRAs.LIRAsPackage#getConditionalStatement_Cs1()
+   * @model
+   * @generated
+   */
+  String getCs1();
+
+  /**
+   * Sets the value of the '{@link it.polimi.lIRAs.ConditionalStatement#getCs1 <em>Cs1</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Cs1</em>' attribute.
+   * @see #getCs1()
+   * @generated
+   */
+  void setCs1(String value);
+
   /**
    * Returns the value of the '<em><b>Condition</b></em>' containment reference list.
    * The list contents are of type {@link it.polimi.lIRAs.Condition}.
@@ -38,6 +64,28 @@ public interface ConditionalStatement extends EObject
    * @generated
    */
   EList<Condition> getCondition();
+
+  /**
+   * Returns the value of the '<em><b>Cs2</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Cs2</em>' attribute.
+   * @see #setCs2(String)
+   * @see it.polimi.lIRAs.LIRAsPackage#getConditionalStatement_Cs2()
+   * @model
+   * @generated
+   */
+  String getCs2();
+
+  /**
+   * Sets the value of the '{@link it.polimi.lIRAs.ConditionalStatement#getCs2 <em>Cs2</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Cs2</em>' attribute.
+   * @see #getCs2()
+   * @generated
+   */
+  void setCs2(String value);
 
   /**
    * Returns the value of the '<em><b>Action</b></em>' containment reference.
@@ -60,6 +108,50 @@ public interface ConditionalStatement extends EObject
    * @generated
    */
   void setAction(Action value);
+
+  /**
+   * Returns the value of the '<em><b>Cs3</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Cs3</em>' attribute.
+   * @see #setCs3(String)
+   * @see it.polimi.lIRAs.LIRAsPackage#getConditionalStatement_Cs3()
+   * @model
+   * @generated
+   */
+  String getCs3();
+
+  /**
+   * Sets the value of the '{@link it.polimi.lIRAs.ConditionalStatement#getCs3 <em>Cs3</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Cs3</em>' attribute.
+   * @see #getCs3()
+   * @generated
+   */
+  void setCs3(String value);
+
+  /**
+   * Returns the value of the '<em><b>Cs4</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Cs4</em>' attribute.
+   * @see #setCs4(String)
+   * @see it.polimi.lIRAs.LIRAsPackage#getConditionalStatement_Cs4()
+   * @model
+   * @generated
+   */
+  String getCs4();
+
+  /**
+   * Sets the value of the '{@link it.polimi.lIRAs.ConditionalStatement#getCs4 <em>Cs4</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Cs4</em>' attribute.
+   * @see #getCs4()
+   * @generated
+   */
+  void setCs4(String value);
 
   /**
    * Returns the value of the '<em><b>N</b></em>' attribute.

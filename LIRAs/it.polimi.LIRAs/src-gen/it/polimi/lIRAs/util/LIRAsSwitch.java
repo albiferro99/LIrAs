@@ -126,6 +126,14 @@ public class LIRAsSwitch<T> extends Switch<T>
       {
         Action action = (Action)theEObject;
         T result = caseAction(action);
+        if (result == null) result = caseActionC(action);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case LIRAsPackage.ACTION_C:
+      {
+        ActionC actionC = (ActionC)theEObject;
+        T result = caseActionC(actionC);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -320,6 +328,22 @@ public class LIRAsSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseAction(Action object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Action C</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Action C</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseActionC(ActionC object)
   {
     return null;
   }

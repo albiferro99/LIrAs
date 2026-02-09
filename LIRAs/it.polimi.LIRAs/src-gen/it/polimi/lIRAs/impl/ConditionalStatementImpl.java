@@ -32,8 +32,12 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link it.polimi.lIRAs.impl.ConditionalStatementImpl#getCs1 <em>Cs1</em>}</li>
  *   <li>{@link it.polimi.lIRAs.impl.ConditionalStatementImpl#getCondition <em>Condition</em>}</li>
+ *   <li>{@link it.polimi.lIRAs.impl.ConditionalStatementImpl#getCs2 <em>Cs2</em>}</li>
  *   <li>{@link it.polimi.lIRAs.impl.ConditionalStatementImpl#getAction <em>Action</em>}</li>
+ *   <li>{@link it.polimi.lIRAs.impl.ConditionalStatementImpl#getCs3 <em>Cs3</em>}</li>
+ *   <li>{@link it.polimi.lIRAs.impl.ConditionalStatementImpl#getCs4 <em>Cs4</em>}</li>
  *   <li>{@link it.polimi.lIRAs.impl.ConditionalStatementImpl#getN <em>N</em>}</li>
  * </ul>
  *
@@ -41,6 +45,26 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class ConditionalStatementImpl extends MinimalEObjectImpl.Container implements ConditionalStatement
 {
+  /**
+   * The default value of the '{@link #getCs1() <em>Cs1</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCs1()
+   * @generated
+   * @ordered
+   */
+  protected static final String CS1_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getCs1() <em>Cs1</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCs1()
+   * @generated
+   * @ordered
+   */
+  protected String cs1 = CS1_EDEFAULT;
+
   /**
    * The cached value of the '{@link #getCondition() <em>Condition</em>}' containment reference list.
    * <!-- begin-user-doc -->
@@ -52,6 +76,26 @@ public class ConditionalStatementImpl extends MinimalEObjectImpl.Container imple
   protected EList<Condition> condition;
 
   /**
+   * The default value of the '{@link #getCs2() <em>Cs2</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCs2()
+   * @generated
+   * @ordered
+   */
+  protected static final String CS2_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getCs2() <em>Cs2</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCs2()
+   * @generated
+   * @ordered
+   */
+  protected String cs2 = CS2_EDEFAULT;
+
+  /**
    * The cached value of the '{@link #getAction() <em>Action</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -60,6 +104,46 @@ public class ConditionalStatementImpl extends MinimalEObjectImpl.Container imple
    * @ordered
    */
   protected Action action;
+
+  /**
+   * The default value of the '{@link #getCs3() <em>Cs3</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCs3()
+   * @generated
+   * @ordered
+   */
+  protected static final String CS3_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getCs3() <em>Cs3</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCs3()
+   * @generated
+   * @ordered
+   */
+  protected String cs3 = CS3_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getCs4() <em>Cs4</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCs4()
+   * @generated
+   * @ordered
+   */
+  protected static final String CS4_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getCs4() <em>Cs4</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getCs4()
+   * @generated
+   * @ordered
+   */
+  protected String cs4 = CS4_EDEFAULT;
 
   /**
    * The default value of the '{@link #getN() <em>N</em>}' attribute.
@@ -108,6 +192,31 @@ public class ConditionalStatementImpl extends MinimalEObjectImpl.Container imple
    * @generated
    */
   @Override
+  public String getCs1()
+  {
+    return cs1;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setCs1(String newCs1)
+  {
+    String oldCs1 = cs1;
+    cs1 = newCs1;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, LIRAsPackage.CONDITIONAL_STATEMENT__CS1, oldCs1, cs1));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EList<Condition> getCondition()
   {
     if (condition == null)
@@ -115,6 +224,31 @@ public class ConditionalStatementImpl extends MinimalEObjectImpl.Container imple
       condition = new EObjectContainmentEList<Condition>(Condition.class, this, LIRAsPackage.CONDITIONAL_STATEMENT__CONDITION);
     }
     return condition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getCs2()
+  {
+    return cs2;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setCs2(String newCs2)
+  {
+    String oldCs2 = cs2;
+    cs2 = newCs2;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, LIRAsPackage.CONDITIONAL_STATEMENT__CS2, oldCs2, cs2));
   }
 
   /**
@@ -173,6 +307,56 @@ public class ConditionalStatementImpl extends MinimalEObjectImpl.Container imple
    * @generated
    */
   @Override
+  public String getCs3()
+  {
+    return cs3;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setCs3(String newCs3)
+  {
+    String oldCs3 = cs3;
+    cs3 = newCs3;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, LIRAsPackage.CONDITIONAL_STATEMENT__CS3, oldCs3, cs3));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getCs4()
+  {
+    return cs4;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setCs4(String newCs4)
+  {
+    String oldCs4 = cs4;
+    cs4 = newCs4;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, LIRAsPackage.CONDITIONAL_STATEMENT__CS4, oldCs4, cs4));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public int getN()
   {
     return n;
@@ -220,10 +404,18 @@ public class ConditionalStatementImpl extends MinimalEObjectImpl.Container imple
   {
     switch (featureID)
     {
+      case LIRAsPackage.CONDITIONAL_STATEMENT__CS1:
+        return getCs1();
       case LIRAsPackage.CONDITIONAL_STATEMENT__CONDITION:
         return getCondition();
+      case LIRAsPackage.CONDITIONAL_STATEMENT__CS2:
+        return getCs2();
       case LIRAsPackage.CONDITIONAL_STATEMENT__ACTION:
         return getAction();
+      case LIRAsPackage.CONDITIONAL_STATEMENT__CS3:
+        return getCs3();
+      case LIRAsPackage.CONDITIONAL_STATEMENT__CS4:
+        return getCs4();
       case LIRAsPackage.CONDITIONAL_STATEMENT__N:
         return getN();
     }
@@ -241,12 +433,24 @@ public class ConditionalStatementImpl extends MinimalEObjectImpl.Container imple
   {
     switch (featureID)
     {
+      case LIRAsPackage.CONDITIONAL_STATEMENT__CS1:
+        setCs1((String)newValue);
+        return;
       case LIRAsPackage.CONDITIONAL_STATEMENT__CONDITION:
         getCondition().clear();
         getCondition().addAll((Collection<? extends Condition>)newValue);
         return;
+      case LIRAsPackage.CONDITIONAL_STATEMENT__CS2:
+        setCs2((String)newValue);
+        return;
       case LIRAsPackage.CONDITIONAL_STATEMENT__ACTION:
         setAction((Action)newValue);
+        return;
+      case LIRAsPackage.CONDITIONAL_STATEMENT__CS3:
+        setCs3((String)newValue);
+        return;
+      case LIRAsPackage.CONDITIONAL_STATEMENT__CS4:
+        setCs4((String)newValue);
         return;
       case LIRAsPackage.CONDITIONAL_STATEMENT__N:
         setN((Integer)newValue);
@@ -265,11 +469,23 @@ public class ConditionalStatementImpl extends MinimalEObjectImpl.Container imple
   {
     switch (featureID)
     {
+      case LIRAsPackage.CONDITIONAL_STATEMENT__CS1:
+        setCs1(CS1_EDEFAULT);
+        return;
       case LIRAsPackage.CONDITIONAL_STATEMENT__CONDITION:
         getCondition().clear();
         return;
+      case LIRAsPackage.CONDITIONAL_STATEMENT__CS2:
+        setCs2(CS2_EDEFAULT);
+        return;
       case LIRAsPackage.CONDITIONAL_STATEMENT__ACTION:
         setAction((Action)null);
+        return;
+      case LIRAsPackage.CONDITIONAL_STATEMENT__CS3:
+        setCs3(CS3_EDEFAULT);
+        return;
+      case LIRAsPackage.CONDITIONAL_STATEMENT__CS4:
+        setCs4(CS4_EDEFAULT);
         return;
       case LIRAsPackage.CONDITIONAL_STATEMENT__N:
         setN(N_EDEFAULT);
@@ -288,10 +504,18 @@ public class ConditionalStatementImpl extends MinimalEObjectImpl.Container imple
   {
     switch (featureID)
     {
+      case LIRAsPackage.CONDITIONAL_STATEMENT__CS1:
+        return CS1_EDEFAULT == null ? cs1 != null : !CS1_EDEFAULT.equals(cs1);
       case LIRAsPackage.CONDITIONAL_STATEMENT__CONDITION:
         return condition != null && !condition.isEmpty();
+      case LIRAsPackage.CONDITIONAL_STATEMENT__CS2:
+        return CS2_EDEFAULT == null ? cs2 != null : !CS2_EDEFAULT.equals(cs2);
       case LIRAsPackage.CONDITIONAL_STATEMENT__ACTION:
         return action != null;
+      case LIRAsPackage.CONDITIONAL_STATEMENT__CS3:
+        return CS3_EDEFAULT == null ? cs3 != null : !CS3_EDEFAULT.equals(cs3);
+      case LIRAsPackage.CONDITIONAL_STATEMENT__CS4:
+        return CS4_EDEFAULT == null ? cs4 != null : !CS4_EDEFAULT.equals(cs4);
       case LIRAsPackage.CONDITIONAL_STATEMENT__N:
         return n != N_EDEFAULT;
     }
@@ -309,7 +533,15 @@ public class ConditionalStatementImpl extends MinimalEObjectImpl.Container imple
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (n: ");
+    result.append(" (cs1: ");
+    result.append(cs1);
+    result.append(", cs2: ");
+    result.append(cs2);
+    result.append(", cs3: ");
+    result.append(cs3);
+    result.append(", cs4: ");
+    result.append(cs4);
+    result.append(", n: ");
     result.append(n);
     result.append(')');
     return result.toString();

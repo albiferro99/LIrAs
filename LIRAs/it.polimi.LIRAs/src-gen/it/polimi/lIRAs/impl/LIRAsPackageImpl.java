@@ -4,6 +4,7 @@
 package it.polimi.lIRAs.impl;
 
 import it.polimi.lIRAs.Action;
+import it.polimi.lIRAs.ActionC;
 import it.polimi.lIRAs.Agent;
 import it.polimi.lIRAs.AtomicPredicate;
 import it.polimi.lIRAs.Conclusion;
@@ -93,6 +94,13 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
    * @generated
    */
   private EClass actionEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass actionCEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -313,7 +321,7 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
    * @generated
    */
   @Override
-  public EReference getPattern_Locations()
+  public EReference getPattern_Location()
   {
     return (EReference)patternEClass.getEStructuralFeatures().get(3);
   }
@@ -423,20 +431,9 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
    * @generated
    */
   @Override
-  public EReference getSubSequence_Action()
+  public EReference getSubSequence_ActionC()
   {
     return (EReference)subSequenceEClass.getEStructuralFeatures().get(3);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getSubSequence_ConditionalStatement()
-  {
-    return (EReference)subSequenceEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -500,9 +497,9 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
    * @generated
    */
   @Override
-  public EReference getConditionalStatement_Condition()
+  public EAttribute getConditionalStatement_Cs1()
   {
-    return (EReference)conditionalStatementEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)conditionalStatementEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -511,7 +508,7 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
    * @generated
    */
   @Override
-  public EReference getConditionalStatement_Action()
+  public EReference getConditionalStatement_Condition()
   {
     return (EReference)conditionalStatementEClass.getEStructuralFeatures().get(1);
   }
@@ -522,9 +519,53 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
    * @generated
    */
   @Override
-  public EAttribute getConditionalStatement_N()
+  public EAttribute getConditionalStatement_Cs2()
   {
     return (EAttribute)conditionalStatementEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConditionalStatement_Action()
+  {
+    return (EReference)conditionalStatementEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConditionalStatement_Cs3()
+  {
+    return (EAttribute)conditionalStatementEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConditionalStatement_Cs4()
+  {
+    return (EAttribute)conditionalStatementEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConditionalStatement_N()
+  {
+    return (EAttribute)conditionalStatementEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -544,9 +585,9 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
    * @generated
    */
   @Override
-  public EReference getAction_Target()
+  public EClass getActionC()
   {
-    return (EReference)actionEClass.getEStructuralFeatures().get(0);
+    return actionCEClass;
   }
 
   /**
@@ -555,9 +596,9 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
    * @generated
    */
   @Override
-  public EReference getAction_Resource()
+  public EAttribute getActionC_ActionType()
   {
-    return (EReference)actionEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)actionCEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -566,9 +607,42 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
    * @generated
    */
   @Override
-  public EReference getAction_Agent()
+  public EReference getActionC_Target()
   {
-    return (EReference)actionEClass.getEStructuralFeatures().get(2);
+    return (EReference)actionCEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getActionC_Resource()
+  {
+    return (EReference)actionCEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getActionC_Agent()
+  {
+    return (EReference)actionCEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getActionC_ConditionalStatement()
+  {
+    return (EReference)actionCEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -599,6 +673,17 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
    * @generated
    */
   @Override
+  public EAttribute getCondition_Op()
+  {
+    return (EAttribute)conditionEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getAtomicPredicate()
   {
     return atomicPredicateEClass;
@@ -610,7 +695,7 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
    * @generated
    */
   @Override
-  public EAttribute getAtomicPredicate_N()
+  public EAttribute getAtomicPredicate_Negated()
   {
     return (EAttribute)atomicPredicateEClass.getEStructuralFeatures().get(0);
   }
@@ -621,29 +706,29 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
    * @generated
    */
   @Override
+  public EAttribute getAtomicPredicate_Ap()
+  {
+    return (EAttribute)atomicPredicateEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getAtomicPredicate_N()
+  {
+    return (EAttribute)atomicPredicateEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getAtomicPredicate_Agent()
-  {
-    return (EReference)atomicPredicateEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getAtomicPredicate_Location()
-  {
-    return (EReference)atomicPredicateEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getAtomicPredicate_Resource()
   {
     return (EReference)atomicPredicateEClass.getEStructuralFeatures().get(3);
   }
@@ -654,9 +739,31 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
    * @generated
    */
   @Override
-  public EReference getAtomicPredicate_Relation()
+  public EReference getAtomicPredicate_Location()
   {
     return (EReference)atomicPredicateEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getAtomicPredicate_Resource()
+  {
+    return (EReference)atomicPredicateEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getAtomicPredicate_Relation()
+  {
+    return (EReference)atomicPredicateEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -864,7 +971,7 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
     createEAttribute(patternEClass, PATTERN__NAME);
     createEReference(patternEClass, PATTERN__HUMAN);
     createEReference(patternEClass, PATTERN__ROBOT);
-    createEReference(patternEClass, PATTERN__LOCATIONS);
+    createEReference(patternEClass, PATTERN__LOCATION);
     createEReference(patternEClass, PATTERN__RESOURCES);
 
     sequenceEClass = createEClass(SEQUENCE);
@@ -876,8 +983,7 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
     createEAttribute(subSequenceEClass, SUB_SEQUENCE__I);
     createEAttribute(subSequenceEClass, SUB_SEQUENCE__J);
     createEReference(subSequenceEClass, SUB_SEQUENCE__LOOP);
-    createEReference(subSequenceEClass, SUB_SEQUENCE__ACTION);
-    createEReference(subSequenceEClass, SUB_SEQUENCE__CONDITIONAL_STATEMENT);
+    createEReference(subSequenceEClass, SUB_SEQUENCE__ACTION_C);
 
     conclusionEClass = createEClass(CONCLUSION);
     createEReference(conclusionEClass, CONCLUSION__CONDITION);
@@ -886,19 +992,30 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
     createEReference(loopEClass, LOOP__CONDITION);
 
     conditionalStatementEClass = createEClass(CONDITIONAL_STATEMENT);
+    createEAttribute(conditionalStatementEClass, CONDITIONAL_STATEMENT__CS1);
     createEReference(conditionalStatementEClass, CONDITIONAL_STATEMENT__CONDITION);
+    createEAttribute(conditionalStatementEClass, CONDITIONAL_STATEMENT__CS2);
     createEReference(conditionalStatementEClass, CONDITIONAL_STATEMENT__ACTION);
+    createEAttribute(conditionalStatementEClass, CONDITIONAL_STATEMENT__CS3);
+    createEAttribute(conditionalStatementEClass, CONDITIONAL_STATEMENT__CS4);
     createEAttribute(conditionalStatementEClass, CONDITIONAL_STATEMENT__N);
 
     actionEClass = createEClass(ACTION);
-    createEReference(actionEClass, ACTION__TARGET);
-    createEReference(actionEClass, ACTION__RESOURCE);
-    createEReference(actionEClass, ACTION__AGENT);
+
+    actionCEClass = createEClass(ACTION_C);
+    createEAttribute(actionCEClass, ACTION_C__ACTION_TYPE);
+    createEReference(actionCEClass, ACTION_C__TARGET);
+    createEReference(actionCEClass, ACTION_C__RESOURCE);
+    createEReference(actionCEClass, ACTION_C__AGENT);
+    createEReference(actionCEClass, ACTION_C__CONDITIONAL_STATEMENT);
 
     conditionEClass = createEClass(CONDITION);
     createEReference(conditionEClass, CONDITION__ATOMIC_PREDICATE);
+    createEAttribute(conditionEClass, CONDITION__OP);
 
     atomicPredicateEClass = createEClass(ATOMIC_PREDICATE);
+    createEAttribute(atomicPredicateEClass, ATOMIC_PREDICATE__NEGATED);
+    createEAttribute(atomicPredicateEClass, ATOMIC_PREDICATE__AP);
     createEAttribute(atomicPredicateEClass, ATOMIC_PREDICATE__N);
     createEReference(atomicPredicateEClass, ATOMIC_PREDICATE__AGENT);
     createEReference(atomicPredicateEClass, ATOMIC_PREDICATE__LOCATION);
@@ -957,6 +1074,7 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
+    actionEClass.getESuperTypes().add(this.getActionC());
 
     // Initialize classes and features; add operations and parameters
     initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -968,7 +1086,7 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
     initEAttribute(getPattern_Name(), ecorePackage.getEString(), "name", null, 0, 1, Pattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getPattern_Human(), this.getHuman(), null, "human", null, 0, -1, Pattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getPattern_Robot(), this.getRobot(), null, "robot", null, 0, -1, Pattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getPattern_Locations(), this.getLocation(), null, "locations", null, 0, -1, Pattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getPattern_Location(), this.getLocation(), null, "location", null, 0, -1, Pattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getPattern_Resources(), this.getResource(), null, "resources", null, 0, -1, Pattern.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(sequenceEClass, Sequence.class, "Sequence", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -980,8 +1098,7 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
     initEAttribute(getSubSequence_I(), ecorePackage.getEInt(), "i", null, 0, 1, SubSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getSubSequence_J(), ecorePackage.getEInt(), "j", null, 0, 1, SubSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getSubSequence_Loop(), this.getLoop(), null, "loop", null, 0, -1, SubSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSubSequence_Action(), this.getAction(), null, "action", null, 0, -1, SubSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getSubSequence_ConditionalStatement(), this.getConditionalStatement(), null, "conditionalStatement", null, 0, -1, SubSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getSubSequence_ActionC(), this.getActionC(), null, "actionC", null, 0, -1, SubSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(conclusionEClass, Conclusion.class, "Conclusion", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getConclusion_Condition(), this.getCondition(), null, "condition", null, 0, -1, Conclusion.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -990,19 +1107,30 @@ public class LIRAsPackageImpl extends EPackageImpl implements LIRAsPackage
     initEReference(getLoop_Condition(), this.getCondition(), null, "condition", null, 0, 1, Loop.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(conditionalStatementEClass, ConditionalStatement.class, "ConditionalStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getConditionalStatement_Cs1(), ecorePackage.getEString(), "cs1", null, 0, 1, ConditionalStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConditionalStatement_Condition(), this.getCondition(), null, "condition", null, 0, -1, ConditionalStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConditionalStatement_Cs2(), ecorePackage.getEString(), "cs2", null, 0, 1, ConditionalStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConditionalStatement_Action(), this.getAction(), null, "action", null, 0, 1, ConditionalStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConditionalStatement_Cs3(), ecorePackage.getEString(), "cs3", null, 0, 1, ConditionalStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConditionalStatement_Cs4(), ecorePackage.getEString(), "cs4", null, 0, 1, ConditionalStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConditionalStatement_N(), ecorePackage.getEInt(), "n", null, 0, 1, ConditionalStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(actionEClass, Action.class, "Action", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getAction_Target(), this.getTarget(), null, "target", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getAction_Resource(), this.getResource(), null, "resource", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getAction_Agent(), this.getAgent(), null, "agent", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(actionCEClass, ActionC.class, "ActionC", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getActionC_ActionType(), ecorePackage.getEString(), "actionType", null, 0, 1, ActionC.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getActionC_Target(), this.getTarget(), null, "target", null, 0, 1, ActionC.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getActionC_Resource(), this.getResource(), null, "resource", null, 0, 1, ActionC.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getActionC_Agent(), this.getAgent(), null, "agent", null, 0, 1, ActionC.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getActionC_ConditionalStatement(), this.getConditionalStatement(), null, "conditionalStatement", null, 0, -1, ActionC.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(conditionEClass, Condition.class, "Condition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getCondition_AtomicPredicate(), this.getAtomicPredicate(), null, "atomicPredicate", null, 0, -1, Condition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getCondition_Op(), ecorePackage.getEString(), "op", null, 0, -1, Condition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(atomicPredicateEClass, AtomicPredicate.class, "AtomicPredicate", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getAtomicPredicate_Negated(), ecorePackage.getEBoolean(), "negated", null, 0, 1, AtomicPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getAtomicPredicate_Ap(), ecorePackage.getEString(), "ap", null, 0, 1, AtomicPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getAtomicPredicate_N(), ecorePackage.getEInt(), "n", null, 0, 1, AtomicPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getAtomicPredicate_Agent(), this.getAgent(), null, "agent", null, 0, 1, AtomicPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getAtomicPredicate_Location(), this.getLocation(), null, "location", null, 0, 1, AtomicPredicate.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -15,7 +15,7 @@
         eType="#//Human" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="robot" upperBound="-1"
         eType="#//Robot" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="locations" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="location" upperBound="-1"
         eType="#//Location" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="resources" upperBound="-1"
         eType="#//Resource" containment="true"/>
@@ -33,10 +33,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="j" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="loop" upperBound="-1" eType="#//Loop"
         containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="action" upperBound="-1"
-        eType="#//Action" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="conditionalStatement" upperBound="-1"
-        eType="#//ConditionalStatement" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="actionC" upperBound="-1"
+        eType="#//ActionC" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Conclusion">
     <eStructuralFeatures xsi:type="ecore:EReference" name="condition" upperBound="-1"
@@ -47,25 +45,37 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ConditionalStatement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cs1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="condition" upperBound="-1"
         eType="#//Condition" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cs2" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="action" eType="#//Action"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cs3" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="cs4" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="n" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Action">
+  <eClassifiers xsi:type="ecore:EClass" name="Action" eSuperTypes="#//ActionC"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ActionC">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="actionType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="#//Target"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="resource" eType="#//Resource"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="agent" eType="#//Agent"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="conditionalStatement" upperBound="-1"
+        eType="#//ConditionalStatement" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Condition">
     <eStructuralFeatures xsi:type="ecore:EReference" name="atomicPredicate" upperBound="-1"
         eType="#//AtomicPredicate" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="op" unique="false" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AtomicPredicate">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="negated" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ap" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="n" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="agent" eType="#//Agent"
         containment="true"/>

@@ -14,6 +14,8 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link it.polimi.lIRAs.AtomicPredicate#isNegated <em>Negated</em>}</li>
+ *   <li>{@link it.polimi.lIRAs.AtomicPredicate#getAp <em>Ap</em>}</li>
  *   <li>{@link it.polimi.lIRAs.AtomicPredicate#getN <em>N</em>}</li>
  *   <li>{@link it.polimi.lIRAs.AtomicPredicate#getAgent <em>Agent</em>}</li>
  *   <li>{@link it.polimi.lIRAs.AtomicPredicate#getLocation <em>Location</em>}</li>
@@ -27,6 +29,50 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface AtomicPredicate extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Negated</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Negated</em>' attribute.
+   * @see #setNegated(boolean)
+   * @see it.polimi.lIRAs.LIRAsPackage#getAtomicPredicate_Negated()
+   * @model
+   * @generated
+   */
+  boolean isNegated();
+
+  /**
+   * Sets the value of the '{@link it.polimi.lIRAs.AtomicPredicate#isNegated <em>Negated</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Negated</em>' attribute.
+   * @see #isNegated()
+   * @generated
+   */
+  void setNegated(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Ap</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Ap</em>' attribute.
+   * @see #setAp(String)
+   * @see it.polimi.lIRAs.LIRAsPackage#getAtomicPredicate_Ap()
+   * @model
+   * @generated
+   */
+  String getAp();
+
+  /**
+   * Sets the value of the '{@link it.polimi.lIRAs.AtomicPredicate#getAp <em>Ap</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Ap</em>' attribute.
+   * @see #getAp()
+   * @generated
+   */
+  void setAp(String value);
+
   /**
    * Returns the value of the '<em><b>N</b></em>' attribute.
    * <!-- begin-user-doc -->

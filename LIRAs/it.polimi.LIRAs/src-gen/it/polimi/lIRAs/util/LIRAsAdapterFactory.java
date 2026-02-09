@@ -116,6 +116,11 @@ public class LIRAsAdapterFactory extends AdapterFactoryImpl
         return createActionAdapter();
       }
       @Override
+      public Adapter caseActionC(ActionC object)
+      {
+        return createActionCAdapter();
+      }
+      @Override
       public Adapter caseCondition(Condition object)
       {
         return createConditionAdapter();
@@ -298,6 +303,21 @@ public class LIRAsAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createActionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link it.polimi.lIRAs.ActionC <em>Action C</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see it.polimi.lIRAs.ActionC
+   * @generated
+   */
+  public Adapter createActionCAdapter()
   {
     return null;
   }

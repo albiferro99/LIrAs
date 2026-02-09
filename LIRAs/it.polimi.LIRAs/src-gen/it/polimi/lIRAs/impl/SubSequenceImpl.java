@@ -3,8 +3,7 @@
  */
 package it.polimi.lIRAs.impl;
 
-import it.polimi.lIRAs.Action;
-import it.polimi.lIRAs.ConditionalStatement;
+import it.polimi.lIRAs.ActionC;
 import it.polimi.lIRAs.LIRAsPackage;
 import it.polimi.lIRAs.Loop;
 import it.polimi.lIRAs.SubSequence;
@@ -36,8 +35,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link it.polimi.lIRAs.impl.SubSequenceImpl#getI <em>I</em>}</li>
  *   <li>{@link it.polimi.lIRAs.impl.SubSequenceImpl#getJ <em>J</em>}</li>
  *   <li>{@link it.polimi.lIRAs.impl.SubSequenceImpl#getLoop <em>Loop</em>}</li>
- *   <li>{@link it.polimi.lIRAs.impl.SubSequenceImpl#getAction <em>Action</em>}</li>
- *   <li>{@link it.polimi.lIRAs.impl.SubSequenceImpl#getConditionalStatement <em>Conditional Statement</em>}</li>
+ *   <li>{@link it.polimi.lIRAs.impl.SubSequenceImpl#getActionC <em>Action C</em>}</li>
  * </ul>
  *
  * @generated
@@ -95,24 +93,14 @@ public class SubSequenceImpl extends MinimalEObjectImpl.Container implements Sub
   protected EList<Loop> loop;
 
   /**
-   * The cached value of the '{@link #getAction() <em>Action</em>}' containment reference list.
+   * The cached value of the '{@link #getActionC() <em>Action C</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getAction()
+   * @see #getActionC()
    * @generated
    * @ordered
    */
-  protected EList<Action> action;
-
-  /**
-   * The cached value of the '{@link #getConditionalStatement() <em>Conditional Statement</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getConditionalStatement()
-   * @generated
-   * @ordered
-   */
-  protected EList<ConditionalStatement> conditionalStatement;
+  protected EList<ActionC> actionC;
 
   /**
    * <!-- begin-user-doc -->
@@ -206,28 +194,13 @@ public class SubSequenceImpl extends MinimalEObjectImpl.Container implements Sub
    * @generated
    */
   @Override
-  public EList<Action> getAction()
+  public EList<ActionC> getActionC()
   {
-    if (action == null)
+    if (actionC == null)
     {
-      action = new EObjectContainmentEList<Action>(Action.class, this, LIRAsPackage.SUB_SEQUENCE__ACTION);
+      actionC = new EObjectContainmentEList<ActionC>(ActionC.class, this, LIRAsPackage.SUB_SEQUENCE__ACTION_C);
     }
-    return action;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EList<ConditionalStatement> getConditionalStatement()
-  {
-    if (conditionalStatement == null)
-    {
-      conditionalStatement = new EObjectContainmentEList<ConditionalStatement>(ConditionalStatement.class, this, LIRAsPackage.SUB_SEQUENCE__CONDITIONAL_STATEMENT);
-    }
-    return conditionalStatement;
+    return actionC;
   }
 
   /**
@@ -242,10 +215,8 @@ public class SubSequenceImpl extends MinimalEObjectImpl.Container implements Sub
     {
       case LIRAsPackage.SUB_SEQUENCE__LOOP:
         return ((InternalEList<?>)getLoop()).basicRemove(otherEnd, msgs);
-      case LIRAsPackage.SUB_SEQUENCE__ACTION:
-        return ((InternalEList<?>)getAction()).basicRemove(otherEnd, msgs);
-      case LIRAsPackage.SUB_SEQUENCE__CONDITIONAL_STATEMENT:
-        return ((InternalEList<?>)getConditionalStatement()).basicRemove(otherEnd, msgs);
+      case LIRAsPackage.SUB_SEQUENCE__ACTION_C:
+        return ((InternalEList<?>)getActionC()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -266,10 +237,8 @@ public class SubSequenceImpl extends MinimalEObjectImpl.Container implements Sub
         return getJ();
       case LIRAsPackage.SUB_SEQUENCE__LOOP:
         return getLoop();
-      case LIRAsPackage.SUB_SEQUENCE__ACTION:
-        return getAction();
-      case LIRAsPackage.SUB_SEQUENCE__CONDITIONAL_STATEMENT:
-        return getConditionalStatement();
+      case LIRAsPackage.SUB_SEQUENCE__ACTION_C:
+        return getActionC();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -295,13 +264,9 @@ public class SubSequenceImpl extends MinimalEObjectImpl.Container implements Sub
         getLoop().clear();
         getLoop().addAll((Collection<? extends Loop>)newValue);
         return;
-      case LIRAsPackage.SUB_SEQUENCE__ACTION:
-        getAction().clear();
-        getAction().addAll((Collection<? extends Action>)newValue);
-        return;
-      case LIRAsPackage.SUB_SEQUENCE__CONDITIONAL_STATEMENT:
-        getConditionalStatement().clear();
-        getConditionalStatement().addAll((Collection<? extends ConditionalStatement>)newValue);
+      case LIRAsPackage.SUB_SEQUENCE__ACTION_C:
+        getActionC().clear();
+        getActionC().addAll((Collection<? extends ActionC>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -326,11 +291,8 @@ public class SubSequenceImpl extends MinimalEObjectImpl.Container implements Sub
       case LIRAsPackage.SUB_SEQUENCE__LOOP:
         getLoop().clear();
         return;
-      case LIRAsPackage.SUB_SEQUENCE__ACTION:
-        getAction().clear();
-        return;
-      case LIRAsPackage.SUB_SEQUENCE__CONDITIONAL_STATEMENT:
-        getConditionalStatement().clear();
+      case LIRAsPackage.SUB_SEQUENCE__ACTION_C:
+        getActionC().clear();
         return;
     }
     super.eUnset(featureID);
@@ -352,10 +314,8 @@ public class SubSequenceImpl extends MinimalEObjectImpl.Container implements Sub
         return j != J_EDEFAULT;
       case LIRAsPackage.SUB_SEQUENCE__LOOP:
         return loop != null && !loop.isEmpty();
-      case LIRAsPackage.SUB_SEQUENCE__ACTION:
-        return action != null && !action.isEmpty();
-      case LIRAsPackage.SUB_SEQUENCE__CONDITIONAL_STATEMENT:
-        return conditionalStatement != null && !conditionalStatement.isEmpty();
+      case LIRAsPackage.SUB_SEQUENCE__ACTION_C:
+        return actionC != null && !actionC.isEmpty();
     }
     return super.eIsSet(featureID);
   }

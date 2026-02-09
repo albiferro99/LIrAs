@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link it.polimi.lIRAs.Condition#getAtomicPredicate <em>Atomic Predicate</em>}</li>
+ *   <li>{@link it.polimi.lIRAs.Condition#getOp <em>Op</em>}</li>
  * </ul>
  *
  * @see it.polimi.lIRAs.LIRAsPackage#getCondition()
@@ -36,5 +37,17 @@ public interface Condition extends EObject
    * @generated
    */
   EList<AtomicPredicate> getAtomicPredicate();
+
+  /**
+   * Returns the value of the '<em><b>Op</b></em>' attribute list.
+   * The list contents are of type {@link java.lang.String}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Op</em>' attribute list.
+   * @see it.polimi.lIRAs.LIRAsPackage#getCondition_Op()
+   * @model unique="false"
+   * @generated
+   */
+  EList<String> getOp();
 
 } // Condition

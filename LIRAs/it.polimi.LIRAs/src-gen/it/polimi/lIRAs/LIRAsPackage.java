@@ -141,13 +141,13 @@ public interface LIRAsPackage extends EPackage
   int PATTERN__ROBOT = 2;
 
   /**
-   * The feature id for the '<em><b>Locations</b></em>' containment reference list.
+   * The feature id for the '<em><b>Location</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PATTERN__LOCATIONS = 3;
+  int PATTERN__LOCATION = 3;
 
   /**
    * The feature id for the '<em><b>Resources</b></em>' containment reference list.
@@ -251,22 +251,13 @@ public interface LIRAsPackage extends EPackage
   int SUB_SEQUENCE__LOOP = 2;
 
   /**
-   * The feature id for the '<em><b>Action</b></em>' containment reference list.
+   * The feature id for the '<em><b>Action C</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int SUB_SEQUENCE__ACTION = 3;
-
-  /**
-   * The feature id for the '<em><b>Conditional Statement</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SUB_SEQUENCE__CONDITIONAL_STATEMENT = 4;
+  int SUB_SEQUENCE__ACTION_C = 3;
 
   /**
    * The number of structural features of the '<em>Sub Sequence</em>' class.
@@ -275,7 +266,7 @@ public interface LIRAsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SUB_SEQUENCE_FEATURE_COUNT = 5;
+  int SUB_SEQUENCE_FEATURE_COUNT = 4;
 
   /**
    * The meta object id for the '{@link it.polimi.lIRAs.impl.ConclusionImpl <em>Conclusion</em>}' class.
@@ -344,13 +335,31 @@ public interface LIRAsPackage extends EPackage
   int CONDITIONAL_STATEMENT = 6;
 
   /**
+   * The feature id for the '<em><b>Cs1</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONDITIONAL_STATEMENT__CS1 = 0;
+
+  /**
    * The feature id for the '<em><b>Condition</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONDITIONAL_STATEMENT__CONDITION = 0;
+  int CONDITIONAL_STATEMENT__CONDITION = 1;
+
+  /**
+   * The feature id for the '<em><b>Cs2</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONDITIONAL_STATEMENT__CS2 = 2;
 
   /**
    * The feature id for the '<em><b>Action</b></em>' containment reference.
@@ -359,7 +368,25 @@ public interface LIRAsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONDITIONAL_STATEMENT__ACTION = 1;
+  int CONDITIONAL_STATEMENT__ACTION = 3;
+
+  /**
+   * The feature id for the '<em><b>Cs3</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONDITIONAL_STATEMENT__CS3 = 4;
+
+  /**
+   * The feature id for the '<em><b>Cs4</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONDITIONAL_STATEMENT__CS4 = 5;
 
   /**
    * The feature id for the '<em><b>N</b></em>' attribute.
@@ -368,7 +395,7 @@ public interface LIRAsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONDITIONAL_STATEMENT__N = 2;
+  int CONDITIONAL_STATEMENT__N = 6;
 
   /**
    * The number of structural features of the '<em>Conditional Statement</em>' class.
@@ -377,7 +404,71 @@ public interface LIRAsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONDITIONAL_STATEMENT_FEATURE_COUNT = 3;
+  int CONDITIONAL_STATEMENT_FEATURE_COUNT = 7;
+
+  /**
+   * The meta object id for the '{@link it.polimi.lIRAs.impl.ActionCImpl <em>Action C</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see it.polimi.lIRAs.impl.ActionCImpl
+   * @see it.polimi.lIRAs.impl.LIRAsPackageImpl#getActionC()
+   * @generated
+   */
+  int ACTION_C = 8;
+
+  /**
+   * The feature id for the '<em><b>Action Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTION_C__ACTION_TYPE = 0;
+
+  /**
+   * The feature id for the '<em><b>Target</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTION_C__TARGET = 1;
+
+  /**
+   * The feature id for the '<em><b>Resource</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTION_C__RESOURCE = 2;
+
+  /**
+   * The feature id for the '<em><b>Agent</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTION_C__AGENT = 3;
+
+  /**
+   * The feature id for the '<em><b>Conditional Statement</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTION_C__CONDITIONAL_STATEMENT = 4;
+
+  /**
+   * The number of structural features of the '<em>Action C</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTION_C_FEATURE_COUNT = 5;
 
   /**
    * The meta object id for the '{@link it.polimi.lIRAs.impl.ActionImpl <em>Action</em>}' class.
@@ -390,13 +481,22 @@ public interface LIRAsPackage extends EPackage
   int ACTION = 7;
 
   /**
+   * The feature id for the '<em><b>Action Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTION__ACTION_TYPE = ACTION_C__ACTION_TYPE;
+
+  /**
    * The feature id for the '<em><b>Target</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTION__TARGET = 0;
+  int ACTION__TARGET = ACTION_C__TARGET;
 
   /**
    * The feature id for the '<em><b>Resource</b></em>' containment reference.
@@ -405,7 +505,7 @@ public interface LIRAsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__RESOURCE = 1;
+  int ACTION__RESOURCE = ACTION_C__RESOURCE;
 
   /**
    * The feature id for the '<em><b>Agent</b></em>' containment reference.
@@ -414,7 +514,16 @@ public interface LIRAsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION__AGENT = 2;
+  int ACTION__AGENT = ACTION_C__AGENT;
+
+  /**
+   * The feature id for the '<em><b>Conditional Statement</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTION__CONDITIONAL_STATEMENT = ACTION_C__CONDITIONAL_STATEMENT;
 
   /**
    * The number of structural features of the '<em>Action</em>' class.
@@ -423,7 +532,7 @@ public interface LIRAsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ACTION_FEATURE_COUNT = 3;
+  int ACTION_FEATURE_COUNT = ACTION_C_FEATURE_COUNT + 0;
 
   /**
    * The meta object id for the '{@link it.polimi.lIRAs.impl.ConditionImpl <em>Condition</em>}' class.
@@ -433,7 +542,7 @@ public interface LIRAsPackage extends EPackage
    * @see it.polimi.lIRAs.impl.LIRAsPackageImpl#getCondition()
    * @generated
    */
-  int CONDITION = 8;
+  int CONDITION = 9;
 
   /**
    * The feature id for the '<em><b>Atomic Predicate</b></em>' containment reference list.
@@ -445,13 +554,22 @@ public interface LIRAsPackage extends EPackage
   int CONDITION__ATOMIC_PREDICATE = 0;
 
   /**
+   * The feature id for the '<em><b>Op</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONDITION__OP = 1;
+
+  /**
    * The number of structural features of the '<em>Condition</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONDITION_FEATURE_COUNT = 1;
+  int CONDITION_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link it.polimi.lIRAs.impl.AtomicPredicateImpl <em>Atomic Predicate</em>}' class.
@@ -461,7 +579,25 @@ public interface LIRAsPackage extends EPackage
    * @see it.polimi.lIRAs.impl.LIRAsPackageImpl#getAtomicPredicate()
    * @generated
    */
-  int ATOMIC_PREDICATE = 9;
+  int ATOMIC_PREDICATE = 10;
+
+  /**
+   * The feature id for the '<em><b>Negated</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ATOMIC_PREDICATE__NEGATED = 0;
+
+  /**
+   * The feature id for the '<em><b>Ap</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ATOMIC_PREDICATE__AP = 1;
 
   /**
    * The feature id for the '<em><b>N</b></em>' attribute.
@@ -470,7 +606,7 @@ public interface LIRAsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ATOMIC_PREDICATE__N = 0;
+  int ATOMIC_PREDICATE__N = 2;
 
   /**
    * The feature id for the '<em><b>Agent</b></em>' containment reference.
@@ -479,7 +615,7 @@ public interface LIRAsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ATOMIC_PREDICATE__AGENT = 1;
+  int ATOMIC_PREDICATE__AGENT = 3;
 
   /**
    * The feature id for the '<em><b>Location</b></em>' containment reference.
@@ -488,7 +624,7 @@ public interface LIRAsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ATOMIC_PREDICATE__LOCATION = 2;
+  int ATOMIC_PREDICATE__LOCATION = 4;
 
   /**
    * The feature id for the '<em><b>Resource</b></em>' containment reference.
@@ -497,7 +633,7 @@ public interface LIRAsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ATOMIC_PREDICATE__RESOURCE = 3;
+  int ATOMIC_PREDICATE__RESOURCE = 5;
 
   /**
    * The feature id for the '<em><b>Relation</b></em>' containment reference.
@@ -506,7 +642,7 @@ public interface LIRAsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ATOMIC_PREDICATE__RELATION = 4;
+  int ATOMIC_PREDICATE__RELATION = 6;
 
   /**
    * The number of structural features of the '<em>Atomic Predicate</em>' class.
@@ -515,7 +651,7 @@ public interface LIRAsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int ATOMIC_PREDICATE_FEATURE_COUNT = 5;
+  int ATOMIC_PREDICATE_FEATURE_COUNT = 7;
 
   /**
    * The meta object id for the '{@link it.polimi.lIRAs.impl.RelationImpl <em>Relation</em>}' class.
@@ -525,7 +661,7 @@ public interface LIRAsPackage extends EPackage
    * @see it.polimi.lIRAs.impl.LIRAsPackageImpl#getRelation()
    * @generated
    */
-  int RELATION = 10;
+  int RELATION = 11;
 
   /**
    * The feature id for the '<em><b>Agent</b></em>' containment reference list.
@@ -562,7 +698,7 @@ public interface LIRAsPackage extends EPackage
    * @see it.polimi.lIRAs.impl.LIRAsPackageImpl#getTarget()
    * @generated
    */
-  int TARGET = 11;
+  int TARGET = 12;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -590,7 +726,7 @@ public interface LIRAsPackage extends EPackage
    * @see it.polimi.lIRAs.impl.LIRAsPackageImpl#getAgent()
    * @generated
    */
-  int AGENT = 12;
+  int AGENT = 13;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -618,7 +754,7 @@ public interface LIRAsPackage extends EPackage
    * @see it.polimi.lIRAs.impl.LIRAsPackageImpl#getHuman()
    * @generated
    */
-  int HUMAN = 13;
+  int HUMAN = 14;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -646,7 +782,7 @@ public interface LIRAsPackage extends EPackage
    * @see it.polimi.lIRAs.impl.LIRAsPackageImpl#getRobot()
    * @generated
    */
-  int ROBOT = 14;
+  int ROBOT = 15;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -674,7 +810,7 @@ public interface LIRAsPackage extends EPackage
    * @see it.polimi.lIRAs.impl.LIRAsPackageImpl#getLocation()
    * @generated
    */
-  int LOCATION = 15;
+  int LOCATION = 16;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -702,7 +838,7 @@ public interface LIRAsPackage extends EPackage
    * @see it.polimi.lIRAs.impl.LIRAsPackageImpl#getResource()
    * @generated
    */
-  int RESOURCE = 16;
+  int RESOURCE = 17;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -810,15 +946,15 @@ public interface LIRAsPackage extends EPackage
   EReference getPattern_Robot();
 
   /**
-   * Returns the meta object for the containment reference list '{@link it.polimi.lIRAs.Pattern#getLocations <em>Locations</em>}'.
+   * Returns the meta object for the containment reference list '{@link it.polimi.lIRAs.Pattern#getLocation <em>Location</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Locations</em>'.
-   * @see it.polimi.lIRAs.Pattern#getLocations()
+   * @return the meta object for the containment reference list '<em>Location</em>'.
+   * @see it.polimi.lIRAs.Pattern#getLocation()
    * @see #getPattern()
    * @generated
    */
-  EReference getPattern_Locations();
+  EReference getPattern_Location();
 
   /**
    * Returns the meta object for the containment reference list '{@link it.polimi.lIRAs.Pattern#getResources <em>Resources</em>}'.
@@ -918,26 +1054,15 @@ public interface LIRAsPackage extends EPackage
   EReference getSubSequence_Loop();
 
   /**
-   * Returns the meta object for the containment reference list '{@link it.polimi.lIRAs.SubSequence#getAction <em>Action</em>}'.
+   * Returns the meta object for the containment reference list '{@link it.polimi.lIRAs.SubSequence#getActionC <em>Action C</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Action</em>'.
-   * @see it.polimi.lIRAs.SubSequence#getAction()
+   * @return the meta object for the containment reference list '<em>Action C</em>'.
+   * @see it.polimi.lIRAs.SubSequence#getActionC()
    * @see #getSubSequence()
    * @generated
    */
-  EReference getSubSequence_Action();
-
-  /**
-   * Returns the meta object for the containment reference list '{@link it.polimi.lIRAs.SubSequence#getConditionalStatement <em>Conditional Statement</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Conditional Statement</em>'.
-   * @see it.polimi.lIRAs.SubSequence#getConditionalStatement()
-   * @see #getSubSequence()
-   * @generated
-   */
-  EReference getSubSequence_ConditionalStatement();
+  EReference getSubSequence_ActionC();
 
   /**
    * Returns the meta object for class '{@link it.polimi.lIRAs.Conclusion <em>Conclusion</em>}'.
@@ -992,6 +1117,17 @@ public interface LIRAsPackage extends EPackage
   EClass getConditionalStatement();
 
   /**
+   * Returns the meta object for the attribute '{@link it.polimi.lIRAs.ConditionalStatement#getCs1 <em>Cs1</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Cs1</em>'.
+   * @see it.polimi.lIRAs.ConditionalStatement#getCs1()
+   * @see #getConditionalStatement()
+   * @generated
+   */
+  EAttribute getConditionalStatement_Cs1();
+
+  /**
    * Returns the meta object for the containment reference list '{@link it.polimi.lIRAs.ConditionalStatement#getCondition <em>Condition</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1003,6 +1139,17 @@ public interface LIRAsPackage extends EPackage
   EReference getConditionalStatement_Condition();
 
   /**
+   * Returns the meta object for the attribute '{@link it.polimi.lIRAs.ConditionalStatement#getCs2 <em>Cs2</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Cs2</em>'.
+   * @see it.polimi.lIRAs.ConditionalStatement#getCs2()
+   * @see #getConditionalStatement()
+   * @generated
+   */
+  EAttribute getConditionalStatement_Cs2();
+
+  /**
    * Returns the meta object for the containment reference '{@link it.polimi.lIRAs.ConditionalStatement#getAction <em>Action</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1012,6 +1159,28 @@ public interface LIRAsPackage extends EPackage
    * @generated
    */
   EReference getConditionalStatement_Action();
+
+  /**
+   * Returns the meta object for the attribute '{@link it.polimi.lIRAs.ConditionalStatement#getCs3 <em>Cs3</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Cs3</em>'.
+   * @see it.polimi.lIRAs.ConditionalStatement#getCs3()
+   * @see #getConditionalStatement()
+   * @generated
+   */
+  EAttribute getConditionalStatement_Cs3();
+
+  /**
+   * Returns the meta object for the attribute '{@link it.polimi.lIRAs.ConditionalStatement#getCs4 <em>Cs4</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Cs4</em>'.
+   * @see it.polimi.lIRAs.ConditionalStatement#getCs4()
+   * @see #getConditionalStatement()
+   * @generated
+   */
+  EAttribute getConditionalStatement_Cs4();
 
   /**
    * Returns the meta object for the attribute '{@link it.polimi.lIRAs.ConditionalStatement#getN <em>N</em>}'.
@@ -1035,37 +1204,69 @@ public interface LIRAsPackage extends EPackage
   EClass getAction();
 
   /**
-   * Returns the meta object for the containment reference '{@link it.polimi.lIRAs.Action#getTarget <em>Target</em>}'.
+   * Returns the meta object for class '{@link it.polimi.lIRAs.ActionC <em>Action C</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Action C</em>'.
+   * @see it.polimi.lIRAs.ActionC
+   * @generated
+   */
+  EClass getActionC();
+
+  /**
+   * Returns the meta object for the attribute '{@link it.polimi.lIRAs.ActionC#getActionType <em>Action Type</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Action Type</em>'.
+   * @see it.polimi.lIRAs.ActionC#getActionType()
+   * @see #getActionC()
+   * @generated
+   */
+  EAttribute getActionC_ActionType();
+
+  /**
+   * Returns the meta object for the containment reference '{@link it.polimi.lIRAs.ActionC#getTarget <em>Target</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference '<em>Target</em>'.
-   * @see it.polimi.lIRAs.Action#getTarget()
-   * @see #getAction()
+   * @see it.polimi.lIRAs.ActionC#getTarget()
+   * @see #getActionC()
    * @generated
    */
-  EReference getAction_Target();
+  EReference getActionC_Target();
 
   /**
-   * Returns the meta object for the containment reference '{@link it.polimi.lIRAs.Action#getResource <em>Resource</em>}'.
+   * Returns the meta object for the containment reference '{@link it.polimi.lIRAs.ActionC#getResource <em>Resource</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference '<em>Resource</em>'.
-   * @see it.polimi.lIRAs.Action#getResource()
-   * @see #getAction()
+   * @see it.polimi.lIRAs.ActionC#getResource()
+   * @see #getActionC()
    * @generated
    */
-  EReference getAction_Resource();
+  EReference getActionC_Resource();
 
   /**
-   * Returns the meta object for the containment reference '{@link it.polimi.lIRAs.Action#getAgent <em>Agent</em>}'.
+   * Returns the meta object for the containment reference '{@link it.polimi.lIRAs.ActionC#getAgent <em>Agent</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the meta object for the containment reference '<em>Agent</em>'.
-   * @see it.polimi.lIRAs.Action#getAgent()
-   * @see #getAction()
+   * @see it.polimi.lIRAs.ActionC#getAgent()
+   * @see #getActionC()
    * @generated
    */
-  EReference getAction_Agent();
+  EReference getActionC_Agent();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link it.polimi.lIRAs.ActionC#getConditionalStatement <em>Conditional Statement</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Conditional Statement</em>'.
+   * @see it.polimi.lIRAs.ActionC#getConditionalStatement()
+   * @see #getActionC()
+   * @generated
+   */
+  EReference getActionC_ConditionalStatement();
 
   /**
    * Returns the meta object for class '{@link it.polimi.lIRAs.Condition <em>Condition</em>}'.
@@ -1089,6 +1290,17 @@ public interface LIRAsPackage extends EPackage
   EReference getCondition_AtomicPredicate();
 
   /**
+   * Returns the meta object for the attribute list '{@link it.polimi.lIRAs.Condition#getOp <em>Op</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Op</em>'.
+   * @see it.polimi.lIRAs.Condition#getOp()
+   * @see #getCondition()
+   * @generated
+   */
+  EAttribute getCondition_Op();
+
+  /**
    * Returns the meta object for class '{@link it.polimi.lIRAs.AtomicPredicate <em>Atomic Predicate</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -1097,6 +1309,28 @@ public interface LIRAsPackage extends EPackage
    * @generated
    */
   EClass getAtomicPredicate();
+
+  /**
+   * Returns the meta object for the attribute '{@link it.polimi.lIRAs.AtomicPredicate#isNegated <em>Negated</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Negated</em>'.
+   * @see it.polimi.lIRAs.AtomicPredicate#isNegated()
+   * @see #getAtomicPredicate()
+   * @generated
+   */
+  EAttribute getAtomicPredicate_Negated();
+
+  /**
+   * Returns the meta object for the attribute '{@link it.polimi.lIRAs.AtomicPredicate#getAp <em>Ap</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Ap</em>'.
+   * @see it.polimi.lIRAs.AtomicPredicate#getAp()
+   * @see #getAtomicPredicate()
+   * @generated
+   */
+  EAttribute getAtomicPredicate_Ap();
 
   /**
    * Returns the meta object for the attribute '{@link it.polimi.lIRAs.AtomicPredicate#getN <em>N</em>}'.
@@ -1403,12 +1637,12 @@ public interface LIRAsPackage extends EPackage
     EReference PATTERN__ROBOT = eINSTANCE.getPattern_Robot();
 
     /**
-     * The meta object literal for the '<em><b>Locations</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Location</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference PATTERN__LOCATIONS = eINSTANCE.getPattern_Locations();
+    EReference PATTERN__LOCATION = eINSTANCE.getPattern_Location();
 
     /**
      * The meta object literal for the '<em><b>Resources</b></em>' containment reference list feature.
@@ -1487,20 +1721,12 @@ public interface LIRAsPackage extends EPackage
     EReference SUB_SEQUENCE__LOOP = eINSTANCE.getSubSequence_Loop();
 
     /**
-     * The meta object literal for the '<em><b>Action</b></em>' containment reference list feature.
+     * The meta object literal for the '<em><b>Action C</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference SUB_SEQUENCE__ACTION = eINSTANCE.getSubSequence_Action();
-
-    /**
-     * The meta object literal for the '<em><b>Conditional Statement</b></em>' containment reference list feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference SUB_SEQUENCE__CONDITIONAL_STATEMENT = eINSTANCE.getSubSequence_ConditionalStatement();
+    EReference SUB_SEQUENCE__ACTION_C = eINSTANCE.getSubSequence_ActionC();
 
     /**
      * The meta object literal for the '{@link it.polimi.lIRAs.impl.ConclusionImpl <em>Conclusion</em>}' class.
@@ -1549,6 +1775,14 @@ public interface LIRAsPackage extends EPackage
     EClass CONDITIONAL_STATEMENT = eINSTANCE.getConditionalStatement();
 
     /**
+     * The meta object literal for the '<em><b>Cs1</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONDITIONAL_STATEMENT__CS1 = eINSTANCE.getConditionalStatement_Cs1();
+
+    /**
      * The meta object literal for the '<em><b>Condition</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1557,12 +1791,36 @@ public interface LIRAsPackage extends EPackage
     EReference CONDITIONAL_STATEMENT__CONDITION = eINSTANCE.getConditionalStatement_Condition();
 
     /**
+     * The meta object literal for the '<em><b>Cs2</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONDITIONAL_STATEMENT__CS2 = eINSTANCE.getConditionalStatement_Cs2();
+
+    /**
      * The meta object literal for the '<em><b>Action</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EReference CONDITIONAL_STATEMENT__ACTION = eINSTANCE.getConditionalStatement_Action();
+
+    /**
+     * The meta object literal for the '<em><b>Cs3</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONDITIONAL_STATEMENT__CS3 = eINSTANCE.getConditionalStatement_Cs3();
+
+    /**
+     * The meta object literal for the '<em><b>Cs4</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONDITIONAL_STATEMENT__CS4 = eINSTANCE.getConditionalStatement_Cs4();
 
     /**
      * The meta object literal for the '<em><b>N</b></em>' attribute feature.
@@ -1583,12 +1841,30 @@ public interface LIRAsPackage extends EPackage
     EClass ACTION = eINSTANCE.getAction();
 
     /**
+     * The meta object literal for the '{@link it.polimi.lIRAs.impl.ActionCImpl <em>Action C</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see it.polimi.lIRAs.impl.ActionCImpl
+     * @see it.polimi.lIRAs.impl.LIRAsPackageImpl#getActionC()
+     * @generated
+     */
+    EClass ACTION_C = eINSTANCE.getActionC();
+
+    /**
+     * The meta object literal for the '<em><b>Action Type</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ACTION_C__ACTION_TYPE = eINSTANCE.getActionC_ActionType();
+
+    /**
      * The meta object literal for the '<em><b>Target</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference ACTION__TARGET = eINSTANCE.getAction_Target();
+    EReference ACTION_C__TARGET = eINSTANCE.getActionC_Target();
 
     /**
      * The meta object literal for the '<em><b>Resource</b></em>' containment reference feature.
@@ -1596,7 +1872,7 @@ public interface LIRAsPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference ACTION__RESOURCE = eINSTANCE.getAction_Resource();
+    EReference ACTION_C__RESOURCE = eINSTANCE.getActionC_Resource();
 
     /**
      * The meta object literal for the '<em><b>Agent</b></em>' containment reference feature.
@@ -1604,7 +1880,15 @@ public interface LIRAsPackage extends EPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference ACTION__AGENT = eINSTANCE.getAction_Agent();
+    EReference ACTION_C__AGENT = eINSTANCE.getActionC_Agent();
+
+    /**
+     * The meta object literal for the '<em><b>Conditional Statement</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ACTION_C__CONDITIONAL_STATEMENT = eINSTANCE.getActionC_ConditionalStatement();
 
     /**
      * The meta object literal for the '{@link it.polimi.lIRAs.impl.ConditionImpl <em>Condition</em>}' class.
@@ -1625,6 +1909,14 @@ public interface LIRAsPackage extends EPackage
     EReference CONDITION__ATOMIC_PREDICATE = eINSTANCE.getCondition_AtomicPredicate();
 
     /**
+     * The meta object literal for the '<em><b>Op</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONDITION__OP = eINSTANCE.getCondition_Op();
+
+    /**
      * The meta object literal for the '{@link it.polimi.lIRAs.impl.AtomicPredicateImpl <em>Atomic Predicate</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1633,6 +1925,22 @@ public interface LIRAsPackage extends EPackage
      * @generated
      */
     EClass ATOMIC_PREDICATE = eINSTANCE.getAtomicPredicate();
+
+    /**
+     * The meta object literal for the '<em><b>Negated</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ATOMIC_PREDICATE__NEGATED = eINSTANCE.getAtomicPredicate_Negated();
+
+    /**
+     * The meta object literal for the '<em><b>Ap</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ATOMIC_PREDICATE__AP = eINSTANCE.getAtomicPredicate_Ap();
 
     /**
      * The meta object literal for the '<em><b>N</b></em>' attribute feature.

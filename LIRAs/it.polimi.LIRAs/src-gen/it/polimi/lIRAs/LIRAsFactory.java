@@ -96,6 +96,15 @@ public interface LIRAsFactory extends EFactory
   Action createAction();
 
   /**
+   * Returns a new object of class '<em>Action C</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Action C</em>'.
+   * @generated
+   */
+  ActionC createActionC();
+
+  /**
    * Returns a new object of class '<em>Condition</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

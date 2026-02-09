@@ -73,6 +73,7 @@ public class LIRAsFactoryImpl extends EFactoryImpl implements LIRAsFactory
       case LIRAsPackage.LOOP: return createLoop();
       case LIRAsPackage.CONDITIONAL_STATEMENT: return createConditionalStatement();
       case LIRAsPackage.ACTION: return createAction();
+      case LIRAsPackage.ACTION_C: return createActionC();
       case LIRAsPackage.CONDITION: return createCondition();
       case LIRAsPackage.ATOMIC_PREDICATE: return createAtomicPredicate();
       case LIRAsPackage.RELATION: return createRelation();
@@ -181,6 +182,18 @@ public class LIRAsFactoryImpl extends EFactoryImpl implements LIRAsFactory
   {
     ActionImpl action = new ActionImpl();
     return action;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ActionC createActionC()
+  {
+    ActionCImpl actionC = new ActionCImpl();
+    return actionC;
   }
 
   /**

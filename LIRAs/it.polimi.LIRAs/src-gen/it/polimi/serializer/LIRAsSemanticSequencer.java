@@ -4,6 +4,7 @@
 package it.polimi.serializer;
 
 import com.google.inject.Inject;
+import it.polimi.lIRAs.ActionC;
 import it.polimi.lIRAs.Agent;
 import it.polimi.lIRAs.AtomicPredicate;
 import it.polimi.lIRAs.Conclusion;
@@ -48,7 +49,17 @@ public class LIRAsSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 		if (epackage == LIRAsPackage.eINSTANCE)
 			switch (semanticObject.eClass().getClassifierID()) {
 			case LIRAsPackage.ACTION:
-				sequence_Action(context, (it.polimi.lIRAs.Action) semanticObject); 
+				if (rule == grammarAccess.getActionCRule()) {
+					sequence_ActionC(context, (it.polimi.lIRAs.Action) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getActionRule()) {
+					sequence_Action(context, (it.polimi.lIRAs.Action) semanticObject); 
+					return; 
+				}
+				else break;
+			case LIRAsPackage.ACTION_C:
+				sequence_ActionC(context, (ActionC) semanticObject); 
 				return; 
 			case LIRAsPackage.AGENT:
 				sequence_Agent(context, (Agent) semanticObject); 
@@ -106,10 +117,59 @@ public class LIRAsSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	/**
 	 * <pre>
 	 * Contexts:
+	 *     ActionC returns Action
+	 *
+	 * Constraint:
+	 *     (actionType='stop' conditionalStatement+=ConditionalStatement?)
+	 * </pre>
+	 */
+	protected void sequence_ActionC(ISerializationContext context, it.polimi.lIRAs.Action semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
+	 *     ActionC returns ActionC
+	 *
+	 * Constraint:
+	 *     (
+	 *         (
+	 *             (actionType='moveTo' target=Target) | 
+	 *             (
+	 *                 actionType='fetch' | 
+	 *                 actionType='pick' | 
+	 *                 actionType='deposit' | 
+	 *                 actionType='deliver' | 
+	 *                 actionType='leave' | 
+	 *                 resource=Resource
+	 *             )+ | 
+	 *             (actionType='follow' agent=Agent target=Target?) | 
+	 *             (actionType='receiveFrom' agent=Agent)
+	 *         ) 
+	 *         conditionalStatement+=ConditionalStatement?
+	 *     )
+	 * </pre>
+	 */
+	protected void sequence_ActionC(ISerializationContext context, ActionC semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * <pre>
+	 * Contexts:
 	 *     Action returns Action
 	 *
 	 * Constraint:
-	 *     (target=Target | resource=Resource+ | (agent=Agent target=Target?) | agent=Agent)?
+	 *     (
+	 *         actionType='stop' | 
+	 *         (actionType='moveTo' target=Target) | 
+	 *         (actionType='fetch' | actionType='pick' | actionType='deliver' | actionType='leave' | resource=Resource)+ | 
+	 *         (actionType='follow' agent=Agent target=Target?) | 
+	 *         (actionType='receiveFrom' agent=Agent)
+	 *     )
 	 * </pre>
 	 */
 	protected void sequence_Action(ISerializationContext context, it.polimi.lIRAs.Action semanticObject) {
@@ -144,12 +204,16 @@ public class LIRAsSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	 *
 	 * Constraint:
 	 *     (
-	 *         n=INT | 
-	 *         (agent=Agent location=Location) | 
-	 *         (agent=Agent resource=Resource) | 
-	 *         agent=Agent | 
-	 *         agent=Agent | 
-	 *         relation=Relation
+	 *         negated?='!'? 
+	 *         (
+	 *             ap='tired' | 
+	 *             (ap='time' n=INT) | 
+	 *             (ap='position' agent=Agent location=Location) | 
+	 *             (ap='possess' agent=Agent resource=Resource) | 
+	 *             (ap='busy' agent=Agent) | 
+	 *             (ap='still' agent=Agent) | 
+	 *             relation=Relation
+	 *         )
 	 *     )
 	 * </pre>
 	 */
@@ -178,11 +242,7 @@ public class LIRAsSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	 *     Condition returns Condition
 	 *
 	 * Constraint:
-	 *     (
-	 *         (atomicPredicate+=AtomicPredicate | atomicPredicate+=AtomicPredicate) 
-	 *         atomicPredicate+=AtomicPredicate? 
-	 *         (atomicPredicate+=AtomicPredicate? atomicPredicate+=AtomicPredicate?)*
-	 *     )
+	 *     (atomicPredicate+=AtomicPredicate ((op+='&&' | op+='||') atomicPredicate+=AtomicPredicate)*)
 	 * </pre>
 	 */
 	protected void sequence_Condition(ISerializationContext context, Condition semanticObject) {
@@ -196,7 +256,12 @@ public class LIRAsSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	 *     ConditionalStatement returns ConditionalStatement
 	 *
 	 * Constraint:
-	 *     (condition+=Condition | (condition+=Condition action=Action) | (condition+=Condition action=Action condition+=Condition) | n=INT)
+	 *     (
+	 *         (cs1='until' condition+=Condition) | 
+	 *         (cs2='if' condition+=Condition action=Action) | 
+	 *         (cs3='if' condition+=Condition action=Action condition+=Condition) | 
+	 *         (cs4='wait' n=INT)
+	 *     )
 	 * </pre>
 	 */
 	protected void sequence_ConditionalStatement(ISerializationContext context, ConditionalStatement semanticObject) {
@@ -280,7 +345,7 @@ public class LIRAsSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	 * Constraint:
 	 *     (
 	 *         name=ID 
-	 *         ((human+=Human human+=Human*) | (robot+=Robot robot+=Robot*) | (locations+=Location locations+=Location*) | (resources+=Resource resources+=Resource*))*
+	 *         ((human+=Human human+=Human*) | (robot+=Robot robot+=Robot*) | (location+=Location location+=Location*) | (resources+=Resource resources+=Resource*))*
 	 *     )
 	 * </pre>
 	 */
@@ -363,7 +428,7 @@ public class LIRAsSemanticSequencer extends AbstractDelegatingSemanticSequencer 
 	 *     SubSequence returns SubSequence
 	 *
 	 * Constraint:
-	 *     (i=INT j=INT? (loop+=Loop? (action+=Action conditionalStatement+=ConditionalStatement?)?)+)
+	 *     (i=INT j=INT? (loop+=Loop | actionC+=ActionC)*)
 	 * </pre>
 	 */
 	protected void sequence_SubSequence(ISerializationContext context, SubSequence semanticObject) {

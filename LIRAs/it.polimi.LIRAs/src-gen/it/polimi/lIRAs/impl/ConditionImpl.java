@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -30,6 +31,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * </p>
  * <ul>
  *   <li>{@link it.polimi.lIRAs.impl.ConditionImpl#getAtomicPredicate <em>Atomic Predicate</em>}</li>
+ *   <li>{@link it.polimi.lIRAs.impl.ConditionImpl#getOp <em>Op</em>}</li>
  * </ul>
  *
  * @generated
@@ -45,6 +47,16 @@ public class ConditionImpl extends MinimalEObjectImpl.Container implements Condi
    * @ordered
    */
   protected EList<AtomicPredicate> atomicPredicate;
+
+  /**
+   * The cached value of the '{@link #getOp() <em>Op</em>}' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOp()
+   * @generated
+   * @ordered
+   */
+  protected EList<String> op;
 
   /**
    * <!-- begin-user-doc -->
@@ -88,6 +100,21 @@ public class ConditionImpl extends MinimalEObjectImpl.Container implements Condi
    * @generated
    */
   @Override
+  public EList<String> getOp()
+  {
+    if (op == null)
+    {
+      op = new EDataTypeEList<String>(String.class, this, LIRAsPackage.CONDITION__OP);
+    }
+    return op;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -110,6 +137,8 @@ public class ConditionImpl extends MinimalEObjectImpl.Container implements Condi
     {
       case LIRAsPackage.CONDITION__ATOMIC_PREDICATE:
         return getAtomicPredicate();
+      case LIRAsPackage.CONDITION__OP:
+        return getOp();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -129,6 +158,10 @@ public class ConditionImpl extends MinimalEObjectImpl.Container implements Condi
         getAtomicPredicate().clear();
         getAtomicPredicate().addAll((Collection<? extends AtomicPredicate>)newValue);
         return;
+      case LIRAsPackage.CONDITION__OP:
+        getOp().clear();
+        getOp().addAll((Collection<? extends String>)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -146,6 +179,9 @@ public class ConditionImpl extends MinimalEObjectImpl.Container implements Condi
       case LIRAsPackage.CONDITION__ATOMIC_PREDICATE:
         getAtomicPredicate().clear();
         return;
+      case LIRAsPackage.CONDITION__OP:
+        getOp().clear();
+        return;
     }
     super.eUnset(featureID);
   }
@@ -162,8 +198,27 @@ public class ConditionImpl extends MinimalEObjectImpl.Container implements Condi
     {
       case LIRAsPackage.CONDITION__ATOMIC_PREDICATE:
         return atomicPredicate != null && !atomicPredicate.isEmpty();
+      case LIRAsPackage.CONDITION__OP:
+        return op != null && !op.isEmpty();
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String toString()
+  {
+    if (eIsProxy()) return super.toString();
+
+    StringBuilder result = new StringBuilder(super.toString());
+    result.append(" (op: ");
+    result.append(op);
+    result.append(')');
+    return result.toString();
   }
 
 } //ConditionImpl

@@ -37,7 +37,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link it.polimi.lIRAs.impl.PatternImpl#getName <em>Name</em>}</li>
  *   <li>{@link it.polimi.lIRAs.impl.PatternImpl#getHuman <em>Human</em>}</li>
  *   <li>{@link it.polimi.lIRAs.impl.PatternImpl#getRobot <em>Robot</em>}</li>
- *   <li>{@link it.polimi.lIRAs.impl.PatternImpl#getLocations <em>Locations</em>}</li>
+ *   <li>{@link it.polimi.lIRAs.impl.PatternImpl#getLocation <em>Location</em>}</li>
  *   <li>{@link it.polimi.lIRAs.impl.PatternImpl#getResources <em>Resources</em>}</li>
  * </ul>
  *
@@ -86,14 +86,14 @@ public class PatternImpl extends MinimalEObjectImpl.Container implements Pattern
   protected EList<Robot> robot;
 
   /**
-   * The cached value of the '{@link #getLocations() <em>Locations</em>}' containment reference list.
+   * The cached value of the '{@link #getLocation() <em>Location</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getLocations()
+   * @see #getLocation()
    * @generated
    * @ordered
    */
-  protected EList<Location> locations;
+  protected EList<Location> location;
 
   /**
    * The cached value of the '{@link #getResources() <em>Resources</em>}' containment reference list.
@@ -187,13 +187,13 @@ public class PatternImpl extends MinimalEObjectImpl.Container implements Pattern
    * @generated
    */
   @Override
-  public EList<Location> getLocations()
+  public EList<Location> getLocation()
   {
-    if (locations == null)
+    if (location == null)
     {
-      locations = new EObjectContainmentEList<Location>(Location.class, this, LIRAsPackage.PATTERN__LOCATIONS);
+      location = new EObjectContainmentEList<Location>(Location.class, this, LIRAsPackage.PATTERN__LOCATION);
     }
-    return locations;
+    return location;
   }
 
   /**
@@ -225,8 +225,8 @@ public class PatternImpl extends MinimalEObjectImpl.Container implements Pattern
         return ((InternalEList<?>)getHuman()).basicRemove(otherEnd, msgs);
       case LIRAsPackage.PATTERN__ROBOT:
         return ((InternalEList<?>)getRobot()).basicRemove(otherEnd, msgs);
-      case LIRAsPackage.PATTERN__LOCATIONS:
-        return ((InternalEList<?>)getLocations()).basicRemove(otherEnd, msgs);
+      case LIRAsPackage.PATTERN__LOCATION:
+        return ((InternalEList<?>)getLocation()).basicRemove(otherEnd, msgs);
       case LIRAsPackage.PATTERN__RESOURCES:
         return ((InternalEList<?>)getResources()).basicRemove(otherEnd, msgs);
     }
@@ -249,8 +249,8 @@ public class PatternImpl extends MinimalEObjectImpl.Container implements Pattern
         return getHuman();
       case LIRAsPackage.PATTERN__ROBOT:
         return getRobot();
-      case LIRAsPackage.PATTERN__LOCATIONS:
-        return getLocations();
+      case LIRAsPackage.PATTERN__LOCATION:
+        return getLocation();
       case LIRAsPackage.PATTERN__RESOURCES:
         return getResources();
     }
@@ -279,9 +279,9 @@ public class PatternImpl extends MinimalEObjectImpl.Container implements Pattern
         getRobot().clear();
         getRobot().addAll((Collection<? extends Robot>)newValue);
         return;
-      case LIRAsPackage.PATTERN__LOCATIONS:
-        getLocations().clear();
-        getLocations().addAll((Collection<? extends Location>)newValue);
+      case LIRAsPackage.PATTERN__LOCATION:
+        getLocation().clear();
+        getLocation().addAll((Collection<? extends Location>)newValue);
         return;
       case LIRAsPackage.PATTERN__RESOURCES:
         getResources().clear();
@@ -310,8 +310,8 @@ public class PatternImpl extends MinimalEObjectImpl.Container implements Pattern
       case LIRAsPackage.PATTERN__ROBOT:
         getRobot().clear();
         return;
-      case LIRAsPackage.PATTERN__LOCATIONS:
-        getLocations().clear();
+      case LIRAsPackage.PATTERN__LOCATION:
+        getLocation().clear();
         return;
       case LIRAsPackage.PATTERN__RESOURCES:
         getResources().clear();
@@ -336,8 +336,8 @@ public class PatternImpl extends MinimalEObjectImpl.Container implements Pattern
         return human != null && !human.isEmpty();
       case LIRAsPackage.PATTERN__ROBOT:
         return robot != null && !robot.isEmpty();
-      case LIRAsPackage.PATTERN__LOCATIONS:
-        return locations != null && !locations.isEmpty();
+      case LIRAsPackage.PATTERN__LOCATION:
+        return location != null && !location.isEmpty();
       case LIRAsPackage.PATTERN__RESOURCES:
         return resources != null && !resources.isEmpty();
     }

@@ -116,7 +116,7 @@ public class LIRAsValidator extends AbstractLIRAsValidator {
             }
 
             // Collect location names from the pattern
-            EList<Location> locations = pattern.getLocations();
+            EList<Location> locations = pattern.getLocation();
             for (Location location : locations) {
                 patternLocations.add(location.getName());
             }

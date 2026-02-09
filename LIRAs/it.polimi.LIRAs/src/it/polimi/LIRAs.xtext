@@ -1,4 +1,4 @@
-
+// Test commit
 grammar it.polimi.LIRAs with org.eclipse.xtext.common.Terminals
 
 generate lIRAs "http://www.polimi.it/LIRAs"
@@ -19,9 +19,9 @@ Model:
 Pattern:
     name=ID NL+
 	(('agents:'  NL+
-	('Humans:' (human+=Human (',' human+=Human)*)? NL+)?
-	('Robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)? )
-    | 'locations:' (locations+=Location (',' locations+=Location)*)? NL+
+	('humans:' (human+=Human (',' human+=Human)*)? NL+)?
+	('robots:' (robot+=Robot (',' robot+=Robot)*)? NL+)? )
+    | 'locations:' (location+=Location (',' location+=Location)*)? NL+
     | 'resources:' (resources+=Resource (',' resources+=Resource)*)? NL+)*
 ;
 
@@ -33,48 +33,58 @@ Sequence:
 
 // SubSequence rule defines the structure of a subsequence within a sequence
 SubSequence:
-    i=INT ('-' j=INT)? ':' ( ( ( loop+=Loop) | ((action+=Action) (conditionalStatement+=ConditionalStatement)?) )? NL )+
+    i=INT ('-' j=INT)? ':' ( ( ( loop+=Loop) | ((actionC+=ActionC) ) )? NL )+
 ;
 
 Conclusion:
 	'success:' condition+=Condition NL*
 	'failure:' condition+=Condition NL*
-; 
+;
 
 Loop:
 	('skip' ('all')? 'if' condition=Condition) | ('restart' ('all')?  'if' condition=Condition)
 ;
 
 ConditionalStatement:
-	'until' condition+=Condition
-	| 'if' condition+=Condition 'else' action=Action 
-	| 'if' condition+=Condition 'else' action=Action 'until' condition+=Condition
-	| 'wait' n=INT
+	{ConditionalStatement} cs1 = 'until' condition+=Condition
+	| cs2 = 'if' condition+=Condition 'else' action=Action
+	| cs3 = 'if' condition+=Condition 'else' action=Action 'until' condition+=Condition
+	| cs4 = 'wait' n=INT
 ;
 
 // Action rule defines the various actions that can be performed
 Action:
-	('stop' 
-    | 'moveTo' target=Target 
-    | (('fetch' | 'deliver' | 'leave') & resource=Resource) 
-    | 'follow' agent=Agent ('(' target=Target ')')?
-    | 'receiveFrom' agent=Agent)
+	({Action} actionType = 'stop' 
+    | actionType = 'moveTo' target=Target 
+    | ((actionType = 'fetch'| actionType = 'pick' | actionType = 'deliver' | actionType = 'leave') & resource=Resource) 
+    | actionType = 'follow' agent=Agent ('(' target=Target ')')?
+    | actionType = 'receiveFrom' agent=Agent) 
+;
+
+ActionC:
+	(actionType = 'stop' 
+    | actionType = 'moveTo' target=Target 
+    | ((actionType = 'fetch'| actionType = 'pick' | actionType = 'deposit' | actionType = 'deliver' | actionType = 'leave') & resource=Resource) 
+    | actionType = 'follow' agent=Agent ('(' target=Target ')')?
+    | actionType = 'receiveFrom' agent=Agent) (conditionalStatement+=ConditionalStatement)?
 ;
 
 Condition:
-	( atomicPredicate+=AtomicPredicate | ('!' atomicPredicate+=AtomicPredicate) )
-	( ('&&' | '||') ( atomicPredicate+=AtomicPredicate | ('!' atomicPredicate+=AtomicPredicate) ) )*
+	( atomicPredicate+=AtomicPredicate)
+	( (op += '&&' | op += '||') ( atomicPredicate+=AtomicPredicate) )*
 ;
 
 AtomicPredicate:
-	'tired' 
-	| 'time' '(' n=INT ')' 
-	| 'position' '(' agent=Agent',' location=Location')'
-	| 'possess' '(' agent=Agent',' resource=Resource')'
-	| 'busy' '(' agent=Agent')'
-	| 'still' '(' agent=Agent')'
+	{AtomicPredicate} (negated?='!')?
+	(ap = 'tired' 
+	| ap = 'time' '(' n=INT ')' 
+	| ap = 'position' '(' agent=Agent',' location=Location')'
+	| ap = 'possess' '(' agent=Agent',' resource=Resource')'
+	| ap = 'busy' '(' agent=Agent')'
+	| ap = 'still' '(' agent=Agent')'
 	| relation=Relation
-	;
+	)
+;
 	
 Relation:
     ('dist' '(' agent+=Agent ',' agent+=Agent ')' ('>' | '<' | '>=' | '<=' | '==' | '!=') th=INT)
