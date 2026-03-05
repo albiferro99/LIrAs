@@ -33,8 +33,6 @@ resources:
     slotted_cells
 
 
-
-
 Robot1:
 	1: moveTo warehouse
 	pick raw_materials

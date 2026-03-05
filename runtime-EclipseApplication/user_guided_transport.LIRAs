@@ -9,7 +9,7 @@ resources: object
 
 Human:
 	1: moveTo bedroom if position(Robot, bedroom) else stop
-	3: moveTo kitchen until position(Robot, bedroom)
+	3: moveTo kitchen 
 	
 Robot:
 	1: moveTo bedroom
