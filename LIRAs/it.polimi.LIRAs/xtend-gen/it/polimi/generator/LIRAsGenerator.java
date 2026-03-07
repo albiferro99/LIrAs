@@ -3275,8 +3275,10 @@ public class LIRAsGenerator extends AbstractGenerator {
     _builder.append(".end)</formula>");
     _builder.newLineIfNotEmpty();
     _builder.append("    ");
-    _builder.append("<comment>Check if the whole pattern ends within 400 time unit</comment>");
-    _builder.newLine();
+    _builder.append("<comment>Check if the whole pattern ends within ");
+    _builder.append(simTime, "    ");
+    _builder.append(" time unit</comment>");
+    _builder.newLineIfNotEmpty();
     _builder.append("</query>");
     _builder.newLine();
     queries.add(_builder.toString());
@@ -3317,8 +3319,10 @@ public class LIRAsGenerator extends AbstractGenerator {
     _builder_1.append(".end}</formula>");
     _builder_1.newLineIfNotEmpty();
     _builder_1.append("    ");
-    _builder_1.append("<comment>Check the position of all the agent in the pattern for 700 time unit</comment>");
-    _builder_1.newLine();
+    _builder_1.append("<comment>Check the position of all the agent in the pattern for ");
+    _builder_1.append(simTime, "    ");
+    _builder_1.append(" time unit</comment>");
+    _builder_1.newLineIfNotEmpty();
     _builder_1.append("</query>");
     _builder_1.newLine();
     queries.add(_builder_1.toString());

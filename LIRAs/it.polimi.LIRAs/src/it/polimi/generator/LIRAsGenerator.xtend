@@ -2345,7 +2345,7 @@ robPositionY["+ rIndex + "] &gt;= location_Y["+ locIndex + "]-30"))
 	    queries.add('''
 	        <query>
 	            <formula>Pr[&lt;=«simTime»] (&lt;&gt; «patternName».end)</formula>
-	            <comment>Check if the whole pattern ends within 400 time unit</comment>
+	            <comment>Check if the whole pattern ends within «simTime» time unit</comment>
 	        </query>
 	    ''')
 	
@@ -2356,7 +2356,7 @@ robPositionY["+ rIndex + "] &gt;= location_Y["+ locIndex + "]-30"))
 	    queries.add('''
 	        <query>
 	            <formula>simulate[&lt;=«simTime»]{«posParts.join(", ")», «patternName».end}</formula>
-	            <comment>Check the position of all the agent in the pattern for 700 time unit</comment>
+	            <comment>Check the position of all the agent in the pattern for «simTime» time unit</comment>
 	        </query>
 	    ''')
 	

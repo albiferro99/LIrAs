@@ -1,0 +1,15 @@
+Fixed_Broken_Delivery
+
+agents:
+	robots: Robot1
+locations: room1, room2
+resources: item1
+
+Robot1:
+	1: moveTo room1
+	pick item1
+	2:moveTo room2
+	3: deposit item1
+	
+	
+	
