@@ -1,0 +1,405 @@
+// Function that include the necessary declaration for a Human moveTo action and add the call the function that add the moveTo template
+    def hidle (String filePath,IFileSystemAccess2 fsa, Model model) {
+        // Declaration
+        val int hNum = model.pattern.human.size
+        
+        if (hNum !== 0) {
+            
+            // Define the channel for start and stop the start and stop the moveTo Human action
+            replace(filePath, "// **h_idle_sync**", "urgent broadcast chan obey_h_moveTo[N_H];", fsa)
+            
+            // Add the Human moveTo template
+            replace(filePath, "// **Human_idle**", readHidle(), fsa)
+            
+            // Define the Human moveTo
+            replace(filePath, "// **missDef_hidle**", missDef_hidle(model), fsa)
+            
+            // Declare the Human moveTo
+            replace(filePath, "// **missDec_hidle**", missDec_hidle(model), fsa)
+        }
+        
+    }
+    def String readHidle () {
+        val filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Human_idle.rtf"
+        
+        try {
+            val fis = new FileInputStream(filePath)
+            val rtfKit = new RTFEditorKit()
+            val doc = rtfKit.createDefaultDocument()
+            rtfKit.read(fis, doc, 0)
+            
+            // Estract the text from the document
+            val text = doc.getText(0, doc.getLength())
+            fis.close()
+        
+            return text
+            
+        } catch (Exception e) {
+            e.printStackTrace
+            return "Error reading file"
+        }
+    }
+    // Human moveTo mission definition
+    def missDef_hidle (Model model) {
+        // Declaration
+        val StringBuilder builder = new StringBuilder
+        val int hNum = model.pattern.human.size
+        
+        if (hNum !== 0) {
+            for (i : 1..hNum) {
+                builder.append(String.format("hi_%d = Human_idle(%d);", i, i))
+                if (i!=hNum) {
+                    builder.append("\n")
+                }
+            }
+        }
+                
+        return builder.toString
+    }
+    // Human moveTo mission Declaration
+    def missDec_hidle (Model model) {
+        // Declarations
+        val StringBuilder builder = new StringBuilder
+        val int hNum = model.pattern.human.size
+        
+        if (hNum !== 0) {
+               for (i : 1..hNum) {
+                builder.append(String.format("hi_%d,", i))
+                if (i!=hNum) {
+                    builder.append("\n")
+                }
+            }
+        }
+
+        return builder.toString
+    }
+    
+    // Function that include the necessary declaration for a Human moveTo action and add the call the function that add the moveTo template
+    def hmoveTo (String filePath,IFileSystemAccess2 fsa, Model model) {
+        // Declaration
+        val int hNum = model.pattern.human.size
+        
+        if (hNum !== 0) {
+            
+            // Define the channel for start and stop the start and stop the moveTo Human action
+            replace(filePath, "// **h_moveTo_sync**", "urgent broadcast chan start_h_moveTo[N_H], stop_h_moveTo[N_H];", fsa)
+            
+            // Initialize the variable used to select the target location of each moveTo action
+            replace(filePath, "// **h_moveTo_var**", "int human_loc_target[N_H];", fsa)
+            
+            // Define the moveTo fail synchronization channel
+            replace(filePath, "// **h_moveTo_chan**", "broadcast chan hm_fail;", fsa)
+            
+            val int lNum = model.pattern.location.size
+            val int resNum = model.pattern.resources.size
+            if( lNum !== 0 || resNum !== 0){
+                // Add the Human moveTo template
+                replace(filePath, "// **Human_moveTo**", readHmoveTo(), fsa)
+                
+                // Define the Human moveTo
+                replace(filePath, "// **missDef_hm**", missDef_hm(model), fsa)
+                
+                // Declare the Human moveTo
+                replace(filePath, "// **missDec_hm**", missDec_hm(model), fsa)
+            }
+        }
+    }
+    // Read and include the moveTo Human template
+    def String readHmoveTo () {
+        val filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Human_moveTo.rtf"
+        try {
+            val fis = new FileInputStream(filePath)
+            val rtfKit = new RTFEditorKit()
+            val doc = rtfKit.createDefaultDocument()
+            rtfKit.read(fis, doc, 0)
+            
+            // Estract the text from the document
+            val text = doc.getText(0, doc.getLength())
+            fis.close()
+        
+            return text
+            
+        } catch (Exception e) {
+            e.printStackTrace
+            return "Error reading file"
+        }
+    }
+    // Human moveTo mission definition
+    def missDef_hm (Model model) {
+        // Declaration
+        val StringBuilder builder = new StringBuilder
+        val int hNum = model.pattern.human.size
+        
+        if (hNum !== 0) {
+            for (i : 1..hNum) {
+                builder.append(String.format("hm_%d = Human_moveTo(%d, 26.0);", i, i))
+                if (i!=hNum) {
+                    builder.append("\n")
+                }
+            }
+        }
+                
+        return builder.toString
+    }
+    // Human moveTo mission Declaration
+    def missDec_hm (Model model) {
+        // Declarations
+        val StringBuilder builder = new StringBuilder
+        val int hNum = model.pattern.human.size
+        
+        if (hNum !== 0) {
+               for (i : 1..hNum) {
+                builder.append(String.format("hm_%d,", i))
+                if (i!=hNum) {
+                    builder.append("\n")
+                }
+            }
+        }
+
+        return builder.toString
+    }
+    
+    // Function that include the necessary declaration for a Robot moveTo action and add the call the function that add the moveTo template
+    def rmoveTo (String filePath,IFileSystemAccess2 fsa, Model model) {
+        // Declaration
+        val int rNum = model.pattern.robot.size
+        
+        if (rNum !== 0) {
+            // Define the channel for start and stop the start and stop the moveTo Robot action
+            replace(filePath, "// **r_moveTo_sync**", "urgent broadcast chan start_r_moveTo[N_R], stop_r_moveTo[N_R];", fsa)
+    
+            // Initialize the variable used to select the target location of each moveTo action
+            replace(filePath, "// **r_moveTo_var**", "int robot_loc_target[N_R];", fsa)
+            
+            // Define the moveTo fail synchronization channel
+            replace(filePath, "// **r_moveTo_chan**", "broadcast chan rm_still;", fsa)
+            
+            val int lNum = model.pattern.location.size
+            val int resNum = model.pattern.resources.size
+            if( lNum !== 0 || resNum !== 0){
+                // Add the Robot moveTo template
+                replace(filePath, "// **Robot_moveTo**", readRmoveTo(), fsa)
+                
+                // Define the Robot moveTo
+                replace(filePath, "// **missDef_rm**", missDef_rm(model), fsa)
+                
+                // Declare the Robot moveTo
+                replace(filePath, "// **missDec_rm**", missDec_rm(model), fsa)
+            }
+            
+        }
+        
+    }
+    // Read and include the moveTo Robot template
+    def String readRmoveTo () {
+        val filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_moveTo.rtf"
+        try {
+            val fis = new FileInputStream(filePath)
+            val rtfKit = new RTFEditorKit()
+            val doc = rtfKit.createDefaultDocument()
+            rtfKit.read(fis, doc, 0)
+            val text = doc.getText(0, doc.getLength())
+            fis.close()
+            
+            return text
+        } catch (Exception e) {
+            e.printStackTrace
+            
+            return "Error reading file"
+        }
+    }
+    // Robot moveTo mission definition
+    def missDef_rm (Model model) {
+        // Declarations
+        val StringBuilder builder = new StringBuilder
+        val int rNum = model.pattern.robot.size
+        
+        for (i : 1..rNum) {
+            builder.append(String.format("rm_%d = Robot_moveTo(%d, 26.0, 26.0);", i, i))
+            if (i!=rNum) {
+                builder.append("\n")
+            }
+        }
+        
+        return builder.toString
+    }
+    // Robot moveTo mission declaration
+    def missDec_rm (Model model) {
+        // Declarations
+        val StringBuilder builder = new StringBuilder
+        val int rNum = model.pattern.robot.size
+        
+        for (i : 1..rNum) {
+            builder.append(String.format("rm_%d,", i))
+            if (i!=rNum) {
+                builder.append("\n")
+            }
+        }
+        
+        return builder.toString
+    }
+    
+    // Functions that include the necessary declaration for a Robot follow action and add the call the function that add the moveTo template
+    def rfollow (String filePath,IFileSystemAccess2 fsa, Model model) {
+        // Declaration
+        val int rNum = model.pattern.robot.size
+        if (rNum !== 0) {
+            replace(filePath, "// **r_follow_sync**", "urgent broadcast chan start_r_follow[N_R], stop_r_follow[N_R];", fsa)
+            replace(filePath, "// **r_follow_var**", "// Who I have to follow (agent id)?\nint human_to_be_followed[N_R];\nint robot_to_be_followed[N_R];\nint f_loc_target[N_R];", fsa)
+            replace(filePath, "// **r_follow_chan**", "broadcast chan rf_still;", fsa)
+            replace(filePath, "// **Robot_follow**", readRfollow(), fsa)
+            replace(filePath, "// **missDef_rf**", missDef_rf(model), fsa)
+            replace(filePath, "// **missDec_rf**", missDec_rf(model), fsa)
+        }
+    }
+    def String readRfollow () {
+        val filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_follow.rtf"
+        try {
+            val fis = new FileInputStream(filePath)
+            val rtfKit = new RTFEditorKit()
+            val doc = rtfKit.createDefaultDocument()
+            rtfKit.read(fis, doc, 0)
+            val text = doc.getText(0, doc.getLength())
+            fis.close()
+        
+            return text
+        } catch (Exception e) {
+            e.printStackTrace
+            return "Error reading file"
+        }
+    }
+    def missDef_rf (Model model) {
+        val StringBuilder builder = new StringBuilder
+        val int rNum = model.pattern.robot.size
+        for (i : 1..rNum) {
+            builder.append(String.format("rf_%d = Robot_follow(%d, 26.0, 26.0);", i, i))
+            if (i!=rNum) {
+                builder.append("\n")
+            }
+        }
+        
+        return builder.toString
+    }
+    def missDec_rf (Model model) {
+        val StringBuilder builder = new StringBuilder
+        val int rNum = model.pattern.robot.size
+        for (i : 1..rNum) {
+            builder.append(String.format("rf_%d,", i))
+            if (i!=rNum) {
+                builder.append("\n")
+            }
+        }
+        return builder.toString
+    }
+    
+    // Functions that include the necessary declaration for a Robot pick action and add the call the function that add the pick template
+    def rpick (String filePath, IFileSystemAccess2 fsa, Model model) {
+        val int rNum = model.pattern.robot.size
+        val int iNum = model.pattern.resources.size
+
+        if (rNum !== 0) {
+            replace(filePath, "// **r_pick_sync**", "urgent broadcast chan start_r_pick[N_R], stop_r_pick[N_R];", fsa)
+            
+            var String inventoryVars
+            if (iNum !== 0) {
+                inventoryVars = "int robot_res_to_pick[N_R];\nint robot_inventory[N_R][N_ITEMS];\nint old_inventory[N_R][N_ITEMS];"
+            } else {
+                inventoryVars = "// No resources defined, inventory variables skipped"
+            }
+            
+            replace(filePath, "// **r_pick_var**", inventoryVars, fsa)
+            replace(filePath, "// **Robot_pick**", readRpick(), fsa)
+            replace(filePath, "// **missDef_rp**", missDef_rp(model), fsa)
+            replace(filePath, "// **missDec_rp**", missDec_rp(model), fsa)
+        }
+    }
+    def String readRpick () {
+        val filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_pick.rtf"
+        try {
+            val fis = new FileInputStream(filePath)
+            val rtfKit = new RTFEditorKit()
+            val doc = rtfKit.createDefaultDocument()
+            rtfKit.read(fis, doc, 0)
+            val text = doc.getText(0, doc.getLength())
+            fis.close()
+        
+            return text
+        } catch (Exception e) {
+            e.printStackTrace
+            return "Error reading Robot_pick.rtf file"
+        }
+    }
+    def missDef_rp (Model model) {
+        val StringBuilder builder = new StringBuilder
+        val int rNum = model.pattern.robot.size
+        for (i : 1..rNum) {
+            builder.append(String.format("rp_%d = Robot_pick(%d);", i, i))
+            if (i!=rNum) {
+                builder.append("\n")
+            }
+        }
+        return builder.toString
+    }
+    def missDec_rp (Model model) {
+        val StringBuilder builder = new StringBuilder
+        val int rNum = model.pattern.robot.size
+        for (i : 1..rNum) {
+            builder.append(String.format("rp_%d,", i))
+            if (i!=rNum) {
+                builder.append("\n")
+            }
+        }
+        return builder.toString
+    }
+    
+    // Functions that include the necessary declaration for a Robot deposit action and add the call the function that add the deposit template
+    def rdeposit (String filePath,IFileSystemAccess2 fsa, Model model) {
+        // Declere it only if there is some robot
+        val int rNum = model.pattern.robot.size
+        if (rNum !== 0) {
+            replace(filePath, "// **r_deposit_sync**", "urgent broadcast chan start_r_deposit[N_R], stop_r_deposit[N_R];", fsa)
+            replace(filePath, "// **r_deposit_var**", "int robot_res_to_deposit[N_R];", fsa)
+            replace(filePath, "// **Robot_deposit**", readRdeposit(), fsa)
+            replace(filePath, "// **missDef_rd**", missDef_rd(model), fsa)
+            replace(filePath, "// **missDec_rd**", missDec_rd(model), fsa)
+        }
+    }
+    def String readRdeposit () {
+        val filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_deposit.rtf"
+        try {
+            val fis = new FileInputStream(filePath)
+            val rtfKit = new RTFEditorKit()
+            val doc = rtfKit.createDefaultDocument()
+            rtfKit.read(fis, doc, 0)
+            val text = doc.getText(0, doc.getLength())
+            fis.close()
+        
+            return text
+        } catch (Exception e) {
+            e.printStackTrace
+            return "Error reading Robot_deposit.rtf file"
+        }
+    }
+    def missDef_rd (Model model) {
+        val StringBuilder builder = new StringBuilder
+        val int rNum = model.pattern.robot.size
+        for (i : 1..rNum) {
+            builder.append(String.format("rd_%d = Robot_deposit(%d);", i, i))
+            if (i!=rNum) {
+                builder.append("\n")
+            }
+        }
+        return builder.toString
+    }
+    def missDec_rd (Model model) {
+        val StringBuilder builder = new StringBuilder
+        val int rNum = model.pattern.robot.size
+        for (i : 1..rNum) {
+            builder.append(String.format("rd_%d,", i))
+            if (i!=rNum) {
+                builder.append("\n")
+            }
+        }
+        return builder.toString
+    }
+    

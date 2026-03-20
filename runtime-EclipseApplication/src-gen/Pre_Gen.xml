@@ -99,37 +99,10 @@ const double slotted_cells[2]           = {600.0, 100.0};
 *** GLOBAL VARIABLES
 */
 
-// action synchronization management and variables
+// ACTIONs synchronization management and variables
 
-// **h_idle_sync**
-
-// **h_moveTo_sync**
-// **h_moveTo_var**
-
-// **r_moveTo_sync**
-// **r_moveTo_var**
-
-// **r_follow_sync**
-// **r_follow_var**
-
-// **r_pick_sync**
-// **r_pick_var**
-
-// **r_deposit_sync**
-// **r_deposit_var**
-
-/**
-*** Channels
-*/
-
-
-
-// Human moveTo
-// **h_moveTo_chan**
-// Robot moveTo
-// **r_moveTo_chan**
-// Robot follow
-// **r_follow_chan**
+// **actions_sync_channels**
+// **actions_variables**
 
 
 /**
@@ -235,22 +208,12 @@ bool isValidPosition(double x, double y) {
 
 // **pattern_orchestrator**
 // **sequence_orchestrator**
-// **Human_idle**
-// **Human_moveTo**
-// **Robot_moveTo**
-// **Robot_follow**
-// **Robot_pick**
-// **Robot_deposit**
+// **actions_templates**
 </declaration>
 	<system>
 // Mission Definition
 
-// **missDef_hidle**
-// **missDef_hm**
-// **missDef_rm**
-// **missDef_rf**
-// **missDef_rp**
-// **missDef_rd**
+// **actions_mission_definitions**
 
 // Pattern Definition
 
@@ -260,12 +223,7 @@ bool isValidPosition(double x, double y) {
 
 system
 
-// **missDec_hidle**
-// **missDec_hm**
-// **missDec_rm**
-// **missDec_rf**
-// **missDec_rp**
-// **missDec_rd**
+// **actions_mission_declarations**
 
 // **pattern_dichiaration**
 

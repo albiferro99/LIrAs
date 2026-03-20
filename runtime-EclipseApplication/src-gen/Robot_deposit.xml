@@ -1,0 +1,51 @@
+<template>
+    <name>Robot_deposit</name>
+    <parameter>int id</parameter>
+    <declaration>clock t;
+
+
+</declaration>
+    <location id="id147" x="-450" y="34">
+        <name x="-460" y="0">Init</name>
+        <committed/>
+    </location>
+    <location id="id148" x="-238" y="34">
+        <name x="-280" y="8">idle</name>
+    </location>
+    <location id="id149" x="34" y="34">
+        <name x="25" y="0">starting</name>
+        <label kind="invariant" x="25" y="51">t &lt;= 5</label>
+    </location>
+    <location id="id150" x="-110" y="170">
+        <name x="-212" y="161">stopping</name>
+    </location>
+    <init ref="id147"/>
+    <transition id="id151">
+        <source ref="id149"/>
+        <target ref="id148"/>
+        <label kind="synchronisation" x="-161" y="-127">stop_r_deposit[id-1]?</label>
+        <nail x="-102" y="-102"/>
+    </transition>
+    <transition id="id152">
+        <source ref="id149"/>
+        <target ref="id150"/>
+        <label kind="guard" x="-25" y="93">t &gt;= 5 and
+robot_inventory[id-1][robot_res_to_deposit[id-1]] &gt; 0</label>
+        <label kind="assignment" x="-34" y="153">robot_inventory[id-1][robot_res_to_deposit[id-1]] -= 1</label>
+    </transition>
+    <transition id="id153">
+        <source ref="id150"/>
+        <target ref="id148"/>
+        <label kind="synchronisation" x="-331" y="127">stop_r_deposit[id-1]?</label>
+    </transition>
+    <transition id="id154">
+        <source ref="id148"/>
+        <target ref="id149"/>
+        <label kind="synchronisation" x="-187" y="8">start_r_deposit[id-1]?</label>
+        <label kind="assignment" x="-178" y="34">t=0</label>
+    </transition>
+    <transition id="id155">
+        <source ref="id147"/>
+        <target ref="id148"/>
+    </transition>
+</template>

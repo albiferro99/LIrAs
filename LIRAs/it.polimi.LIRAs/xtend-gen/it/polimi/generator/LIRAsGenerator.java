@@ -13,18 +13,16 @@ import it.polimi.lIRAs.Pattern;
 import it.polimi.lIRAs.Robot;
 import it.polimi.lIRAs.Sequence;
 import it.polimi.lIRAs.SubSequence;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
-import javax.swing.text.Document;
-import javax.swing.text.rtf.RTFEditorKit;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -44,9 +42,42 @@ import org.eclipse.xtext.xbase.lib.IteratorExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure2;
+import org.eclipse.xtext.xbase.lib.StringExtensions;
 
 @SuppressWarnings("all")
 public class LIRAsGenerator extends AbstractGenerator {
+  public static class ActionConfig {
+    public final String agentType;
+
+    public final String actionName;
+
+    public final String templateFileName;
+
+    public final String syncChannels;
+
+    public final String variables;
+
+    public final String missionDefFormat;
+
+    public final String missionDecPrefix;
+
+    public final boolean requiresLocationsOrResources;
+
+    public final boolean requiresResourcesOnly;
+
+    public ActionConfig(final String agentType, final String actionName, final String templateFileName, final String syncChannels, final String variables, final String missionDefFormat, final String missionDecPrefix, final boolean requiresLocationsOrResources, final boolean requiresResourcesOnly) {
+      this.agentType = agentType;
+      this.actionName = actionName;
+      this.templateFileName = templateFileName;
+      this.syncChannels = syncChannels;
+      this.variables = variables;
+      this.missionDefFormat = missionDefFormat;
+      this.missionDecPrefix = missionDecPrefix;
+      this.requiresLocationsOrResources = requiresLocationsOrResources;
+      this.requiresResourcesOnly = requiresResourcesOnly;
+    }
+  }
+
   @Override
   public void doGenerate(final Resource resource, final IFileSystemAccess2 fsa, final IGeneratorContext context) {
     final long start = System.nanoTime();
@@ -65,15 +96,7 @@ public class LIRAsGenerator extends AbstractGenerator {
       this.replace(filePath, "// **human_start_pos**", this.hInitPos(model), fsa);
       this.replace(filePath, "// **robot_initialization**", this.rInit(model), fsa);
       this.replace(filePath, "// **robot_start_pos**", this.rInitPos(model), fsa);
-      this.hmoveTo(filePath, fsa, model);
-      this.hidle(filePath, fsa, model);
-      this.rmoveTo(filePath, fsa, model);
-      this.rfollow(filePath, fsa, model);
-      final int iNum = model.getPattern().getResources().size();
-      if ((iNum != 0)) {
-        this.rpick(filePath, fsa, model);
-        this.rdeposit(filePath, fsa, model);
-      }
+      this.injectActions(filePath, fsa, model);
       this.replace(filePath, "// **pattern_orchestrator**", this.pattOrch(model), fsa);
       this.replace(filePath, "// **sequence_orchestrator**", this.seqOrch(model), fsa);
       this.replace(filePath, "// **pattern_definition**", this.pattDef(model), fsa);
@@ -328,6 +351,8 @@ public class LIRAsGenerator extends AbstractGenerator {
     final int hNum = model.getPattern().getHuman().size();
     if ((hNum == 0)) {
       StringConcatenation _builder = new StringConcatenation();
+      _builder.append("// No humans declared: declare dummy arrays to prevent compilation errors");
+      _builder.newLine();
       _builder.append("double humanPositionX[1] = {0.0};");
       _builder.newLine();
       _builder.append("double humanPositionY[1] = {0.0};");
@@ -357,504 +382,186 @@ public class LIRAsGenerator extends AbstractGenerator {
   }
 
   public String hInitPos(final Model model) {
-    final StringBuilder builder = new StringBuilder();
     final int hNum = model.getPattern().getHuman().size();
-    if ((hNum != 0)) {
-      builder.append("double h_startX[N_H] = {");
-      IntegerRange _upTo = new IntegerRange(1, hNum);
-      for (final Integer i : _upTo) {
-        {
-          builder.append("2500.0");
-          if (((i).intValue() != hNum)) {
-            builder.append(", ");
-          }
-        }
-      }
-      builder.append("};\n");
-      builder.append("double h_startY[N_H] = {");
-      IntegerRange _upTo_1 = new IntegerRange(1, hNum);
-      for (final Integer i_1 : _upTo_1) {
-        {
-          builder.append("100.0");
-          if (((i_1).intValue() != hNum)) {
-            builder.append(", ");
-          }
-        }
-      }
-      builder.append("};");
+    if ((hNum == 0)) {
+      return "// No Human declared";
     }
-    return builder.toString();
+    final Function1<Integer, String> _function = (Integer it) -> {
+      return "2500.0";
+    };
+    final String startX = IterableExtensions.join(IterableExtensions.<Integer, String>map(new IntegerRange(1, hNum), _function), ", ");
+    final Function1<Integer, String> _function_1 = (Integer it) -> {
+      return "100.0";
+    };
+    final String startY = IterableExtensions.join(IterableExtensions.<Integer, String>map(new IntegerRange(1, hNum), _function_1), ", ");
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("double h_startX[N_H] = {");
+    _builder.append(startX);
+    _builder.append("};");
+    _builder.newLineIfNotEmpty();
+    _builder.append("double h_startY[N_H] = {");
+    _builder.append(startY);
+    _builder.append("};");
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
   }
 
   public String rInit(final Model model) {
-    final StringBuilder builder = new StringBuilder();
     final int rNum = model.getPattern().getRobot().size();
-    if ((rNum != 0)) {
-      builder.append("// Robot initialization\n");
-      builder.append("double batteryCharge[N_R] = {");
-      IntegerRange _upTo = new IntegerRange(1, rNum);
-      for (final Integer i : _upTo) {
-        {
-          builder.append("100.0");
-          if (((i).intValue() != rNum)) {
-            builder.append(", ");
-          }
-        }
-      }
-      builder.append("};\n");
-      builder.append("double robPositionX[N_R] = {");
-      IntegerRange _upTo_1 = new IntegerRange(1, rNum);
-      for (final Integer i_1 : _upTo_1) {
-        {
-          builder.append("0.0");
-          if (((i_1).intValue() != rNum)) {
-            builder.append(", ");
-          }
-        }
-      }
-      builder.append("};\n");
-      builder.append("double robPositionY[N_R] = {");
-      IntegerRange _upTo_2 = new IntegerRange(1, rNum);
-      for (final Integer i_2 : _upTo_2) {
-        {
-          builder.append("0.0");
-          if (((i_2).intValue() != rNum)) {
-            builder.append(", ");
-          }
-        }
-      }
-      builder.append("};\n");
-    } else {
-      builder.append("// None input Robot has been declared");
+    if ((rNum == 0)) {
+      return "// No input Robot has been declared\n";
     }
-    return builder.toString();
+    final Function1<Integer, String> _function = (Integer it) -> {
+      return "100.0";
+    };
+    final String charges = IterableExtensions.join(IterableExtensions.<Integer, String>map(new IntegerRange(1, rNum), _function), ", ");
+    final Function1<Integer, String> _function_1 = (Integer it) -> {
+      return "0.0";
+    };
+    final String zeros = IterableExtensions.join(IterableExtensions.<Integer, String>map(new IntegerRange(1, rNum), _function_1), ", ");
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("// Robot initialization");
+    _builder.newLine();
+    _builder.append("double batteryCharge[N_R] = {");
+    _builder.append(charges);
+    _builder.append("};");
+    _builder.newLineIfNotEmpty();
+    _builder.append("double robPositionX[N_R] = {");
+    _builder.append(zeros);
+    _builder.append("};");
+    _builder.newLineIfNotEmpty();
+    _builder.append("double robPositionY[N_R] = {");
+    _builder.append(zeros);
+    _builder.append("};");
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
   }
 
   public String rInitPos(final Model model) {
-    final StringBuilder builder = new StringBuilder();
     final int rNum = model.getPattern().getRobot().size();
-    if ((rNum != 0)) {
-      builder.append("double r_startX[N_R] = {");
-      IntegerRange _upTo = new IntegerRange(1, rNum);
-      for (final Integer i : _upTo) {
-        {
-          builder.append("2000.0");
-          if (((i).intValue() != rNum)) {
-            builder.append(", ");
-          }
-        }
-      }
-      builder.append("};\n");
-      builder.append("double r_startY[N_R] = {");
-      IntegerRange _upTo_1 = new IntegerRange(1, rNum);
-      for (final Integer i_1 : _upTo_1) {
-        {
-          builder.append("500.0");
-          if (((i_1).intValue() != rNum)) {
-            builder.append(", ");
-          }
-        }
-      }
-      builder.append("};");
+    if ((rNum == 0)) {
+      return "";
     }
-    return builder.toString();
+    final Function1<Integer, String> _function = (Integer it) -> {
+      return "2000.0";
+    };
+    final String startX = IterableExtensions.join(IterableExtensions.<Integer, String>map(new IntegerRange(1, rNum), _function), ", ");
+    final Function1<Integer, String> _function_1 = (Integer it) -> {
+      return "500.0";
+    };
+    final String startY = IterableExtensions.join(IterableExtensions.<Integer, String>map(new IntegerRange(1, rNum), _function_1), ", ");
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("double r_startX[N_R] = {");
+    _builder.append(startX);
+    _builder.append("};");
+    _builder.newLineIfNotEmpty();
+    _builder.append("double r_startY[N_R] = {");
+    _builder.append(startY);
+    _builder.append("};");
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
   }
 
-  public void hidle(final String filePath, final IFileSystemAccess2 fsa, final Model model) {
+  public List<LIRAsGenerator.ActionConfig> getActionRegistry() {
+    LIRAsGenerator.ActionConfig _actionConfig = new LIRAsGenerator.ActionConfig("HUMAN", "idle", "Human_idle.xml", 
+      "urgent broadcast chan obey_h_moveTo[N_H];", 
+      "", 
+      "hi_%d = Human_idle(%d);", "hi_", false, false);
+    LIRAsGenerator.ActionConfig _actionConfig_1 = new LIRAsGenerator.ActionConfig("HUMAN", "moveTo", "Human_moveTo.xml", 
+      "urgent broadcast chan start_h_moveTo[N_H], stop_h_moveTo[N_H];\nbroadcast chan hm_fail;", 
+      "int human_loc_target[N_H];", 
+      "hm_%d = Human_moveTo(%d, 26.0);", "hm_", true, false);
+    LIRAsGenerator.ActionConfig _actionConfig_2 = new LIRAsGenerator.ActionConfig("ROBOT", "moveTo", "Robot_moveTo.xml", 
+      "urgent broadcast chan start_r_moveTo[N_R], stop_r_moveTo[N_R];\nbroadcast chan rm_still;", 
+      "int robot_loc_target[N_R];", 
+      "rm_%d = Robot_moveTo(%d, 26.0, 26.0);", "rm_", true, false);
+    LIRAsGenerator.ActionConfig _actionConfig_3 = new LIRAsGenerator.ActionConfig("ROBOT", "follow", "Robot_follow.xml", 
+      "urgent broadcast chan start_r_follow[N_R], stop_r_follow[N_R];\nbroadcast chan rf_still;", 
+      "// Who I have to follow (agent id)?\nint human_to_be_followed[N_R];\nint robot_to_be_followed[N_R];\nint f_loc_target[N_R];", 
+      "rf_%d = Robot_follow(%d, 26.0, 26.0);", "rf_", false, false);
+    LIRAsGenerator.ActionConfig _actionConfig_4 = new LIRAsGenerator.ActionConfig("ROBOT", "pick", "Robot_pick.xml", 
+      "urgent broadcast chan start_r_pick[N_R], stop_r_pick[N_R];", 
+      "int robot_res_to_pick[N_R];\nint robot_inventory[N_R][N_ITEMS];\nint old_inventory[N_R][N_ITEMS];", 
+      "rp_%d = Robot_pick(%d);", "rp_", false, true);
+    LIRAsGenerator.ActionConfig _actionConfig_5 = new LIRAsGenerator.ActionConfig("ROBOT", "deposit", "Robot_deposit.xml", 
+      "urgent broadcast chan start_r_deposit[N_R], stop_r_deposit[N_R];", 
+      "int robot_res_to_deposit[N_R];", 
+      "rd_%d = Robot_deposit(%d);", "rd_", false, true);
+    return Collections.<LIRAsGenerator.ActionConfig>unmodifiableList(CollectionLiterals.<LIRAsGenerator.ActionConfig>newArrayList(_actionConfig, _actionConfig_1, _actionConfig_2, _actionConfig_3, _actionConfig_4, _actionConfig_5));
+  }
+
+  public void injectActions(final String filePath, final IFileSystemAccess2 fsa, final Model model) {
     final int hNum = model.getPattern().getHuman().size();
-    if ((hNum != 0)) {
-      this.replace(filePath, "// **h_idle_sync**", "urgent broadcast chan obey_h_moveTo[N_H];", fsa);
-      this.replace(filePath, "// **Human_idle**", this.readHidle(), fsa);
-      this.replace(filePath, "// **missDef_hidle**", this.missDef_hidle(model), fsa);
-      this.replace(filePath, "// **missDec_hidle**", this.missDec_hidle(model), fsa);
+    final int rNum = model.getPattern().getRobot().size();
+    final int lNum = model.getPattern().getLocation().size();
+    final int resNum = model.getPattern().getResources().size();
+    final boolean hasLocationsOrResources = ((lNum > 0) || (resNum > 0));
+    final boolean hasResources = (resNum > 0);
+    final StringBuilder syncBuilder = new StringBuilder();
+    final StringBuilder varBuilder = new StringBuilder();
+    final StringBuilder templateBuilder = new StringBuilder();
+    final StringBuilder missDefBuilder = new StringBuilder();
+    final StringBuilder missDecBuilder = new StringBuilder();
+    List<LIRAsGenerator.ActionConfig> _actionRegistry = this.getActionRegistry();
+    for (final LIRAsGenerator.ActionConfig config : _actionRegistry) {
+      {
+        int _xifexpression = (int) 0;
+        boolean _equals = Objects.equals(config.agentType, "HUMAN");
+        if (_equals) {
+          _xifexpression = hNum;
+        } else {
+          _xifexpression = rNum;
+        }
+        final int agentCount = _xifexpression;
+        final boolean agentConditionMet = (agentCount > 0);
+        final boolean locResConditionMet = ((!config.requiresLocationsOrResources) || hasLocationsOrResources);
+        final boolean resConditionMet = ((!config.requiresResourcesOnly) || hasResources);
+        if (((agentConditionMet && locResConditionMet) && resConditionMet)) {
+          boolean _isNullOrEmpty = StringExtensions.isNullOrEmpty(config.syncChannels);
+          boolean _not = (!_isNullOrEmpty);
+          if (_not) {
+            syncBuilder.append(config.syncChannels).append("\n");
+          }
+          boolean _isNullOrEmpty_1 = StringExtensions.isNullOrEmpty(config.variables);
+          boolean _not_1 = (!_isNullOrEmpty_1);
+          if (_not_1) {
+            varBuilder.append(config.variables).append("\n");
+          }
+          templateBuilder.append(this.readActionTemplate(config.templateFileName)).append("\n");
+          final Function1<Integer, String> _function = (Integer it) -> {
+            return String.format(config.missionDefFormat, it, it);
+          };
+          final String defs = IterableExtensions.join(IterableExtensions.<Integer, String>map(new IntegerRange(1, agentCount), _function), "\n");
+          missDefBuilder.append(defs).append("\n");
+          final Function1<Integer, String> _function_1 = (Integer it) -> {
+            return (config.missionDecPrefix + it);
+          };
+          final String decs = IterableExtensions.join(IterableExtensions.<Integer, String>map(new IntegerRange(1, agentCount), _function_1), ",\n");
+          missDecBuilder.append(decs).append(",\n");
+        }
+      }
     }
+    this.replace(filePath, "// **actions_sync_channels**", syncBuilder.toString(), fsa);
+    this.replace(filePath, "// **actions_variables**", varBuilder.toString(), fsa);
+    this.replace(filePath, "// **actions_templates**", templateBuilder.toString(), fsa);
+    this.replace(filePath, "// **actions_mission_definitions**", missDefBuilder.toString(), fsa);
+    this.replace(filePath, "// **actions_mission_declarations**", missDecBuilder.toString(), fsa);
   }
 
-  public String readHidle() {
-    final String filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Human_idle.rtf";
+  public String readActionTemplate(final String fileName) {
+    final String basePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/";
+    final String fullPath = (basePath + fileName);
     try {
-      final FileInputStream fis = new FileInputStream(filePath);
-      final RTFEditorKit rtfKit = new RTFEditorKit();
-      final Document doc = rtfKit.createDefaultDocument();
-      rtfKit.read(fis, doc, 0);
-      final String text = doc.getText(0, doc.getLength());
-      fis.close();
-      return text;
+      return IterableExtensions.join(Files.readAllLines(Paths.get(fullPath)), "\n");
     } catch (final Throwable _t) {
       if (_t instanceof Exception) {
         final Exception e = (Exception)_t;
         e.printStackTrace();
-        return "Error reading file";
+        return "";
       } else {
         throw Exceptions.sneakyThrow(_t);
       }
     }
-  }
-
-  public String missDef_hidle(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final int hNum = model.getPattern().getHuman().size();
-    if ((hNum != 0)) {
-      IntegerRange _upTo = new IntegerRange(1, hNum);
-      for (final Integer i : _upTo) {
-        {
-          builder.append(String.format("hi_%d = Human_idle(%d);", i, i));
-          if (((i).intValue() != hNum)) {
-            builder.append("\n");
-          }
-        }
-      }
-    }
-    return builder.toString();
-  }
-
-  public String missDec_hidle(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final int hNum = model.getPattern().getHuman().size();
-    if ((hNum != 0)) {
-      IntegerRange _upTo = new IntegerRange(1, hNum);
-      for (final Integer i : _upTo) {
-        {
-          builder.append(String.format("hi_%d,", i));
-          if (((i).intValue() != hNum)) {
-            builder.append("\n");
-          }
-        }
-      }
-    }
-    return builder.toString();
-  }
-
-  public void hmoveTo(final String filePath, final IFileSystemAccess2 fsa, final Model model) {
-    final int hNum = model.getPattern().getHuman().size();
-    if ((hNum != 0)) {
-      this.replace(filePath, "// **h_moveTo_sync**", "urgent broadcast chan start_h_moveTo[N_H], stop_h_moveTo[N_H];", fsa);
-      this.replace(filePath, "// **h_moveTo_var**", "int human_loc_target[N_H];", fsa);
-      this.replace(filePath, "// **h_moveTo_chan**", "broadcast chan hm_fail;", fsa);
-      final int lNum = model.getPattern().getLocation().size();
-      final int resNum = model.getPattern().getResources().size();
-      if (((lNum != 0) || (resNum != 0))) {
-        this.replace(filePath, "// **Human_moveTo**", this.readHmoveTo(), fsa);
-        this.replace(filePath, "// **missDef_hm**", this.missDef_hm(model), fsa);
-        this.replace(filePath, "// **missDec_hm**", this.missDec_hm(model), fsa);
-      }
-    }
-  }
-
-  public String readHmoveTo() {
-    final String filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Human_moveTo.rtf";
-    try {
-      final FileInputStream fis = new FileInputStream(filePath);
-      final RTFEditorKit rtfKit = new RTFEditorKit();
-      final Document doc = rtfKit.createDefaultDocument();
-      rtfKit.read(fis, doc, 0);
-      final String text = doc.getText(0, doc.getLength());
-      fis.close();
-      return text;
-    } catch (final Throwable _t) {
-      if (_t instanceof Exception) {
-        final Exception e = (Exception)_t;
-        e.printStackTrace();
-        return "Error reading file";
-      } else {
-        throw Exceptions.sneakyThrow(_t);
-      }
-    }
-  }
-
-  public String missDef_hm(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final int hNum = model.getPattern().getHuman().size();
-    if ((hNum != 0)) {
-      IntegerRange _upTo = new IntegerRange(1, hNum);
-      for (final Integer i : _upTo) {
-        {
-          builder.append(String.format("hm_%d = Human_moveTo(%d, 26.0);", i, i));
-          if (((i).intValue() != hNum)) {
-            builder.append("\n");
-          }
-        }
-      }
-    }
-    return builder.toString();
-  }
-
-  public String missDec_hm(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final int hNum = model.getPattern().getHuman().size();
-    if ((hNum != 0)) {
-      IntegerRange _upTo = new IntegerRange(1, hNum);
-      for (final Integer i : _upTo) {
-        {
-          builder.append(String.format("hm_%d,", i));
-          if (((i).intValue() != hNum)) {
-            builder.append("\n");
-          }
-        }
-      }
-    }
-    return builder.toString();
-  }
-
-  public void rmoveTo(final String filePath, final IFileSystemAccess2 fsa, final Model model) {
-    final int rNum = model.getPattern().getRobot().size();
-    if ((rNum != 0)) {
-      this.replace(filePath, "// **r_moveTo_sync**", "urgent broadcast chan start_r_moveTo[N_R], stop_r_moveTo[N_R];", fsa);
-      this.replace(filePath, "// **r_moveTo_var**", "int robot_loc_target[N_R];", fsa);
-      this.replace(filePath, "// **r_moveTo_chan**", "broadcast chan rm_still;", fsa);
-      final int lNum = model.getPattern().getLocation().size();
-      final int resNum = model.getPattern().getResources().size();
-      if (((lNum != 0) || (resNum != 0))) {
-        this.replace(filePath, "// **Robot_moveTo**", this.readRmoveTo(), fsa);
-        this.replace(filePath, "// **missDef_rm**", this.missDef_rm(model), fsa);
-        this.replace(filePath, "// **missDec_rm**", this.missDec_rm(model), fsa);
-      }
-    }
-  }
-
-  public String readRmoveTo() {
-    final String filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_moveTo.rtf";
-    try {
-      final FileInputStream fis = new FileInputStream(filePath);
-      final RTFEditorKit rtfKit = new RTFEditorKit();
-      final Document doc = rtfKit.createDefaultDocument();
-      rtfKit.read(fis, doc, 0);
-      final String text = doc.getText(0, doc.getLength());
-      fis.close();
-      return text;
-    } catch (final Throwable _t) {
-      if (_t instanceof Exception) {
-        final Exception e = (Exception)_t;
-        e.printStackTrace();
-        return "Error reading file";
-      } else {
-        throw Exceptions.sneakyThrow(_t);
-      }
-    }
-  }
-
-  public String missDef_rm(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final int rNum = model.getPattern().getRobot().size();
-    IntegerRange _upTo = new IntegerRange(1, rNum);
-    for (final Integer i : _upTo) {
-      {
-        builder.append(String.format("rm_%d = Robot_moveTo(%d, 26.0, 26.0);", i, i));
-        if (((i).intValue() != rNum)) {
-          builder.append("\n");
-        }
-      }
-    }
-    return builder.toString();
-  }
-
-  public String missDec_rm(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final int rNum = model.getPattern().getRobot().size();
-    IntegerRange _upTo = new IntegerRange(1, rNum);
-    for (final Integer i : _upTo) {
-      {
-        builder.append(String.format("rm_%d,", i));
-        if (((i).intValue() != rNum)) {
-          builder.append("\n");
-        }
-      }
-    }
-    return builder.toString();
-  }
-
-  public void rfollow(final String filePath, final IFileSystemAccess2 fsa, final Model model) {
-    final int rNum = model.getPattern().getRobot().size();
-    if ((rNum != 0)) {
-      this.replace(filePath, "// **r_follow_sync**", "urgent broadcast chan start_r_follow[N_R], stop_r_follow[N_R];", fsa);
-      this.replace(filePath, "// **r_follow_var**", "// Who I have to follow (agent id)?\nint human_to_be_followed[N_R];\nint robot_to_be_followed[N_R];\nint f_loc_target[N_R];", fsa);
-      this.replace(filePath, "// **r_follow_chan**", "broadcast chan rf_still;", fsa);
-      this.replace(filePath, "// **Robot_follow**", this.readRfollow(), fsa);
-      this.replace(filePath, "// **missDef_rf**", this.missDef_rf(model), fsa);
-      this.replace(filePath, "// **missDec_rf**", this.missDec_rf(model), fsa);
-    }
-  }
-
-  public String readRfollow() {
-    final String filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_follow.rtf";
-    try {
-      final FileInputStream fis = new FileInputStream(filePath);
-      final RTFEditorKit rtfKit = new RTFEditorKit();
-      final Document doc = rtfKit.createDefaultDocument();
-      rtfKit.read(fis, doc, 0);
-      final String text = doc.getText(0, doc.getLength());
-      fis.close();
-      return text;
-    } catch (final Throwable _t) {
-      if (_t instanceof Exception) {
-        final Exception e = (Exception)_t;
-        e.printStackTrace();
-        return "Error reading file";
-      } else {
-        throw Exceptions.sneakyThrow(_t);
-      }
-    }
-  }
-
-  public String missDef_rf(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final int rNum = model.getPattern().getRobot().size();
-    IntegerRange _upTo = new IntegerRange(1, rNum);
-    for (final Integer i : _upTo) {
-      {
-        builder.append(String.format("rf_%d = Robot_follow(%d, 26.0, 26.0);", i, i));
-        if (((i).intValue() != rNum)) {
-          builder.append("\n");
-        }
-      }
-    }
-    return builder.toString();
-  }
-
-  public String missDec_rf(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final int rNum = model.getPattern().getRobot().size();
-    IntegerRange _upTo = new IntegerRange(1, rNum);
-    for (final Integer i : _upTo) {
-      {
-        builder.append(String.format("rf_%d,", i));
-        if (((i).intValue() != rNum)) {
-          builder.append("\n");
-        }
-      }
-    }
-    return builder.toString();
-  }
-
-  public void rpick(final String filePath, final IFileSystemAccess2 fsa, final Model model) {
-    final int rNum = model.getPattern().getRobot().size();
-    final int iNum = model.getPattern().getResources().size();
-    if ((rNum != 0)) {
-      this.replace(filePath, "// **r_pick_sync**", "urgent broadcast chan start_r_pick[N_R], stop_r_pick[N_R];", fsa);
-      String inventoryVars = null;
-      if ((iNum != 0)) {
-        inventoryVars = "int robot_res_to_pick[N_R];\nint robot_inventory[N_R][N_ITEMS];\nint old_inventory[N_R][N_ITEMS];";
-      } else {
-        inventoryVars = "// No resources defined, inventory variables skipped";
-      }
-      this.replace(filePath, "// **r_pick_var**", inventoryVars, fsa);
-      this.replace(filePath, "// **Robot_pick**", this.readRpick(), fsa);
-      this.replace(filePath, "// **missDef_rp**", this.missDef_rp(model), fsa);
-      this.replace(filePath, "// **missDec_rp**", this.missDec_rp(model), fsa);
-    }
-  }
-
-  public String readRpick() {
-    final String filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_pick.rtf";
-    try {
-      final FileInputStream fis = new FileInputStream(filePath);
-      final RTFEditorKit rtfKit = new RTFEditorKit();
-      final Document doc = rtfKit.createDefaultDocument();
-      rtfKit.read(fis, doc, 0);
-      final String text = doc.getText(0, doc.getLength());
-      fis.close();
-      return text;
-    } catch (final Throwable _t) {
-      if (_t instanceof Exception) {
-        final Exception e = (Exception)_t;
-        e.printStackTrace();
-        return "Error reading Robot_pick.rtf file";
-      } else {
-        throw Exceptions.sneakyThrow(_t);
-      }
-    }
-  }
-
-  public String missDef_rp(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final int rNum = model.getPattern().getRobot().size();
-    IntegerRange _upTo = new IntegerRange(1, rNum);
-    for (final Integer i : _upTo) {
-      {
-        builder.append(String.format("rp_%d = Robot_pick(%d);", i, i));
-        if (((i).intValue() != rNum)) {
-          builder.append("\n");
-        }
-      }
-    }
-    return builder.toString();
-  }
-
-  public String missDec_rp(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final int rNum = model.getPattern().getRobot().size();
-    IntegerRange _upTo = new IntegerRange(1, rNum);
-    for (final Integer i : _upTo) {
-      {
-        builder.append(String.format("rp_%d,", i));
-        if (((i).intValue() != rNum)) {
-          builder.append("\n");
-        }
-      }
-    }
-    return builder.toString();
-  }
-
-  public void rdeposit(final String filePath, final IFileSystemAccess2 fsa, final Model model) {
-    final int rNum = model.getPattern().getRobot().size();
-    if ((rNum != 0)) {
-      this.replace(filePath, "// **r_deposit_sync**", "urgent broadcast chan start_r_deposit[N_R], stop_r_deposit[N_R];", fsa);
-      this.replace(filePath, "// **r_deposit_var**", "int robot_res_to_deposit[N_R];", fsa);
-      this.replace(filePath, "// **Robot_deposit**", this.readRdeposit(), fsa);
-      this.replace(filePath, "// **missDef_rd**", this.missDef_rd(model), fsa);
-      this.replace(filePath, "// **missDec_rd**", this.missDec_rd(model), fsa);
-    }
-  }
-
-  public String readRdeposit() {
-    final String filePath = "/Users/alberto_tagliaferro/Library/CloudStorage/OneDrive-PolitecnicodiMilano/Desktop/LIRAs_Generation/runtime-EclipseApplication/src-gen/Robot_deposit.rtf";
-    try {
-      final FileInputStream fis = new FileInputStream(filePath);
-      final RTFEditorKit rtfKit = new RTFEditorKit();
-      final Document doc = rtfKit.createDefaultDocument();
-      rtfKit.read(fis, doc, 0);
-      final String text = doc.getText(0, doc.getLength());
-      fis.close();
-      return text;
-    } catch (final Throwable _t) {
-      if (_t instanceof Exception) {
-        final Exception e = (Exception)_t;
-        e.printStackTrace();
-        return "Error reading Robot_deposit.rtf file";
-      } else {
-        throw Exceptions.sneakyThrow(_t);
-      }
-    }
-  }
-
-  public String missDef_rd(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final int rNum = model.getPattern().getRobot().size();
-    IntegerRange _upTo = new IntegerRange(1, rNum);
-    for (final Integer i : _upTo) {
-      {
-        builder.append(String.format("rd_%d = Robot_deposit(%d);", i, i));
-        if (((i).intValue() != rNum)) {
-          builder.append("\n");
-        }
-      }
-    }
-    return builder.toString();
-  }
-
-  public String missDec_rd(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final int rNum = model.getPattern().getRobot().size();
-    IntegerRange _upTo = new IntegerRange(1, rNum);
-    for (final Integer i : _upTo) {
-      {
-        builder.append(String.format("rd_%d,", i));
-        if (((i).intValue() != rNum)) {
-          builder.append("\n");
-        }
-      }
-    }
-    return builder.toString();
   }
 
   public String pattDef(final Model model) {
