@@ -7,7 +7,7 @@
 
 // Pigreco
 const double PI = 3.1415926535;
-
+clock global_clock;
 const int Tpoll = 1;
 
 // Locations (Layout 1)
@@ -97,6 +97,7 @@ const int N_ITEMS = 1; // Number of resources in the pattern
 
 double humanPositionX[1] = {0.0};
 double humanPositionY[1] = {0.0};
+
 
 // Robot initialization
 double batteryCharge[N_R] = {100.0};
@@ -1438,7 +1439,7 @@ Coffee_Delivery_robot_def
 
 <query>
     <formula>Pr[&lt;=700] (&lt;&gt; Coffee_Delivery.end)</formula>
-    <comment>Check if the whole pattern ends within 400 time unit</comment>
+    <comment>Check if the whole pattern ends within 700 time unit</comment>
 </query>
 
 <query>

@@ -132,48 +132,42 @@ public class LIRAsGenerator extends AbstractGenerator {
   }
 
   public String ssChan(final Model model) {
-    final int[] maxSSnum = { 0 };
-    final StringBuilder builder = new StringBuilder();
-    final Consumer<Sequence> _function = (Sequence sequence) -> {
-      final Consumer<SubSequence> _function_1 = (SubSequence subSequence) -> {
-        int _i = subSequence.getI();
-        int _get = maxSSnum[0];
-        boolean _greaterThan = (_i > _get);
-        if (_greaterThan) {
-          maxSSnum[0] = subSequence.getI();
-        }
-        int _j = subSequence.getJ();
-        int _get_1 = maxSSnum[0];
-        boolean _greaterThan_1 = (_j > _get_1);
-        if (_greaterThan_1) {
-          maxSSnum[0] = subSequence.getJ();
-        }
-      };
-      sequence.getSubSequence().forEach(_function_1);
+    Integer _elvis = null;
+    final Function1<Sequence, EList<SubSequence>> _function = (Sequence it) -> {
+      return it.getSubSequence();
     };
-    model.getSequence().forEach(_function);
-    builder.append("urgent broadcast chan ");
-    int _get = maxSSnum[0];
-    IntegerRange _upTo = new IntegerRange(1, _get);
-    for (final Integer i : _upTo) {
-      {
-        if (((i).intValue() > 1)) {
-          builder.append(", ");
-        }
-        builder.append(String.format("s%d", i));
-      }
+    final Function1<SubSequence, Integer> _function_1 = (SubSequence it) -> {
+      return Integer.valueOf(Math.max(it.getI(), it.getJ()));
+    };
+    Integer _max = IterableExtensions.<Integer>max(IterableExtensions.<SubSequence, Integer>map(IterableExtensions.<Sequence, SubSequence>flatMap(model.getSequence(), _function), _function_1));
+    if (_max != null) {
+      _elvis = _max;
+    } else {
+      _elvis = Integer.valueOf(0);
     }
-    builder.append(", e;");
-    return builder.toString();
+    final Integer maxSSnum = _elvis;
+    if (((maxSSnum).intValue() == 0)) {
+      return "urgent broadcast chan e;";
+    }
+    final Function1<Integer, String> _function_2 = (Integer it) -> {
+      return ("s" + it);
+    };
+    final String channels = IterableExtensions.join(IterableExtensions.<Integer, String>map(new IntegerRange(1, (maxSSnum).intValue()), _function_2), ", ");
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("urgent broadcast chan ");
+    _builder.append(channels);
+    _builder.append(", e;");
+    return _builder.toString();
   }
 
   public String sStatus(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final Consumer<Sequence> _function = (Sequence sequence) -> {
-      builder.append(String.format("bool %s_stat = true;\n", sequence.getAgent().getName().toLowerCase()));
+    final Function1<Sequence, String> _function = (Sequence it) -> {
+      String _lowerCase = it.getAgent().getName().toLowerCase();
+      String _plus = ("bool " + _lowerCase);
+      return (_plus + "_stat = true;");
     };
-    model.getSequence().forEach(_function);
-    return builder.toString();
+    String _join = IterableExtensions.join(ListExtensions.<Sequence, String>map(model.getSequence(), _function), "\n");
+    return (_join + "\n");
   }
 
   public String iLocation(final Model model) {
@@ -199,161 +193,167 @@ public class LIRAsGenerator extends AbstractGenerator {
     int _size_1 = resources.size();
     final int totalSize = (_size + _size_1);
     if ((totalSize == 0)) {
-      StringConcatenation _builder = new StringConcatenation();
-      _builder.append("// No locations or resources declared. Using dummy to prevent compilation errors.");
-      _builder.newLine();
-      return _builder.toString();
+      return "// No locations or resources declared. Using dummy to prevent compilation errors.\n";
     }
     final Function1<Location, String> _function = (Location it) -> {
       String _name = it.getName();
       return (_name + "[0]");
     };
-    final List<String> locX = ListExtensions.<Location, String>map(locations, _function);
+    List<String> _map = ListExtensions.<Location, String>map(locations, _function);
     final Function1<it.polimi.lIRAs.Resource, String> _function_1 = (it.polimi.lIRAs.Resource it) -> {
       String _name = it.getName();
       return (_name + "[0]");
     };
-    final List<String> resX = ListExtensions.<it.polimi.lIRAs.Resource, String>map(resources, _function_1);
-    final String stringX = IterableExtensions.join(Iterables.<String>concat(locX, resX), ", ");
+    List<String> _map_1 = ListExtensions.<it.polimi.lIRAs.Resource, String>map(resources, _function_1);
+    final String stringX = IterableExtensions.join(Iterables.<String>concat(_map, _map_1), ", ");
     final Function1<Location, String> _function_2 = (Location it) -> {
       String _name = it.getName();
       return (_name + "[1]");
     };
-    final List<String> locY = ListExtensions.<Location, String>map(locations, _function_2);
+    List<String> _map_2 = ListExtensions.<Location, String>map(locations, _function_2);
     final Function1<it.polimi.lIRAs.Resource, String> _function_3 = (it.polimi.lIRAs.Resource it) -> {
       String _name = it.getName();
       return (_name + "[1]");
     };
-    final List<String> resY = ListExtensions.<it.polimi.lIRAs.Resource, String>map(resources, _function_3);
-    final String stringY = IterableExtensions.join(Iterables.<String>concat(locY, resY), ", ");
-    StringConcatenation _builder_1 = new StringConcatenation();
-    _builder_1.append("double location_X[");
-    _builder_1.append(totalSize);
-    _builder_1.append("] = {");
-    _builder_1.append(stringX);
-    _builder_1.append("};");
-    _builder_1.newLineIfNotEmpty();
-    _builder_1.append("double location_Y[");
-    _builder_1.append(totalSize);
-    _builder_1.append("] = {");
-    _builder_1.append(stringY);
-    _builder_1.append("};");
-    _builder_1.newLineIfNotEmpty();
-    return _builder_1.toString();
+    List<String> _map_3 = ListExtensions.<it.polimi.lIRAs.Resource, String>map(resources, _function_3);
+    final String stringY = IterableExtensions.join(Iterables.<String>concat(_map_2, _map_3), ", ");
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("double location_X[");
+    _builder.append(totalSize);
+    _builder.append("] = {");
+    _builder.append(stringX);
+    _builder.append("};");
+    _builder.newLineIfNotEmpty();
+    _builder.append("double location_Y[");
+    _builder.append(totalSize);
+    _builder.append("] = {");
+    _builder.append(stringY);
+    _builder.append("};");
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
   }
 
   public String iResource(final Model model) {
     final EList<it.polimi.lIRAs.Resource> resources = model.getPattern().getResources();
     boolean _isNullOrEmpty = IterableExtensions.isNullOrEmpty(resources);
     if (_isNullOrEmpty) {
-      StringConcatenation _builder = new StringConcatenation();
-      _builder.append("// No resources in pattern");
-      _builder.newLine();
-      return _builder.toString();
+      return "// No resources in pattern\n";
     }
-    final int size = resources.size();
-    StringConcatenation _builder_1 = new StringConcatenation();
-    _builder_1.append("double resources_X[");
-    _builder_1.append(size);
-    _builder_1.append("] = {");
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("double resources_X[");
+    int _size = resources.size();
+    _builder.append(_size);
+    _builder.append("] = {");
     final Function1<it.polimi.lIRAs.Resource, String> _function = (it.polimi.lIRAs.Resource it) -> {
       String _name = it.getName();
       return (_name + "[0]");
     };
     String _join = IterableExtensions.join(ListExtensions.<it.polimi.lIRAs.Resource, String>map(resources, _function), ", ");
-    _builder_1.append(_join);
-    _builder_1.append("};");
-    _builder_1.newLineIfNotEmpty();
-    _builder_1.append("double resources_Y[");
-    _builder_1.append(size);
-    _builder_1.append("] = {");
+    _builder.append(_join);
+    _builder.append("};");
+    _builder.newLineIfNotEmpty();
+    _builder.append("double resources_Y[");
+    int _size_1 = resources.size();
+    _builder.append(_size_1);
+    _builder.append("] = {");
     final Function1<it.polimi.lIRAs.Resource, String> _function_1 = (it.polimi.lIRAs.Resource it) -> {
       String _name = it.getName();
       return (_name + "[1]");
     };
     String _join_1 = IterableExtensions.join(ListExtensions.<it.polimi.lIRAs.Resource, String>map(resources, _function_1), ", ");
-    _builder_1.append(_join_1);
-    _builder_1.append("};");
-    _builder_1.newLineIfNotEmpty();
-    return _builder_1.toString();
+    _builder.append(_join_1);
+    _builder.append("};");
+    _builder.newLineIfNotEmpty();
+    return _builder.toString();
   }
 
   public String hNumber(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final int hNum = model.getPattern().getHuman().size();
-    if ((hNum != 0)) {
-      builder.append(String.format("const int N_H = %d; // Number of humans in the pattern", Integer.valueOf(hNum)));
-    } else {
-      builder.append("// There are no Humans in the pattern Input");
+    String _xblockexpression = null;
+    {
+      final int hNum = model.getPattern().getHuman().size();
+      String _xifexpression = null;
+      if ((hNum > 0)) {
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append("const int N_H = ");
+        _builder.append(hNum);
+        _builder.append("; // Number of humans in the pattern");
+        _xifexpression = _builder.toString();
+      } else {
+        _xifexpression = "// There are no Humans in the pattern Input";
+      }
+      _xblockexpression = _xifexpression;
     }
-    return builder.toString();
+    return _xblockexpression;
   }
 
   public String rNumber(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final int rNum = model.getPattern().getRobot().size();
-    if ((rNum != 0)) {
-      builder.append(String.format("const int N_R = %d; // Number of robots in the pattern", Integer.valueOf(rNum)));
-    } else {
-      builder.append("// There are no Robots in the pattern Input");
+    String _xblockexpression = null;
+    {
+      final int rNum = model.getPattern().getRobot().size();
+      String _xifexpression = null;
+      if ((rNum > 0)) {
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append("const int N_R = ");
+        _builder.append(rNum);
+        _builder.append("; // Number of robots in the pattern");
+        _xifexpression = _builder.toString();
+      } else {
+        _xifexpression = "// There are no Robots in the pattern Input";
+      }
+      _xblockexpression = _xifexpression;
     }
-    return builder.toString();
+    return _xblockexpression;
   }
 
   public String iNumber(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final int iNum = model.getPattern().getResources().size();
-    if ((iNum != 0)) {
-      builder.append(String.format("const int N_ITEMS = %d; // Number of resources in the pattern", Integer.valueOf(iNum)));
-    } else {
-      builder.append("// There are no Resources in the pattern Input");
+    String _xblockexpression = null;
+    {
+      final int iNum = model.getPattern().getResources().size();
+      String _xifexpression = null;
+      if ((iNum > 0)) {
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append("const int N_ITEMS = ");
+        _builder.append(iNum);
+        _builder.append("; // Number of resources in the pattern");
+        _xifexpression = _builder.toString();
+      } else {
+        _xifexpression = "// There are no Resources in the pattern Input";
+      }
+      _xblockexpression = _xifexpression;
     }
-    return builder.toString();
+    return _xblockexpression;
   }
 
   public String hInit(final Model model) {
-    final StringBuilder builder = new StringBuilder();
     final int hNum = model.getPattern().getHuman().size();
-    if ((hNum != 0)) {
-      builder.append("// Human initialization\n");
-      builder.append("double humanFatigue[N_H] = {");
-      IntegerRange _upTo = new IntegerRange(1, hNum);
-      for (final Integer i : _upTo) {
-        {
-          builder.append("0.0");
-          if (((i).intValue() != hNum)) {
-            builder.append(", ");
-          }
-        }
-      }
-      builder.append("};\n");
-      builder.append("double humanPositionX[N_H] = {");
-      IntegerRange _upTo_1 = new IntegerRange(1, hNum);
-      for (final Integer i_1 : _upTo_1) {
-        {
-          builder.append("0.0");
-          if (((i_1).intValue() != hNum)) {
-            builder.append(", ");
-          }
-        }
-      }
-      builder.append("};\n");
-      builder.append("double humanPositionY[N_H] = {");
-      IntegerRange _upTo_2 = new IntegerRange(1, hNum);
-      for (final Integer i_2 : _upTo_2) {
-        {
-          builder.append("0.0");
-          if (((i_2).intValue() != hNum)) {
-            builder.append(", ");
-          }
-        }
-      }
-      builder.append("};");
-    }
     if ((hNum == 0)) {
-      builder.append("double humanPositionX[1] = {0.0};\ndouble humanPositionY[1] = {0.0};");
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("double humanPositionX[1] = {0.0};");
+      _builder.newLine();
+      _builder.append("double humanPositionY[1] = {0.0};");
+      _builder.newLine();
+      return _builder.toString();
     }
-    return builder.toString();
+    final Function1<Integer, String> _function = (Integer it) -> {
+      return "0.0";
+    };
+    final String zeros = IterableExtensions.join(IterableExtensions.<Integer, String>map(new IntegerRange(1, hNum), _function), ", ");
+    StringConcatenation _builder_1 = new StringConcatenation();
+    _builder_1.append("// Human initialization");
+    _builder_1.newLine();
+    _builder_1.append("double humanFatigue[N_H] = {");
+    _builder_1.append(zeros);
+    _builder_1.append("};");
+    _builder_1.newLineIfNotEmpty();
+    _builder_1.append("double humanPositionX[N_H] = {");
+    _builder_1.append(zeros);
+    _builder_1.append("};");
+    _builder_1.newLineIfNotEmpty();
+    _builder_1.append("double humanPositionY[N_H] = {");
+    _builder_1.append(zeros);
+    _builder_1.append("};");
+    _builder_1.newLineIfNotEmpty();
+    return _builder_1.toString();
   }
 
   public String hInitPos(final Model model) {

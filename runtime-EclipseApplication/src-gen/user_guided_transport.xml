@@ -7,7 +7,7 @@
 
 // Pigreco
 const double PI = 3.1415926535;
-
+clock global_clock;
 const int Tpoll = 1;
 
 // Locations (Layout 1)
@@ -82,24 +82,25 @@ bool robot_stat = true;
 
 
 // Declared Locations
-double location_X[3] = {bedroom[0], kitchen[0], object[0]};
-double location_Y[3] = {bedroom[1], kitchen[1], object[1]};
+double location_X[4] = {bedroom[0], kitchen[0], object[0], coffee[0]};
+double location_Y[4] = {bedroom[1], kitchen[1], object[1], coffee[1]};
 
 
 // Declared Resources
-double resources_X[1] = {object[0]};
-double resources_Y[1] = {object[1]};
+double resources_X[2] = {object[0], coffee[0]};
+double resources_Y[2] = {object[1], coffee[1]};
 
 
 // Quantity of agents and resouces
-const int N_H = 1; // Number of humans in the pattern
+const int N_H = 2; // Number of humans in the pattern
 const int N_R = 1; // Number of robots in the pattern
-const int N_ITEMS = 1; // Number of resources in the pattern
+const int N_ITEMS = 2; // Number of resources in the pattern
 
 // Human initialization
-double humanFatigue[N_H] = {0.0};
-double humanPositionX[N_H] = {0.0};
-double humanPositionY[N_H] = {0.0};
+double humanFatigue[N_H] = {0.0, 0.0};
+double humanPositionX[N_H] = {0.0, 0.0};
+double humanPositionY[N_H] = {0.0, 0.0};
+
 
 // Robot initialization
 double batteryCharge[N_R] = {100.0};
@@ -155,8 +156,8 @@ broadcast chan rf_still;
 **/
 
 // Human starting position
-double h_startX[N_H] = {2500.0};
-double h_startY[N_H] = {100.0};
+double h_startX[N_H] = {2500.0, 2500.0};
+double h_startY[N_H] = {100.0, 100.0};
 
 // Robot starting position
 double r_startX[N_R] = {2000.0};
@@ -2140,7 +2141,9 @@ robot_inventory[id-1][robot_res_to_deposit[id-1]] &gt; 0</label>
 // Mission Definition
 
 hi_1 = Human_idle(1);
+hi_2 = Human_idle(2);
 hm_1 = Human_moveTo(1, 26.0);
+hm_2 = Human_moveTo(2, 26.0);
 rm_1 = Robot_moveTo(1, 26.0, 26.0);
 rf_1 = Robot_follow(1, 26.0, 26.0);
 rp_1 = Robot_pick(1);
@@ -2158,7 +2161,9 @@ user_guided_transport_robot_def = user_guided_transport_robot(1, 1);
 system
 
 hi_1,
+hi_2,
 hm_1,
+hm_2,
 rm_1,
 rf_1,
 rp_1,
@@ -2182,16 +2187,16 @@ user_guided_transport_robot_def
 
 <query>
     <formula>Pr[&lt;=700] (&lt;&gt; user_guided_transport.end)</formula>
-    <comment>Check if the whole pattern ends within 400 time unit</comment>
+    <comment>Check if the whole pattern ends within 700 time unit</comment>
 </query>
 
 <query>
-    <formula>simulate[&lt;=700]{humanPositionX[0], humanPositionY[0], robPositionX[0], robPositionY[0], batteryCharge[0], user_guided_transport.end}</formula>
+    <formula>simulate[&lt;=700]{humanPositionX[0], humanPositionY[0], humanPositionX[1], humanPositionY[1], robPositionX[0], robPositionY[0], batteryCharge[0], user_guided_transport.end}</formula>
     <comment>Check the position of all the agent in the pattern for 700 time unit</comment>
 </query>
 
 <query>
-    <formula>simulate[&lt;=700]{robot_inventory[0][0], user_guided_transport.end*2}</formula>
+    <formula>simulate[&lt;=700]{robot_inventory[0][0], robot_inventory[0][1], user_guided_transport.end*2}</formula>
     <comment>Check quantity of each item for each robot</comment>
 </query>
 
@@ -2233,6 +2238,11 @@ user_guided_transport_robot_def
 <query>
     <formula>Pr[&lt;=700] (&lt;&gt; !isValidPosition(humanPositionX[0], humanPositionY[0]))</formula>
     <comment>Check if human Human enters an invalid position (e.g. collision or obstacle)</comment>
+</query>
+
+<query>
+    <formula>Pr[&lt;=700] (&lt;&gt; !isValidPosition(humanPositionX[1], humanPositionY[1]))</formula>
+    <comment>Check if human Filippo enters an invalid position (e.g. collision or obstacle)</comment>
 </query>
 
 <query>

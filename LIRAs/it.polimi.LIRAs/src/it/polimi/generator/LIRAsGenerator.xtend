@@ -90,19 +90,6 @@ class LIRAsGenerator extends AbstractGenerator{
         '''
     }
 
-		// To use relatives path use something like this. Be sure that the folder with the template exist in this position
-			//val inputStream = getClass().getResourceAsStream("/it/polimi/generator/template/Pre_Gen.xml")
-	        
-	        //if (inputStream === null) {
-	        //    return "Error: Template not found (Check build.properties includes)"
-	        //}
-	        //val scanner = new java.util.Scanner(inputStream, "UTF-8")
-	        //val content = if (scanner.hasNext()) scanner.useDelimiter("\\A").next() else ""
-	        
-	        //scanner.close()
-	        //inputStream.close()
-	        
-	        //return content
     // Read the basic template file
     def String readTemplate () {
         try{
@@ -133,190 +120,119 @@ class LIRAsGenerator extends AbstractGenerator{
     }
     
     // Function that compute the maximum subSequence value and declare the necessary Urgent Channel
-    def ssChan (Model model) {
-        // Declarations
-        val int[] maxSSnum = #[0]
-        val StringBuilder builder = new StringBuilder
-        
-        // Check for the higher subSequence number
-        model.sequence.forEach[sequence |
-            sequence.subSequence.forEach[subSequence |
-                if (subSequence.i > maxSSnum.get(0)) {
-                    maxSSnum.set(0, subSequence.i)
-                }
-                if (subSequence.j > maxSSnum.get(0)) {
-                    maxSSnum.set(0, subSequence.j)
-                }
-            ]
-        ]
-        
-        // Generate the string for the declaration
-        builder.append("urgent broadcast chan ")
-        // Define one channel for each SubSequence
-        for (i : 1..maxSSnum.get(0)) {
-            if (i > 1) {
-                builder.append(", ")
-            }
-            builder.append(String.format("s%d", i))
-        }
-        // Final channel that is present for each pattern
-        builder.append(", e;")
-        return builder.toString
-    }
+	def String ssChan(Model model) {
+	    // 1. Find the maximum value between i and j across all subsequences (with fallback to 0)
+	    val maxSSnum = model.sequence
+	        .flatMap[subSequence]
+	        .map[Math.max(i, j)]
+	        .max ?: 0
+	
+	    // If there are no subsequences, declare only the 'e' channel
+	    if (maxSSnum == 0) {
+	        return "urgent broadcast chan e;"
+	    }
+	
+	    // 2. Create the list of strings "s1", "s2", etc. and join them with a comma
+	    val channels = (1..maxSSnum).map["s" + it].join(", ")
+	
+	    // 3. Use Template Expressions to compose the final result
+	    return '''urgent broadcast chan «channels», e;'''.toString
+	}
     
     // Function that declare the initial status of each Sequence as true
-    def sStatus (Model model) {
-    	// Declaration
-    	val StringBuilder builder = new StringBuilder
-    	
-    	// Declaration
-    	model.sequence.forEach[sequence |
-            builder.append(String.format("bool %s_stat = true;\n", sequence.agent.name.toLowerCase()))
-    	]
-    	return builder.toString
+	def String sStatus(Model model) {
+	    // Map each agent's name to its boolean status declaration and join them with a newline
+	    return model.sequence
+	        .map["bool " + agent.name.toLowerCase + "_stat = true;"]
+	        .join("\n") + "\n"
 	}
 
 	// Function that generate the locations array for the input location AND resources
 	def String iLocation(Model model) {
-	    // 1. Get lists with null-safety (elvis operator)
+	    // 1. Safe retrieval of lists
 	    val locations = model.pattern.location ?: emptyList
 	    val resources = model.pattern.resources ?: emptyList
 	    
-	    // 2. Calculate total size
 	    val totalSize = locations.size + resources.size
-		
-	    // 3. Safety check
+	    
+	    // 2. Safety check
 	    if (totalSize == 0) {
-	        return '''
-// No locations or resources declared. Using dummy to prevent compilation errors.
-	        '''.toString
+	        return "// No locations or resources declared. Using dummy to prevent compilation errors.\n"
 	    }
 	
-	    // 4. Generate the strings for X
-	    val locX = locations.map[name + "[0]"]
-	    val resX = resources.map[name + "[0]"]
-	    val stringX = (locX + resX).join(", ")
-	
-	    // 5. Generate the strings for Y
-	    val locY = locations.map[name + "[1]"]
-	    val resY = resources.map[name + "[1]"] // Fixed: was [0] in your snippet
-	    val stringY = (locY + resY).join(", ")
-		
+	    // 3. Map safely with strong typing, THEN combine the resulting iterables of strings
+	    val stringX = (locations.map[name + "[0]"] + resources.map[name + "[0]"]).join(", ")
+	    val stringY = (locations.map[name + "[1]"] + resources.map[name + "[1]"]).join(", ")
+	    
 	    return '''
 double location_X[«totalSize»] = {«stringX»};
 double location_Y[«totalSize»] = {«stringY»};
 	    '''.toString
 	}
 
-	// Function that generate the array for the input resource
+	// Function that generates the arrays for the input resources
 	def String iResource(Model model) {
 	    val resources = model.pattern.resources
 	
-	    // Safety check: if list is null or empty
-	    if (resources.nullOrEmpty) {
-	        return '''
-// No resources in pattern
-	        '''.toString
-	    }
+	    // Safety check: if the list is null or empty, return a comment
+	    if (resources.nullOrEmpty) { return "// No resources in pattern\n" }
 	
-	    val size = resources.size
-	    
+	    // Generate the arrays mapping X and Y coordinates directly
 	    return '''
-double resources_X[«size»] = {«resources.map[name + "[0]"].join(", ")»};
-double resources_Y[«size»] = {«resources.map[name + "[1]"].join(", ")»};
+double resources_X[«resources.size»] = {«resources.map[name + "[0]"].join(", ")»};
+double resources_Y[«resources.size»] = {«resources.map[name + "[1]"].join(", ")»};
 	    '''.toString
 	}
 
-	// Function that declare the number of humans in the pattern, if any
-	// (n.b. an agent that is not used for a SubSequence can still be needed for the conditions if passed as input, so it has to be fully defined
-	def hNumber (Model model) {
-		// Declarations
-    	val StringBuilder builder = new StringBuilder
-    	val int hNum = model.pattern.human.size
-    	
-    	// If there are humans in the pattern, declare how much they are
-    	if (hNum !== 0) {
-	    	builder.append(String.format("const int N_H = %d; // Number of humans in the pattern", hNum))
-    	}else{
-			builder.append("// There are no Humans in the pattern Input")
-		}
-    	
-    	return builder.toString
+	// Function that declares the number of humans in the pattern, if any
+	// (n.b. an agent that is not used for a SubSequence can still be needed for the conditions if passed as input, so it has to be fully defined)
+	def String hNumber(Model model) {
+	    val hNum = model.pattern.human.size
+	    
+	    // Return the declaration or a comment if no humans are present
+	    if (hNum > 0) {
+	        '''const int N_H = «hNum»; // Number of humans in the pattern'''.toString
+	    } else {
+	        "// There are no Humans in the pattern Input"
+	    }
 	}
 	
-	// Function that declare the number of robots in the pattern, if any
-	def rNumber (Model model) {
-    	val StringBuilder builder = new StringBuilder
-    	val int rNum = model.pattern.robot.size
-    	
-    	// If there are robots in the pattern, declare how much they are
-		if (rNum !== 0) {
-	    	builder.append(String.format("const int N_R = %d; // Number of robots in the pattern", rNum))
-    	}else{
-			builder.append("// There are no Robots in the pattern Input")
-		}
-    	
-    	return builder.toString
+	// Function that declares the number of robots in the pattern, if any
+	def String rNumber(Model model) {
+	    val rNum = model.pattern.robot.size
+	    if (rNum > 0) { '''const int N_R = «rNum»; // Number of robots in the pattern'''.toString
+	    } else { "// There are no Robots in the pattern Input" }
 	}
 	
-	// Function that declare the number of resources in the pattern, if any
-	def iNumber (Model model) {
-    	val StringBuilder builder = new StringBuilder
-    	val int iNum = model.pattern.resources.size
-    	
-    	// If there are robots in the pattern, declare how much they are
-		if (iNum !== 0) {
-	    	builder.append(String.format("const int N_ITEMS = %d; // Number of resources in the pattern", iNum))
-    	}else{
-			builder.append("// There are no Resources in the pattern Input")
-		}
-    	
-    	return builder.toString
+	// Function that declares the number of resources in the pattern, if any
+	def String iNumber(Model model) {
+	    val iNum = model.pattern.resources.size
+	    if (iNum > 0) { '''const int N_ITEMS = «iNum»; // Number of resources in the pattern'''.toString
+	    } else { "// There are no Resources in the pattern Input" }
 	}
 	
-	// Function that initialize the variables necessary for a Human agent
-	def hInit (Model model) {
-		// Declarations
-		val StringBuilder builder = new StringBuilder
-    	val int hNum = model.pattern.human.size
-		
-		
-		if (hNum !== 0) {
-		builder.append("// Human initialization\n")
-			// Declare the Human fatigue
-			builder.append("double humanFatigue[N_H] = {")
-			for (i : 1..hNum) {
-				builder.append("0.0")
-				if (i!=hNum) {
-					builder.append(", ")
-				}
-			}
-			builder.append("};\n")
-			
-			// Human X
-			builder.append("double humanPositionX[N_H] = {")
-			for (i : 1..hNum) {
-				builder.append("0.0")
-				if (i!=hNum) {
-					builder.append(", ")
-				}
-			}
-			builder.append("};\n")
-			
-			// Human Y
-			builder.append("double humanPositionY[N_H] = {")
-			for (i : 1..hNum) {
-				builder.append("0.0")
-				if (i!=hNum) {
-					builder.append(", ")
-				}
-			}
-			builder.append("};")
-		}
-		if (hNum == 0){
-			builder.append("double humanPositionX[1] = {0.0};\ndouble humanPositionY[1] = {0.0};")
-		}
-		return builder.toString
+	// Function that initializes the variables necessary for a Human agent
+	def String hInit(Model model) {
+	    val hNum = model.pattern.human.size
+	    
+	    // If no humans, declare dummy arrays to prevent compilation errors
+	    if (hNum == 0) {
+	        return '''
+	        double humanPositionX[1] = {0.0};
+	        double humanPositionY[1] = {0.0};
+	        '''.toString
+	    }
+	
+	    // Generate a single string of "0.0" repeated hNum times, separated by comma
+	    val zeros = (1..hNum).map["0.0"].join(", ")
+	    
+	    // Use Template Expressions to compose the declarations
+	    return '''
+	    // Human initialization
+	    double humanFatigue[N_H] = {«zeros»};
+	    double humanPositionX[N_H] = {«zeros»};
+	    double humanPositionY[N_H] = {«zeros»};
+	    '''.toString
 	}
 	
 	// Function that define the starting position of each Human
