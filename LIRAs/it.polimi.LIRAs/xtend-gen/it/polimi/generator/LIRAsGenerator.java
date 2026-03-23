@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Consumer;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -29,7 +30,6 @@ import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.generator.AbstractGenerator;
 import org.eclipse.xtext.generator.IFileSystemAccess2;
 import org.eclipse.xtext.generator.IGeneratorContext;
-import org.eclipse.xtext.xbase.lib.ArrayExtensions;
 import org.eclipse.xtext.xbase.lib.CollectionLiterals;
 import org.eclipse.xtext.xbase.lib.Conversions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
@@ -565,251 +565,214 @@ public class LIRAsGenerator extends AbstractGenerator {
   }
 
   public String pattDef(final Model model) {
+    final String patternName = model.getPattern().getName().toString();
     final StringBuilder builder = new StringBuilder();
-    final int[] rNum = { 1 };
-    final int[] hNum = { 1 };
-    builder.append(String.format("%s = %s_orchestrator(1);\n", model.getPattern().getName().toString(), model.getPattern().getName().toString()));
-    final Consumer<Sequence> _function = (Sequence sequence) -> {
-      final Function1<Human, String> _function_1 = (Human it) -> {
-        return it.getName();
-      };
-      boolean _contains = ListExtensions.<Human, String>map(model.getPattern().getHuman(), _function_1).contains(sequence.getAgent().getName());
-      if (_contains) {
-        builder.append(String.format("%s_%s_def = %s_%s(1, %d);\n", model.getPattern().getName().toString(), sequence.getAgent().getName().toLowerCase(), model.getPattern().getName().toString(), sequence.getAgent().getName().toLowerCase(), Integer.valueOf(hNum[0])));
-        int _get = hNum[0];
-        int _plus = (_get + 1);
-        hNum[0] = _plus;
-      }
-      final Function1<Robot, String> _function_2 = (Robot it) -> {
-        return it.getName();
-      };
-      boolean _contains_1 = ListExtensions.<Robot, String>map(model.getPattern().getRobot(), _function_2).contains(sequence.getAgent().getName());
-      if (_contains_1) {
-        builder.append(String.format("%s_%s_def = %s_%s(1, %d);\n", model.getPattern().getName().toString(), sequence.getAgent().getName().toLowerCase(), model.getPattern().getName().toString(), sequence.getAgent().getName().toLowerCase(), Integer.valueOf(rNum[0])));
-        int _get_1 = rNum[0];
-        int _plus_1 = (_get_1 + 1);
-        rNum[0] = _plus_1;
-      }
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append(patternName);
+    _builder.append(" = ");
+    _builder.append(patternName);
+    _builder.append("_orchestrator(1);");
+    builder.append(_builder).append("\n");
+    final Function1<Human, String> _function = (Human it) -> {
+      return it.getName();
     };
-    model.getSequence().forEach(_function);
+    final Set<String> humanNames = IterableExtensions.<String>toSet(ListExtensions.<Human, String>map(model.getPattern().getHuman(), _function));
+    final Function1<Robot, String> _function_1 = (Robot it) -> {
+      return it.getName();
+    };
+    final Set<String> robotNames = IterableExtensions.<String>toSet(ListExtensions.<Robot, String>map(model.getPattern().getRobot(), _function_1));
+    int hIndex = 1;
+    int rIndex = 1;
+    EList<Sequence> _sequence = model.getSequence();
+    for (final Sequence sequence : _sequence) {
+      {
+        final String agentName = sequence.getAgent().getName();
+        final String agentLower = agentName.toLowerCase();
+        boolean _contains = humanNames.contains(agentName);
+        if (_contains) {
+          StringConcatenation _builder_1 = new StringConcatenation();
+          _builder_1.append(patternName);
+          _builder_1.append("_");
+          _builder_1.append(agentLower);
+          _builder_1.append("_def = ");
+          _builder_1.append(patternName);
+          _builder_1.append("_");
+          _builder_1.append(agentLower);
+          _builder_1.append("(1, ");
+          _builder_1.append(hIndex);
+          _builder_1.append(");");
+          builder.append(_builder_1).append("\n");
+          hIndex++;
+        } else {
+          boolean _contains_1 = robotNames.contains(agentName);
+          if (_contains_1) {
+            StringConcatenation _builder_2 = new StringConcatenation();
+            _builder_2.append(patternName);
+            _builder_2.append("_");
+            _builder_2.append(agentLower);
+            _builder_2.append("_def = ");
+            _builder_2.append(patternName);
+            _builder_2.append("_");
+            _builder_2.append(agentLower);
+            _builder_2.append("(1, ");
+            _builder_2.append(rIndex);
+            _builder_2.append(");");
+            builder.append(_builder_2).append("\n");
+            rIndex++;
+          }
+        }
+      }
+    }
     return builder.toString();
   }
 
   public String pattDic(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    builder.append(String.format("%s,\n", model.getPattern().getName().toString(), model.getPattern().getName().toString()));
-    final Consumer<Sequence> _function = (Sequence sequence) -> {
-      final Function1<Human, String> _function_1 = (Human it) -> {
-        return it.getName();
-      };
-      boolean _contains = ListExtensions.<Human, String>map(model.getPattern().getHuman(), _function_1).contains(sequence.getAgent().getName());
-      if (_contains) {
-        builder.append(String.format("%s_%s_def,\n", model.getPattern().getName().toString(), sequence.getAgent().getName().toLowerCase()));
+    final String patternName = model.getPattern().getName().toString();
+    final String mainOrch = patternName;
+    final Function1<Sequence, String> _function = (Sequence it) -> {
+      String _xblockexpression = null;
+      {
+        final String agentLower = it.getAgent().getName().toLowerCase();
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append(patternName);
+        _builder.append("_");
+        _builder.append(agentLower);
+        _builder.append("_def");
+        _xblockexpression = _builder.toString();
       }
-      final Function1<Robot, String> _function_2 = (Robot it) -> {
-        return it.getName();
-      };
-      boolean _contains_1 = ListExtensions.<Robot, String>map(model.getPattern().getRobot(), _function_2).contains(sequence.getAgent().getName());
-      if (_contains_1) {
-        builder.append(String.format("%s_%s_def,\n", model.getPattern().getName().toString(), sequence.getAgent().getName().toLowerCase()));
-      }
+      return _xblockexpression;
     };
-    model.getSequence().forEach(_function);
-    int _length = builder.length();
-    boolean _greaterThan = (_length > 0);
-    if (_greaterThan) {
-      int _length_1 = builder.length();
-      int _minus = (_length_1 - 2);
-      builder.deleteCharAt(_minus);
-    }
-    return builder.toString();
+    final List<String> seqDefs = ListExtensions.<Sequence, String>map(model.getSequence(), _function);
+    final ArrayList<String> allDeclarations = CollectionLiterals.<String>newArrayList(mainOrch);
+    allDeclarations.addAll(seqDefs);
+    return IterableExtensions.join(allDeclarations, ",\n");
   }
 
   public String pattOrch(final Model model) {
-    final StringBuilder builder = new StringBuilder();
-    final StringBuilder guard = new StringBuilder();
-    final StringBuilder update = new StringBuilder();
     final String patternName = model.getPattern().getName().toString();
-    final int[] id = { 0 };
-    final int[] seqNum = { 0 };
-    final int[] x = { 0 };
-    final int[] y = { 0 };
-    final int[] maxIndexHelper = { 0 };
+    final StringBuilder builder = new StringBuilder();
+    final int xOffset = 500;
+    final int yOffset = 0;
+    String locName = null;
+    String invariant = null;
+    String rate_of_exp = null;
+    boolean urgent = false;
+    boolean committed = false;
+    int source = 0;
+    int target = 0;
+    String select = null;
+    String sync = null;
+    boolean controllable = true;
+    int nailX = 0;
+    int nailY = 0;
     builder.append("\t<template>\n");
     builder.append(String.format("\t\t<name>%s_orchestrator</name>\n", patternName));
-    builder.append(String.format("\t\t<parameter>int p</parameter>\n"));
-    builder.append("\t\t<declaration>// Place local declarations here.\n");
-    builder.append("\t\t</declaration>\n");
-    final Consumer<Sequence> _function = (Sequence sequence) -> {
-      final Consumer<SubSequence> _function_1 = (SubSequence subSequence) -> {
-        int _i = subSequence.getI();
-        int _get = maxIndexHelper[0];
-        boolean _greaterThan = (_i > _get);
-        if (_greaterThan) {
-          maxIndexHelper[0] = subSequence.getI();
-        }
-        int _j = subSequence.getJ();
-        int _get_1 = maxIndexHelper[0];
-        boolean _greaterThan_1 = (_j > _get_1);
-        if (_greaterThan_1) {
-          maxIndexHelper[0] = subSequence.getJ();
-        }
-      };
-      sequence.getSubSequence().forEach(_function_1);
+    builder.append("\t\t<parameter>int p</parameter>\n");
+    builder.append("\t\t<declaration>// Place local declarations here.\n\t\t</declaration>\n");
+    Integer _elvis = null;
+    final Function1<Sequence, EList<SubSequence>> _function = (Sequence it) -> {
+      return it.getSubSequence();
     };
-    model.getSequence().forEach(_function);
-    builder.append(this.genLoc(id[0], x[0], y[0], "Init", null, null, false, false));
-    int _get = id[0];
-    int _plus = (_get + 1);
-    id[0] = _plus;
-    int _get_1 = maxIndexHelper[0];
-    int _plus_1 = (_get_1 + 1);
-    IntegerRange _upTo = new IntegerRange(1, _plus_1);
+    final Function1<SubSequence, Integer> _function_1 = (SubSequence it) -> {
+      return Integer.valueOf(Math.max(it.getI(), it.getJ()));
+    };
+    Integer _max = IterableExtensions.<Integer>max(IterableExtensions.<SubSequence, Integer>map(IterableExtensions.<Sequence, SubSequence>flatMap(model.getSequence(), _function), _function_1));
+    if (_max != null) {
+      _elvis = _max;
+    } else {
+      _elvis = Integer.valueOf(0);
+    }
+    final Integer maxIndexHelper = _elvis;
+    int locId = 0;
+    locName = "Init";
+    invariant = null;
+    rate_of_exp = null;
+    urgent = false;
+    committed = false;
+    builder.append(this.genLoc(locId, (0 * xOffset), yOffset, locName, invariant, rate_of_exp, urgent, committed));
+    locId++;
+    IntegerRange _upTo = new IntegerRange(1, ((maxIndexHelper).intValue() + 1));
     for (final Integer i : _upTo) {
-      int _get_2 = maxIndexHelper[0];
-      boolean _lessEqualsThan = ((i).intValue() <= _get_2);
-      if (_lessEqualsThan) {
-        int _get_3 = id[0];
-        int _multiply = (_get_3 * 500);
-        int _get_4 = id[0];
-        int _multiply_1 = (_get_4 * 0);
-        builder.append(this.genLoc(id[0], _multiply, _multiply_1, String.format("sub_seq_s%d", Integer.valueOf(id[0])), null, null, false, false));
-        int _get_5 = id[0];
-        int _plus_2 = (_get_5 + 1);
-        id[0] = _plus_2;
-      } else {
-        int _get_6 = id[0];
-        int _multiply_2 = (_get_6 * 500);
-        int _get_7 = id[0];
-        int _multiply_3 = (_get_7 * 0);
-        builder.append(this.genLoc(id[0], _multiply_2, _multiply_3, "end", null, null, false, false));
-        int _get_8 = id[0];
-        int _plus_3 = (_get_8 + 1);
-        id[0] = _plus_3;
+      {
+        String _xifexpression = null;
+        boolean _lessEqualsThan = (i.compareTo(maxIndexHelper) <= 0);
+        if (_lessEqualsThan) {
+          _xifexpression = String.format("sub_seq_s%d", i);
+        } else {
+          _xifexpression = "end";
+        }
+        locName = _xifexpression;
+        invariant = null;
+        rate_of_exp = null;
+        urgent = false;
+        committed = false;
+        builder.append(this.genLoc(locId, ((i).intValue() * xOffset), yOffset, locName, invariant, rate_of_exp, urgent, committed));
+        locId++;
       }
     }
-    final Consumer<Sequence> _function_1 = (Sequence sequence) -> {
-      int _get_9 = seqNum[0];
-      int _plus_4 = (_get_9 + 1);
-      seqNum[0] = _plus_4;
-    };
-    model.getSequence().forEach(_function_1);
-    builder.append(String.format("\t\t<init ref=\"id%d\"/>\n", Integer.valueOf(0)));
-    int _get_9 = seqNum[0];
-    int _get_10 = maxIndexHelper[0];
-    int _multiply_4 = (_get_9 * _get_10);
-    final int[] continuation = new int[_multiply_4];
-    final int[] s = { 0 };
-    final int[] ss = { 0 };
-    final Consumer<Sequence> _function_2 = (Sequence sequence) -> {
-      final Consumer<SubSequence> _function_3 = (SubSequence subSequence) -> {
-        int _j = subSequence.getJ();
-        int _i = subSequence.getI();
-        int _minus = (_j - _i);
-        boolean _greaterThan = (_minus > 0);
-        if (_greaterThan) {
-          int _i_1 = subSequence.getI();
-          int _plus_4 = (_i_1 + 1);
-          int _j_1 = subSequence.getJ();
-          IntegerRange _upTo_1 = new IntegerRange(_plus_4, _j_1);
-          for (final Integer j : _upTo_1) {
-            int _get_11 = seqNum[0];
-            int _multiply_5 = (((j).intValue() - 1) * _get_11);
-            int _get_12 = s[0];
-            int _plus_5 = (_multiply_5 + _get_12);
-            continuation[_plus_5] = 1;
-          }
-        }
-        int _get_13 = s[0];
-        int _plus_6 = (_get_13 + 1);
-        ss[0] = _plus_6;
-      };
-      sequence.getSubSequence().forEach(_function_3);
-      int _get_11 = s[0];
-      int _plus_4 = (_get_11 + 1);
-      s[0] = _plus_4;
-    };
-    model.getSequence().forEach(_function_2);
-    s[0] = 0;
-    ss[0] = 0;
-    guard.setLength(0);
-    int _get_11 = maxIndexHelper[0];
-    int _minus = (_get_11 - 1);
-    IntegerRange _upTo_1 = new IntegerRange(0, _minus);
+    builder.append("\t\t<init ref=\"id0\"/>\n");
+    IntegerRange _upTo_1 = new IntegerRange(0, ((maxIndexHelper).intValue() - 1));
     for (final Integer i_1 : _upTo_1) {
       {
-        int _get_12 = seqNum[0];
-        int _minus_1 = (_get_12 - 1);
-        IntegerRange _upTo_2 = new IntegerRange(0, _minus_1);
-        for (final Integer j : _upTo_2) {
-          int _get_13 = seqNum[0];
-          int _multiply_5 = ((i_1).intValue() * _get_13);
-          int _plus_4 = (_multiply_5 + (j).intValue());
-          int _get_14 = continuation[_plus_4];
-          boolean _equals = (_get_14 == 0);
-          if (_equals) {
-            final Consumer<Sequence> _function_3 = (Sequence sequence) -> {
-              if ((((j).intValue() == s[0]) && Objects.equals(guard.toString(), ""))) {
-                guard.append(sequence.getAgent().getName().toLowerCase());
-                guard.append("_stat==true");
-                update.append(sequence.getAgent().getName().toLowerCase());
-                update.append("_stat=false");
-              } else {
-                int _get_15 = s[0];
-                boolean _equals_1 = ((j).intValue() == _get_15);
-                if (_equals_1) {
-                  guard.append(" and ");
-                  guard.append(sequence.getAgent().getName().toLowerCase());
-                  guard.append("_stat==true");
-                  update.append(", ");
-                  update.append(sequence.getAgent().getName().toLowerCase());
-                  update.append("_stat=false");
+        final ArrayList<String> agentsToSync = new ArrayList<String>();
+        EList<Sequence> _sequence = model.getSequence();
+        for (final Sequence sequence : _sequence) {
+          {
+            boolean hasContinuation = false;
+            EList<SubSequence> _subSequence = sequence.getSubSequence();
+            for (final SubSequence subSeq : _subSequence) {
+              int _j = subSeq.getJ();
+              int _i = subSeq.getI();
+              int _minus = (_j - _i);
+              boolean _greaterThan = (_minus > 0);
+              if (_greaterThan) {
+                if ((((i_1).intValue() >= subSeq.getI()) && ((i_1).intValue() < subSeq.getJ()))) {
+                  hasContinuation = true;
                 }
               }
-              int _get_16 = s[0];
-              int _plus_5 = (_get_16 + 1);
-              s[0] = _plus_5;
-            };
-            model.getSequence().forEach(_function_3);
-            s[0] = 0;
+            }
+            if ((!hasContinuation)) {
+              agentsToSync.add(sequence.getAgent().getName().toLowerCase());
+            }
           }
         }
-        if (((i_1).intValue() == 0)) {
-          guard.append(" and p==currP");
+        final ArrayList<String> guardsList = new ArrayList<String>();
+        for (final String agent : agentsToSync) {
+          guardsList.add((agent + "_stat==true"));
         }
-        builder.append(this.genTran(id[0], (i_1).intValue(), ((i_1).intValue() + 1), null, guard.toString(), String.format("s%d!", Integer.valueOf(((i_1).intValue() + 1))), update.toString(), true, 500, 0, 0, 0));
-        int _get_15 = id[0];
-        int _plus_5 = (_get_15 + 1);
-        id[0] = _plus_5;
-        guard.setLength(0);
-        update.setLength(0);
-        int _get_16 = maxIndexHelper[0];
-        int _minus_2 = (_get_16 - 1);
-        boolean _equals_1 = ((i_1).intValue() == _minus_2);
-        if (_equals_1) {
-          final Consumer<Sequence> _function_4 = (Sequence sequence) -> {
-            String _string = guard.toString();
-            boolean _equals_2 = Objects.equals(_string, "");
-            if (_equals_2) {
-              guard.append(sequence.getAgent().getName().toLowerCase());
-              guard.append("_stat==true");
-            } else {
-              guard.append(" and ");
-              guard.append(sequence.getAgent().getName().toLowerCase());
-              guard.append("_stat==true");
-            }
-            int _get_17 = s[0];
-            int _plus_6 = (_get_17 + 1);
-            s[0] = _plus_6;
+        if (((i_1).intValue() == 0)) {
+          guardsList.add("p==currP");
+        }
+        final String guardStr = IterableExtensions.join(guardsList, " and ");
+        final Function1<String, String> _function_2 = (String it) -> {
+          return (it + "_stat=false");
+        };
+        final String updateStr = IterableExtensions.join(ListExtensions.<String, String>map(agentsToSync, _function_2), ", ");
+        source = (i_1).intValue();
+        target = ((i_1).intValue() + 1);
+        select = null;
+        sync = String.format("s%d!", Integer.valueOf(((i_1).intValue() + 1)));
+        controllable = true;
+        nailX = 0;
+        nailY = 0;
+        builder.append(this.genTran(locId, source, target, select, guardStr, sync, updateStr, controllable, xOffset, yOffset, nailX, nailY));
+        locId++;
+        if (((i_1).intValue() == ((maxIndexHelper).intValue() - 1))) {
+          final Function1<Sequence, String> _function_3 = (Sequence it) -> {
+            String _lowerCase = it.getAgent().getName().toLowerCase();
+            return (_lowerCase + "_stat==true");
           };
-          model.getSequence().forEach(_function_4);
-          update.append("currP=currP+1");
-          builder.append(this.genTran(id[0], ((i_1).intValue() + 1), ((i_1).intValue() + 2), null, guard.toString(), String.format("e!"), update.toString(), true, 500, 0, 0, 0));
-          int _get_17 = id[0];
-          int _plus_6 = (_get_17 + 1);
-          id[0] = _plus_6;
-          guard.setLength(0);
-          update.setLength(0);
+          final String finalGuards = IterableExtensions.join(ListExtensions.<Sequence, String>map(model.getSequence(), _function_3), " and ");
+          final String finalUpdate = "currP=currP+1";
+          source = ((i_1).intValue() + 1);
+          target = ((i_1).intValue() + 2);
+          select = null;
+          sync = "e!";
+          controllable = true;
+          nailX = 0;
+          nailY = 0;
+          builder.append(this.genTran(locId, source, target, select, finalGuards, sync, finalUpdate, controllable, xOffset, yOffset, nailX, nailY));
+          locId++;
         }
       }
     }
@@ -1081,12 +1044,12 @@ public class LIRAsGenerator extends AbstractGenerator {
                       boolean _isNegated_1 = pred2.isNegated();
                       if (_isNegated_1) {
                         String _apPositionGuard_2 = this.apPositionGuard(model, pred2.getAgent().getName().toString(), pred2.getLocation().getName().toString());
-                        String _plus_11 = ("\nnot (" + _apPositionGuard_2);
+                        String _plus_11 = ("\n\tnot (" + _apPositionGuard_2);
                         String _plus_12 = (_plus_11 + "))");
                         guard.append(_plus_12);
                       } else {
                         String _apPositionGuard_3 = this.apPositionGuard(model, pred2.getAgent().getName().toString(), pred2.getLocation().getName().toString());
-                        String _plus_13 = ("\n(" + _apPositionGuard_3);
+                        String _plus_13 = ("\n\t(" + _apPositionGuard_3);
                         String _plus_14 = (_plus_13 + "))");
                         guard.append(_plus_14);
                       }
@@ -1399,7 +1362,7 @@ public class LIRAsGenerator extends AbstractGenerator {
           if (_equals) {
             x[0] = xOffset;
             y[0] = ((i_1).intValue() * yOffset);
-            builder.append(this.genLoc(id[0], x[0], y[0], String.format("S%d_idle", i_1), null, null, false, false));
+            builder.append(this.genLoc(id[0], x[0], y[0], String.format("s%d_idle", i_1), null, null, false, false));
             endSubSeqID[(i_1).intValue()] = id[0];
             int _get_8 = id[0];
             int _plus_5 = (_get_8 + 1);
@@ -1432,11 +1395,11 @@ public class LIRAsGenerator extends AbstractGenerator {
       final int[] firstAction = { 0 };
       actionCount[0] = 0;
       final HashMap<String, String> hMapGuard = new HashMap<String, String>();
-      hMapGuard.put("moveTo", "humanPositionX[H-1] &lt;= location_X[human_loc_target[H-1]]+30 and\nhumanPositionX[H-1] &gt;= location_X[human_loc_target[H-1]]-30 and\nhumanPositionY[H-1] &lt;= location_Y[human_loc_target[H-1]]+30 and\nhumanPositionY[H-1] &gt;= location_Y[human_loc_target[H-1]]-30");
+      hMapGuard.put("moveTo", "humanPositionX[H-1] &lt;= location_X[human_loc_target[H-1]]+30 and\n\thumanPositionX[H-1] &gt;= location_X[human_loc_target[H-1]]-30 and\n\thumanPositionY[H-1] &lt;= location_Y[human_loc_target[H-1]]+30 and\n\thumanPositionY[H-1] &gt;= location_Y[human_loc_target[H-1]]-30");
       final HashMap<String, String> rMapGuard = new HashMap<String, String>();
-      rMapGuard.put("moveTo", "robPositionX[R-1] &lt;= location_X[robot_loc_target[R-1]]+30 and\nrobPositionX[R-1] &gt;= location_X[robot_loc_target[R-1]]-30 and\nrobPositionY[R-1] &lt;= location_Y[robot_loc_target[R-1]]+30 and\nrobPositionY[R-1] &gt;= location_Y[robot_loc_target[R-1]]-30");
-      rMapGuard.put("followH", "humanPositionX[human_to_be_followed[R-1]-1] &lt;= location_X[f_loc_target[R-1]]+30 and\nhumanPositionX[human_to_be_followed[R-1]-1] &gt;= location_X[f_loc_target[R-1]]-30 and\nhumanPositionY[human_to_be_followed[R-1]-1] &lt;= location_Y[f_loc_target[R-1]]+30 and\nhumanPositionY[human_to_be_followed[R-1]-1] &gt;= location_Y[f_loc_target[R-1]]-30 and\nrobPositionX[R-1] &gt;= location_X[f_loc_target[R-1]]-30 and\nrobPositionX[R-1] &lt;= location_X[f_loc_target[R-1]]+30 and\nrobPositionY[R-1] &gt;= location_Y[f_loc_target[R-1]]-30 and\nrobPositionY[R-1] &lt;= location_Y[f_loc_target[R-1]]+30");
-      rMapGuard.put("followR", "robPositionX[robot_to_be_followed[R-1]] &lt;= location_X[f_loc_target[R-1]]+30 and\nrobPositionX[robot_to_be_followed[R-1]-1] &gt;= location_X[f_loc_target[R-1]]-30 and\nrobPositionX[robot_to_be_followed[R-1]-1] &lt;= location_Y[f_loc_target[R-1]]+30 and\nrobPositionX[robot_to_be_followed[R-1]-1] &gt;= location_Y[f_loc_target[R-1]]-30 and\nrobPositionX[R-1] &gt;= location_X[f_loc_target[R-1]]-30 and\nrobPositionX[R-1] &lt;= location_X[f_loc_target[R-1]]+30 and\nrobPositionY[R-1] &gt;= location_Y[f_loc_target[R-1]]-30 and\nrobPositionY[R-1] &lt;= location_Y[f_loc_target[R-1]]+30");
+      rMapGuard.put("moveTo", "robPositionX[R-1] &lt;= location_X[robot_loc_target[R-1]]+30 and\n\trobPositionX[R-1] &gt;= location_X[robot_loc_target[R-1]]-30 and\n\trobPositionY[R-1] &lt;= location_Y[robot_loc_target[R-1]]+30 and\n\trobPositionY[R-1] &gt;= location_Y[robot_loc_target[R-1]]-30");
+      rMapGuard.put("followH", "humanPositionX[human_to_be_followed[R-1]-1] &lt;= location_X[f_loc_target[R-1]]+30 and\n\thumanPositionX[human_to_be_followed[R-1]-1] &gt;= location_X[f_loc_target[R-1]]-30 and\n\thumanPositionY[human_to_be_followed[R-1]-1] &lt;= location_Y[f_loc_target[R-1]]+30 and\n\thumanPositionY[human_to_be_followed[R-1]-1] &gt;= location_Y[f_loc_target[R-1]]-30 and\n\trobPositionX[R-1] &gt;= location_X[f_loc_target[R-1]]-30 and\n\trobPositionX[R-1] &lt;= location_X[f_loc_target[R-1]]+30 and\n\trobPositionY[R-1] &gt;= location_Y[f_loc_target[R-1]]-30 and\n\trobPositionY[R-1] &lt;= location_Y[f_loc_target[R-1]]+30");
+      rMapGuard.put("followR", "robPositionX[robot_to_be_followed[R-1]] &lt;= location_X[f_loc_target[R-1]]+30 and\n\trobPositionX[robot_to_be_followed[R-1]-1] &gt;= location_X[f_loc_target[R-1]]-30 and\n\trobPositionX[robot_to_be_followed[R-1]-1] &lt;= location_Y[f_loc_target[R-1]]+30 and\n\trobPositionX[robot_to_be_followed[R-1]-1] &gt;= location_Y[f_loc_target[R-1]]-30 and\n\trobPositionX[R-1] &gt;= location_X[f_loc_target[R-1]]-30 and\n\trobPositionX[R-1] &lt;= location_X[f_loc_target[R-1]]+30 and\n\trobPositionY[R-1] &gt;= location_Y[f_loc_target[R-1]]-30 and\n\trobPositionY[R-1] &lt;= location_Y[f_loc_target[R-1]]+30");
       rMapGuard.put("pick", "robot_inventory[R-1][robot_res_to_pick[R-1]] > old_inventory[R-1][robot_res_to_pick[R-1]]");
       rMapGuard.put("deposit", "robot_inventory[R-1][robot_res_to_deposit[R-1]] &lt; old_inventory[R-1][robot_res_to_deposit[R-1]]");
       final Consumer<SubSequence> _function_11 = (SubSequence subSequence) -> {
@@ -2740,604 +2703,748 @@ public class LIRAsGenerator extends AbstractGenerator {
     return builder.toString();
   }
 
-  public String apPositionGuard(final Model model, final String Agent, final String Location) {
-    final int[] locNum = { 0 };
-    final int[] hNum = { 0 };
-    final int[] rNum = { 0 };
-    final StringBuilder builder = new StringBuilder();
-    final Consumer<it.polimi.lIRAs.Location> _function = (it.polimi.lIRAs.Location loc) -> {
-      int _get = locNum[0];
-      int _plus = (_get + 1);
-      locNum[0] = _plus;
+  public String apPositionGuard(final Model model, final String agentName, final String locationName) {
+    final Function1<Location, String> _function = (Location it) -> {
+      return it.getName().toString();
     };
-    model.getPattern().getLocation().forEach(_function);
-    final String[] locations = new String[locNum[0]];
-    locNum[0] = 0;
-    final Consumer<it.polimi.lIRAs.Location> _function_1 = (it.polimi.lIRAs.Location loc) -> {
-      locations[locNum[0]] = loc.getName().toString();
-      int _get = locNum[0];
-      int _plus = (_get + 1);
-      locNum[0] = _plus;
+    final int locIndex = IterableExtensions.<String>toList(ListExtensions.<Location, String>map(model.getPattern().getLocation(), _function)).indexOf(locationName);
+    final Function1<Human, String> _function_1 = (Human it) -> {
+      return it.getName().toString();
     };
-    model.getPattern().getLocation().forEach(_function_1);
-    final Consumer<Human> _function_2 = (Human hum) -> {
-      int _get = hNum[0];
-      int _plus = (_get + 1);
-      hNum[0] = _plus;
-    };
-    model.getPattern().getHuman().forEach(_function_2);
-    final String[] humans = new String[hNum[0]];
-    hNum[0] = 0;
-    final Consumer<Human> _function_3 = (Human hum) -> {
-      humans[hNum[0]] = hum.getName().toString();
-      int _get = hNum[0];
-      int _plus = (_get + 1);
-      hNum[0] = _plus;
-    };
-    model.getPattern().getHuman().forEach(_function_3);
-    final Consumer<Robot> _function_4 = (Robot rob) -> {
-      int _get = rNum[0];
-      int _plus = (_get + 1);
-      rNum[0] = _plus;
-    };
-    model.getPattern().getRobot().forEach(_function_4);
-    final String[] robots = new String[rNum[0]];
-    rNum[0] = 0;
-    final Consumer<Robot> _function_5 = (Robot rob) -> {
-      robots[rNum[0]] = rob.getName().toString();
-      int _get = rNum[0];
-      int _plus = (_get + 1);
-      rNum[0] = _plus;
-    };
-    model.getPattern().getRobot().forEach(_function_5);
-    final int locIndex = ((List<String>)Conversions.doWrapArray(locations)).indexOf(Location);
-    boolean _contains = ArrayExtensions.contains(humans, Agent);
-    if (_contains) {
-      final int hIndex = ((List<String>)Conversions.doWrapArray(humans)).indexOf(Agent);
-      builder.append(String.format((((((((((((((((("humanPositionX[" + Integer.valueOf(hIndex)) + "] &lt;= location_X[") + Integer.valueOf(locIndex)) + "]+30 and\nhumanPositionX[") + Integer.valueOf(hIndex)) + "] &gt;= location_X[") + Integer.valueOf(locIndex)) + "]-30 and\nhumanPositionY[") + Integer.valueOf(hIndex)) + "] &lt;= location_Y[") + Integer.valueOf(locIndex)) + "]+30 and\nhumanPositionY[") + Integer.valueOf(hIndex)) + "] &gt;= location_Y[") + Integer.valueOf(locIndex)) + "]-30")));
+    final int hIndex = IterableExtensions.<String>toList(ListExtensions.<Human, String>map(model.getPattern().getHuman(), _function_1)).indexOf(agentName);
+    if ((hIndex != (-1))) {
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("humanPositionX[");
+      _builder.append(hIndex);
+      _builder.append("] &lt;= location_X[");
+      _builder.append(locIndex);
+      _builder.append("]+30 and");
+      _builder.newLineIfNotEmpty();
+      _builder.append("humanPositionX[");
+      _builder.append(hIndex);
+      _builder.append("] &gt;= location_X[");
+      _builder.append(locIndex);
+      _builder.append("]-30 and");
+      _builder.newLineIfNotEmpty();
+      _builder.append("humanPositionY[");
+      _builder.append(hIndex);
+      _builder.append("] &lt;= location_Y[");
+      _builder.append(locIndex);
+      _builder.append("]+30 and");
+      _builder.newLineIfNotEmpty();
+      _builder.append("humanPositionY[");
+      _builder.append(hIndex);
+      _builder.append("] &gt;= location_Y[");
+      _builder.append(locIndex);
+      _builder.append("]-30");
+      return _builder.toString();
     }
-    boolean _contains_1 = ArrayExtensions.contains(robots, Agent);
-    if (_contains_1) {
-      final int rIndex = ((List<String>)Conversions.doWrapArray(robots)).indexOf(Agent);
-      builder.append(String.format((((((((((((((((("robPositionX[" + Integer.valueOf(rIndex)) + "] &lt;= location_X[") + Integer.valueOf(locIndex)) + "]+30 and\nrobPositionX[") + Integer.valueOf(rIndex)) + "] &gt;= location_X[") + Integer.valueOf(locIndex)) + "]-30 and\nrobPositionY[") + Integer.valueOf(rIndex)) + "] &lt;= location_Y[") + Integer.valueOf(locIndex)) + "]+30 and\nrobPositionY[") + Integer.valueOf(rIndex)) + "] &gt;= location_Y[") + Integer.valueOf(locIndex)) + "]-30")));
+    final Function1<Robot, String> _function_2 = (Robot it) -> {
+      return it.getName().toString();
+    };
+    final int rIndex = IterableExtensions.<String>toList(ListExtensions.<Robot, String>map(model.getPattern().getRobot(), _function_2)).indexOf(agentName);
+    if ((rIndex != (-1))) {
+      StringConcatenation _builder_1 = new StringConcatenation();
+      _builder_1.append("robPositionX[");
+      _builder_1.append(rIndex);
+      _builder_1.append("] &lt;= location_X[");
+      _builder_1.append(locIndex);
+      _builder_1.append("]+30 and");
+      _builder_1.newLineIfNotEmpty();
+      _builder_1.append("robPositionX[");
+      _builder_1.append(rIndex);
+      _builder_1.append("] &gt;= location_X[");
+      _builder_1.append(locIndex);
+      _builder_1.append("]-30 and");
+      _builder_1.newLineIfNotEmpty();
+      _builder_1.append("robPositionY[");
+      _builder_1.append(rIndex);
+      _builder_1.append("] &lt;= location_Y[");
+      _builder_1.append(locIndex);
+      _builder_1.append("]+30 and");
+      _builder_1.newLineIfNotEmpty();
+      _builder_1.append("robPositionY[");
+      _builder_1.append(rIndex);
+      _builder_1.append("] &gt;= location_Y[");
+      _builder_1.append(locIndex);
+      _builder_1.append("]-30");
+      return _builder_1.toString();
     }
-    return builder.toString();
+    return "// Error: Agent not found";
   }
 
-  public String genLoc(final int id, final int x, final int y, final String name, final String invariant, final String Rate_of_exp, final boolean urgent, final boolean committed) {
-    final StringBuilder builder = new StringBuilder();
-    builder.append(String.format("\t\t<location id=\"id%d\" x=\"%d\" y=\"%d\">\n", Integer.valueOf(id), Integer.valueOf(x), Integer.valueOf(y)));
-    if ((name != null)) {
-      builder.append(String.format("\t\t\t<name x=\"%d\" y=\"%d\">%s</name>\n", Integer.valueOf((x - 17)), Integer.valueOf((y - 34)), name));
+  public String genLoc(final int id, final int x, final int y, final String name, final String invariant, final String rate_of_exp, final boolean urgent, final boolean committed) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("<location id=\"id");
+    _builder.append(id);
+    _builder.append("\" x=\"");
+    _builder.append(x);
+    _builder.append("\" y=\"");
+    _builder.append(y);
+    _builder.append("\">");
+    _builder.newLineIfNotEmpty();
+    {
+      if ((name != null)) {
+        _builder.append("\t");
+        _builder.append("<name x=\"");
+        _builder.append((x - 17), "\t");
+        _builder.append("\" y=\"");
+        _builder.append((y - 34), "\t");
+        _builder.append("\">");
+        _builder.append(name, "\t");
+        _builder.append("</name>");
+        _builder.newLineIfNotEmpty();
+      }
     }
-    if ((invariant != null)) {
-      builder.append(String.format("\t\t\t<label kind=\"invariant\" x=\"%d\" y=\"%d\">%s</label>\n", Integer.valueOf((x - 10)), Integer.valueOf((y + 17)), invariant));
+    {
+      if ((invariant != null)) {
+        _builder.append("\t");
+        _builder.append("<label kind=\"invariant\" x=\"");
+        _builder.append((x - 10), "\t");
+        _builder.append("\" y=\"");
+        _builder.append((y + 17), "\t");
+        _builder.append("\">");
+        _builder.append(invariant, "\t");
+        _builder.append("</label>");
+        _builder.newLineIfNotEmpty();
+      }
     }
-    if ((Rate_of_exp != null)) {
-      builder.append(String.format("\t\t\t<label kind=\"exponentialrate\" x=\"%d\" y=\"%d\">%s</label>\n", Integer.valueOf((x - 10)), Integer.valueOf((y + 34)), Rate_of_exp));
+    {
+      if ((rate_of_exp != null)) {
+        _builder.append("\t");
+        _builder.append("<label kind=\"exponentialrate\" x=\"");
+        _builder.append((x - 10), "\t");
+        _builder.append("\" y=\"");
+        _builder.append((y + 34), "\t");
+        _builder.append("\">");
+        _builder.append(rate_of_exp, "\t");
+        _builder.append("</label>");
+        _builder.newLineIfNotEmpty();
+      }
     }
-    if (((Boolean.valueOf(urgent) != Boolean.valueOf(false)) && (Boolean.valueOf(committed) != Boolean.valueOf(true)))) {
-      builder.append(String.format("\t\t\t<urgent/>\n", Integer.valueOf(id)));
+    {
+      if ((urgent && (!committed))) {
+        _builder.append("\t");
+        _builder.append("<urgent/>");
+        _builder.newLine();
+      }
     }
-    if (((Boolean.valueOf(committed) != Boolean.valueOf(false)) && (Boolean.valueOf(urgent) != Boolean.valueOf(true)))) {
-      builder.append(String.format("\t\t\t<committed/>\n", Integer.valueOf(id)));
+    {
+      if ((committed && (!urgent))) {
+        _builder.append("\t");
+        _builder.append("<committed/>");
+        _builder.newLine();
+      }
     }
-    builder.append("\t\t</location>\n");
-    return builder.toString();
+    _builder.append("</location>");
+    _builder.newLine();
+    return _builder.toString();
   }
 
   public String genTran(final int id, final int source, final int target, final String select, final String guard, final String sync, final String update, final boolean controllable, final int xOffset, final int yOffset, final int nailX, final int nailY) {
-    final StringBuilder builder = new StringBuilder();
-    if ((controllable == false)) {
-      builder.append(String.format("\t\t<transition id=\"id%d\" controllable=\"false\">\n", Integer.valueOf(id)));
+    final boolean isPatternOrch = ((xOffset == 500) && (yOffset == 0));
+    int _xifexpression = (int) 0;
+    if (isPatternOrch) {
+      _xifexpression = (xOffset * source);
     } else {
-      builder.append(String.format("\t\t<transition id=\"id%d\">\n", Integer.valueOf(id)));
+      _xifexpression = xOffset;
     }
-    builder.append(String.format("\t\t\t<source ref=\"id%d\"/>\n", Integer.valueOf(source)));
-    builder.append(String.format("\t\t\t<target ref=\"id%d\"/>\n", Integer.valueOf(target)));
-    if (((xOffset == 500) && (yOffset == 0))) {
-      if ((select != null)) {
-        builder.append(String.format("\t\t\t<label kind=\"select\" x=\"%d\" y=\"%d\">%s</label>\n", Integer.valueOf((17 + (xOffset * source))), Integer.valueOf(((-51) + (yOffset * source))), select));
-      }
-      if ((guard != null)) {
-        builder.append(String.format("\t\t\t<label kind=\"guard\" x=\"%d\" y=\"%d\">%s</label>\n", Integer.valueOf((18 + (xOffset * source))), Integer.valueOf(((-34) + (yOffset * source))), guard));
-      }
-      if ((sync != null)) {
-        builder.append(String.format("\t\t\t<label kind=\"synchronisation\" x=\"%d\" y=\"%d\">%s</label>\n", Integer.valueOf((18 + (xOffset * source))), Integer.valueOf(((-17) + (yOffset * source))), sync));
-      }
-      if ((update != null)) {
-        builder.append(String.format("\t\t\t<label kind=\"assignment\" x=\"%d\" y=\"%d\">%s</label>\n", Integer.valueOf((18 + (xOffset * source))), Integer.valueOf((0 + (yOffset * source))), update));
-      }
-      if (((nailX != 0) && (nailY != 0))) {
-        builder.append(String.format("\t\t\t<nail x=\"%d\" y=\"%d\"/>\n", Integer.valueOf(nailX), Integer.valueOf(nailY)));
-      }
+    final int baseX = _xifexpression;
+    int _xifexpression_1 = (int) 0;
+    if (isPatternOrch) {
+      _xifexpression_1 = (yOffset * source);
     } else {
-      if ((select != null)) {
-        builder.append(String.format("\t\t\t<label kind=\"select\" x=\"%d\" y=\"%d\">%s</label>\n", Integer.valueOf((17 + xOffset)), Integer.valueOf(((-51) + yOffset)), select));
-      }
-      if ((guard != null)) {
-        builder.append(String.format("\t\t\t<label kind=\"guard\" x=\"%d\" y=\"%d\">%s</label>\n", Integer.valueOf((18 + xOffset)), Integer.valueOf(((-34) + yOffset)), guard));
-      }
-      if ((sync != null)) {
-        builder.append(String.format("\t\t\t<label kind=\"synchronisation\" x=\"%d\" y=\"%d\">%s</label>\n", Integer.valueOf((18 + xOffset)), Integer.valueOf(((-17) + yOffset)), sync));
-      }
-      if ((update != null)) {
-        builder.append(String.format("\t\t\t<label kind=\"assignment\" x=\"%d\" y=\"%d\">%s</label>\n", Integer.valueOf((18 + xOffset)), Integer.valueOf((0 + yOffset)), update));
-      }
-      if (((nailX != 0) && (nailY != 0))) {
-        builder.append(String.format("\t\t\t<nail x=\"%d\" y=\"%d\"/>\n", Integer.valueOf(nailX), Integer.valueOf(nailY)));
+      _xifexpression_1 = yOffset;
+    }
+    final int baseY = _xifexpression_1;
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("<transition id=\"id");
+    _builder.append(id);
+    _builder.append("\"");
+    {
+      if ((!controllable)) {
+        _builder.append(" controllable=\"false\"");
       }
     }
-    builder.append("\t\t</transition>\n");
-    return builder.toString();
+    _builder.append(">");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("<source ref=\"id");
+    _builder.append(source, "\t");
+    _builder.append("\"/>");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("<target ref=\"id");
+    _builder.append(target, "\t");
+    _builder.append("\"/>");
+    _builder.newLineIfNotEmpty();
+    {
+      if ((select != null)) {
+        _builder.append("\t");
+        _builder.append("<label kind=\"select\" x=\"");
+        _builder.append((17 + baseX), "\t");
+        _builder.append("\" y=\"");
+        _builder.append(((-51) + baseY), "\t");
+        _builder.append("\">");
+        _builder.append(select, "\t");
+        _builder.append("</label>");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    {
+      if ((guard != null)) {
+        _builder.append("\t");
+        _builder.append("<label kind=\"guard\" x=\"");
+        _builder.append((18 + baseX), "\t");
+        _builder.append("\" y=\"");
+        _builder.append(((-34) + baseY), "\t");
+        _builder.append("\">");
+        _builder.append(guard, "\t");
+        _builder.append("</label>");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    {
+      if ((sync != null)) {
+        _builder.append("\t");
+        _builder.append("<label kind=\"synchronisation\" x=\"");
+        _builder.append((18 + baseX), "\t");
+        _builder.append("\" y=\"");
+        _builder.append(((-17) + baseY), "\t");
+        _builder.append("\">");
+        _builder.append(sync, "\t");
+        _builder.append("</label>");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    {
+      if ((update != null)) {
+        _builder.append("\t");
+        _builder.append("<label kind=\"assignment\" x=\"");
+        _builder.append((18 + baseX), "\t");
+        _builder.append("\" y=\"");
+        _builder.append((0 + baseY), "\t");
+        _builder.append("\">");
+        _builder.append(update, "\t");
+        _builder.append("</label>");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    {
+      if (((nailX != 0) && (nailY != 0))) {
+        _builder.append("\t");
+        _builder.append("<nail x=\"");
+        _builder.append(nailX, "\t");
+        _builder.append("\" y=\"");
+        _builder.append(nailY, "\t");
+        _builder.append("\"/>");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    _builder.append("</transition>");
+    _builder.newLine();
+    return _builder.toString();
   }
 
   public String verifier(final Model model) {
     final int simTime = 700;
     final Pattern pattern = model.getPattern();
     final String patternName = pattern.getName().toString();
+    Integer _elvis = null;
     final Function1<Sequence, EList<SubSequence>> _function = (Sequence it) -> {
       return it.getSubSequence();
     };
-    final Iterable<SubSequence> allSS = IterableExtensions.<Sequence, SubSequence>flatMap(model.getSequence(), _function);
-    Integer _elvis = null;
     final Function1<SubSequence, Integer> _function_1 = (SubSequence it) -> {
       return Integer.valueOf(Math.max(it.getI(), it.getJ()));
     };
-    Integer _max = IterableExtensions.<Integer>max(IterableExtensions.<SubSequence, Integer>map(allSS, _function_1));
+    Integer _max = IterableExtensions.<Integer>max(IterableExtensions.<SubSequence, Integer>map(IterableExtensions.<Sequence, SubSequence>flatMap(model.getSequence(), _function), _function_1));
     if (_max != null) {
       _elvis = _max;
     } else {
       _elvis = Integer.valueOf(0);
     }
     final Integer maxIndex = _elvis;
-    final ArrayList<String> queries = CollectionLiterals.<String>newArrayList();
-    final Consumer<Sequence> _function_2 = (Sequence seq) -> {
-      final int[] continuation = new int[(maxIndex).intValue()];
-      final int[] emptySS = new int[(maxIndex).intValue()];
-      final String agent = seq.getAgent().getName().toLowerCase();
-      final Consumer<SubSequence> _function_3 = (SubSequence ss) -> {
-        int _j = ss.getJ();
-        int _i = ss.getI();
-        boolean _greaterThan = (_j > _i);
-        if (_greaterThan) {
-          int _i_1 = ss.getI();
-          int _plus = (_i_1 + 1);
-          int _j_1 = ss.getJ();
-          final Consumer<Integer> _function_4 = (Integer k) -> {
-            continuation[((k).intValue() - 1)] = 1;
-            emptySS[((k).intValue() - 1)] = 1;
-          };
-          new IntegerRange(_plus, _j_1).forEach(_function_4);
-        }
-        if (((ss.getActionC() != null) && (!ss.getActionC().isEmpty()))) {
-          int _i_2 = ss.getI();
-          int _minus = (_i_2 - 1);
-          emptySS[_minus] = 1;
-        }
-      };
-      seq.getSubSequence().forEach(_function_3);
-      final Function1<Integer, String> _function_4 = (Integer i) -> {
-        String _xblockexpression = null;
-        {
-          final int c = continuation[((i).intValue() - 1)];
-          final int e = emptySS[((i).intValue() - 1)];
-          String _xifexpression = null;
-          if (((e == 0) && (c == 0))) {
-            StringConcatenation _builder = new StringConcatenation();
-            _builder.append(patternName);
-            _builder.append("_");
-            _builder.append(agent);
-            _builder.append("_def.S");
-            _builder.append(i);
-            _builder.append("_idle");
-            _xifexpression = _builder.toString();
-          } else {
-            String _xifexpression_1 = null;
-            if (((e == 1) && (c == 0))) {
-              StringConcatenation _builder_1 = new StringConcatenation();
-              _builder_1.append(patternName);
-              _builder_1.append("_");
-              _builder_1.append(agent);
-              _builder_1.append("_def.s");
-              _builder_1.append(i);
-              _builder_1.append("_end");
-              _xifexpression_1 = _builder_1.toString();
+    final ArrayList<String> queries = new ArrayList<String>();
+    EList<Sequence> _sequence = model.getSequence();
+    for (final Sequence seq : _sequence) {
+      {
+        final int[] continuation = new int[(maxIndex).intValue()];
+        final int[] emptySS = new int[(maxIndex).intValue()];
+        final String agent = seq.getAgent().getName().toLowerCase();
+        EList<SubSequence> _subSequence = seq.getSubSequence();
+        for (final SubSequence ss : _subSequence) {
+          {
+            int _j = ss.getJ();
+            int _i = ss.getI();
+            boolean _greaterThan = (_j > _i);
+            if (_greaterThan) {
+              int _i_1 = ss.getI();
+              int _plus = (_i_1 + 1);
+              int _j_1 = ss.getJ();
+              IntegerRange _upTo = new IntegerRange(_plus, _j_1);
+              for (final Integer k : _upTo) {
+                {
+                  continuation[((k).intValue() - 1)] = 1;
+                  emptySS[((k).intValue() - 1)] = 1;
+                }
+              }
             }
-            _xifexpression = _xifexpression_1;
+            if (((ss.getActionC() != null) && (!ss.getActionC().isEmpty()))) {
+              int _i_2 = ss.getI();
+              int _minus = (_i_2 - 1);
+              emptySS[_minus] = 1;
+            }
           }
-          _xblockexpression = _xifexpression;
         }
-        return _xblockexpression;
-      };
-      final String states = IterableExtensions.join(IterableExtensions.<String>filterNull(IterableExtensions.<Integer, String>map(new IntegerRange(1, (maxIndex).intValue()), _function_4)), ", ");
-      StringConcatenation _builder = new StringConcatenation();
-      _builder.append("<query>");
-      _builder.newLine();
-      _builder.append("    ");
-      _builder.append("<formula>simulate[&lt;=");
-      _builder.append(simTime, "    ");
-      _builder.append("]{");
-      _builder.append(states, "    ");
-      _builder.append(", ");
-      _builder.append(patternName, "    ");
-      _builder.append(".end}</formula>");
-      _builder.newLineIfNotEmpty();
-      _builder.append("</query>");
-      _builder.newLine();
-      queries.add(_builder.toString());
-    };
-    model.getSequence().forEach(_function_2);
+        final Function1<Integer, String> _function_2 = (Integer i) -> {
+          String _xblockexpression = null;
+          {
+            final int c = continuation[((i).intValue() - 1)];
+            final int e = emptySS[((i).intValue() - 1)];
+            String _xifexpression = null;
+            if ((c == 0)) {
+              String _xblockexpression_1 = null;
+              {
+                StringConcatenation _builder = new StringConcatenation();
+                _builder.append(patternName);
+                _builder.append("_");
+                _builder.append(agent);
+                _builder.append("_def.s");
+                _builder.append(i);
+                _builder.append("_start");
+                final String startState = _builder.toString();
+                String _xifexpression_1 = null;
+                if ((e == 0)) {
+                  StringConcatenation _builder_1 = new StringConcatenation();
+                  _builder_1.append(patternName);
+                  _builder_1.append("_");
+                  _builder_1.append(agent);
+                  _builder_1.append("_def.s");
+                  _builder_1.append(i);
+                  _builder_1.append("_idle");
+                  _xifexpression_1 = _builder_1.toString();
+                } else {
+                  StringConcatenation _builder_2 = new StringConcatenation();
+                  _builder_2.append(patternName);
+                  _builder_2.append("_");
+                  _builder_2.append(agent);
+                  _builder_2.append("_def.s");
+                  _builder_2.append(i);
+                  _builder_2.append("_end");
+                  _xifexpression_1 = _builder_2.toString();
+                }
+                final String endOrIdleState = _xifexpression_1;
+                StringConcatenation _builder_3 = new StringConcatenation();
+                _builder_3.append(startState);
+                _builder_3.append(", ");
+                _builder_3.append(endOrIdleState);
+                _xblockexpression_1 = _builder_3.toString();
+              }
+              _xifexpression = _xblockexpression_1;
+            } else {
+              _xifexpression = null;
+            }
+            _xblockexpression = _xifexpression;
+          }
+          return _xblockexpression;
+        };
+        final String states = IterableExtensions.join(IterableExtensions.<String>filterNull(IterableExtensions.<Integer, String>map(new IntegerRange(1, (maxIndex).intValue()), _function_2)), ", ");
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append("<query>");
+        _builder.newLine();
+        _builder.append("\t");
+        _builder.append("<formula>simulate[&lt;=");
+        _builder.append(simTime, "\t");
+        _builder.append("]{");
+        _builder.append(states, "\t");
+        _builder.append(", ");
+        _builder.append(patternName, "\t");
+        _builder.append(".end}</formula>");
+        _builder.newLineIfNotEmpty();
+        _builder.append("</query>");
+        _builder.newLine();
+        queries.add(_builder.toString());
+      }
+    }
     final int hCount = pattern.getHuman().size();
     final int rCount = pattern.getRobot().size();
     final int resCount = pattern.getResources().size();
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("<query>");
     _builder.newLine();
-    _builder.append("    ");
+    _builder.append("\t");
     _builder.append("<formula>Pr[&lt;=");
-    _builder.append(simTime, "    ");
+    _builder.append(simTime, "\t");
     _builder.append("] (&lt;&gt; ");
-    _builder.append(patternName, "    ");
+    _builder.append(patternName, "\t");
     _builder.append(".end)</formula>");
     _builder.newLineIfNotEmpty();
-    _builder.append("    ");
+    _builder.append("\t");
     _builder.append("<comment>Check if the whole pattern ends within ");
-    _builder.append(simTime, "    ");
+    _builder.append(simTime, "\t");
     _builder.append(" time unit</comment>");
     _builder.newLineIfNotEmpty();
     _builder.append("</query>");
     _builder.newLine();
     queries.add(_builder.toString());
-    final Function1<Integer, String> _function_3 = (Integer it) -> {
-      StringConcatenation _builder_1 = new StringConcatenation();
-      _builder_1.append("humanPositionX[");
-      _builder_1.append(it);
-      _builder_1.append("], humanPositionY[");
-      _builder_1.append(it);
-      _builder_1.append("]");
-      return _builder_1.toString();
-    };
-    Iterable<String> _map = IterableExtensions.<Integer, String>map(new ExclusiveRange(0, hCount, true), _function_3);
-    final Function1<Integer, String> _function_4 = (Integer it) -> {
-      StringConcatenation _builder_1 = new StringConcatenation();
-      _builder_1.append("robPositionX[");
-      _builder_1.append(it);
-      _builder_1.append("], robPositionY[");
-      _builder_1.append(it);
-      _builder_1.append("], batteryCharge[");
-      _builder_1.append(it);
-      _builder_1.append("]");
-      return _builder_1.toString();
-    };
-    Iterable<String> _map_1 = IterableExtensions.<Integer, String>map(new ExclusiveRange(0, rCount, true), _function_4);
-    final Iterable<String> posParts = Iterables.<String>concat(_map, _map_1);
-    StringConcatenation _builder_1 = new StringConcatenation();
-    _builder_1.append("<query>");
-    _builder_1.newLine();
-    _builder_1.append("    ");
-    _builder_1.append("<formula>simulate[&lt;=");
-    _builder_1.append(simTime, "    ");
-    _builder_1.append("]{");
-    String _join = IterableExtensions.join(posParts, ", ");
-    _builder_1.append(_join, "    ");
-    _builder_1.append(", ");
-    _builder_1.append(patternName, "    ");
-    _builder_1.append(".end}</formula>");
-    _builder_1.newLineIfNotEmpty();
-    _builder_1.append("    ");
-    _builder_1.append("<comment>Check the position of all the agent in the pattern for ");
-    _builder_1.append(simTime, "    ");
-    _builder_1.append(" time unit</comment>");
-    _builder_1.newLineIfNotEmpty();
-    _builder_1.append("</query>");
-    _builder_1.newLine();
-    queries.add(_builder_1.toString());
-    final Function1<Integer, Iterable<String>> _function_5 = (Integer r) -> {
-      final Function1<Integer, String> _function_6 = (Integer res) -> {
-        StringConcatenation _builder_2 = new StringConcatenation();
-        _builder_2.append("robot_inventory[");
-        _builder_2.append(r);
-        _builder_2.append("][");
-        _builder_2.append(res);
-        _builder_2.append("]");
-        return _builder_2.toString();
+    final ArrayList<String> posParts = new ArrayList<String>();
+    if ((hCount > 0)) {
+      final Function1<Integer, String> _function_2 = (Integer it) -> {
+        StringConcatenation _builder_1 = new StringConcatenation();
+        _builder_1.append("humanPositionX[");
+        _builder_1.append(it);
+        _builder_1.append("], humanPositionY[");
+        _builder_1.append(it);
+        _builder_1.append("]");
+        return _builder_1.toString();
       };
-      return IterableExtensions.<Integer, String>map(new ExclusiveRange(0, resCount, true), _function_6);
-    };
-    final String invs = IterableExtensions.join(IterableExtensions.<Integer, String>flatMap(new ExclusiveRange(0, rCount, true), _function_5), ", ");
-    StringConcatenation _builder_2 = new StringConcatenation();
-    _builder_2.append("<query>");
-    _builder_2.newLine();
-    _builder_2.append("    ");
-    _builder_2.append("<formula>simulate[&lt;=");
-    _builder_2.append(simTime, "    ");
-    _builder_2.append("]{");
-    _builder_2.append(invs, "    ");
-    _builder_2.append(", ");
-    _builder_2.append(patternName, "    ");
-    _builder_2.append(".end*2}</formula>");
-    _builder_2.newLineIfNotEmpty();
-    _builder_2.append("    ");
-    _builder_2.append("<comment>Check quantity of each item for each robot</comment>");
-    _builder_2.newLine();
-    _builder_2.append("</query>");
-    _builder_2.newLine();
-    queries.add(_builder_2.toString());
-    final Function1<Location, String> _function_6 = (Location it) -> {
-      String _name = it.getName();
-      String _plus = (_name + "[0], ");
-      String _name_1 = it.getName();
-      String _plus_1 = (_plus + _name_1);
-      return (_plus_1 + "[1]");
-    };
-    final String locs = IterableExtensions.join(ListExtensions.<Location, String>map(pattern.getLocation(), _function_6), ", ");
-    StringConcatenation _builder_3 = new StringConcatenation();
-    _builder_3.append("<query>");
-    _builder_3.newLine();
-    _builder_3.append("    ");
-    _builder_3.append("<formula>simulate[&lt;=");
-    _builder_3.append(simTime, "    ");
-    _builder_3.append("]{");
-    _builder_3.append(locs, "    ");
-    _builder_3.append("}</formula>");
-    _builder_3.newLineIfNotEmpty();
-    _builder_3.append("    ");
-    _builder_3.append("<comment>Plot the position of each location in the pattern</comment>");
-    _builder_3.newLine();
-    _builder_3.append("</query>");
-    _builder_3.newLine();
-    queries.add(_builder_3.toString());
-    final Function1<Integer, String> _function_7 = (Integer i) -> {
+      Iterables.<String>addAll(posParts, IterableExtensions.<Integer, String>map(new IntegerRange(0, (hCount - 1)), _function_2));
+    }
+    if ((rCount > 0)) {
+      final Function1<Integer, String> _function_3 = (Integer it) -> {
+        StringConcatenation _builder_1 = new StringConcatenation();
+        _builder_1.append("robPositionX[");
+        _builder_1.append(it);
+        _builder_1.append("], robPositionY[");
+        _builder_1.append(it);
+        _builder_1.append("], batteryCharge[");
+        _builder_1.append(it);
+        _builder_1.append("]");
+        return _builder_1.toString();
+      };
+      Iterables.<String>addAll(posParts, IterableExtensions.<Integer, String>map(new IntegerRange(0, (rCount - 1)), _function_3));
+    }
+    boolean _isEmpty = posParts.isEmpty();
+    boolean _not = (!_isEmpty);
+    if (_not) {
+      StringConcatenation _builder_1 = new StringConcatenation();
+      _builder_1.append("<query>");
+      _builder_1.newLine();
+      _builder_1.append("\t");
+      _builder_1.append("<formula>simulate[&lt;=");
+      _builder_1.append(simTime, "\t");
+      _builder_1.append("]{");
+      String _join = IterableExtensions.join(posParts, ", ");
+      _builder_1.append(_join, "\t");
+      _builder_1.append(", ");
+      _builder_1.append(patternName, "\t");
+      _builder_1.append(".end}</formula>");
+      _builder_1.newLineIfNotEmpty();
+      _builder_1.append("\t");
+      _builder_1.append("<comment>Check the position of all the agent in the pattern for ");
+      _builder_1.append(simTime, "\t");
+      _builder_1.append(" time unit</comment>");
+      _builder_1.newLineIfNotEmpty();
+      _builder_1.append("</query>");
+      _builder_1.newLine();
+      queries.add(_builder_1.toString());
+    }
+    if (((rCount > 0) && (resCount > 0))) {
+      final Function1<Integer, Iterable<String>> _function_4 = (Integer r) -> {
+        final Function1<Integer, String> _function_5 = (Integer res) -> {
+          StringConcatenation _builder_2 = new StringConcatenation();
+          _builder_2.append("robot_inventory[");
+          _builder_2.append(r);
+          _builder_2.append("][");
+          _builder_2.append(res);
+          _builder_2.append("]");
+          return _builder_2.toString();
+        };
+        return IterableExtensions.<Integer, String>map(new IntegerRange(0, (resCount - 1)), _function_5);
+      };
+      final String invs = IterableExtensions.join(IterableExtensions.<Integer, String>flatMap(new IntegerRange(0, (rCount - 1)), _function_4), ", ");
+      StringConcatenation _builder_2 = new StringConcatenation();
+      _builder_2.append("<query>");
+      _builder_2.newLine();
+      _builder_2.append("\t");
+      _builder_2.append("<formula>simulate[&lt;=");
+      _builder_2.append(simTime, "\t");
+      _builder_2.append("]{");
+      _builder_2.append(invs, "\t");
+      _builder_2.append(", ");
+      _builder_2.append(patternName, "\t");
+      _builder_2.append(".end*2}</formula>");
+      _builder_2.newLineIfNotEmpty();
+      _builder_2.append("\t");
+      _builder_2.append("<comment>Check quantity of each item for each robot</comment>");
+      _builder_2.newLine();
+      _builder_2.append("</query>");
+      _builder_2.newLine();
+      queries.add(_builder_2.toString());
+    }
+    boolean _isNullOrEmpty = IterableExtensions.isNullOrEmpty(pattern.getLocation());
+    boolean _not_1 = (!_isNullOrEmpty);
+    if (_not_1) {
+      final Function1<Location, String> _function_5 = (Location it) -> {
+        String _name = it.getName();
+        String _plus = (_name + "[0], ");
+        String _name_1 = it.getName();
+        String _plus_1 = (_plus + _name_1);
+        return (_plus_1 + "[1]");
+      };
+      final String locs = IterableExtensions.join(ListExtensions.<Location, String>map(pattern.getLocation(), _function_5), ", ");
+      StringConcatenation _builder_3 = new StringConcatenation();
+      _builder_3.append("<query>");
+      _builder_3.newLine();
+      _builder_3.append("\t");
+      _builder_3.append("<formula>simulate[&lt;=");
+      _builder_3.append(simTime, "\t");
+      _builder_3.append("]{");
+      _builder_3.append(locs, "\t");
+      _builder_3.append("}</formula>");
+      _builder_3.newLineIfNotEmpty();
+      _builder_3.append("\t");
+      _builder_3.append("<comment>Plot the position of each location in the pattern</comment>");
+      _builder_3.newLine();
+      _builder_3.append("</query>");
+      _builder_3.newLine();
+      queries.add(_builder_3.toString());
+    }
+    if ((rCount > 0)) {
+      final Function1<Integer, String> _function_6 = (Integer i) -> {
+        StringConcatenation _builder_4 = new StringConcatenation();
+        _builder_4.append("rm_");
+        _builder_4.append(i);
+        _builder_4.append(".idle, rf_");
+        _builder_4.append(i);
+        _builder_4.append(".idle, rp_");
+        _builder_4.append(i);
+        _builder_4.append(".idle, rd_");
+        _builder_4.append(i);
+        _builder_4.append(".idle");
+        return _builder_4.toString();
+      };
+      final String rmodes = IterableExtensions.join(IterableExtensions.<Integer, String>map(new IntegerRange(1, rCount), _function_6), ", ");
       StringConcatenation _builder_4 = new StringConcatenation();
-      _builder_4.append("rm_");
-      _builder_4.append(i);
-      _builder_4.append(".idle, rf_");
-      _builder_4.append(i);
-      _builder_4.append(".idle, rp_");
-      _builder_4.append(i);
-      _builder_4.append(".idle, rd_");
-      _builder_4.append(i);
-      _builder_4.append(".idle");
-      return _builder_4.toString();
-    };
-    final String rmodes = IterableExtensions.join(IterableExtensions.<Integer, String>map(new IntegerRange(1, rCount), _function_7), ", ");
-    StringConcatenation _builder_4 = new StringConcatenation();
-    _builder_4.append("<query>");
-    _builder_4.newLine();
-    _builder_4.append("    ");
-    _builder_4.append("<formula>simulate[&lt;=");
-    _builder_4.append(simTime, "    ");
-    _builder_4.append("]{");
-    _builder_4.append(rmodes, "    ");
-    _builder_4.append("}</formula>");
-    _builder_4.newLineIfNotEmpty();
-    _builder_4.append("    ");
-    _builder_4.append("<comment></comment>");
-    _builder_4.newLine();
-    _builder_4.append("</query>");
-    _builder_4.newLine();
-    queries.add(_builder_4.toString());
-    final Function1<Integer, String> _function_8 = (Integer i) -> {
+      _builder_4.append("<query>");
+      _builder_4.newLine();
+      _builder_4.append("\t");
+      _builder_4.append("<formula>simulate[&lt;=");
+      _builder_4.append(simTime, "\t");
+      _builder_4.append("]{");
+      _builder_4.append(rmodes, "\t");
+      _builder_4.append("}</formula>");
+      _builder_4.newLineIfNotEmpty();
+      _builder_4.append("\t");
+      _builder_4.append("<comment></comment>");
+      _builder_4.newLine();
+      _builder_4.append("</query>");
+      _builder_4.newLine();
+      queries.add(_builder_4.toString());
+      final Function1<Integer, String> _function_7 = (Integer i) -> {
+        StringConcatenation _builder_5 = new StringConcatenation();
+        _builder_5.append("!rm_");
+        _builder_5.append(i);
+        _builder_5.append(".idle || !rf_");
+        _builder_5.append(i);
+        _builder_5.append(".idle || !rp_");
+        _builder_5.append(i);
+        _builder_5.append(".idle || !rd_");
+        _builder_5.append(i);
+        _builder_5.append(".idle");
+        return _builder_5.toString();
+      };
+      final String rmodes2 = IterableExtensions.join(IterableExtensions.<Integer, String>map(new IntegerRange(1, rCount), _function_7), " || ");
       StringConcatenation _builder_5 = new StringConcatenation();
-      _builder_5.append("!rm_");
-      _builder_5.append(i);
-      _builder_5.append(".idle || !rf_");
-      _builder_5.append(i);
-      _builder_5.append(".idle || !rp_");
-      _builder_5.append(i);
-      _builder_5.append(".idle || !rd_");
-      _builder_5.append(i);
-      _builder_5.append(".idle");
-      return _builder_5.toString();
-    };
-    final String rmodes2 = IterableExtensions.join(IterableExtensions.<Integer, String>map(new IntegerRange(1, rCount), _function_8), " || ");
-    StringConcatenation _builder_5 = new StringConcatenation();
-    _builder_5.append("<query>");
-    _builder_5.newLine();
-    _builder_5.append("    ");
-    _builder_5.append("<formula>Pr[&lt;=");
-    _builder_5.append(simTime, "    ");
-    _builder_5.append("](&lt;&gt;");
-    _builder_5.append(rmodes2, "    ");
-    _builder_5.append(")</formula>");
-    _builder_5.newLineIfNotEmpty();
-    _builder_5.append("    ");
-    _builder_5.append("<comment></comment>");
-    _builder_5.newLine();
-    _builder_5.append("</query>");
-    _builder_5.newLine();
-    queries.add(_builder_5.toString());
-    final Function1<Integer, String> _function_9 = (Integer i) -> {
+      _builder_5.append("<query>");
+      _builder_5.newLine();
+      _builder_5.append("\t");
+      _builder_5.append("<formula>Pr[&lt;=");
+      _builder_5.append(simTime, "\t");
+      _builder_5.append("](&lt;&gt;");
+      _builder_5.append(rmodes2, "\t");
+      _builder_5.append(")</formula>");
+      _builder_5.newLineIfNotEmpty();
+      _builder_5.append("\t");
+      _builder_5.append("<comment></comment>");
+      _builder_5.newLine();
+      _builder_5.append("</query>");
+      _builder_5.newLine();
+      queries.add(_builder_5.toString());
+      final Function1<Integer, String> _function_8 = (Integer i) -> {
+        StringConcatenation _builder_6 = new StringConcatenation();
+        _builder_6.append("rm_");
+        _builder_6.append(i);
+        _builder_6.append(".idle &amp;&amp; rf_");
+        _builder_6.append(i);
+        _builder_6.append(".idle &amp;&amp; rp_");
+        _builder_6.append(i);
+        _builder_6.append(".idle &amp;&amp; rd_");
+        _builder_6.append(i);
+        _builder_6.append(".idle");
+        return _builder_6.toString();
+      };
+      final String rmodes3 = IterableExtensions.join(IterableExtensions.<Integer, String>map(new IntegerRange(1, rCount), _function_8), " &amp;&amp; ");
       StringConcatenation _builder_6 = new StringConcatenation();
-      _builder_6.append("rm_");
-      _builder_6.append(i);
-      _builder_6.append(".idle &amp;&amp; rf_");
-      _builder_6.append(i);
-      _builder_6.append(".idle &amp;&amp; rp_");
-      _builder_6.append(i);
-      _builder_6.append(".idle &amp;&amp; rd_");
-      _builder_6.append(i);
-      _builder_6.append(".idle");
-      return _builder_6.toString();
-    };
-    final String rmodes3 = IterableExtensions.join(IterableExtensions.<Integer, String>map(new IntegerRange(1, rCount), _function_9), " &amp;&amp; ");
-    StringConcatenation _builder_6 = new StringConcatenation();
-    _builder_6.append("<query>");
-    _builder_6.newLine();
-    _builder_6.append("    ");
-    _builder_6.append("<formula>Pr[&lt;=");
-    _builder_6.append(simTime, "    ");
-    _builder_6.append("]([] (");
-    _builder_6.append(patternName, "    ");
-    _builder_6.append(".end imply (");
-    _builder_6.append(rmodes3, "    ");
-    _builder_6.append(")))</formula>");
-    _builder_6.newLineIfNotEmpty();
-    _builder_6.append("    ");
-    _builder_6.append("<comment></comment>");
-    _builder_6.newLine();
-    _builder_6.append("</query>");
-    _builder_6.newLine();
-    queries.add(_builder_6.toString());
-    final Function1<Robot, String> _function_10 = (Robot it) -> {
+      _builder_6.append("<query>");
+      _builder_6.newLine();
+      _builder_6.append("\t");
+      _builder_6.append("<formula>Pr[&lt;=");
+      _builder_6.append(simTime, "\t");
+      _builder_6.append("]([] (");
+      _builder_6.append(patternName, "\t");
+      _builder_6.append(".end imply (");
+      _builder_6.append(rmodes3, "\t");
+      _builder_6.append(")))</formula>");
+      _builder_6.newLineIfNotEmpty();
+      _builder_6.append("\t");
+      _builder_6.append("<comment></comment>");
+      _builder_6.newLine();
+      _builder_6.append("</query>");
+      _builder_6.newLine();
+      queries.add(_builder_6.toString());
+    }
+    final Function1<Robot, String> _function_9 = (Robot it) -> {
       return it.getName();
     };
-    final List<String> robotList = ListExtensions.<Robot, String>map(pattern.getRobot(), _function_10);
-    final Function1<Human, String> _function_11 = (Human it) -> {
+    final List<String> robotList = ListExtensions.<Robot, String>map(pattern.getRobot(), _function_9);
+    final Function1<Human, String> _function_10 = (Human it) -> {
       return it.getName();
     };
-    final List<String> humanList = ListExtensions.<Human, String>map(pattern.getHuman(), _function_11);
-    final Consumer<Sequence> _function_12 = (Sequence seq) -> {
-      final int rIndex = robotList.indexOf(seq.getAgent().getName());
-      final int hIndex = humanList.indexOf(seq.getAgent().getName());
-      if ((rIndex != (-1))) {
-        final HashSet<String> targets = new HashSet<String>();
-        final Consumer<SubSequence> _function_13 = (SubSequence ss) -> {
-          final Consumer<ActionC> _function_14 = (ActionC act) -> {
-            String _actionType = act.getActionType();
-            boolean _equals = Objects.equals(_actionType, "moveTo");
-            if (_equals) {
-              targets.add(act.getTarget().getName());
+    final List<String> humanList = ListExtensions.<Human, String>map(pattern.getHuman(), _function_10);
+    EList<Sequence> _sequence_1 = model.getSequence();
+    for (final Sequence seq_1 : _sequence_1) {
+      {
+        final int rIndex = robotList.indexOf(seq_1.getAgent().getName());
+        final int hIndex = humanList.indexOf(seq_1.getAgent().getName());
+        final boolean isRobot = (rIndex != (-1));
+        final boolean isHuman = (hIndex != (-1));
+        if ((isRobot || isHuman)) {
+          final HashSet<String> targets = new HashSet<String>();
+          EList<SubSequence> _subSequence = seq_1.getSubSequence();
+          for (final SubSequence ss : _subSequence) {
+            EList<ActionC> _actionC = ss.getActionC();
+            for (final ActionC act : _actionC) {
+              String _actionType = act.getActionType();
+              boolean _equals = Objects.equals(_actionType, "moveTo");
+              if (_equals) {
+                targets.add(act.getTarget().getName());
+              }
             }
-          };
-          ss.getActionC().forEach(_function_14);
-        };
-        seq.getSubSequence().forEach(_function_13);
-        final Consumer<String> _function_14 = (String tName) -> {
-          StringConcatenation _builder_7 = new StringConcatenation();
-          _builder_7.append("<query>");
-          _builder_7.newLine();
-          _builder_7.append("    ");
-          _builder_7.append("<formula>Pr[&lt;=");
-          _builder_7.append(simTime, "    ");
-          _builder_7.append("] (&lt;&gt; pow(robPositionX[");
-          _builder_7.append(rIndex, "    ");
-          _builder_7.append("] - ");
-          _builder_7.append(tName, "    ");
-          _builder_7.append("[0], 2) + pow(robPositionY[");
-          _builder_7.append(rIndex, "    ");
-          _builder_7.append("] - ");
-          _builder_7.append(tName, "    ");
-          _builder_7.append("[1], 2) &lt;= 900 )</formula>");
-          _builder_7.newLineIfNotEmpty();
-          _builder_7.append("    ");
-          _builder_7.append("<comment>Check if robot ");
-          String _name = seq.getAgent().getName();
-          _builder_7.append(_name, "    ");
-          _builder_7.append(" reaches ");
-          _builder_7.append(tName, "    ");
-          _builder_7.append(" (within 30 units)</comment>");
-          _builder_7.newLineIfNotEmpty();
-          _builder_7.append("</query>");
-          _builder_7.newLine();
-          queries.add(_builder_7.toString());
-        };
-        targets.forEach(_function_14);
+          }
+          String _xifexpression = null;
+          if (isRobot) {
+            _xifexpression = "robPositionX";
+          } else {
+            _xifexpression = "humanPositionX";
+          }
+          final String posX = _xifexpression;
+          String _xifexpression_1 = null;
+          if (isRobot) {
+            _xifexpression_1 = "robPositionY";
+          } else {
+            _xifexpression_1 = "humanPositionY";
+          }
+          final String posY = _xifexpression_1;
+          int _xifexpression_2 = (int) 0;
+          if (isRobot) {
+            _xifexpression_2 = rIndex;
+          } else {
+            _xifexpression_2 = hIndex;
+          }
+          final int idx = _xifexpression_2;
+          String _xifexpression_3 = null;
+          if (isRobot) {
+            _xifexpression_3 = "robot";
+          } else {
+            _xifexpression_3 = "human";
+          }
+          final String typeName = _xifexpression_3;
+          for (final String tName : targets) {
+            StringConcatenation _builder_7 = new StringConcatenation();
+            _builder_7.append("<query>");
+            _builder_7.newLine();
+            _builder_7.append("\t");
+            _builder_7.append("<formula>Pr[&lt;=");
+            _builder_7.append(simTime, "\t");
+            _builder_7.append("] (&lt;&gt; pow(");
+            _builder_7.append(posX, "\t");
+            _builder_7.append("[");
+            _builder_7.append(idx, "\t");
+            _builder_7.append("] - ");
+            _builder_7.append(tName, "\t");
+            _builder_7.append("[0], 2) + pow(");
+            _builder_7.append(posY, "\t");
+            _builder_7.append("[");
+            _builder_7.append(idx, "\t");
+            _builder_7.append("] - ");
+            _builder_7.append(tName, "\t");
+            _builder_7.append("[1], 2) &lt;= 900 )</formula>");
+            _builder_7.newLineIfNotEmpty();
+            _builder_7.append("\t");
+            _builder_7.append("<comment>Check if ");
+            _builder_7.append(typeName, "\t");
+            _builder_7.append(" ");
+            String _name = seq_1.getAgent().getName();
+            _builder_7.append(_name, "\t");
+            _builder_7.append(" reaches ");
+            _builder_7.append(tName, "\t");
+            _builder_7.append(" (within 30 units)</comment>");
+            _builder_7.newLineIfNotEmpty();
+            _builder_7.append("</query>");
+            _builder_7.newLine();
+            queries.add(_builder_7.toString());
+          }
+        }
       }
-      if ((hIndex != (-1))) {
-        final HashSet<String> targets_1 = new HashSet<String>();
-        final Consumer<SubSequence> _function_15 = (SubSequence ss) -> {
-          final Consumer<ActionC> _function_16 = (ActionC act) -> {
-            String _actionType = act.getActionType();
-            boolean _equals = Objects.equals(_actionType, "moveTo");
-            if (_equals) {
-              targets_1.add(act.getTarget().getName());
-            }
-          };
-          ss.getActionC().forEach(_function_16);
-        };
-        seq.getSubSequence().forEach(_function_15);
-        final Consumer<String> _function_16 = (String tName) -> {
-          StringConcatenation _builder_7 = new StringConcatenation();
-          _builder_7.append("<query>");
-          _builder_7.newLine();
-          _builder_7.append("    ");
-          _builder_7.append("<formula>Pr[&lt;=");
-          _builder_7.append(simTime, "    ");
-          _builder_7.append("] (&lt;&gt; pow(humanPositionX[");
-          _builder_7.append(rIndex, "    ");
-          _builder_7.append("] - ");
-          _builder_7.append(tName, "    ");
-          _builder_7.append("[0], 2) + pow(humanPositionY[");
-          _builder_7.append(rIndex, "    ");
-          _builder_7.append("] - ");
-          _builder_7.append(tName, "    ");
-          _builder_7.append("[1], 2) &lt;= 900 )</formula>");
-          _builder_7.newLineIfNotEmpty();
-          _builder_7.append("    ");
-          _builder_7.append("<comment>Check if human ");
-          String _name = seq.getAgent().getName();
-          _builder_7.append(_name, "    ");
-          _builder_7.append(" reaches ");
-          _builder_7.append(tName, "    ");
-          _builder_7.append(" (within 30 units)</comment>");
-          _builder_7.newLineIfNotEmpty();
-          _builder_7.append("</query>");
-          _builder_7.newLine();
-          queries.add(_builder_7.toString());
-        };
-        targets_1.forEach(_function_16);
-      }
-    };
-    model.getSequence().forEach(_function_12);
-    final Procedure2<Human, Integer> _function_13 = (Human h, Integer i) -> {
+    }
+    final Procedure2<Human, Integer> _function_11 = (Human h, Integer i) -> {
       StringConcatenation _builder_7 = new StringConcatenation();
       _builder_7.append("<query>");
       _builder_7.newLine();
-      _builder_7.append("    ");
+      _builder_7.append("\t");
       _builder_7.append("<formula>Pr[&lt;=");
-      _builder_7.append(simTime, "    ");
+      _builder_7.append(simTime, "\t");
       _builder_7.append("] (&lt;&gt; !isValidPosition(humanPositionX[");
-      _builder_7.append(i, "    ");
+      _builder_7.append(i, "\t");
       _builder_7.append("], humanPositionY[");
-      _builder_7.append(i, "    ");
+      _builder_7.append(i, "\t");
       _builder_7.append("]))</formula>");
       _builder_7.newLineIfNotEmpty();
-      _builder_7.append("    ");
+      _builder_7.append("\t");
       _builder_7.append("<comment>Check if human ");
       String _name = h.getName();
-      _builder_7.append(_name, "    ");
+      _builder_7.append(_name, "\t");
       _builder_7.append(" enters an invalid position (e.g. collision or obstacle)</comment>");
       _builder_7.newLineIfNotEmpty();
       _builder_7.append("</query>");
       _builder_7.newLine();
       queries.add(_builder_7.toString());
     };
-    IterableExtensions.<Human>forEach(model.getPattern().getHuman(), _function_13);
-    final Procedure2<Robot, Integer> _function_14 = (Robot r, Integer i) -> {
+    IterableExtensions.<Human>forEach(pattern.getHuman(), _function_11);
+    final Procedure2<Robot, Integer> _function_12 = (Robot r, Integer i) -> {
       StringConcatenation _builder_7 = new StringConcatenation();
       _builder_7.append("<query>");
       _builder_7.newLine();
-      _builder_7.append("    ");
+      _builder_7.append("\t");
       _builder_7.append("<formula>Pr[&lt;=");
-      _builder_7.append(simTime, "    ");
+      _builder_7.append(simTime, "\t");
       _builder_7.append("] (&lt;&gt; !isValidPosition(robPositionX[");
-      _builder_7.append(i, "    ");
+      _builder_7.append(i, "\t");
       _builder_7.append("], robPositionY[");
-      _builder_7.append(i, "    ");
+      _builder_7.append(i, "\t");
       _builder_7.append("]))</formula>");
       _builder_7.newLineIfNotEmpty();
-      _builder_7.append("    ");
+      _builder_7.append("\t");
       _builder_7.append("<comment>Check if robot ");
       String _name = r.getName();
-      _builder_7.append(_name, "    ");
+      _builder_7.append(_name, "\t");
       _builder_7.append(" enters an invalid position (e.g. collision or obstacle)</comment>");
       _builder_7.newLineIfNotEmpty();
       _builder_7.append("</query>");
       _builder_7.newLine();
       queries.add(_builder_7.toString());
     };
-    IterableExtensions.<Robot>forEach(model.getPattern().getRobot(), _function_14);
+    IterableExtensions.<Robot>forEach(pattern.getRobot(), _function_12);
     StringConcatenation _builder_7 = new StringConcatenation();
     _builder_7.append("<query>");
     _builder_7.newLine();
-    _builder_7.append("    ");
+    _builder_7.append("\t");
     _builder_7.append("<formula>Pr[&lt;=");
-    _builder_7.append(simTime, "    ");
+    _builder_7.append(simTime, "\t");
     _builder_7.append("] (&lt;&gt; currP > 2)</formula>");
     _builder_7.newLineIfNotEmpty();
-    _builder_7.append("    ");
+    _builder_7.append("\t");
     _builder_7.append("<comment>Check if pattern is executed more then once</comment>");
     _builder_7.newLine();
     _builder_7.append("</query>");

@@ -240,50 +240,50 @@ bool isValidPosition(double x, double y) {
 		<parameter>int p</parameter>
 		<declaration>// Place local declarations here.
 		</declaration>
-		<location id="id0" x="0" y="0">
-			<name x="-17" y="-34">Init</name>
-		</location>
-		<location id="id1" x="500" y="0">
-			<name x="483" y="-34">sub_seq_s1</name>
-		</location>
-		<location id="id2" x="1000" y="0">
-			<name x="983" y="-34">sub_seq_s2</name>
-		</location>
-		<location id="id3" x="1500" y="0">
-			<name x="1483" y="-34">sub_seq_s3</name>
-		</location>
-		<location id="id4" x="2000" y="0">
-			<name x="1983" y="-34">end</name>
-		</location>
+<location id="id0" x="0" y="0">
+	<name x="-17" y="-34">Init</name>
+</location>
+<location id="id1" x="500" y="0">
+	<name x="483" y="-34">sub_seq_s1</name>
+</location>
+<location id="id2" x="1000" y="0">
+	<name x="983" y="-34">sub_seq_s2</name>
+</location>
+<location id="id3" x="1500" y="0">
+	<name x="1483" y="-34">sub_seq_s3</name>
+</location>
+<location id="id4" x="2000" y="0">
+	<name x="1983" y="-34">end</name>
+</location>
 		<init ref="id0"/>
-		<transition id="id5">
-			<source ref="id0"/>
-			<target ref="id1"/>
-			<label kind="guard" x="18" y="-34">robot1_stat==true and p==currP</label>
-			<label kind="synchronisation" x="18" y="-17">s1!</label>
-			<label kind="assignment" x="18" y="0">robot1_stat=false</label>
-		</transition>
-		<transition id="id6">
-			<source ref="id1"/>
-			<target ref="id2"/>
-			<label kind="guard" x="518" y="-34">robot1_stat==true</label>
-			<label kind="synchronisation" x="518" y="-17">s2!</label>
-			<label kind="assignment" x="518" y="0">robot1_stat=false</label>
-		</transition>
-		<transition id="id7">
-			<source ref="id2"/>
-			<target ref="id3"/>
-			<label kind="guard" x="1018" y="-34">robot1_stat==true</label>
-			<label kind="synchronisation" x="1018" y="-17">s3!</label>
-			<label kind="assignment" x="1018" y="0">robot1_stat=false</label>
-		</transition>
-		<transition id="id8">
-			<source ref="id3"/>
-			<target ref="id4"/>
-			<label kind="guard" x="1518" y="-34">robot1_stat==true</label>
-			<label kind="synchronisation" x="1518" y="-17">e!</label>
-			<label kind="assignment" x="1518" y="0">currP=currP+1</label>
-		</transition>
+<transition id="id5">
+	<source ref="id0"/>
+	<target ref="id1"/>
+	<label kind="guard" x="18" y="-34">robot1_stat==true and p==currP</label>
+	<label kind="synchronisation" x="18" y="-17">s1!</label>
+	<label kind="assignment" x="18" y="0">robot1_stat=false</label>
+</transition>
+<transition id="id6">
+	<source ref="id1"/>
+	<target ref="id2"/>
+	<label kind="guard" x="518" y="-34">robot1_stat==true</label>
+	<label kind="synchronisation" x="518" y="-17">s2!</label>
+	<label kind="assignment" x="518" y="0">robot1_stat=false</label>
+</transition>
+<transition id="id7">
+	<source ref="id2"/>
+	<target ref="id3"/>
+	<label kind="guard" x="1018" y="-34">robot1_stat==true</label>
+	<label kind="synchronisation" x="1018" y="-17">s3!</label>
+	<label kind="assignment" x="1018" y="0">robot1_stat=false</label>
+</transition>
+<transition id="id8">
+	<source ref="id3"/>
+	<target ref="id4"/>
+	<label kind="guard" x="1518" y="-34">robot1_stat==true</label>
+	<label kind="synchronisation" x="1518" y="-17">e!</label>
+	<label kind="assignment" x="1518" y="0">currP=currP+1</label>
+</transition>
 	</template>
 
 	<template>
@@ -291,135 +291,135 @@ bool isValidPosition(double x, double y) {
 		<parameter>int p, int R</parameter>
 		<declaration>// Place local declarations here.
 clock t;		</declaration>
-		<location id="id0" x="0" y="0">
-			<name x="-17" y="-34">init_robot1</name>
-		</location>
-		<location id="id1" x="0" y="350">
-			<name x="-17" y="316">s1_start</name>
-			<committed/>
-		</location>
-		<location id="id2" x="0" y="700">
-			<name x="-17" y="666">s2_start</name>
-			<committed/>
-		</location>
-		<location id="id3" x="0" y="1050">
-			<name x="-17" y="1016">s3_start</name>
-			<committed/>
-		</location>
-		<location id="id4" x="0" y="1400">
-			<name x="-17" y="1366">end_robot1</name>
-		</location>
-		<location id="id5" x="200" y="350">
-			<name x="183" y="316">A1_a1_moveTo_busy</name>
-		</location>
-		<location id="id6" x="400" y="350">
-			<name x="383" y="316">A1_a1_moveTo_complete</name>
-			<committed/>
-		</location>
-		<location id="id7" x="600" y="350">
-			<name x="583" y="316">s1_end</name>
-		</location>
-		<location id="id9" x="200" y="700">
-			<name x="183" y="666">A1_a2_moveTo_busy</name>
-		</location>
-		<location id="id10" x="400" y="700">
-			<name x="383" y="666">A1_a2_moveTo_complete</name>
-			<committed/>
-		</location>
-		<location id="id11" x="600" y="700">
-			<name x="583" y="666">s2_end</name>
-		</location>
-		<location id="id13" x="200" y="1050">
-			<name x="183" y="1016">A1_a3_deposit_busy</name>
-		</location>
-		<location id="id14" x="400" y="1050">
-			<name x="383" y="1016">A1_a3_deposit_complete</name>
-			<committed/>
-		</location>
-		<location id="id15" x="600" y="1050">
-			<name x="583" y="1016">s3_end</name>
-		</location>
+<location id="id0" x="0" y="0">
+	<name x="-17" y="-34">init_robot1</name>
+</location>
+<location id="id1" x="0" y="350">
+	<name x="-17" y="316">s1_start</name>
+	<committed/>
+</location>
+<location id="id2" x="0" y="700">
+	<name x="-17" y="666">s2_start</name>
+	<committed/>
+</location>
+<location id="id3" x="0" y="1050">
+	<name x="-17" y="1016">s3_start</name>
+	<committed/>
+</location>
+<location id="id4" x="0" y="1400">
+	<name x="-17" y="1366">end_robot1</name>
+</location>
+<location id="id5" x="200" y="350">
+	<name x="183" y="316">A1_a1_moveTo_busy</name>
+</location>
+<location id="id6" x="400" y="350">
+	<name x="383" y="316">A1_a1_moveTo_complete</name>
+	<committed/>
+</location>
+<location id="id7" x="600" y="350">
+	<name x="583" y="316">s1_end</name>
+</location>
+<location id="id9" x="200" y="700">
+	<name x="183" y="666">A1_a2_moveTo_busy</name>
+</location>
+<location id="id10" x="400" y="700">
+	<name x="383" y="666">A1_a2_moveTo_complete</name>
+	<committed/>
+</location>
+<location id="id11" x="600" y="700">
+	<name x="583" y="666">s2_end</name>
+</location>
+<location id="id13" x="200" y="1050">
+	<name x="183" y="1016">A1_a3_deposit_busy</name>
+</location>
+<location id="id14" x="400" y="1050">
+	<name x="383" y="1016">A1_a3_deposit_complete</name>
+	<committed/>
+</location>
+<location id="id15" x="600" y="1050">
+	<name x="583" y="1016">s3_end</name>
+</location>
 		<init ref="id0"/>
-		<transition id="id8">
-			<source ref="id6"/>
-			<target ref="id7"/>
-			<label kind="assignment" x="418" y="350">robot1_stat = true</label>
-		</transition>
-		<transition id="id12">
-			<source ref="id10"/>
-			<target ref="id11"/>
-			<label kind="assignment" x="418" y="700">robot1_stat = true</label>
-		</transition>
-		<transition id="id16">
-			<source ref="id14"/>
-			<target ref="id15"/>
-			<label kind="assignment" x="418" y="1050">robot1_stat = true</label>
-		</transition>
-		<transition id="id17">
-			<source ref="id1"/>
-			<target ref="id5"/>
-			<label kind="synchronisation" x="18" y="333">start_r_moveTo[R-1]!</label>
-		</transition>
-		<transition id="id18">
-			<source ref="id0"/>
-			<target ref="id1"/>
-			<label kind="synchronisation" x="18" y="233">s1?</label>
-			<label kind="assignment" x="18" y="250">robot_loc_target[R-1] = 0</label>
-		</transition>
-		<transition id="id19">
-			<source ref="id5"/>
-			<target ref="id6"/>
-			<label kind="guard" x="218" y="216">robPositionX[R-1] &lt;= location_X[robot_loc_target[R-1]]+30 and
-robPositionX[R-1] &gt;= location_X[robot_loc_target[R-1]]-30 and
-robPositionY[R-1] &lt;= location_Y[robot_loc_target[R-1]]+30 and
-robPositionY[R-1] &gt;= location_Y[robot_loc_target[R-1]]-30</label>
-			<label kind="synchronisation" x="218" y="233">stop_r_moveTo[R-1]!</label>
-			<label kind="assignment" x="218" y="250"></label>
-		</transition>
-		<transition id="id20">
-			<source ref="id2"/>
-			<target ref="id9"/>
-			<label kind="synchronisation" x="18" y="683">start_r_moveTo[R-1]!</label>
-		</transition>
-		<transition id="id21">
-			<source ref="id7"/>
-			<target ref="id2"/>
-			<label kind="synchronisation" x="18" y="583">s2?</label>
-			<label kind="assignment" x="18" y="600">robot_loc_target[R-1] = 1</label>
-		</transition>
-		<transition id="id22">
-			<source ref="id9"/>
-			<target ref="id10"/>
-			<label kind="guard" x="218" y="566">robPositionX[R-1] &lt;= location_X[robot_loc_target[R-1]]+30 and
-robPositionX[R-1] &gt;= location_X[robot_loc_target[R-1]]-30 and
-robPositionY[R-1] &lt;= location_Y[robot_loc_target[R-1]]+30 and
-robPositionY[R-1] &gt;= location_Y[robot_loc_target[R-1]]-30</label>
-			<label kind="synchronisation" x="218" y="583">stop_r_moveTo[R-1]!</label>
-			<label kind="assignment" x="218" y="600"></label>
-		</transition>
-		<transition id="id23">
-			<source ref="id3"/>
-			<target ref="id13"/>
-			<label kind="synchronisation" x="18" y="1033">start_r_deposit[R-1]!</label>
-		</transition>
-		<transition id="id24">
-			<source ref="id11"/>
-			<target ref="id3"/>
-			<label kind="synchronisation" x="18" y="933">s3?</label>
-			<label kind="assignment" x="18" y="950">robot_res_to_deposit[R-1] = 0, old_inventory = robot_inventory</label>
-		</transition>
-		<transition id="id25">
-			<source ref="id13"/>
-			<target ref="id14"/>
-			<label kind="guard" x="218" y="916">robot_inventory[R-1][robot_res_to_deposit[R-1]] &lt; old_inventory[R-1][robot_res_to_deposit[R-1]]</label>
-			<label kind="synchronisation" x="218" y="933">stop_r_deposit[R-1]!</label>
-			<label kind="assignment" x="218" y="950"></label>
-		</transition>
-		<transition id="id26">
-			<source ref="id15"/>
-			<target ref="id4"/>
-			<label kind="synchronisation" x="18" y="1283">e?</label>
-		</transition>
+<transition id="id8">
+	<source ref="id6"/>
+	<target ref="id7"/>
+	<label kind="assignment" x="418" y="350">robot1_stat = true</label>
+</transition>
+<transition id="id12">
+	<source ref="id10"/>
+	<target ref="id11"/>
+	<label kind="assignment" x="418" y="700">robot1_stat = true</label>
+</transition>
+<transition id="id16">
+	<source ref="id14"/>
+	<target ref="id15"/>
+	<label kind="assignment" x="418" y="1050">robot1_stat = true</label>
+</transition>
+<transition id="id17">
+	<source ref="id1"/>
+	<target ref="id5"/>
+	<label kind="synchronisation" x="18" y="333">start_r_moveTo[R-1]!</label>
+</transition>
+<transition id="id18">
+	<source ref="id0"/>
+	<target ref="id1"/>
+	<label kind="synchronisation" x="18" y="233">s1?</label>
+	<label kind="assignment" x="18" y="250">robot_loc_target[R-1] = 0</label>
+</transition>
+<transition id="id19">
+	<source ref="id5"/>
+	<target ref="id6"/>
+	<label kind="guard" x="218" y="216">robPositionX[R-1] &lt;= location_X[robot_loc_target[R-1]]+30 and
+		robPositionX[R-1] &gt;= location_X[robot_loc_target[R-1]]-30 and
+		robPositionY[R-1] &lt;= location_Y[robot_loc_target[R-1]]+30 and
+		robPositionY[R-1] &gt;= location_Y[robot_loc_target[R-1]]-30</label>
+	<label kind="synchronisation" x="218" y="233">stop_r_moveTo[R-1]!</label>
+	<label kind="assignment" x="218" y="250"></label>
+</transition>
+<transition id="id20">
+	<source ref="id2"/>
+	<target ref="id9"/>
+	<label kind="synchronisation" x="18" y="683">start_r_moveTo[R-1]!</label>
+</transition>
+<transition id="id21">
+	<source ref="id7"/>
+	<target ref="id2"/>
+	<label kind="synchronisation" x="18" y="583">s2?</label>
+	<label kind="assignment" x="18" y="600">robot_loc_target[R-1] = 1</label>
+</transition>
+<transition id="id22">
+	<source ref="id9"/>
+	<target ref="id10"/>
+	<label kind="guard" x="218" y="566">robPositionX[R-1] &lt;= location_X[robot_loc_target[R-1]]+30 and
+		robPositionX[R-1] &gt;= location_X[robot_loc_target[R-1]]-30 and
+		robPositionY[R-1] &lt;= location_Y[robot_loc_target[R-1]]+30 and
+		robPositionY[R-1] &gt;= location_Y[robot_loc_target[R-1]]-30</label>
+	<label kind="synchronisation" x="218" y="583">stop_r_moveTo[R-1]!</label>
+	<label kind="assignment" x="218" y="600"></label>
+</transition>
+<transition id="id23">
+	<source ref="id3"/>
+	<target ref="id13"/>
+	<label kind="synchronisation" x="18" y="1033">start_r_deposit[R-1]!</label>
+</transition>
+<transition id="id24">
+	<source ref="id11"/>
+	<target ref="id3"/>
+	<label kind="synchronisation" x="18" y="933">s3?</label>
+	<label kind="assignment" x="18" y="950">robot_res_to_deposit[R-1] = 0, old_inventory = robot_inventory</label>
+</transition>
+<transition id="id25">
+	<source ref="id13"/>
+	<target ref="id14"/>
+	<label kind="guard" x="218" y="916">robot_inventory[R-1][robot_res_to_deposit[R-1]] &lt; old_inventory[R-1][robot_res_to_deposit[R-1]]</label>
+	<label kind="synchronisation" x="218" y="933">stop_r_deposit[R-1]!</label>
+	<label kind="assignment" x="218" y="950"></label>
+</transition>
+<transition id="id26">
+	<source ref="id15"/>
+	<target ref="id4"/>
+	<label kind="synchronisation" x="18" y="1283">e?</label>
+</transition>
 	</template>
 
 <template>
@@ -1362,67 +1362,66 @@ rd_1,
 Broken_Delivery,
 Broken_Delivery_robot1_def
 
-
 ;
 </system>
 	<queries>
         <query>
-    <formula>simulate[&lt;=700]{Broken_Delivery_robot1_def.s1_end, Broken_Delivery_robot1_def.s2_end, Broken_Delivery_robot1_def.s3_end, Broken_Delivery.end}</formula>
+	<formula>simulate[&lt;=700]{Broken_Delivery_robot1_def.s1_start, Broken_Delivery_robot1_def.s1_end, Broken_Delivery_robot1_def.s2_start, Broken_Delivery_robot1_def.s2_end, Broken_Delivery_robot1_def.s3_start, Broken_Delivery_robot1_def.s3_end, Broken_Delivery.end}</formula>
 </query>
 
 <query>
-    <formula>Pr[&lt;=700] (&lt;&gt; Broken_Delivery.end)</formula>
-    <comment>Check if the whole pattern ends within 700 time unit</comment>
+	<formula>Pr[&lt;=700] (&lt;&gt; Broken_Delivery.end)</formula>
+	<comment>Check if the whole pattern ends within 700 time unit</comment>
 </query>
 
 <query>
-    <formula>simulate[&lt;=700]{robPositionX[0], robPositionY[0], batteryCharge[0], Broken_Delivery.end}</formula>
-    <comment>Check the position of all the agent in the pattern for 700 time unit</comment>
+	<formula>simulate[&lt;=700]{robPositionX[0], robPositionY[0], batteryCharge[0], Broken_Delivery.end}</formula>
+	<comment>Check the position of all the agent in the pattern for 700 time unit</comment>
 </query>
 
 <query>
-    <formula>simulate[&lt;=700]{robot_inventory[0][0], Broken_Delivery.end*2}</formula>
-    <comment>Check quantity of each item for each robot</comment>
+	<formula>simulate[&lt;=700]{robot_inventory[0][0], Broken_Delivery.end*2}</formula>
+	<comment>Check quantity of each item for each robot</comment>
 </query>
 
 <query>
-    <formula>simulate[&lt;=700]{room1[0], room1[1], room2[0], room2[1]}</formula>
-    <comment>Plot the position of each location in the pattern</comment>
+	<formula>simulate[&lt;=700]{room1[0], room1[1], room2[0], room2[1]}</formula>
+	<comment>Plot the position of each location in the pattern</comment>
 </query>
 
 <query>
-    <formula>simulate[&lt;=700]{rm_1.idle, rf_1.idle, rp_1.idle, rd_1.idle}</formula>
-    <comment></comment>
+	<formula>simulate[&lt;=700]{rm_1.idle, rf_1.idle, rp_1.idle, rd_1.idle}</formula>
+	<comment></comment>
 </query>
 
 <query>
-    <formula>Pr[&lt;=700](&lt;&gt;!rm_1.idle || !rf_1.idle || !rp_1.idle || !rd_1.idle)</formula>
-    <comment></comment>
+	<formula>Pr[&lt;=700](&lt;&gt;!rm_1.idle || !rf_1.idle || !rp_1.idle || !rd_1.idle)</formula>
+	<comment></comment>
 </query>
 
 <query>
-    <formula>Pr[&lt;=700]([] (Broken_Delivery.end imply (rm_1.idle &amp;&amp; rf_1.idle &amp;&amp; rp_1.idle &amp;&amp; rd_1.idle)))</formula>
-    <comment></comment>
+	<formula>Pr[&lt;=700]([] (Broken_Delivery.end imply (rm_1.idle &amp;&amp; rf_1.idle &amp;&amp; rp_1.idle &amp;&amp; rd_1.idle)))</formula>
+	<comment></comment>
 </query>
 
 <query>
-    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - room1[0], 2) + pow(robPositionY[0] - room1[1], 2) &lt;= 900 )</formula>
-    <comment>Check if robot Robot1 reaches room1 (within 30 units)</comment>
+	<formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - room1[0], 2) + pow(robPositionY[0] - room1[1], 2) &lt;= 900 )</formula>
+	<comment>Check if robot Robot1 reaches room1 (within 30 units)</comment>
 </query>
 
 <query>
-    <formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - room2[0], 2) + pow(robPositionY[0] - room2[1], 2) &lt;= 900 )</formula>
-    <comment>Check if robot Robot1 reaches room2 (within 30 units)</comment>
+	<formula>Pr[&lt;=700] (&lt;&gt; pow(robPositionX[0] - room2[0], 2) + pow(robPositionY[0] - room2[1], 2) &lt;= 900 )</formula>
+	<comment>Check if robot Robot1 reaches room2 (within 30 units)</comment>
 </query>
 
 <query>
-    <formula>Pr[&lt;=700] (&lt;&gt; !isValidPosition(robPositionX[0], robPositionY[0]))</formula>
-    <comment>Check if robot Robot1 enters an invalid position (e.g. collision or obstacle)</comment>
+	<formula>Pr[&lt;=700] (&lt;&gt; !isValidPosition(robPositionX[0], robPositionY[0]))</formula>
+	<comment>Check if robot Robot1 enters an invalid position (e.g. collision or obstacle)</comment>
 </query>
 
 <query>
-    <formula>Pr[&lt;=700] (&lt;&gt; currP > 2)</formula>
-    <comment>Check if pattern is executed more then once</comment>
+	<formula>Pr[&lt;=700] (&lt;&gt; currP > 2)</formula>
+	<comment>Check if pattern is executed more then once</comment>
 </query>
 
 	</queries>

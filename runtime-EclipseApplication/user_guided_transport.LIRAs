@@ -9,12 +9,13 @@ resources: object, coffee
 
 Human:
 	1: moveTo bedroom if position(Robot, bedroom) else stop
-	3: moveTo kitchen 
+	3-4: moveTo kitchen 
 	
 Robot:
 	1: moveTo bedroom
 	2: pick object
 	3: follow Human (kitchen)
+
 
 
 
