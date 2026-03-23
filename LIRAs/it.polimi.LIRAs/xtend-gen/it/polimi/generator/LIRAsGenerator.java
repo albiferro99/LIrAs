@@ -40,6 +40,7 @@ import org.eclipse.xtext.xbase.lib.IntegerRange;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import org.eclipse.xtext.xbase.lib.IteratorExtensions;
 import org.eclipse.xtext.xbase.lib.ListExtensions;
+import org.eclipse.xtext.xbase.lib.Pair;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure1;
 import org.eclipse.xtext.xbase.lib.Procedures.Procedure2;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
@@ -2703,72 +2704,70 @@ public class LIRAsGenerator extends AbstractGenerator {
     return builder.toString();
   }
 
+  public Pair<String, Integer> resolveAgentPositionData(final Model model, final String agentName) {
+    final Function1<Human, String> _function = (Human it) -> {
+      return it.getName();
+    };
+    final int hIndex = IterableExtensions.<String>toList(ListExtensions.<Human, String>map(model.getPattern().getHuman(), _function)).indexOf(agentName);
+    if ((hIndex != (-1))) {
+      return Pair.<String, Integer>of("human", Integer.valueOf(hIndex));
+    }
+    final Function1<Robot, String> _function_1 = (Robot it) -> {
+      return it.getName();
+    };
+    final int rIndex = IterableExtensions.<String>toList(ListExtensions.<Robot, String>map(model.getPattern().getRobot(), _function_1)).indexOf(agentName);
+    if ((rIndex != (-1))) {
+      return Pair.<String, Integer>of("rob", Integer.valueOf(rIndex));
+    }
+    return null;
+  }
+
   public String apPositionGuard(final Model model, final String agentName, final String locationName) {
+    final int tolerance = 30;
     final Function1<Location, String> _function = (Location it) -> {
-      return it.getName().toString();
+      return it.getName();
     };
     final int locIndex = IterableExtensions.<String>toList(ListExtensions.<Location, String>map(model.getPattern().getLocation(), _function)).indexOf(locationName);
-    final Function1<Human, String> _function_1 = (Human it) -> {
-      return it.getName().toString();
-    };
-    final int hIndex = IterableExtensions.<String>toList(ListExtensions.<Human, String>map(model.getPattern().getHuman(), _function_1)).indexOf(agentName);
-    if ((hIndex != (-1))) {
+    final Pair<String, Integer> agentData = this.resolveAgentPositionData(model, agentName);
+    if ((agentData != null)) {
+      final String prefix = agentData.getKey();
+      final Integer index = agentData.getValue();
       StringConcatenation _builder = new StringConcatenation();
-      _builder.append("humanPositionX[");
-      _builder.append(hIndex);
+      _builder.append(prefix);
+      _builder.append("PositionX[");
+      _builder.append(index);
       _builder.append("] &lt;= location_X[");
       _builder.append(locIndex);
-      _builder.append("]+30 and");
+      _builder.append("]+");
+      _builder.append(tolerance);
+      _builder.append(" and");
       _builder.newLineIfNotEmpty();
-      _builder.append("humanPositionX[");
-      _builder.append(hIndex);
+      _builder.append(prefix);
+      _builder.append("PositionX[");
+      _builder.append(index);
       _builder.append("] &gt;= location_X[");
       _builder.append(locIndex);
-      _builder.append("]-30 and");
+      _builder.append("]-");
+      _builder.append(tolerance);
+      _builder.append(" and");
       _builder.newLineIfNotEmpty();
-      _builder.append("humanPositionY[");
-      _builder.append(hIndex);
+      _builder.append(prefix);
+      _builder.append("PositionY[");
+      _builder.append(index);
       _builder.append("] &lt;= location_Y[");
       _builder.append(locIndex);
-      _builder.append("]+30 and");
+      _builder.append("]+");
+      _builder.append(tolerance);
+      _builder.append(" and");
       _builder.newLineIfNotEmpty();
-      _builder.append("humanPositionY[");
-      _builder.append(hIndex);
+      _builder.append(prefix);
+      _builder.append("PositionY[");
+      _builder.append(index);
       _builder.append("] &gt;= location_Y[");
       _builder.append(locIndex);
-      _builder.append("]-30");
+      _builder.append("]-");
+      _builder.append(tolerance);
       return _builder.toString();
-    }
-    final Function1<Robot, String> _function_2 = (Robot it) -> {
-      return it.getName().toString();
-    };
-    final int rIndex = IterableExtensions.<String>toList(ListExtensions.<Robot, String>map(model.getPattern().getRobot(), _function_2)).indexOf(agentName);
-    if ((rIndex != (-1))) {
-      StringConcatenation _builder_1 = new StringConcatenation();
-      _builder_1.append("robPositionX[");
-      _builder_1.append(rIndex);
-      _builder_1.append("] &lt;= location_X[");
-      _builder_1.append(locIndex);
-      _builder_1.append("]+30 and");
-      _builder_1.newLineIfNotEmpty();
-      _builder_1.append("robPositionX[");
-      _builder_1.append(rIndex);
-      _builder_1.append("] &gt;= location_X[");
-      _builder_1.append(locIndex);
-      _builder_1.append("]-30 and");
-      _builder_1.newLineIfNotEmpty();
-      _builder_1.append("robPositionY[");
-      _builder_1.append(rIndex);
-      _builder_1.append("] &lt;= location_Y[");
-      _builder_1.append(locIndex);
-      _builder_1.append("]+30 and");
-      _builder_1.newLineIfNotEmpty();
-      _builder_1.append("robPositionY[");
-      _builder_1.append(rIndex);
-      _builder_1.append("] &gt;= location_Y[");
-      _builder_1.append(locIndex);
-      _builder_1.append("]-30");
-      return _builder_1.toString();
     }
     return "// Error: Agent not found";
   }

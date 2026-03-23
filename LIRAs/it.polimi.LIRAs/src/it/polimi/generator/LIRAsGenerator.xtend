@@ -1754,29 +1754,47 @@ double resources_Y[«resources.size»] = {«resources.map[name + "[1]"].join(", 
 		
 		return builder.toString
 	}
+	
+	
 		
+	// Helper function to centralize agent resolution.
+	// Returns a Pair with the array prefix (e.g., "human", "rob") and the agent index.
+	def Pair<String, Integer> resolveAgentPositionData(Model model, String agentName) {
+		
+		val hIndex = model.pattern.human.map[name].toList.indexOf(agentName)
+		if (hIndex != -1) return "human" -> hIndex
+		
+		val rIndex = model.pattern.robot.map[name].toList.indexOf(agentName)
+		if (rIndex != -1) return "rob" -> rIndex
+		
+		// If you add a Drone later, you just add two lines here:
+		// val dIndex = model.pattern.drone.map[name].toList.indexOf(agentName)
+		// if (dIndex != -1) return "drone" -> dIndex
+		
+		return null
+	}
+
 	// Guards when the atomic predicate is position(agent, location)
 	def String apPositionGuard(Model model, String agentName, String locationName) {
 		
-		// 1. Find the location index efficiently
-		val locIndex = model.pattern.location.map[name.toString()].toList.indexOf(locationName)
+		// Define the tolerance for the bounding box (distance from the center)
+		val int tolerance = 30
 		
-		// 2. Check if the agent is a Human and return the template
-		val hIndex = model.pattern.human.map[name.toString()].toList.indexOf(agentName)
-		if (hIndex != -1) {
-			return '''humanPositionX[«hIndex»] &lt;= location_X[«locIndex»]+30 and
-humanPositionX[«hIndex»] &gt;= location_X[«locIndex»]-30 and
-humanPositionY[«hIndex»] &lt;= location_Y[«locIndex»]+30 and
-humanPositionY[«hIndex»] &gt;= location_Y[«locIndex»]-30'''.toString
-		}
+		// 1. Find the location index
+		val locIndex = model.pattern.location.map[name].toList.indexOf(locationName)
 		
-		// 3. Check if the agent is a Robot and return the template
-		val rIndex = model.pattern.robot.map[name.toString()].toList.indexOf(agentName)
-		if (rIndex != -1) {
-			return '''robPositionX[«rIndex»] &lt;= location_X[«locIndex»]+30 and
-robPositionX[«rIndex»] &gt;= location_X[«locIndex»]-30 and
-robPositionY[«rIndex»] &lt;= location_Y[«locIndex»]+30 and
-robPositionY[«rIndex»] &gt;= location_Y[«locIndex»]-30'''.toString
+		// 2. Dynamically resolve the agent's array prefix and index
+		val agentData = resolveAgentPositionData(model, agentName)
+		
+		if (agentData !== null) {
+			val prefix = agentData.key
+			val index = agentData.value
+			
+			// 3. Return the generic template using the tolerance variable
+			return '''«prefix»PositionX[«index»] &lt;= location_X[«locIndex»]+«tolerance» and
+«prefix»PositionX[«index»] &gt;= location_X[«locIndex»]-«tolerance» and
+«prefix»PositionY[«index»] &lt;= location_Y[«locIndex»]+«tolerance» and
+«prefix»PositionY[«index»] &gt;= location_Y[«locIndex»]-«tolerance»'''.toString
 		}
 		
 		return "// Error: Agent not found"
