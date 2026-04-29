@@ -9,6 +9,7 @@ import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.generator.AbstractGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess2
 import org.eclipse.xtext.generator.IGeneratorContext
+import it.polimi.lIRAs.ActionC
 
 class LIRAsGenerator extends AbstractGenerator{
     override void doGenerate(Resource resource, IFileSystemAccess2 fsa, IGeneratorContext context) {
@@ -41,15 +42,9 @@ class LIRAsGenerator extends AbstractGenerator{
             // Generate the declarations to initialize a Human agent (fatigue, position)
             replace(filePath, "// **human_initialization**", hInit (model), fsa)
             
-            // Define the initial position of each Human (as default all the humans start in the same position)
-            replace(filePath, "// **human_start_pos**", hInitPos (model), fsa)
-            
             // Generate the declarations to initialize a Robot agent (SoC, position)
             replace(filePath, "// **robot_initialization**", rInit (model), fsa)
-            
-            // Define the initial position of each Robot (as default all the humans start in the same position)
-      		replace(filePath, "// **robot_start_pos**", rInitPos (model), fsa)
-      		
+           	
         	// DEFINE ALL THE ACTIONS AND THEIR PARAMETERS
         	injectActions(filePath, fsa, model)
         	
@@ -217,32 +212,19 @@ double resources_Y[«resources.size»] = {«resources.map[name + "[1]"].join(", 
 	
 	    // Generate a single string of "0.0" repeated hNum times, separated by comma
 	    val zeros = (1..hNum).map["0.0"].join(", ")
+	    val nodeIndices = (0..<hNum).map[it.toString].join(", ")
 	    
 	    // Use Template Expressions to compose the declarations
 	    return '''
 	    // Human initialization
 	    double humanFatigue[N_H] = {«zeros»};
+	    // The humans will start from the first N_H intersections
+	    const int H_start_nodes[N_H] = {«nodeIndices»};
 	    double humanPositionX[N_H] = {«zeros»};
 	    double humanPositionY[N_H] = {«zeros»};
 	    '''.toString
 	}
 	
-	// Function that defines the starting position of each Human
-	def String hInitPos(Model model) {
-	    val hNum = model.pattern.human.size
-	    
-	    // Return empty string if no humans
-	    if (hNum == 0) return "// No Human declared"
-	
-	    // Generate arrays of repeating values
-	    val startX = (1..hNum).map["2500.0"].join(", ")
-	    val startY = (1..hNum).map["100.0"].join(", ")
-	    
-	    return '''
-	    double h_startX[N_H] = {«startX»};
-	    double h_startY[N_H] = {«startY»};
-	    '''.toString
-	}
 	
 	// Function that initializes the variables necessary for a Robot agent
 	def String rInit(Model model) {
@@ -254,31 +236,18 @@ double resources_Y[«resources.size»] = {«resources.map[name + "[1]"].join(", 
 	    // Generate strings for repeated values
 	    val charges = (1..rNum).map["100.0"].join(", ")
 	    val zeros = (1..rNum).map["0.0"].join(", ")
+	    val nodeIndices = (0..<rNum).map[it.toString].join(", ")
 	    
 	    return '''
 	    // Robot initialization
 	    double batteryCharge[N_R] = {«charges»};
+	    // The robots will start from the first N_R intersections
+	    const int R_start_nodes[N_R] = {«nodeIndices»};
 	    double robPositionX[N_R] = {«zeros»};
 	    double robPositionY[N_R] = {«zeros»};
 	    '''.toString
 	}
 	
-	// Function that defines the starting position of each Robot
-	def String rInitPos(Model model) {
-	    val rNum = model.pattern.robot.size
-	    
-	    // Return empty string if no robots
-	    if (rNum == 0) return ""
-	
-	    // Generate arrays of repeating values
-	    val startX = (1..rNum).map["2000.0"].join(", ")
-	    val startY = (1..rNum).map["500.0"].join(", ")
-	    
-	    return '''
-	    double r_startX[N_R] = {«startX»};
-	    double r_startY[N_R] = {«startY»};
-	    '''.toString
-	}
 	
 	// ACTION CONFIGURATION
 	// 1. Define the configuration structure for an action (must be static if nested)
@@ -477,7 +446,11 @@ double resources_Y[«resources.size»] = {«resources.map[name + "[1]"].join(", 
 	    return allDeclarations.join(",\n")
 	}
 	
-	// Pattern Orchestrator
+	
+	// ==========================
+	// PATTERN ORCHESTRATOR
+	// ==========================
+	
 	def String pattOrch(Model model) {
 		val patternName = model.pattern.name.toString()
 		val builder = new StringBuilder()
@@ -606,12 +579,52 @@ double resources_Y[«resources.size»] = {«resources.map[name + "[1]"].join(", 
 	}
 	
 
-	
-	// ==========================
 	// ==========================
 	// SEQUENCE ORCHESTRATOR
-	// ==========================
 	// ==========================	
+	
+	static class SeqActionConfig {
+		public val String actionName
+		public val String agentType
+		public val String startSync
+		public val String stopSync
+		public val boolean hasInitialUpdate
+		public val boolean hasBusyLoop
+		
+		new(String actionName, String agentType, String startSync, String stopSync, boolean hasInitialUpdate, boolean hasBusyLoop) {
+			this.actionName = actionName
+			this.agentType = agentType
+			this.startSync = startSync
+			this.stopSync = stopSync
+			this.hasInitialUpdate = hasInitialUpdate
+			this.hasBusyLoop = hasBusyLoop
+		}
+	}
+	
+	def List<SeqActionConfig> getSeqActionRegistry() {
+		return #[
+			new SeqActionConfig("moveTo", "human", "start_h_moveTo[H-1]!", "stop_h_moveTo[H-1]!", true, true),
+			new SeqActionConfig("moveTo", "rob",   "start_r_moveTo[R-1]!", "stop_r_moveTo[R-1]!", true, false),
+			new SeqActionConfig("follow", "rob",   "start_r_follow[R-1]!", "stop_r_follow[R-1]!", true, false),
+			new SeqActionConfig("pick",   "rob",   "start_r_pick[R-1]!", "stop_r_pick[R-1]!", true, false),
+			new SeqActionConfig("deposit","rob",   "start_r_deposit[R-1]!", "stop_r_deposit[R-1]!", true, false)
+		]
+	}
+	
+	def SeqActionConfig getSeqActionConfig(String actionName, String agentPrefix) {
+		return getSeqActionRegistry().findFirst[
+			actionName == it.actionName && agentPrefix == it.agentType
+		]
+	}
+	
+	// Return the next action in the list, or null if this is the last one
+	def ActionC getNextAction(org.eclipse.emf.common.util.EList<ActionC> actions, ActionC currentAction) {
+		val index = actions.indexOf(currentAction)
+		if (index != -1 && index < actions.size - 1) {
+			return actions.get(index + 1)
+		}
+		return null
+	}
 	
 	def seqOrch (Model model) {
 		// Declaration
@@ -619,380 +632,406 @@ double resources_Y[«resources.size»] = {«resources.map[name + "[1]"].join(", 
 		val StringBuilder builder = new StringBuilder
 		val StringBuilder guard = new StringBuilder
 		val StringBuilder update = new StringBuilder
-		val StringBuilder sync = new StringBuilder
-		val int[] id = #[0]
-		val int[] AgentID = #[0]
-		val int[] actionID = #[0]
-		val int[] locNum = #[0]
-		val int[] resNum = #[0]
-		val int[] x = #[0]
-		val int[] y = #[0]
-		val int[] maxIndex = #[0]
-		val int[] endID = #[0]
+		var String locName = null
+		var String invariant = null
+		var String  rate_of_exp = null
+		var boolean urgent = false
+		var boolean committed = false
+		// Variables for transitions parameters
+		var int source = 0
+		var int target = 0
+		var String select = null
+		var String sync = null
+		var boolean controllable = true
+		var int nailX = 0
+		var int nailY = 0
+		
+		
 		val int xOffset = 200
 		val int yOffset = 350
-		val int[] actionCount = #[0]
+		var int actionCount = 0
 	
-		// Higher subSequence value
-		model.sequence.forEach[sequence |
-	        sequence.subSequence.forEach[subSequence |
-	            // Aggiorna maxIndex se necessario
-	            if (subSequence.i > maxIndex.get(0)) {
-	                maxIndex.set(0, subSequence.i)
-	            }
-	            if (subSequence.j > maxIndex.get(0)) {
-	                maxIndex.set(0, subSequence.j)
-	            }
-	        ]
-	    ]
+		// Calculate the highest subSequence value
+		val maxIndex = model.sequence
+			.flatMap[subSequence]
+			.map[Math.max(i, j)]
+			.max ?: 0
 	    
-	    // Generate the array that contains the locations
-	    model.pattern.location.forEach[ loc |
-	    	locNum.set(0, locNum.get(0)+1)
-	    ]
-	    val String[] locations = newArrayOfSize(locNum.get(0))
-	    locNum.set(0, 0)
-		model.pattern.location.forEach[ loc |
-	    	locations.set(locNum.get(0), loc.name.toString())
-	    	locNum.set(0, locNum.get(0)+1)
-	    ]
 	    
-	    // Generate the array that contains the resources
-	    model.pattern.resources.forEach[ res |
-	    	resNum.set(0, resNum.get(0)+1)
-	    ]
-	    val String[] resources = newArrayOfSize(resNum.get(0))
-	    resNum.set(0, 0)
-		model.pattern.resources.forEach[ res |
-	    	resources.set(resNum.get(0), res.name.toString())
-	    	resNum.set(0, resNum.get(0)+1)
-	    ]
-	    
-		// Declarations 
-		val int[] continuation = newIntArrayOfSize(maxIndex.get(0))		
-		val int[] emptySS = newIntArrayOfSize(maxIndex.get(0))
-		val int[] firstActionID = newIntArrayOfSize(maxIndex.get(0)+1) // id of the first action for each subsequence
-		val int[] lastActionID = newIntArrayOfSize(maxIndex.get(0)+1) // id of the first action for each subsequence
-		val int[] endSubSeqID = newIntArrayOfSize(maxIndex.get(0)+1) // id of the first action for each subsequence
-		
-		
-		model.sequence.forEach[sequence |
-	        id.set(0, 0)
-	        x.set(0, 0)
-	        y.set(0, 0)
-	        AgentID.set(0, AgentID.get(0)+1)
-	        actionID.set(0, 1)
-	        // Search for continuations
-	        sequence.subSequence.forEach[subSequence |
+		// AgentID is incremented across sequences, so it stays outside the loop
+		var AgentID = 0
+
+		for (sequence : model.sequence) {
+			AgentID++
+			
+			// Local variables for this specific sequence
+			var id = 0
+			var x = 0
+			var y = 0
+			var actionID = 1
+			var int endID = 0
+			
+			// Arrays declared inside the loop guarantee a clean slate for each sequence 
+			val continuation = newIntArrayOfSize(maxIndex)		
+			val emptySS = newIntArrayOfSize(maxIndex)
+			val firstActionID = newIntArrayOfSize(maxIndex + 1) // id of the first action for each subsequence
+			val lastActionID = newIntArrayOfSize(maxIndex + 1)  // id of the last action for each subsequence
+			val endSubSeqID = newIntArrayOfSize(maxIndex + 1)   // id of the end subsequence location
+			
+			// Search for continuations
+			for (subSequence : sequence.subSequence) {
 				if (subSequence.j - subSequence.i > 0) {
-					for (j : (subSequence.i + 1)..(subSequence.j)) {
-						continuation.set(j-1, 1)	
+					for (j : subSequence.i + 1 .. subSequence.j) {
+						continuation.set(j - 1, 1)	
 					}
 				}
-			]
+			}
 			
 	        // ==========================================================
 	        // ********* SEQUENCE ORCHESTRATOR LOCATIONS ***************
 			// ==========================================================
 	        
-	        builder.append("\t<template>\n")
-			builder.append(String.format("\t\t<name>%s_%s</name>\n", model.pattern.name, sequence.agent.name.toLowerCase()));			
-			// The sequence is for a human?
-			if (model.pattern.human.map[name].contains(sequence.agent.name)) {
-				builder.append(String.format("\t\t<parameter>int p, int H</parameter>\n"));
-			}
-			// The sequence is for a robot?
-			if (model.pattern.robot.map[name].contains(sequence.agent.name)) {
-				builder.append(String.format("\t\t<parameter>int p, int R</parameter>\n"));
-			}
+	        // Determine the agent type once to reuse it later
+			val agentName = sequence.agent.name.toString()
+			val isHuman = model.pattern.human.map[name.toString()].toList.contains(agentName)
+			val isRobot = model.pattern.robot.map[name.toString()].toList.contains(agentName)
 			
-			builder.append("\t\t<declaration>// Place local declarations here.\nclock t;")
-			builder.append("\t\t</declaration>\n")
+			// Set the parameter for the orch. accordingly to the agent type
+			builder.append('''
+				<template>
+					<name>«model.pattern.name»_«agentName.toLowerCase()»</name>
+					«IF isHuman»
+					<parameter>int p, int H</parameter>
+					«ENDIF»
+					«IF isRobot»
+					<parameter>int p, int R</parameter>
+					«ENDIF»
+					<declaration>// Place local declarations here.
+				clock t;
+					</declaration>
+			''')
 	        
 	        // Initial location for the sequence
-	        builder.append(genLoc(id.get(0), x.get(0), y.get(0), String.format("init_%s", sequence.agent.name.toLowerCase()), null, null, false, false))
-			id.set(0, id.get(0)+1)
+	        locName = '''init_«agentName.toLowerCase()»'''.toString
+			invariant = null
+			rate_of_exp = null
+			urgent = false
+			committed = false
+	        builder.append(genLoc(id, x, y, locName, invariant, rate_of_exp, urgent, committed))
+			id++
 			
 	        // Initial location for each subSequence
-	        for (i : 1..maxIndex.get(0)) {
-	        	y.set(0, y.get(0)+yOffset)
-	        	x.set(0, 0)
-	        	
-	        	if (continuation.get(i-1) == 0) {
-	            	builder.append(genLoc(id.get(0), x.get(0), y.get(0), String.format("s%d_start", i), null, null, false, true))
-	        	}
-				id.set(0, id.get(0)+1)            		
-				continuation.set(i-1, 0)
+			for (i : 1..maxIndex) {
+				y += yOffset
+				x = 0
 				
-				if (i == maxIndex.get(0)) {
-					y.set(0, y.get(0)+yOffset)
-	        		x.set(0, 0)
-					builder.append(genLoc(id.get(0), x.get(0), y.get(0), String.format("end_%s", sequence.agent.name.toLowerCase()), null, null, false, false))
-					endID.set(0, id.get(0))
-					id.set(0, id.get(0)+1)
+				if (continuation.get(i - 1) == 0) {
+					locName = '''s«i»_start'''.toString()
+					invariant = null
+					rate_of_exp = null
+					urgent = false
+					committed = true
+					builder.append(genLoc(id, x, y, locName, invariant, rate_of_exp, urgent, committed))
 				}
-	        }
-	        
-	        y.set(0, 0)
-	        sequence.subSequence.forEach[subSequence |
-	            // In case of continuation we don'w want idle locations (except for an empty continuation)
-	            if (subSequence.j !== 0) {
-	            	for (i : subSequence.i+1..subSequence.j) {
-	            		emptySS.set(i-1, 1)
-	            	}
-	            }
-	            x.set(0, 0)
-	            y.set(0, subSequence.i * yOffset)
-	        	subSequence.actionC.forEach[actionC	|
-	        		emptySS.set(subSequence.i-1, 1) // The subSequence is not empty
-	
-	        		// Action busy locations
-	        		// The agent doing the action is a Human? => Put the invariant t <= 5 for the start iteration
-					if (model.pattern.human.map[name].contains(sequence.agent.name)) {
-	            		x.set(0, x.get(0)+xOffset)
-						builder.append(genLoc(id.get(0), x.get(0), y.get(0), String.format("A%d_a%d_%s_busy", AgentID.get(0), actionID.get(0), actionC.actionType.toString()), "t&lt;=5", null, false, false))
-					}else{ // The action is done by a robot = no invariant
-	            		x.set(0, x.get(0)+xOffset)
-						builder.append(genLoc(id.get(0), x.get(0), y.get(0), String.format("A%d_a%d_%s_busy", AgentID.get(0), actionID.get(0), actionC.actionType.toString()), null, null, false, false))
+				id++            		
+				continuation.set(i - 1, 0)
+				
+				if (i == maxIndex) {
+					y += yOffset
+					x = 0
+					
+					locName = '''end_«agentName.toLowerCase()»'''.toString()
+					invariant = null
+					rate_of_exp = null
+					urgent = false
+					committed = false
+					builder.append(genLoc(id, x, y, locName, invariant, rate_of_exp, urgent, committed))
+					
+					endID = id
+					id++
+				}
+			}
+	         
+	        y = 0
+			for (subSequence : sequence.subSequence) {
+				// In case of continuation we don't want idle locations (except for an empty continuation)
+				if (subSequence.j != 0) {
+					for (i : subSequence.i + 1 .. subSequence.j) {
+						emptySS.set(i - 1, 1)
 					}
+				}
+				
+				x = 0
+				y = subSequence.i * yOffset
+
+				for (actionC : subSequence.actionC) {
+					emptySS.set(subSequence.i - 1, 1) // The subSequence is not empty
+					
+					val aType = actionC.actionType.toString()
+					
+					// Action busy locations
+					x += xOffset
+					
+					// The agent doing the action is a Human? => Put the invariant t <= 5 for the start iteration
+					locName = '''A«AgentID»_a«actionID»_«aType»_busy'''.toString()
+					invariant = if (isHuman) "t&lt;=5" else null
+					rate_of_exp = null
+					urgent = false
+					committed = false
+					builder.append(genLoc(id, x, y, locName, invariant, rate_of_exp, urgent, committed))
 					
 					// Save the id of the first busy action for each SubSequence
-	        		if (x.get(0) == xOffset) {
-	        			firstActionID.set(subSequence.i, id.get(0))
-	        		}
-	        		id.set(0, id.get(0)+1)
-	        		
+					if (x == xOffset) {
+						firstActionID.set(subSequence.i, id)
+					}
+					id++
+					
 					// Action complete
-					x.set(0, x.get(0)+xOffset)
-					builder.append(genLoc(id.get(0), x.get(0), y.get(0), String.format("A%d_a%d_%s_complete", AgentID.get(0), actionID.get(0), actionC.actionType.toString()), null, null, false, true))
-	        		lastActionID.set(subSequence.i, id.get(0))
-					id.set(0, id.get(0)+1)
-					actionID.set(0, actionID.get(0)+1)
-				]
-				
-			
+					x += xOffset
+					locName = '''A«AgentID»_a«actionID»_«aType»_complete'''.toString()
+					invariant = null
+					rate_of_exp = null
+					urgent = false
+					committed = true
+					builder.append(genLoc(id, x, y, locName, invariant, rate_of_exp, urgent, committed))
+					
+					lastActionID.set(subSequence.i, id)
+					id++
+					actionID++
+				}
 				
 				// ==============
 				// Location and transition for the conditional statement
 				// ==============
-				actionCount.set(0, 0)
-				subSequence.actionC.forEach[actionC	|
-					actionCount.set(0, actionCount.get(0)+1)
-					// Check conditional statement and add location / transition when necessary
-				    if (!actionC.conditionalStatement.isEmpty) {
-				    	actionC.conditionalStatement.forEach [cs |
-				            // Create the guard accordingly to the atomic predicate
-							cs.condition.forEach [c |
+				actionCount = 0
+				for (actionC : subSequence.actionC) {
+				
+					actionCount++
+				
+					// Check conditional statements and generate guard when present
+					if (!actionC.conditionalStatement.isEmpty) {
+				
+						for (cs : actionC.conditionalStatement) {
+				
+							// Build guard from atomic predicates of the conditional statement
+							for (c : cs.condition) {
+				
+								// === FIRST ATOMIC PREDICATE ===
 								val pred0 = c.atomicPredicate.get(0)
-						        if ( pred0.ap == 'position'){
-						        	if (pred0.negated) {
-						        		guard.append("not (" + apPositionGuard(model, pred0.agent.name.toString(), pred0.location.name.toString()) + ")")
-						            } else {
-						                guard.append("(" + apPositionGuard(model, pred0.agent.name.toString(), pred0.location.name.toString()) + ")")
-						            }
-						        }
-						        
-						        if (c.atomicPredicate.size == 1) {
-						            
-						        } else {
-						            // If more AtomicPredicate, loop on && and ||
-						            for (i : 0 ..< (c.atomicPredicate.size - 1)) {
-						                val pred2 = c.atomicPredicate.get(i + 1)
-						                val operatore = c.op.get(i)
-						
-						                // Stampa operatore tra predicati
-						                if (operatore.toString() == '&&'){
-						                	guard.append(" and(")
-						                }else if (operatore.toString() == '||'){
-						                	guard.append(" or(")
-						                }
-						                // Controlla se il predicato è negato con '!'
-						                if (pred2.negated) {
-						                    guard.append("
-	not (" + apPositionGuard(model, pred2.agent.name.toString(), pred2.location.name.toString()) + "))")
-						                } else {
-						                    guard.append("
-	(" + apPositionGuard(model, pred2.agent.name.toString(), pred2.location.name.toString()) + "))")
-						                }
-						
-						            }
-						        }
-						    ]
-				            // Create the shync accordingly to the conditioned action 
-				            // The sequence is for a human?
-							if (model.pattern.human.map[name].contains(sequence.agent.name)) {
-								sync.append("_h_" + actionC.actionType.toString() + "[H-1]!")
-							}
-							// The sequence is for a robot?
-							if (model.pattern.robot.map[name].contains(sequence.agent.name)) {
-								sync.append("_r_" + actionC.actionType.toString() + "[R-1]!")
-							}
-							
-							// Create the update accordingly to the original action
-							// The agent doing the action is a Human?
-							if (model.pattern.human.map[name].contains(sequence.agent.name)) {
-								// Check if the Human will do a moveTo
-								if (actionC.actionType.toString() == 'moveTo'){
-									// We need to check if the target of the action is a location or a resource
-									var targetName = actionC.target.name.toString()
-									var targetIndex = -1
-									
-									// 1. Check if target is a Location
-									var locIndex = locations.indexOf(targetName)
-									if (locIndex != -1) {
-										targetIndex = locIndex
+				
+								if (pred0.ap == 'position') {
+									val baseGuard = apPositionGuard(
+										model,
+										pred0.agent.name.toString(),
+										pred0.location.name.toString()
+									)
+				
+									if (pred0.negated) {
+										guard.append("not (" + baseGuard + ")")
 									} else {
-										// 2. Check if target is a Resource
-										var resIndex = resources.indexOf(targetName)
-										if (resIndex != -1) {
-											// Index = Number of Locations + Resource Index
-											targetIndex = locations.length + resIndex
+										guard.append("(" + baseGuard + ")")
+									}
+								}
+				
+								// === ADDITIONAL ATOMIC PREDICATES (AND / OR) ===
+								if (c.atomicPredicate.size > 1) {
+									for (i : 0 ..< (c.atomicPredicate.size - 1)) {
+										val predNext = c.atomicPredicate.get(i + 1)
+										val operator = c.op.get(i).toString()
+				
+										// Append logical operator
+										if (operator == '&&') {
+											guard.append(" and(")
+										} else if (operator == '||') {
+											guard.append(" or(")
+										}
+				
+										// Build predicate guard
+										val nextGuard = apPositionGuard(
+											model,
+											predNext.agent.name.toString(),
+											predNext.location.name.toString()
+										)
+				
+										// Append predicate with optional negation
+										if (predNext.negated) {
+											guard.append("\n\tnot (" + nextGuard + "))")
+										} else {
+											guard.append("\n\t(" + nextGuard + "))")
 										}
 									}
-									
-									// Only append if a valid target was found
-									if (targetIndex != -1) {
-							        	update.append(String.format("human_loc_target[H-1] = %d", targetIndex));
-							        }
 								}
 							}
-							// The agent doing the action is a Robot?
-							if (model.pattern.robot.map[name].contains(sequence.agent.name)) {
-								// The action is a moveTo?
-								if (actionC.actionType.toString() == 'moveTo'){
-							        var targetName = actionC.target.name.toString()
-									var targetIndex = -1
-									
-									// 1. Check if target is a Location
-									var locIndex = locations.indexOf(targetName)
-									if (locIndex != -1) {
-										targetIndex = locIndex
+				
+							// Create the synchronization according to the conditioned action
+							if (isHuman) {
+								sync = '''_h_«actionC.actionType.toString()»[H-1]!'''.toString
+							} else if (isRobot) {
+								sync = '''_r_«actionC.actionType.toString()»[R-1]!'''.toString
+							}
+				
+							// Create the update according to the original action
+							if (isHuman) {
+								update.append(getActionUpdate(model, actionC, "human", "H-1"))
+							} else if (isRobot) {
+								update.append(getActionUpdate(model, actionC, "rob", "R-1"))
+							}
+							
+							if (cs.cs1 !== null) { // until
+								// Add the transition from the current action busy location to its complete location
+								source = firstActionID.get(subSequence.i) + actionCount * 2 - 2
+								target = firstActionID.get(subSequence.i) + actionCount * 2 - 1
+								select = null
+								
+								controllable = true
+								x = xOffset * (actionCount * 2 - 2) + xOffset
+								y = subSequence.i * yOffset - 100
+								nailX = xOffset * (actionCount * 2 - 2) + xOffset + 100
+								nailY = subSequence.i * yOffset - 100
+								transition.append(genTran(id, source, target, select, guard.toString(), "stop" + sync, null, controllable, x, y, nailX, nailY))
+								id++
+							}
+							
+							if (cs.cs2 !== null) { // if/else
+							
+								// Check the type of the alternative action
+								// =================== Stop ===================
+								if (cs.action.actionType.toString() == "stop") {
+							
+									// Generate the location for the stop alternative action
+									locName = String.format("A%d_a%d_%s", AgentID, actionID, cs.action.actionType.toString())
+									invariant = null
+									rate_of_exp = null
+									urgent = false
+									committed = false
+									x = actionCount * xOffset * 2 - xOffset
+									y = subSequence.i * yOffset - (yOffset / 2)
+									builder.append(genLoc(id, x, y, locName, invariant, rate_of_exp, urgent, committed))
+									id++
+									actionID++
+							
+									// Add the transition from the current action to the alternative action
+									source = firstActionID.get(subSequence.i) + actionCount * 2 - 2
+									target = id - 1
+									select = null
+									controllable = true
+									x = xOffset * actionCount * 2 + xOffset
+									y = subSequence.i * yOffset - 100
+									nailX = 0
+									nailY = 0
+									transition.append(genTran(id, source, target, select, "not (" + guard.toString() + ")", "stop" + sync, null, controllable, x, y, nailX, nailY))
+									id++
+							
+									// Add the transition from the alternative action to the correct target
+									if (actionCount == 1) {
+										source = id - 2
+										target = subSequence.i
+										select = null
+										sync = "stop" + sync
+										controllable = true
+										x = xOffset * actionCount * 2 + xOffset
+										y = subSequence.i * yOffset - 100
+										nailX = 0
+										nailY = 0
+										transition.append(genTran(id, source, target, select, guard.toString(), sync, update.toString(), controllable, x, y, nailX, nailY))
+										id++
 									} else {
-										// 2. Check if target is a Resource
-										var resIndex = resources.indexOf(targetName)
-										if (resIndex != -1) {
-											// Index = Number of Locations + Resource Index
-											targetIndex = locations.length + resIndex
-										}
+										source = id - 2
+										target = firstActionID.get(subSequence.i) + actionCount * 2 - 3
+										select = null
+										sync = "stop" + sync
+										controllable = true
+										x = xOffset * actionCount * 2 + xOffset
+										y = subSequence.i * yOffset - 100
+										nailX = 0
+										nailY = 0
+										transition.append(genTran(id, source, target, select, guard.toString(), sync, update.toString(), controllable, x, y, nailX, nailY))
+										id++
 									}
-	
-									// Only append if a valid target was found
-									if (targetIndex != -1) {
-							        	update.append(String.format("robot_loc_target[R-1] = %d", targetIndex));
-							        }
 								}
-								
-							    // The action is a "follow"
-							    if (actionC.actionType.toString() == "follow") {
-							    	update.append(String.format("f_loc_target[R-1] = %d,\n", locations.indexOf(actionC.target.name.toString())))
-									if (model.pattern.human.map[name].contains(actionC.agent.name)) { // We have to follow a human
-										update.append(String.format("human_to_be_followed[R-1] = %d,\n", model.pattern.human.map[name].indexOf(actionC.agent.name)+1)) // -1 is done insede the follow action
-										update.append("robot_to_be_followed[R-1] = 0")
-									}
-									if (model.pattern.robot.map[name].contains(actionC.agent.name)) { // We have to follow a robot
-										update.append(String.format("robot_to_be_followed[R-1] = %d,\n", model.pattern.robot.map[name].indexOf(actionC.agent.name)+1)) // -1 is done insede the follow action
-										update.append("human_to_be_followed[R-1] = 0")
-									}
-							    }
-							    
-							    // The action is a pick?
-							    if (actionC.actionType.toString() == 'pick'){
-							        update.append(String.format("robot_res_to_pick[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(actionC.resource.name.toString())));
-								}
-								
-								// The action is a deposit?
-							    if (actionC.actionType.toString() == 'deposit'){
-							        update.append(String.format("robot_res_to_deposit[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(actionC.resource.name.toString())));
+							
+								// =================== MoveTo ===================
+								if (cs.action.actionType.toString() == "moveTo") {
+							
 								}
 							}
 							
+							if (cs.cs3 !== null) { // if/else/until
+								locName = String.format("A%d_a%d_%s", AgentID, actionID, cs.action.actionType.toString())
+								invariant = null
+								rate_of_exp = null
+								urgent = false
+								committed = false
+								builder.append(genLoc(id, x - xOffset, y - (yOffset / 2), locName, invariant, rate_of_exp, urgent, committed))
+								id++
+								actionID++
+							}
 							
-				            if (cs.cs1 !== null) { // until
-				                // Add the transition from the action to the alternative action
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i) + actionCount.get(0) * 2 - 2, firstActionID.get(subSequence.i) + actionCount.get(0) * 2 - 1, null, guard.toString(), "stop" + sync.toString(), null, true, xOffset * (actionCount.get(0) * 2-2) + xOffset, subSequence.i * yOffset-100, xOffset * (actionCount.get(0) * 2-2) + xOffset + 100, subSequence.i * yOffset - 100))
-								id.set(0, id.get(0)+1)
-				            }
-				            if (cs.cs2 !== null) { // if/else
-				            	// Check the type of the alternative action
-				            	// =================== Stop ===================
-				            	if (cs.action.actionType.toString() == "stop"){
-					                
-					                // Generate the location for the stop alternative action
-					                builder.append(genLoc(id.get(0), actionCount.get(0)*xOffset*2-xOffset, subSequence.i*yOffset-(yOffset/2), String.format("A%d_a%d_%s", AgentID.get(0), actionID.get(0), cs.action.actionType.toString()), null, null, false, false))
-									id.set(0, id.get(0)+1)
-									actionID.set(0, actionID.get(0)+1)
-									
-									// Choose the guard depending on the condition
-									// Add the transition from the action to the alternative action
-									transition.append(genTran(id.get(0), firstActionID.get(subSequence.i) + actionCount.get(0) * 2 - 2, id.get(0)-1, null, "not (" + guard.toString() + ")", "stop" + sync.toString(), null, true, xOffset * actionCount.get(0) * 2 + xOffset, subSequence.i * yOffset-100, 0, 0))
-									id.set(0, id.get(0)+1)
-									
-									// Transition from the alternative action to the initializer of the action
-									if (actionCount.get(0) == 1){
-										transition.append(genTran(id.get(0), id.get(0)-2, subSequence.i, null, guard.toString(), "stop" + sync.toString(), update.toString(), true, xOffset * actionCount.get(0) * 2 + xOffset, subSequence.i * yOffset-100, 0, 0))
-										id.set(0, id.get(0)+1)
-									}else{
-										transition.append(genTran(id.get(0), id.get(0)-2, firstActionID.get(subSequence.i) + actionCount.get(0) * 2 - 3, null, guard.toString(), "stop" + sync.toString(), update.toString(), true, xOffset * actionCount.get(0) * 2 + xOffset, subSequence.i * yOffset-100, 0, 0))
-										id.set(0, id.get(0)+1)
-									}
-				            	}
-				            	
-				            	// =================== MoveTo ===================
-				            	if (cs.action.actionType.toString() == "moveTo"){
-					                
-				            	}
-				            	
-				            }
-				            if (cs.cs3 !== null) { // if/else/until
-				            	builder.append(genLoc(id.get(0), x.get(0)-xOffset, y.get(0)-(yOffset/2), String.format("A%d_a%d_%s", AgentID.get(0), actionID.get(0), cs.action.actionType.toString()), null, null, false, false))
-								id.set(0, id.get(0)+1)
-								actionID.set(0, actionID.get(0)+1)
-				            }
-				            if (cs.cs4 !== null) { // wait
-				            	
-				            }
+							if (cs.cs4 !== null) { // wait
+							
+							}
 				            guard.setLength(0)
-				            sync.setLength(0)
+				            sync = null
 				            update.setLength(0)
-			        	]
+			        	}
 				    }
-	        	]
+	        	}
 	        	
 	        	if (emptySS.get(subSequence.i-1) == 1) { // If the SubSequence is not empty
 	        		// Add the location for the SubSequence end
-	        		x.set(0, x.get(0)+xOffset)
-					builder.append(genLoc(id.get(0), x.get(0), y.get(0), String.format("s%d_end", subSequence.i), null, null, false, false))
-					transition.append(genTran(id.get(0)+1, lastActionID.get(subSequence.i), id.get(0), null, null, null, String.format("%s_stat = true", sequence.agent.name.toLowerCase()), true, x.get(0)-xOffset, y.get(0), 0 ,0))
-					endSubSeqID.set(subSequence.i, id.get(0))
-					id.set(0, id.get(0)+2)
+	        		x = subSequence.actionC.size() * 2 * xOffset + xOffset
+	        		y = subSequence.i * yOffset
+					locName = String.format("s%d_end", subSequence.i)
+					invariant = null
+					rate_of_exp = null
+					urgent = false
+					committed = false
+					builder.append(genLoc(id, x, y, locName, invariant, rate_of_exp, urgent, committed))
+					// Add the transition from the last action complete location to the subsequence end
+					source = lastActionID.get(subSequence.i)
+					target = id
+					select = null
+					sync = null
+					controllable = true
+					nailX = 0
+					nailY = 0
+					transition.append(genTran(id+1, source, target, select, null, sync, String.format("%s_stat = true", sequence.agent.name.toLowerCase()), controllable, x-xOffset, y, nailX, nailY))
+					endSubSeqID.set(subSequence.i, id)
+					id = id + 2
 	        	}
 	        	
-	        ]
-	        
-	        for (i : 1..maxIndex.get(0)) {
-	         	if (emptySS.get(i-1) == 0) {
-	        		x.set(0, xOffset)
-	            	y.set(0, i * yOffset)
-	            	builder.append(genLoc(id.get(0), x.get(0), y.get(0), String.format("s%d_idle", i), null, null, false, false))
-					endSubSeqID.set(i, id.get(0))
-					id.set(0, id.get(0)+1)
-	        	} 
-	        	emptySS.set(i-1, 0)
 	        }
 	        
-	        sequence.subSequence.forEach[subSequence |
-				if (subSequence.j - subSequence.i > 0) {
-					// The last action for the subASequence in a Continuation is the same of the first one
-	            	if (subSequence.j !== 0) {
-		            	for (i : subSequence.i+1..subSequence.j) {
-		            		endSubSeqID.set(i, endSubSeqID.get(i-1))
-		            	}
-		            }
+	        for (i : 1..maxIndex) {
+				if (emptySS.get(i - 1) == 0) {
+					// Add the idle location for an empty subsequence
+					x = xOffset
+					y = i * yOffset
+					locName = String.format("s%d_idle", i)
+					invariant = null
+					rate_of_exp = null
+					urgent = false
+					committed = false
+					builder.append(genLoc(id, x, y, locName, invariant, rate_of_exp, urgent, committed))
+					endSubSeqID.set(i, id)
+					id++
 				}
-			]
-	        
-	        
-	        builder.append(String.format("\t\t<init ref=\"id%d\"/>\n", 0));
+				emptySS.set(i - 1, 0)
+			}
+			
+			for (subSequence : sequence.subSequence) {
+				if (subSequence.j - subSequence.i > 0) {
+					// In a continuation, the end location id is shared across the chained subsequences
+					if (subSequence.j != 0) {
+						for (i : subSequence.i + 1 .. subSequence.j) {
+							endSubSeqID.set(i, endSubSeqID.get(i - 1))
+						}
+					}
+				}
+			}
+			
+			builder.append('''		<init ref="id0"/>
+			''')
 	        
 	        // ==========================================================
 	        // ==========================================================
@@ -1001,762 +1040,303 @@ double resources_Y[«resources.size»] = {«resources.map[name + "[1]"].join(", 
 	        
 	        // ==========================================================
 	        // ==========================================================
+
+	   		var int firstAction = 0
+			actionCount = 0
 	   		
-	   		
-	
-	   		val int[] firstAction = #[0]
-	   		actionCount.set(0,0)
-	   		
-	   		// Dictionaries
-	   		val hMapGuard = new java.util.HashMap<String, String>()
-			hMapGuard.put("moveTo", "humanPositionX[H-1] &lt;= location_X[human_loc_target[H-1]]+30 and
-	humanPositionX[H-1] &gt;= location_X[human_loc_target[H-1]]-30 and
-	humanPositionY[H-1] &lt;= location_Y[human_loc_target[H-1]]+30 and
-	humanPositionY[H-1] &gt;= location_Y[human_loc_target[H-1]]-30")
-	
-			val rMapGuard = new java.util.HashMap<String, String>()
-			rMapGuard.put("moveTo", "robPositionX[R-1] &lt;= location_X[robot_loc_target[R-1]]+30 and
-	robPositionX[R-1] &gt;= location_X[robot_loc_target[R-1]]-30 and
-	robPositionY[R-1] &lt;= location_Y[robot_loc_target[R-1]]+30 and
-	robPositionY[R-1] &gt;= location_Y[robot_loc_target[R-1]]-30")
-			rMapGuard.put("followH", "humanPositionX[human_to_be_followed[R-1]-1] &lt;= location_X[f_loc_target[R-1]]+30 and
-	humanPositionX[human_to_be_followed[R-1]-1] &gt;= location_X[f_loc_target[R-1]]-30 and
-	humanPositionY[human_to_be_followed[R-1]-1] &lt;= location_Y[f_loc_target[R-1]]+30 and
-	humanPositionY[human_to_be_followed[R-1]-1] &gt;= location_Y[f_loc_target[R-1]]-30 and
-	robPositionX[R-1] &gt;= location_X[f_loc_target[R-1]]-30 and
-	robPositionX[R-1] &lt;= location_X[f_loc_target[R-1]]+30 and
-	robPositionY[R-1] &gt;= location_Y[f_loc_target[R-1]]-30 and
-	robPositionY[R-1] &lt;= location_Y[f_loc_target[R-1]]+30")
-			rMapGuard.put("followR", "robPositionX[robot_to_be_followed[R-1]] &lt;= location_X[f_loc_target[R-1]]+30 and
-	robPositionX[robot_to_be_followed[R-1]-1] &gt;= location_X[f_loc_target[R-1]]-30 and
-	robPositionX[robot_to_be_followed[R-1]-1] &lt;= location_Y[f_loc_target[R-1]]+30 and
-	robPositionX[robot_to_be_followed[R-1]-1] &gt;= location_Y[f_loc_target[R-1]]-30 and
-	robPositionX[R-1] &gt;= location_X[f_loc_target[R-1]]-30 and
-	robPositionX[R-1] &lt;= location_X[f_loc_target[R-1]]+30 and
-	robPositionY[R-1] &gt;= location_Y[f_loc_target[R-1]]-30 and
-	robPositionY[R-1] &lt;= location_Y[f_loc_target[R-1]]+30")
-	        rMapGuard.put("pick", "robot_inventory[R-1][robot_res_to_pick[R-1]] > old_inventory[R-1][robot_res_to_pick[R-1]]")
-	        rMapGuard.put("deposit", "robot_inventory[R-1][robot_res_to_deposit[R-1]] &lt; old_inventory[R-1][robot_res_to_deposit[R-1]]")
-	        
-	        sequence.subSequence.forEach[subSequence |
-	            // In case of continuation we don'w want idle locations (except for an empty continuation)
-	            if (subSequence.j !== 0) {
-	            	for (i : subSequence.i+1..subSequence.j) {
-	            		emptySS.set(i-1, 1)
-	            	}
-	            }
+	        for (subSequence : sequence.subSequence) {
+				// In case of continuation we do not want idle locations
+				// except for an empty continuation
+				if (subSequence.j != 0) {
+					for (i : subSequence.i + 1 .. subSequence.j) {
+						emptySS.set(i - 1, 1)
+					}
+				}
 	            
-	            firstAction.set(0, 1)
+	            firstAction = 1
 	        	
-	        	subSequence.actionC.forEach[actionC	|
-	        		emptySS.set(subSequence.i-1, 1) // The subSequence is not empty
+	        	for (actionC : subSequence.actionC) {
+					emptySS.set(subSequence.i - 1, 1) // The subsequence is not empty
 	        		
 					// Transition that brings to a busy action
-					if (firstAction.get(0) == 1) {  	// Is it the first busy action of the subSequence
-						firstAction.set(0, 0) 		// The next action will not be the first of the subSequence
+					if (firstAction == 1) {  	// Is it the first busy action of the subSequence
+						firstAction = 0 		// The next action will not be the first of the subSequence
 						
-						// The transition to be generated depends on the type of action (for updates and guards)
-						if (actionC.actionType.toString() == "moveTo") {
-							
-							// The agent doing the moveTo is a Human?
-							if (model.pattern.human.map[name].contains(sequence.agent.name)) {
-								// From current sub-sequence to first busy action
-								transition.append(genTran(id.get(0), subSequence.i, firstActionID.get(subSequence.i), null, null, String.format("start_h_moveTo[H-1]!"), "t = 0", true, 0, subSequence.i * yOffset, 0 ,0))
-								id.set(0, id.get(0)+1)
-								
-								// Reach the actual subSequence location
-								var targetName = actionC.target.name.toString()
-								var targetIndex = -1
-								var locIndex = locations.indexOf(targetName)
-								if (locIndex != -1) targetIndex = locIndex
-								else {
-									var resIndex = resources.indexOf(targetName)
-									if (resIndex != -1) targetIndex = locations.length + resIndex
-								}
-								if (targetIndex != -1) {
-									transition.append(genTran(id.get(0), endSubSeqID.get(subSequence.i-1), subSequence.i, null, null, String.format("s%d?", subSequence.i), String.format("human_loc_target[H-1] = %d", targetIndex), true, 0, subSequence.i * yOffset - 100, 0 ,0))
-								}
-								id.set(0, id.get(0)+1)
-								
-								// From busy to committed that iterate the busy command
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i), subSequence.i, null, "t&gt;=5", null, "t = 0", true, xOffset * actionCount.get(0) * 2, subSequence.i * yOffset+100, xOffset * actionCount.get(0) * 2+100, subSequence.i * yOffset+80))
-								id.set(0, id.get(0)+1)
-								
-								// From busy to complete
-								guard.append(hMapGuard.get("moveTo"))
-								
-								if (subSequence.actionC.size() >= 2) {
-								    // Ottieni l'azione successiva nel subSequence
-								    var nextAction = subSequence.actionC.get(subSequence.actionC.indexOf(actionC) + 1);
-								    
-								    // Verifica se l'azione successiva è di tipo "moveTo"
-								    if (nextAction.actionType.toString().equals("moveTo")) {
-								        var nextTargetName = nextAction.target.name.toString()
-										var nextTargetIndex = -1
-										var nextLocIndex = locations.indexOf(nextTargetName)
-										if (nextLocIndex != -1) nextTargetIndex = nextLocIndex
-										else {
-											var nextResIndex = resources.indexOf(nextTargetName)
-											if (nextResIndex != -1) nextTargetIndex = locations.length + nextResIndex
-										}
-										if (nextTargetIndex != -1) {
-								        	update.append(String.format("human_loc_target[H-1] = %d", nextTargetIndex));
-								        }
-								    }
-								    // AGGIUNGI AGGIORNAMENTI PER ALTRE AZIONI QUI
-								}
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i), firstActionID.get(subSequence.i)+1, null, guard.toString(), String.format("stop_h_moveTo[H-1]!"), update.toString(), true, xOffset, subSequence.i * yOffset-100, 0 ,0))
-								id.set(0, id.get(0)+1)
-								guard.setLength(0)
-								update.setLength(0)
-							}
-							
-							// The agent doing the moveTo is a Robot?
-							if (model.pattern.robot.map[name].contains(sequence.agent.name)) {
-								// From current sub-sequence to first busy action
-								transition.append(genTran(id.get(0), subSequence.i, firstActionID.get(subSequence.i), null, null, String.format("start_r_moveTo[R-1]!"), null, true, 0, (subSequence.i * yOffset), 0 ,0 ))
-								id.set(0, id.get(0)+1)
-								
-								// Reach the actual subSequence location
-								var targetName = actionC.target.name.toString()
-								var targetIndex = -1
-								var locIndex = locations.indexOf(targetName)
-								if (locIndex != -1) targetIndex = locIndex
-								else {
-									var resIndex = resources.indexOf(targetName)
-									if (resIndex != -1) targetIndex = locations.length + resIndex
-								}
-								if (targetIndex != -1) {
-									transition.append(genTran(id.get(0), endSubSeqID.get(subSequence.i-1), subSequence.i, null, null, String.format("s%d?", subSequence.i), String.format("robot_loc_target[R-1] = %d", targetIndex), true, 0, subSequence.i * yOffset - 100, 0 ,0))
-								}
-								id.set(0, id.get(0)+1)
-								// From busy to complete
-								guard.append(rMapGuard.get("moveTo"))
-	
-								if (subSequence.actionC.indexOf(actionC) < subSequence.actionC.size() - 1) {
-								    // Ottieni l'azione successiva nel subSequence
-								    var nextAction = subSequence.actionC.get(subSequence.actionC.indexOf(actionC) + 1);
-								    
-								    // Verifica se l'azione successiva è di tipo "moveTo"
-								    if (nextAction.actionType.toString().equals("moveTo")) {
-								        var nextTargetName = nextAction.target.name.toString()
-										var nextTargetIndex = -1
-										var nextLocIndex = locations.indexOf(nextTargetName)
-										if (nextLocIndex != -1) nextTargetIndex = nextLocIndex
-										else {
-											var nextResIndex = resources.indexOf(nextTargetName)
-											if (nextResIndex != -1) nextTargetIndex = locations.length + nextResIndex
-										}
-										if (nextTargetIndex != -1) {
-								        	update.append(String.format("robot_loc_target[R-1] = %d", nextTargetIndex));
-								        }
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "follow"
-								    if (nextAction.actionType.toString().equals("follow")) {
-								    	update.append(String.format("f_loc_target[R-1] = %d,\n", locations.indexOf(nextAction.target.name.toString())))
-										if (model.pattern.human.map[name].contains(nextAction.agent.name)) { // We have to follow a human
-											update.append(String.format("human_to_be_followed[R-1] = %d,\n", model.pattern.human.map[name].indexOf(nextAction.agent.name)+1)) // -1 is done insede the follow action
-											update.append("robot_to_be_followed[R-1] = 0")
-										}
-										if (model.pattern.robot.map[name].contains(nextAction.agent.name)) { // We have to follow a robot
-											update.append(String.format("robot_to_be_followed[R-1] = %d,\n", model.pattern.robot.map[name].indexOf(nextAction.agent.name)+1)) // -1 is done insede the follow action
-											update.append("human_to_be_followed[R-1] = 0")
-										}
-								    }
-								    
-								    if (nextAction.actionType.toString().equals("pick")) {
-								        update.append(String.format("robot_res_to_pick[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(nextAction.resource.name.toString())));
-								    }
-								    
-								    if (nextAction.actionType.toString().equals("deposit")) {
-								        update.append(String.format("robot_res_to_deposit[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(nextAction.resource.name.toString())));
-								    }
-								    
-								    // AGGIUNGI AGGIORNAMENTI PER ALTRE AZIONI QUI (ROBOT)
-								}
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i), firstActionID.get(subSequence.i)+1, null, guard.toString(), String.format("stop_r_moveTo[R-1]!"), update.toString(), true, xOffset, subSequence.i * yOffset-100, 0 ,0))
-								id.set(0, id.get(0)+1)
-								guard.setLength(0)
-								update.setLength(0)
-							}
-						}
-						// FOLLOW (implemented only for robots)
-						if (actionC.actionType.toString() == "follow") {
-				
-							// The agent doing the action is a Robot?
-							if (model.pattern.robot.map[name].contains(sequence.agent.name)) {
-								
-								// From current sub-sequence to first busy action
-								transition.append(genTran(id.get(0), subSequence.i, firstActionID.get(subSequence.i), null, null, String.format("start_r_follow[R-1]!"), null, true, 0, (subSequence.i * yOffset), 0 ,0 ))
-								id.set(0, id.get(0)+1)
-								
-								// Reach the actual subSequence location
-								update.append(String.format("f_loc_target[R-1] = %d,\n", locations.indexOf(actionC.target.name.toString())))
-								if (model.pattern.human.map[name].contains(actionC.agent.name)) { // We have to follow a human
-									update.append(String.format("human_to_be_followed[R-1] = %d,\n", model.pattern.human.map[name].indexOf(actionC.agent.name)+1)) // -1 is done insede the follow action
-									update.append("robot_to_be_followed[R-1] = 0")
-								}
-								if (model.pattern.robot.map[name].contains(actionC.agent.name)) { // We have to follow a robot
-									update.append(String.format("robot_to_be_followed[R-1] = %d,\n", model.pattern.robot.map[name].indexOf(actionC.agent.name)+1)) // -1 is done insede the follow action
-									update.append("human_to_be_followed[R-1] = 0")
-								}
-								transition.append(genTran(id.get(0), endSubSeqID.get(subSequence.i-1), subSequence.i, null, null, String.format("s%d?", subSequence.i), update.toString(), true, 0, subSequence.i * yOffset - 100, 0 ,0))
-								id.set(0, id.get(0)+1)
-								update.setLength(0)
-								
-								// From busy to complete
-								if (model.pattern.human.map[name].contains(actionC.agent.name)) { // We have to follow a human
-									guard.append(rMapGuard.get("followH"))
-								}
-								if (model.pattern.robot.map[name].contains(actionC.agent.name)) { // We have to follow a robot
-									guard.append(rMapGuard.get("followR"))
-								}
-								// We have to update variables wrt the next action
-								if (subSequence.actionC.indexOf(actionC) < subSequence.actionC.size() - 1) {
-								    // Ottieni l'azione successiva nel subSequence
-								    var nextAction = subSequence.actionC.get(subSequence.actionC.indexOf(actionC) + 1);
-								    
-								    // Verifica se l'azione successiva è di tipo "moveTo"
-								    if (nextAction.actionType.toString().equals("moveTo")) {
-								        var nextTargetName = nextAction.target.name.toString()
-										var nextTargetIndex = -1
-										var nextLocIndex = locations.indexOf(nextTargetName)
-										if (nextLocIndex != -1) nextTargetIndex = nextLocIndex
-										else {
-											var nextResIndex = resources.indexOf(nextTargetName)
-											if (nextResIndex != -1) nextTargetIndex = locations.length + nextResIndex
-										}
-										if (nextTargetIndex != -1) {
-								        	update.append(String.format("robot_loc_target[R-1] = %d", nextTargetIndex));
-								        }
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "follow"
-								    if (nextAction.actionType.toString().equals("follow")) {
-								    	update.append(String.format("f_loc_target[R-1] = %d,\n", locations.indexOf(nextAction.target.name.toString())))
-										if (model.pattern.human.map[name].contains(nextAction.agent.name)) { // We have to follow a human
-											update.append(String.format("human_to_be_followed[R-1] = %d,\n", model.pattern.human.map[name].indexOf(nextAction.agent.name)+1)) // -1 is done insede the follow action
-											update.append("robot_to_be_followed[R-1] = 0")
-										}
-										if (model.pattern.robot.map[name].contains(nextAction.agent.name)) { // We have to follow a robot
-											update.append(String.format("robot_to_be_followed[R-1] = %d,\n", model.pattern.robot.map[name].indexOf(nextAction.agent.name)+1)) // -1 is done insede the follow action
-											update.append("human_to_be_followed[R-1] = 0")
-										}
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "pick"
-								    if (nextAction.actionType.toString().equals("pick")) {
-								        update.append(String.format("robot_res_to_pick[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(nextAction.resource.name.toString())));
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "Deposit"
-								    if (nextAction.actionType.toString().equals("deposit")) {
-								        update.append(String.format("robot_res_to_pdeposit[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(nextAction.resource.name.toString())));
-								    }
-								    
-								    // AGGIUNGI AGGIORNAMENTI PER ALTRE AZIONI QUI (Robot)
-								}
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i), firstActionID.get(subSequence.i)+1, null, guard.toString(), String.format("stop_r_follow[R-1]!"), update.toString(), true, xOffset, subSequence.i * yOffset-100, 0 ,0))
-								id.set(0, id.get(0)+1)
-								guard.setLength(0)
-								update.setLength(0)
-							}
-						}
+						val agentPrefix = if (isHuman) "human" else "rob"
+						val agentIndex = if (isHuman) "H-1" else "R-1"
+						val config = getSeqActionConfig(actionC.actionType.toString(), agentPrefix)
 						
-						// PICK (implemented only for robots)
-						if (actionC.actionType.toString() == "pick") {
-				
-							// The agent doing the action is a Robot?
-							if (model.pattern.robot.map[name].contains(sequence.agent.name)) {
-								
-								// From current sub-sequence to first busy action
-								transition.append(genTran(id.get(0), subSequence.i, firstActionID.get(subSequence.i), null, null, String.format("start_r_pick[R-1]!"), null, true, 0, (subSequence.i * yOffset), 0 ,0 ))
-								id.set(0, id.get(0)+1)
-								
-								// Reach the actual subSequence location
-								update.append(String.format("robot_res_to_pick[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(actionC.resource.name.toString())))
-								
-								transition.append(genTran(id.get(0), endSubSeqID.get(subSequence.i-1), subSequence.i, null, null, String.format("s%d?", subSequence.i), update.toString(), true, 0, subSequence.i * yOffset - 100, 0 ,0))
-								id.set(0, id.get(0)+1)
-								update.setLength(0)
-								
-								// From busy to complete
-								guard.append(rMapGuard.get("pick"))
-								
-								// We have to update variables wrt the next action
-								if (subSequence.actionC.indexOf(actionC) < subSequence.actionC.size() - 1) {
-								    // Ottieni l'azione successiva nel subSequence
-								    var nextAction = subSequence.actionC.get(subSequence.actionC.indexOf(actionC) + 1);
-								    
-								    // Verifica se l'azione successiva è di tipo "moveTo"
-								    if (nextAction.actionType.toString().equals("moveTo")) {
-								        var nextTargetName = nextAction.target.name.toString()
-										var nextTargetIndex = -1
-										var nextLocIndex = locations.indexOf(nextTargetName)
-										if (nextLocIndex != -1) nextTargetIndex = nextLocIndex
-										else {
-											var nextResIndex = resources.indexOf(nextTargetName)
-											if (nextResIndex != -1) nextTargetIndex = locations.length + nextResIndex
-										}
-										if (nextTargetIndex != -1) {
-								        	update.append(String.format("robot_loc_target[R-1] = %d", nextTargetIndex));
-								        }
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "follow"
-								    if (nextAction.actionType.toString().equals("follow")) {
-								    	update.append(String.format("f_loc_target[R-1] = %d,\n", locations.indexOf(nextAction.target.name.toString())))
-										if (model.pattern.human.map[name].contains(nextAction.agent.name)) { // We have to follow a human
-											update.append(String.format("human_to_be_followed[R-1] = %d,\n", model.pattern.human.map[name].indexOf(nextAction.agent.name)+1)) // -1 is done insede the follow action
-											update.append("robot_to_be_followed[R-1] = 0")
-										}
-										if (model.pattern.robot.map[name].contains(nextAction.agent.name)) { // We have to follow a robot
-											update.append(String.format("robot_to_be_followed[R-1] = %d,\n", model.pattern.robot.map[name].indexOf(nextAction.agent.name)+1)) // -1 is done insede the follow action
-											update.append("human_to_be_followed[R-1] = 0")
-										}
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "pick"
-								    if (nextAction.actionType.toString().equals("pick")) {
-								        update.append(String.format("robot_res_to_pick[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(nextAction.resource.name.toString())));
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "deposit"
-								    if (nextAction.actionType.toString().equals("deposit")) {
-								        update.append(String.format("robot_res_to_deposit[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(nextAction.resource.name.toString())));
-								    }
-								    
-								    // AGGIUNGI AGGIORNAMENTI PER ALTRE AZIONI QUI (Robot)
-								}
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i), firstActionID.get(subSequence.i)+1, null, guard.toString(), String.format("stop_r_pick[R-1]!"), update.toString(), true, xOffset, subSequence.i * yOffset-100, 0 ,0))
-								id.set(0, id.get(0)+1)
-								guard.setLength(0)
-								update.setLength(0)
-							}
-						}
+						if (config !== null) {
+							transition.append(genTran(id, subSequence.i, firstActionID.get(subSequence.i), null, null, config.startSync, if (config.hasBusyLoop) "t = 0" else null, true, 0, subSequence.i * yOffset, 0, 0))
+							id++
 						
-						// DEPOSIT (implemented only for robots)
-						if (actionC.actionType.toString() == "deposit") {
-				
-							// The agent doing the action is a Robot?
-							if (model.pattern.robot.map[name].contains(sequence.agent.name)) {
-								
-								// From current sub-sequence to first busy action
-								transition.append(genTran(id.get(0), subSequence.i, firstActionID.get(subSequence.i), null, null, String.format("start_r_deposit[R-1]!"), null, true, 0, (subSequence.i * yOffset), 0 ,0 ))
-								id.set(0, id.get(0)+1)
-								
-								// Reach the actual subSequence location
-								update.append(String.format("robot_res_to_deposit[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(actionC.resource.name.toString())))
-								
-								transition.append(genTran(id.get(0), endSubSeqID.get(subSequence.i-1), subSequence.i, null, null, String.format("s%d?", subSequence.i), update.toString(), true, 0, subSequence.i * yOffset - 100, 0 ,0))
-								id.set(0, id.get(0)+1)
-								update.setLength(0)
-								
-								// From busy to complete
-								guard.append(rMapGuard.get("deposit"))
-								
-								// We have to update variables wrt the next action
-								if (subSequence.actionC.indexOf(actionC) < subSequence.actionC.size() - 1) {
-								    // Ottieni l'azione successiva nel subSequence
-								    var nextAction = subSequence.actionC.get(subSequence.actionC.indexOf(actionC) + 1);
-								    
-								    // Verifica se l'azione successiva è di tipo "moveTo"
-								    if (nextAction.actionType.toString().equals("moveTo")) {
-								        var nextTargetName = nextAction.target.name.toString()
-										var nextTargetIndex = -1
-										var nextLocIndex = locations.indexOf(nextTargetName)
-										if (nextLocIndex != -1) nextTargetIndex = nextLocIndex
-										else {
-											var nextResIndex = resources.indexOf(nextTargetName)
-											if (nextResIndex != -1) nextTargetIndex = locations.length + nextResIndex
-										}
-										if (nextTargetIndex != -1) {
-								        	update.append(String.format("robot_loc_target[R-1] = %d", nextTargetIndex));
-								        }
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "follow"
-								    if (nextAction.actionType.toString().equals("follow")) {
-								    	update.append(String.format("f_loc_target[R-1] = %d,\n", locations.indexOf(nextAction.target.name.toString())))
-										if (model.pattern.human.map[name].contains(nextAction.agent.name)) { // We have to follow a human
-											update.append(String.format("human_to_be_followed[R-1] = %d,\n", model.pattern.human.map[name].indexOf(nextAction.agent.name)+1)) // -1 is done insede the follow action
-											update.append("robot_to_be_followed[R-1] = 0")
-										}
-										if (model.pattern.robot.map[name].contains(nextAction.agent.name)) { // We have to follow a robot
-											update.append(String.format("robot_to_be_followed[R-1] = %d,\n", model.pattern.robot.map[name].indexOf(nextAction.agent.name)+1)) // -1 is done insede the follow action
-											update.append("human_to_be_followed[R-1] = 0")
-										}
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "pick"
-								    if (nextAction.actionType.toString().equals("pick")) {
-								        update.append(String.format("robot_res_to_pick[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(nextAction.resource.name.toString())));
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "deposit"
-								    if (nextAction.actionType.toString().equals("deposit")) {
-								        update.append(String.format("robot_res_to_deposit[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(nextAction.resource.name.toString())));
-								    }
-								    
-								    // AGGIUNGI AGGIORNAMENTI PER ALTRE AZIONI QUI (Robot)
-								}
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i), firstActionID.get(subSequence.i)+1, null, guard.toString(), String.format("stop_r_deposit[R-1]!"), update.toString(), true, xOffset, subSequence.i * yOffset-100, 0 ,0))
-								id.set(0, id.get(0)+1)
-								guard.setLength(0)
-								update.setLength(0)
+							if (config.hasInitialUpdate) {
+								update.append(getActionUpdate(model, actionC, agentPrefix, agentIndex))
 							}
-						}
+							transition.append(genTran(id, endSubSeqID.get(subSequence.i - 1), subSequence.i, null, null, String.format("s%d?", subSequence.i), update.toString(), true, 0, subSequence.i * yOffset - 100, 0, 0))
+							id++
+							update.setLength(0)
 						
-						// ADD TRANSITION FOR EACH ACTION
+							if (config.hasBusyLoop) {
+								transition.append(genTran(id, firstActionID.get(subSequence.i), subSequence.i, null, "t&gt;=5", null, null, true, xOffset * actionCount * 2, subSequence.i * yOffset + 100, xOffset * actionCount * 2 + 100, subSequence.i * yOffset + 80))
+								id++
+							}
+						
+							val actionGuard = getActionGuard(model, actionC, agentPrefix, agentIndex)
+							if (!actionGuard.isEmpty) {
+								guard.append(actionGuard)
+							}
+						
+							val nextAction = getNextAction(subSequence.actionC, actionC)
+							if (nextAction !== null) {
+								val nextUpdate = getActionUpdate(model, nextAction, agentPrefix, agentIndex)
+								if (!nextUpdate.isEmpty) {
+									update.append(nextUpdate)
+								}
+							}
+						
+							transition.append(genTran(id, firstActionID.get(subSequence.i), firstActionID.get(subSequence.i) + 1, null, guard.toString(), config.stopSync, update.toString(), true, xOffset, subSequence.i * yOffset - 100, 0, 0))
+							id++
+							guard.setLength(0)
+							update.setLength(0)
+						}
 						
 					} else { // Not the first busy action of a subsequence
+
+						actionCount++
 					
-						actionCount.set(0, actionCount.get(0)+1)
-						// ADD TRANSITION FOR EACH ACTION
-						
-						// The transition to be generated depends on the type of action (for updates and guards)
-						if (actionC.actionType.toString() == "moveTo") {
-							
-							// The agent doing the action is a Human?
-							if (model.pattern.human.map[name].contains(sequence.agent.name)) {
-								// From Last complete to the busy
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i) + actionCount.get(0) * 2 - 1, firstActionID.get(subSequence.i) + actionCount.get(0) * 2, null, null, String.format("start_h_moveTo[H-1]!"), "t = 0", true, xOffset * actionCount.get(0) * 2, subSequence.i * yOffset, 0 ,0))
-								id.set(0, id.get(0)+1)
-								
-								// From busy to committed that iterate the busy command
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i) + actionCount.get(0) * 2, firstActionID.get(subSequence.i) + actionCount.get(0) * 2 - 1, null, "t&gt;=5", null, "t = 0", true, xOffset * actionCount.get(0) * 2, subSequence.i * yOffset+100, xOffset * actionCount.get(0) * 2+100, subSequence.i * yOffset+80))
-								id.set(0, id.get(0)+1)
-								
-								
-								// From busy to complete
-								guard.append(hMapGuard.get("moveTo"))
-								
-								if (subSequence.actionC.size() >= actionCount.get(0) + 2) {
-								    // Ottieni l'azione successiva nel subSequence
-								    var nextAction = subSequence.actionC.get(subSequence.actionC.indexOf(actionC) + 1);
-								    
-								    // Verifica se l'azione successiva è di tipo "moveTo"
-								    if (nextAction.actionType.toString().equals("moveTo")) {
-								        var nextTargetName = nextAction.target.name.toString()
-										var nextTargetIndex = -1
-										var nextLocIndex = locations.indexOf(nextTargetName)
-										if (nextLocIndex != -1) nextTargetIndex = nextLocIndex
-										else {
-											var nextResIndex = resources.indexOf(nextTargetName)
-											if (nextResIndex != -1) nextTargetIndex = locations.length + nextResIndex
-										}
-										if (nextTargetIndex != -1) {
-								        	update.append(String.format("human_loc_target[R-1] = %d", nextTargetIndex));
-								        }
-								    }
-								    // AGGIUNGI AGGIORNAMENTI PER ALTRE AZIONI QUI
-								}
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i) + actionCount.get(0) * 2, firstActionID.get(subSequence.i) + actionCount.get(0) * 2 + 1, null, guard.toString(), String.format("stop_h_moveTo[H-1]!"), update.toString(), true, xOffset * (actionCount.get(0) * 2 +1), subSequence.i * yOffset-100, 0 ,0))
-								id.set(0, id.get(0)+1)
-								guard.setLength(0)
-								update.setLength(0)
+						val agentPrefix = if (isHuman) "human" else "rob"
+						val agentIndex = if (isHuman) "H-1" else "R-1"
+						val config = getSeqActionConfig(actionC.actionType.toString(), agentPrefix)
+					
+						if (config !== null) {
+					
+							// From last complete to the busy location
+							transition.append(genTran(
+								id,
+								firstActionID.get(subSequence.i) + actionCount * 2 - 1,
+								firstActionID.get(subSequence.i) + actionCount * 2,
+								null,
+								null,
+								config.startSync,
+								if (config.hasBusyLoop) "t = 0" else null,
+								true,
+								xOffset * actionCount * 2,
+								subSequence.i * yOffset,
+								0,
+								0
+							))
+							id++
+					
+							// Busy loop for actions that require repeated execution
+							if (config.hasBusyLoop) {
+								transition.append(genTran(
+									id,
+									firstActionID.get(subSequence.i) + actionCount * 2,
+									firstActionID.get(subSequence.i) + actionCount * 2 - 1,
+									null,
+									"t&gt;=5",
+									null,
+									null,
+									true,
+									xOffset * actionCount * 2,
+									subSequence.i * yOffset + 100,
+									xOffset * actionCount * 2 + 100,
+									subSequence.i * yOffset + 80
+								))
+								id++
 							}
-							
-							// The agent doing the action is a Robot?
-							if (model.pattern.robot.map[name].contains(sequence.agent.name)) {
-								// From Last complete to the busy
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i) + actionCount.get(0) * 2 - 1, firstActionID.get(subSequence.i) + actionCount.get(0) * 2, null, null, String.format("start_r_moveTo[R-1]!"), null, true, xOffset * actionCount.get(0) * 2, subSequence.i * yOffset, 0 ,0))
-								id.set(0, id.get(0)+1)
-								
-								// From busy to complete
-								guard.append(rMapGuard.get("moveTo"))
-								
-								if (subSequence.actionC.size() >= actionCount.get(0) + 2) {
-								    // Ottieni l'azione successiva nel subSequence
-								    var nextAction = subSequence.actionC.get(subSequence.actionC.indexOf(actionC) + 1);
-								    
-								    // Verifica se l'azione successiva è di tipo "moveTo"
-								    if (nextAction.actionType.toString().equals("moveTo")) {
-								        var nextTargetName = nextAction.target.name.toString()
-										var nextTargetIndex = -1
-										var nextLocIndex = locations.indexOf(nextTargetName)
-										if (nextLocIndex != -1) nextTargetIndex = nextLocIndex
-										else {
-											var nextResIndex = resources.indexOf(nextTargetName)
-											if (nextResIndex != -1) nextTargetIndex = locations.length + nextResIndex
-										}
-										if (nextTargetIndex != -1) {
-								        	update.append(String.format("robot_loc_target[R-1] = %d", nextTargetIndex));
-								        }
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "follow"
-								    if (nextAction.actionType.toString().equals("follow")) {
-								    	update.append(String.format("f_loc_target[R-1] = %d,\n", locations.indexOf(nextAction.target.name.toString())))
-										if (model.pattern.human.map[name].contains(nextAction.agent.name)) { // We have to follow a human
-											update.append(String.format("human_to_be_followed[R-1] = %d,\n", model.pattern.human.map[name].indexOf(nextAction.agent.name)+1)) // -1 is done insede the follow action
-											update.append("robot_to_be_followed[R-1] = 0")
-										}
-										if (model.pattern.robot.map[name].contains(nextAction.agent.name)) { // We have to follow a robot
-											update.append(String.format("robot_to_be_followed[R-1] = %d,\n", model.pattern.robot.map[name].indexOf(nextAction.agent.name)+1)) // -1 is done insede the follow action
-											update.append("human_to_be_followed[R-1] = 0")
-										}
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "pick"
-								    if (nextAction.actionType.toString().equals("pick")) {
-								        update.append(String.format("robot_res_to_pick[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(nextAction.resource.name.toString())));
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "deposit"
-								    if (nextAction.actionType.toString().equals("deposit")) {
-								        update.append(String.format("robot_res_to_deposit[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(nextAction.resource.name.toString())));
-								    }
-								    
-								    // AGGIUNGI AGGIORNAMENTI PER ALTRE AZIONI QUI
-								}
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i) + actionCount.get(0) * 2, firstActionID.get(subSequence.i) + actionCount.get(0) * 2 + 1, null, guard.toString(), String.format("stop_r_moveTo[R-1]!"), update.toString(), true, xOffset * (actionCount.get(0) * 2 +1), subSequence.i * yOffset-100, 0 ,0))
-								id.set(0, id.get(0)+1)
-								guard.setLength(0)
-								update.setLength(0)
+					
+							// Completion guard for the current action
+							val actionGuard = getActionGuard(model, actionC, agentPrefix, agentIndex)
+							if (!actionGuard.isEmpty) {
+								guard.append(actionGuard)
 							}
+					
+							// Update variables according to the next action
+							val nextAction = getNextAction(subSequence.actionC, actionC)
+							if (nextAction !== null) {
+								val nextUpdate = getActionUpdate(model, nextAction, agentPrefix, agentIndex)
+								if (!nextUpdate.isEmpty) {
+									update.append(nextUpdate)
+								}
+							}
+					
+							// From busy to complete
+							transition.append(genTran(
+								id,
+								firstActionID.get(subSequence.i) + actionCount * 2,
+								firstActionID.get(subSequence.i) + actionCount * 2 + 1,
+								null,
+								guard.toString(),
+								config.stopSync,
+								update.toString(),
+								true,
+								xOffset * (actionCount * 2 + 1),
+								subSequence.i * yOffset - 100,
+								0,
+								0
+							))
+							id++
+							guard.setLength(0)
+							update.setLength(0)
 						}
-						
-						// Follow - Not as first action
-						if (actionC.actionType.toString() == "follow") {
-							
-							// The agent doing the follow is a Robot?
-							if (model.pattern.robot.map[name].contains(sequence.agent.name)) {
-								
-								// From Last complete to the busy
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i) + actionCount.get(0) * 2 - 1, firstActionID.get(subSequence.i) + actionCount.get(0) * 2, null, null, String.format("start_r_follow[R-1]!"), null, true, xOffset * actionCount.get(0) * 2, subSequence.i * yOffset, 0 ,0))
-								id.set(0, id.get(0)+1)
-								
-								// From busy to complete
-								if (model.pattern.human.map[name].contains(actionC.agent.name)) { // We have to follow a human
-									guard.append(rMapGuard.get("followH"))
-								}
-								if (model.pattern.robot.map[name].contains(actionC.agent.name)) { // We have to follow a robot
-									guard.append(rMapGuard.get("followR"))
-								}
-								// We have to update variables wrt the next action
-								if (subSequence.actionC.indexOf(actionC) < subSequence.actionC.size() - 1) {
-								    // Ottieni l'azione successiva nel subSequence
-								    var nextAction = subSequence.actionC.get(subSequence.actionC.indexOf(actionC) + 1);
-								    
-								    // Verifica se l'azione successiva è di tipo "moveTo"
-								    if (nextAction.actionType.toString().equals("moveTo")) {
-								    	// FIX TARGET INDEX CALCULATION (LOOKAHEAD)
-								        var nextTargetName = nextAction.target.name.toString()
-										var nextTargetIndex = -1
-										var nextLocIndex = locations.indexOf(nextTargetName)
-										if (nextLocIndex != -1) nextTargetIndex = nextLocIndex
-										else {
-											var nextResIndex = resources.indexOf(nextTargetName)
-											if (nextResIndex != -1) nextTargetIndex = locations.length + nextResIndex
-										}
-										if (nextTargetIndex != -1) {
-								        	update.append(String.format("robot_loc_target[R-1] = %d", nextTargetIndex));
-								        }
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "follow"
-								    if (nextAction.actionType.toString().equals("follow")) {
-								    	update.append(String.format("f_loc_target[R-1] = %d,\n", locations.indexOf(nextAction.target.name.toString())))
-										if (model.pattern.human.map[name].contains(nextAction.agent.name)) { // We have to follow a human
-											update.append(String.format("human_to_be_followed[R-1] = %d,\n", model.pattern.human.map[name].indexOf(nextAction.agent.name)+1)) // -1 is done insede the follow action
-											update.append("robot_to_be_followed[R-1] = 0")
-										}
-										if (model.pattern.robot.map[name].contains(nextAction.agent.name)) { // We have to follow a robot
-											update.append(String.format("robot_to_be_followed[R-1] = %d,\n", model.pattern.robot.map[name].indexOf(nextAction.agent.name)+1)) // -1 is done insede the follow action
-											update.append("human_to_be_followed[R-1] = 0")
-										}
-								    }
-								   	
-								   	// Verifica se l'azione successiva è di tipo "pick"
-								    if (nextAction.actionType.toString().equals("pick")) {
-								        update.append(String.format("robot_res_to_pick[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(nextAction.resource.name.toString())));
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "deposit"
-								    if (nextAction.actionType.toString().equals("deposit")) {
-								        update.append(String.format("robot_res_to_deposit[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(nextAction.resource.name.toString())));
-								    }
-								    
-								    // AGGIUNGI AGGIORNAMENTI PER ALTRE AZIONI QUI
-								}
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i) + actionCount.get(0) * 2, firstActionID.get(subSequence.i) + actionCount.get(0) * 2 + 1, null, guard.toString(), String.format("stop_r_follow[R-1]!"), update.toString(), true, xOffset * (actionCount.get(0) * 2 +1), subSequence.i * yOffset-100, 0 ,0))
-								id.set(0, id.get(0)+1)
-								guard.setLength(0)
-								update.setLength(0)
-							}
-						}
-						// Pick - Not as first action
-						if (actionC.actionType.toString() == "pick") {
-							
-							// The agent doing the pick is a Robot?
-							if (model.pattern.robot.map[name].contains(sequence.agent.name)) {
-								
-								// From Last complete to the busy
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i) + actionCount.get(0) * 2 - 1, firstActionID.get(subSequence.i) + actionCount.get(0) * 2, null, null, String.format("start_r_pick[R-1]!"), null, true, xOffset * actionCount.get(0) * 2, subSequence.i * yOffset, 0 ,0))
-								id.set(0, id.get(0)+1)
-								
-								// From busy to complete
-								guard.append(rMapGuard.get("pick"))
-								
-								// We have to update variables wrt the next action
-								if (subSequence.actionC.indexOf(actionC) < subSequence.actionC.size() - 1) {
-								    // Ottieni l'azione successiva nel subSequence
-								    var nextAction = subSequence.actionC.get(subSequence.actionC.indexOf(actionC) + 1);
-								    
-								    // Verifica se l'azione successiva è di tipo "moveTo"
-								    if (nextAction.actionType.toString().equals("moveTo")) {
-								        var nextTargetName = nextAction.target.name.toString()
-										var nextTargetIndex = -1
-										var nextLocIndex = locations.indexOf(nextTargetName)
-										if (nextLocIndex != -1) nextTargetIndex = nextLocIndex
-										else {
-											var nextResIndex = resources.indexOf(nextTargetName)
-											if (nextResIndex != -1) nextTargetIndex = locations.length + nextResIndex
-										}
-										if (nextTargetIndex != -1) {
-								        	update.append(String.format("robot_loc_target[R-1] = %d", nextTargetIndex));
-								        }
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "follow"
-								    if (nextAction.actionType.toString().equals("follow")) {
-								    	update.append(String.format("f_loc_target[R-1] = %d,\n", locations.indexOf(nextAction.target.name.toString())))
-										if (model.pattern.human.map[name].contains(nextAction.agent.name)) { // We have to follow a human
-											update.append(String.format("human_to_be_followed[R-1] = %d,\n", model.pattern.human.map[name].indexOf(nextAction.agent.name)+1)) // -1 is done insede the follow action
-											update.append("robot_to_be_followed[R-1] = 0")
-										}
-										if (model.pattern.robot.map[name].contains(nextAction.agent.name)) { // We have to follow a robot
-											update.append(String.format("robot_to_be_followed[R-1] = %d,\n", model.pattern.robot.map[name].indexOf(nextAction.agent.name)+1)) // -1 is done insede the follow action
-											update.append("human_to_be_followed[R-1] = 0")
-										}
-								    }
-								   	
-								   	// Verifica se l'azione successiva è di tipo "pick"
-								    if (nextAction.actionType.toString().equals("pick")) {
-								        update.append(String.format("robot_res_to_pick[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(nextAction.resource.name.toString())));
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "deposit"
-								    if (nextAction.actionType.toString().equals("deposit")) {
-								        update.append(String.format("robot_res_to_deposit[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(nextAction.resource.name.toString())));
-								    }
-								    
-								    // AGGIUNGI AGGIORNAMENTI PER ALTRE AZIONI QUI
-								}
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i) + actionCount.get(0) * 2, firstActionID.get(subSequence.i) + actionCount.get(0) * 2 + 1, null, guard.toString(), String.format("stop_r_pick[R-1]!"), update.toString(), true, xOffset * (actionCount.get(0) * 2 +1), subSequence.i * yOffset-100, 0 ,0))
-								id.set(0, id.get(0)+1)
-								guard.setLength(0)
-								update.setLength(0)
-							}
-						}
-						
-						// Deposit - Not as first action
-						if (actionC.actionType.toString() == "deposit") {
-							
-							// The agent doing the deposit is a Robot?
-							if (model.pattern.robot.map[name].contains(sequence.agent.name)) {
-								
-								// From Last complete to the busy
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i) + actionCount.get(0) * 2 - 1, firstActionID.get(subSequence.i) + actionCount.get(0) * 2, null, null, String.format("start_r_deposit[R-1]!"), null, true, xOffset * actionCount.get(0) * 2, subSequence.i * yOffset, 0 ,0))
-								id.set(0, id.get(0)+1)
-								
-								// From busy to complete
-								guard.append(rMapGuard.get("deposit"))
-								
-								// We have to update variables wrt the next action
-								if (subSequence.actionC.indexOf(actionC) < subSequence.actionC.size() - 1) {
-								    // Ottieni l'azione successiva nel subSequence
-								    var nextAction = subSequence.actionC.get(subSequence.actionC.indexOf(actionC) + 1);
-								    
-								    // Verifica se l'azione successiva è di tipo "moveTo"
-								    if (nextAction.actionType.toString().equals("moveTo")) {
-								        var nextTargetName = nextAction.target.name.toString()
-										var nextTargetIndex = -1
-										var nextLocIndex = locations.indexOf(nextTargetName)
-										if (nextLocIndex != -1) nextTargetIndex = nextLocIndex
-										else {
-											var nextResIndex = resources.indexOf(nextTargetName)
-											if (nextResIndex != -1) nextTargetIndex = locations.length + nextResIndex
-										}
-										if (nextTargetIndex != -1) {
-								        	update.append(String.format("robot_loc_target[R-1] = %d", nextTargetIndex));
-								        }
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "follow"
-								    if (nextAction.actionType.toString().equals("follow")) {
-								    	update.append(String.format("f_loc_target[R-1] = %d,\n", locations.indexOf(nextAction.target.name.toString())))
-										if (model.pattern.human.map[name].contains(nextAction.agent.name)) { // We have to follow a human
-											update.append(String.format("human_to_be_followed[R-1] = %d,\n", model.pattern.human.map[name].indexOf(nextAction.agent.name)+1)) // -1 is done insede the follow action
-											update.append("robot_to_be_followed[R-1] = 0")
-										}
-										if (model.pattern.robot.map[name].contains(nextAction.agent.name)) { // We have to follow a robot
-											update.append(String.format("robot_to_be_followed[R-1] = %d,\n", model.pattern.robot.map[name].indexOf(nextAction.agent.name)+1)) // -1 is done insede the follow action
-											update.append("human_to_be_followed[R-1] = 0")
-										}
-								    }
-								   	
-								   	// Verifica se l'azione successiva è di tipo "pick"
-								    if (nextAction.actionType.toString().equals("pick")) {
-								        update.append(String.format("robot_res_to_pick[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(nextAction.resource.name.toString())));
-								    }
-								    
-								    // Verifica se l'azione successiva è di tipo "deposit"
-								    if (nextAction.actionType.toString().equals("deposit")) {
-								        update.append(String.format("robot_res_to_deposit[R-1] = %d, old_inventory = robot_inventory", resources.indexOf(nextAction.resource.name.toString())));
-								    }
-								    
-								    // AGGIUNGI AGGIORNAMENTI PER ALTRE AZIONI QUI
-								}
-								transition.append(genTran(id.get(0), firstActionID.get(subSequence.i) + actionCount.get(0) * 2, firstActionID.get(subSequence.i) + actionCount.get(0) * 2 + 1, null, guard.toString(), String.format("stop_r_deposit[R-1]!"), update.toString(), true, xOffset * (actionCount.get(0) * 2 +1), subSequence.i * yOffset-100, 0 ,0))
-								id.set(0, id.get(0)+1)
-								guard.setLength(0)
-								update.setLength(0)
-							}
-						}
-						
-						// ADD TRANSITION FOR EACH ACTION
-						
 					}
 					
-	        	]
-	        	actionCount.set(0, 0)
-	        ]
+	        	}
+	        	
+	        	actionCount = 0
+	        }
 	        
 	        // LOCATIONs AND TRANSITIONs FOR CONDITION
 	        
 	        
-	        // Transition when there is idle subsequences
-	        for (i : 1..maxIndex.get(0)) {
-	         	if (emptySS.get(i-1) == 0) {
-	        		x.set(0, xOffset)
-	            	y.set(0, i * yOffset)
-	            	// Reach the actual subSequence location
-					transition.append(genTran(id.get(0), endSubSeqID.get(i-1), i, null, null, String.format("s%d?", i), null, true, 0, i * yOffset - 100, 0 ,0))
-					id.set(0, id.get(0)+1)
-					// Reach the idle location
-					transition.append(genTran(id.get(0), i, endSubSeqID.get(i), null, null, null, String.format("%s_stat = true", sequence.agent.name.toLowerCase()), true, 0, i * yOffset, 0 ,0))
-					id.set(0, id.get(0)+1)
-	        	} 
-	        	emptySS.set(i-1, 0)
-	        }
+	        // Transitions for idle subsequences
+			for (i : 1 .. maxIndex) {
+				if (emptySS.get(i - 1) == 0) {
+					x = xOffset
+					y = i * yOffset
 			
-			// Add the transition to reach location for that ends the subsequence
-			transition.append(genTran(id.get(0), endSubSeqID.get(maxIndex.get(0)), endID.get(0), null, null, String.format("e?"), null, true, 0, (maxIndex.get(0)+1) * yOffset - 100, 0 ,0))
-			id.set(0, id.get(0)+1)
-	          
-	        builder.append(transition.toString)
-	        transition.delete(0, transition.length())
-	        builder.append("\t</template>\n")
-	    ]
+					// Reach the actual subsequence location
+					transition.append(genTran(id, endSubSeqID.get(i - 1), i, null, null, String.format("s%d?", i), null, true, 0, i * yOffset - 100, 0, 0))
+					id++
+			
+					// Reach the idle location
+					transition.append(genTran(id, i, endSubSeqID.get(i), null, null, null, String.format("%s_stat = true", sequence.agent.name.toLowerCase()), true, 0, i * yOffset, 0, 0))
+					id++
+				}
+				emptySS.set(i - 1, 0)
+			}
+			
+			// Add the transition to the final sequence location
+			transition.append(genTran(id, endSubSeqID.get(maxIndex), endID, null, null, "e?", null, true, 0, (maxIndex + 1) * yOffset - 100, 0, 0))
+			id++
+			
+			builder.append(transition.toString)
+			transition.setLength(0)
+			builder.append("\t</template>\n")
+	    }
 		
 		return builder.toString
 	}
 	
-	
+	// Function to find the target index (Location or Resource)
+	def int getTargetIndex(Model model, String targetName) {
+		val locations = model.pattern.location.map[name.toString()].toList
+		val locIndex = locations.indexOf(targetName)
+		if (locIndex != -1) return locIndex
 		
+		val resources = model.pattern.resources.map[name.toString()].toList
+		val resIndex = resources.indexOf(targetName)
+		if (resIndex != -1) return locations.size + resIndex
+		
+		return -1
+	}
+	
+	// Return true if the agent type supports the given action
+	def boolean supportsAction(String agentPrefix, String actionType) {
+		if (agentPrefix == "human") {
+			return actionType == "moveTo"
+		}
+		
+		if (agentPrefix == "rob") {
+			return actionType == "moveTo" ||
+				actionType == "follow" ||
+				actionType == "pick" ||
+				actionType == "deposit"
+		}
+		
+		return false
+	}
+	
+	// Function to generate the update assignments for a specific action
+	def String getActionUpdate(Model model, ActionC action, String agentPrefix, String agentUppaalIndex) {
+		val actionType = action.actionType.toString()
+		
+		// Return empty update if the action is not supported by the agent type
+		if (!supportsAction(agentPrefix, actionType)) {
+			return ""
+		}
+			
+		switch (actionType) {
+			case "moveTo": {
+				val targetIndex = getTargetIndex(model, action.target.name.toString())
+				val targetVar = if (agentPrefix == "human") "human_loc_target" else "robot_loc_target"
+				return '''«targetVar»[«agentUppaalIndex»] = «targetIndex»'''.toString
+			}
+			case "pick": {
+				val resIndex = model.pattern.resources.map[name.toString()].toList.indexOf(action.resource.name.toString())
+				return '''robot_res_to_pick[«agentUppaalIndex»] = «resIndex», old_inventory = robot_inventory'''.toString
+			}
+			case "deposit": {
+				val resIndex = model.pattern.resources.map[name.toString()].toList.indexOf(action.resource.name.toString())
+				return '''robot_res_to_deposit[«agentUppaalIndex»] = «resIndex», old_inventory = robot_inventory'''.toString
+			}
+			case "follow": {
+				val locIndex = model.pattern.location.map[name.toString()].toList.indexOf(action.target.name.toString())
+				// Determine who is being followed
+				val targetAgentData = resolveAgentPositionData(model, action.agent.name.toString()) 
+				
+				val humanFollowVar = if (targetAgentData?.key == "human") targetAgentData.value + 1 else 0
+				val robotFollowVar = if (targetAgentData?.key == "rob") targetAgentData.value + 1 else 0
+				
+				return '''f_loc_target[«agentUppaalIndex»] = «locIndex»,
+human_to_be_followed[«agentUppaalIndex»] = «humanFollowVar»,
+robot_to_be_followed[«agentUppaalIndex»] = «robotFollowVar»'''.toString
+			}
+			default: return ""
+		}
+	}
+	
+	// Function to generate the completion guard for an action
+	def String getActionGuard(Model model, ActionC action, String agentPrefix, String agentUppaalIndex) {
+		val actionType = action.actionType.toString()
+		val tolerance = 30
+		
+		// Return empty update if the action is not supported by the agent type
+		if (!supportsAction(agentPrefix, actionType)) {
+			return ""
+		}
+		
+		switch (actionType) {
+			case "moveTo": {
+				val targetVar = if (agentPrefix == "human") "human_loc_target" else "robot_loc_target"
+				return '''«agentPrefix»PositionX[«agentUppaalIndex»] &lt;= location_X[«targetVar»[«agentUppaalIndex»]]+«tolerance» and
+	«agentPrefix»PositionX[«agentUppaalIndex»] &gt;= location_X[«targetVar»[«agentUppaalIndex»]]-«tolerance» and
+	«agentPrefix»PositionY[«agentUppaalIndex»] &lt;= location_Y[«targetVar»[«agentUppaalIndex»]]+«tolerance» and
+	«agentPrefix»PositionY[«agentUppaalIndex»] &gt;= location_Y[«targetVar»[«agentUppaalIndex»]]-«tolerance»'''.toString
+			}
+			
+			case "pick": {
+				return '''robot_inventory[«agentUppaalIndex»][robot_res_to_pick[«agentUppaalIndex»]] > old_inventory[«agentUppaalIndex»][robot_res_to_pick[«agentUppaalIndex»]]'''.toString
+			}
+			
+			case "deposit": {
+				return '''robot_inventory[«agentUppaalIndex»][robot_res_to_deposit[«agentUppaalIndex»]] &lt; old_inventory[«agentUppaalIndex»][robot_res_to_deposit[«agentUppaalIndex»]]'''.toString
+			}
+			
+			case "follow": {
+				val targetAgentData = resolveAgentPositionData(model, action.agent.name.toString())
+				if (targetAgentData === null) return "// Error: Target agent not found"
+				
+				val tPrefix = targetAgentData.key
+				val tVar = if (tPrefix == "human") "human_to_be_followed" else "robot_to_be_followed"
+				
+				// Guard: target agent must be at location and this agent must be at location
+				return '''«tPrefix»PositionX[«tVar»[«agentUppaalIndex»]-1] &lt;= location_X[f_loc_target[«agentUppaalIndex»]]+«tolerance» and
+	«tPrefix»PositionX[«tVar»[«agentUppaalIndex»]-1] &gt;= location_X[f_loc_target[«agentUppaalIndex»]]-«tolerance» and
+	«tPrefix»PositionY[«tVar»[«agentUppaalIndex»]-1] &lt;= location_Y[f_loc_target[«agentUppaalIndex»]]+«tolerance» and
+	«tPrefix»PositionY[«tVar»[«agentUppaalIndex»]-1] &gt;= location_Y[f_loc_target[«agentUppaalIndex»]]-«tolerance» and
+	«agentPrefix»PositionX[«agentUppaalIndex»] &gt;= location_X[f_loc_target[«agentUppaalIndex»]]-«tolerance» and
+	«agentPrefix»PositionX[«agentUppaalIndex»] &lt;= location_X[f_loc_target[«agentUppaalIndex»]]+«tolerance» and
+	«agentPrefix»PositionY[«agentUppaalIndex»] &gt;= location_Y[f_loc_target[«agentUppaalIndex»]]-«tolerance» and
+	«agentPrefix»PositionY[«agentUppaalIndex»] &lt;= location_Y[f_loc_target[«agentUppaalIndex»]]+«tolerance»'''.toString
+			}
+			
+			default: return ""
+		}
+	}
+			
 	// Helper function to centralize agent resolution.
 	// Returns a Pair with the array prefix (e.g., "human", "rob") and the agent index.
 	def Pair<String, Integer> resolveAgentPositionData(Model model, String agentName) {
@@ -1774,30 +1354,30 @@ double resources_Y[«resources.size»] = {«resources.map[name + "[1]"].join(", 
 		return null
 	}
 
-	// Guards when the atomic predicate is position(agent, location)
-	def String apPositionGuard(Model model, String agentName, String locationName) {
+	// Guards when the atomic predicate is position(agent, location or resource)
+	def String apPositionGuard(Model model, String agentName, String targetName) {
 		
 		// Define the tolerance for the bounding box (distance from the center)
 		val int tolerance = 30
 		
-		// 1. Find the location index
-		val locIndex = model.pattern.location.map[name].toList.indexOf(locationName)
+		// 1. Find the target index using the unified helper method (Location or Resource)
+		val targetIndex = getTargetIndex(model, targetName)
 		
 		// 2. Dynamically resolve the agent's array prefix and index
 		val agentData = resolveAgentPositionData(model, agentName)
 		
-		if (agentData !== null) {
+		if (agentData !== null && targetIndex != -1) {
 			val prefix = agentData.key
 			val index = agentData.value
 			
-			// 3. Return the generic template using the tolerance variable
-			return '''«prefix»PositionX[«index»] &lt;= location_X[«locIndex»]+«tolerance» and
-«prefix»PositionX[«index»] &gt;= location_X[«locIndex»]-«tolerance» and
-«prefix»PositionY[«index»] &lt;= location_Y[«locIndex»]+«tolerance» and
-«prefix»PositionY[«index»] &gt;= location_Y[«locIndex»]-«tolerance»'''.toString
+			// 3. Return the generic template using the tolerance variable and the resolved targetIndex
+			return '''«prefix»PositionX[«index»] &lt;= location_X[«targetIndex»]+«tolerance» and
+«prefix»PositionX[«index»] &gt;= location_X[«targetIndex»]-«tolerance» and
+«prefix»PositionY[«index»] &lt;= location_Y[«targetIndex»]+«tolerance» and
+«prefix»PositionY[«index»] &gt;= location_Y[«targetIndex»]-«tolerance»'''.toString
 		}
 		
-		return "// Error: Agent not found"
+		return "// Error: Agent or Target not found"
 	}
 
 
@@ -2059,6 +1639,7 @@ double resources_Y[«resources.size»] = {«resources.map[name + "[1]"].join(", 
 		
 		return queries.join("\n")
 	}
+
 
 }
 

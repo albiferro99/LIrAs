@@ -1,8 +1,8 @@
 AMR_photovoltaic_pipeline
 
-
 agents:
 	robots: Robot1, Robot2, Robot3, Robot4
+
 
 locations: 
     warehouse,
@@ -191,3 +191,6 @@ Robot4:
 	pick slotted_cells  
 	29: moveTo loading_area
 	deposit slotted_cells
+
+	
+	

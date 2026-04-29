@@ -3,7 +3,6 @@ Coffee_Delivery
 agents:
 	robots: Robot
 
-
 locations: office001, office004, coffee_room
 resources: coffee
 

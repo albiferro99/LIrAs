@@ -102,6 +102,8 @@ double humanPositionY[1] = {0.0};
 
 // Robot initialization
 double batteryCharge[N_R] = {100.0};
+// The robots will start from the first N_R intersections
+const int start_nodes[N_R] = {0}
 double robPositionX[N_R] = {0.0};
 double robPositionY[N_R] = {0.0};
 
@@ -139,11 +141,6 @@ int robot_res_to_deposit[N_R];
 // Human starting position
 // No Human declared
 
-// Robot starting position
-double r_startX[N_R] = {2000.0};
-double r_startY[N_R] = {500.0};
-
-
 const int MAX_BUFF_SIZE = 10;
 
 // Pattern execution flow
@@ -180,24 +177,33 @@ const point INTERSECTIONS[N_I] = {{92.5, 163.5},{92.5, 761.2},{1452.0, 761.2},{1
 //typedef area layout[N_A];
 //typedef point trajectory[N_P];
 
-//const layout FLOOR = {{{500.0, 0.0}, {500.0, 200}, {6300.0, 200.0}, {6300.0, 0.0}}, {{500.0, 4000.0}, {500.0, 3800}, {6300.0, 3800.0}, {6300.0, 4000.0}}, {{500.0, 0.0}, {500.0, 4000}, {700.0, 4000.0}, {700.0, 0.0}}, {{1200.0, 0.0}, {1200.0, 4000}, {1400.0, 4000.0}, {1400.0, 0.0}}, {{1900.0, 0.0}, {1900.0, 4000}, {2100.0, 4000.0}, {2100.0, 0.0}}, {{2600.0, 0.0}, {2600.0, 4000}, {2800.0, 4000.0}, {2800.0, 0.0}}, {{3300.0, 0.0}, {3300.0, 4000}, {3500.0, 4000.0}, {3500.0, 0.0}}, {{4000.0, 0.0}, {4000.0, 4000}, {4200.0, 4000.0}, {4200.0, 0.0}}, {{4700.0, 0.0}, {4700.0, 4000}, {4900.0, 4000.0}, {4900.0, 0.0}}, {{5400.0, 0.0}, {5400.0, 4000}, {5600.0, 4000.0}, {5600.0, 0.0}}, {{6100.0, 0.0}, {6100.0, 4000}, {6300.0, 4000.0}, {6300.0, 0.0}}, {{6300.0, 4000.0}, {6300.0, 2500}, {6800.0, 2500.0}, {6800.0, 4000.0}}, {{0.0, 0.0}, {0.0, 500.0}, {500.0, 500.0}, {500.0, 0.0}}, {{300.0, 0.0}, {300.0, 200.0}, {700.0, 200.0}, {700.0, 0.0} }, {{6500.0, 4000.0}, {6100.0, 4000}, {6100.0, 3800.0}, {6500.0, 3800.0}}};
+//const layout FLOOR = {{{500.0, 0.0}, {500.0, 200}, {6300.0, 200.0}, {6300.0, 0.0}}, {{500.0, 3800.0}, {500.0, 4000}, {6300.0, 4000.0}, {6300.0, 3800.0}}, {{500.0, 0.0}, {500.0, 4000}, {700.0, 4000.0}, {700.0, 0.0}}, {{1200.0, 0.0}, {1200.0, 4000}, {1400.0, 4000.0}, {1400.0, 0.0}}, {{1900.0, 0.0}, {1900.0, 4000}, {2100.0, 4000.0}, {2100.0, 0.0}}, {{2600.0, 0.0}, {2600.0, 4000}, {2800.0, 4000.0}, {2800.0, 0.0}}, {{3300.0, 0.0}, {3300.0, 4000}, {3500.0, 4000.0}, {3500.0, 0.0}}, {{4000.0, 0.0}, {4000.0, 4000}, {4200.0, 4000.0}, {4200.0, 0.0}}, {{4700.0, 0.0}, {4700.0, 4000}, {4900.0, 4000.0}, {4900.0, 0.0}}, {{5400.0, 0.0}, {5400.0, 4000}, {5600.0, 4000.0}, {5600.0, 0.0}}, {{6100.0, 0.0}, {6100.0, 4000}, {6300.0, 4000.0}, {6300.0, 0.0}}, {{6300.0, 4000.0}, {6300.0, 2500}, {6800.0, 2500.0}, {6800.0, 4000.0}}, {{0.0, 0.0}, {0.0, 500.0}, {500.0, 500.0}, {500.0, 0.0}}, {{300.0, 0.0}, {300.0, 200.0}, {700.0, 200.0}, {700.0, 0.0} }, {{6500.0, 4000.0}, {6100.0, 4000}, {6100.0, 3800.0}, {6500.0, 3800.0}}};
 
 
 //const point INTERSECTIONS[N_I] = {{400.0, 100.0}, {600.0, 3900.0}, {600.0, 100.0}, {1300.0, 100.0}, {1300.0, 3900.0}, {2000.0, 100.0}, {2000.0, 3900.0}, {2700.0, 100.0}, {2700.0, 3900.0}, {3400.0, 100.0}, {3400.0, 3900.0}, {4100.0, 100.0}, {4100.0, 3900.0}, {4800.0, 100.0}, {4800.0, 3900.0}, {5500.0, 100.0}, {5500.0, 3900.0}, {6400.0, 3900.0}, {6200.0, 3900.0}, {6200.0, 100.0}};
 
 // END LAYOUT 2
 
-// used in all the actions
 bool same_area(double sx, double sy, double dx, double dy) {
     int i;
     bool x_s_in, y_s_in, x_d_in, y_d_in;
-    for (i = 0; i &lt; N_A; i++)
+    double x_min, x_max, y_min, y_max;
+
+    for (i = 0; i < N_A; i++)
     {
-        x_s_in = sx &gt; FLOOR[i][0][0] &amp;&amp; sx &lt; FLOOR[i][3][0];
-        y_s_in = sy &gt; FLOOR[i][0][1] &amp;&amp; sy &lt; FLOOR[i][1][1];
-        x_d_in = dx &gt; FLOOR[i][0][0] &amp;&amp; dx &lt; FLOOR[i][3][0];
-        y_d_in = dy &gt; FLOOR[i][0][1] &amp;&amp; dy &lt; FLOOR[i][1][1];
-        if ((x_s_in &amp;&amp; y_s_in) &amp;&amp; (x_d_in &amp;&amp; y_d_in)) // start and dest in same area
+        // Trova il VERO minimo e massimo confrontando gli angoli opposti (Punto 0 e Punto 2)
+        x_min = FLOOR[i][0][0] < FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
+        x_max = FLOOR[i][0][0] > FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
+        y_min = FLOOR[i][0][1] < FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
+        y_max = FLOOR[i][0][1] > FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
+
+        // Aggiungo una piccola tolleranza (1.0) anche qui per evitare problemi di routing sui bordi
+        x_s_in = (sx >= x_min - 1.0) && (sx <= x_max + 1.0);
+        y_s_in = (sy >= y_min - 1.0) && (sy <= y_max + 1.0);
+        x_d_in = (dx >= x_min - 1.0) && (dx <= x_max + 1.0);
+        y_d_in = (dy >= y_min - 1.0) && (dy <= y_max + 1.0);
+
+        if ((x_s_in && y_s_in) && (x_d_in && y_d_in)) // start and dest in same area
             return true;
     }
     return false;
@@ -214,25 +220,28 @@ double pt_dist(double x1, double x2, double y1, double y2) {
  * Checks if the given coordinates (x, y) are inside ANY of the valid floor areas.
  * Returns true if the position is valid, false if it is in a forbidden area.
  */
+const double EPSILON = 1.0;
+
 bool isValidPosition(double x, double y) {
-    // Iterate through all defined areas in the layout
-    for (i : int[0, N_A - 1]) {
-        // Extract boundaries from the rectangle definition
-        // Assuming Point 0 is Bottom-Left (min) and Point 2 is Top-Right (max)
-        double x_min = FLOOR[i][0][0];
-        double y_min = FLOOR[i][0][1];
-        double x_max = FLOOR[i][2][0];
-        double y_max = FLOOR[i][2][1];
+    int i;
+    double x_min, x_max, y_min, y_max;
+    
+    for (i = 0; i < N_A; i++) {
+        // Stesso calcolo antiproiettile per il rilevamento collisioni
+        x_min = FLOOR[i][0][0] < FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
+        x_max = FLOOR[i][0][0] > FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
+        y_min = FLOOR[i][0][1] < FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
+        y_max = FLOOR[i][0][1] > FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
         
-        // Check if the point is strictly inside the current rectangle
-        if (x &gt; x_min &amp;&amp; x &lt; x_max &amp;&amp; y &gt; y_min &amp;&amp; y &lt; y_max) {
-            return true; // The agent is safe, found a valid floor
+        // Epsilon (+- 1.0) e >= per permettere la passeggiata sui confini
+        if (x >= x_min - 1.0 && x <= x_max + 1.0 && y >= y_min - 1.0 && y <= y_max + 1.0) {
+            return true;
         }
     }
-    
-    // If the loop finishes without returning true, the agent is outside all valid areas
     return false;
 }
+
+
 
 
 	<template>
@@ -286,11 +295,12 @@ bool isValidPosition(double x, double y) {
 </transition>
 	</template>
 
-	<template>
-		<name>Fixed_Broken_Delivery_robot1</name>
-		<parameter>int p, int R</parameter>
-		<declaration>// Place local declarations here.
-clock t;		</declaration>
+<template>
+	<name>Fixed_Broken_Delivery_robot1</name>
+	<parameter>int p, int R</parameter>
+	<declaration>// Place local declarations here.
+clock t;
+	</declaration>
 <location id="id0" x="0" y="0">
 	<name x="-17" y="-34">init_robot1</name>
 </location>
@@ -459,209 +469,175 @@ int v_max;
 int a_max;
 
 bool needsTurning = false;
+
 void change_orientation(double sx, double sy, double dx, double dy) {
-double cos_alpha, alpha, theta, delta;
-double AC, AB;
-bool turnLeft;
+    double cos_alpha, alpha, theta, delta;
+    double AC, AB;
+    bool turnLeft;
 
-AC = pt_dist(sx, dx, sy, sy);
-AB = pt_dist(sx, dx, sy, dy);
+    AC = pt_dist(sx, dx, sy, sy);
+    AB = pt_dist(sx, dx, sy, dy);
 
-if (AB == 0)
-{
-    return;
-}
+    if (AB == 0) return;
 
-cos_alpha = AC / AB;
-// angle between destination and hor. line
-alpha = acos(cos_alpha);
-// angle between robot axis and hor. line
-theta = ort * 180 / PI;
-// how much the robot should rotate [deg]
-delta = 0.0;
-turnLeft = false;
+    cos_alpha = AC / AB;
+    alpha = acos(cos_alpha); // Result in radians
+    theta = ort; // Current orientation in degrees
+    
+    delta = 0.0;
+    turnLeft = false;
 
-if (dx &gt;= sx &amp;&amp; dy &gt;= sy)
-{ // Destination in 1st quadrant
-    alpha = alpha * (180 / PI);
-    if (alpha &gt; theta)
-    {
-        delta = alpha - theta;
-        turnLeft = true;
+    // Calculate target angle and rotation delta based on quadrant
+    if (dx >= sx && dy >= sy) {
+        alpha = alpha * (180 / PI);
+        if (alpha > theta) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
     }
-    else
-    {
-        delta = theta - alpha;
-        turnLeft = false;
+    else if (dx >= sx && dy <= sy) {
+        alpha = -alpha * (180 / PI);
+        if (theta < alpha) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
     }
-}
-else if (dx &gt;= sx &amp;&amp; dy &lt;= sy)
-{ // Destination in 2nd quadrant
-    alpha = -alpha * (180 / PI);
-    if (theta &lt; alpha)
-    {
-        delta = alpha - theta;
-        turnLeft = true;
+    else if (dx <= sx && dy <= sy) {
+        alpha = -(180 - alpha * (180 / PI));
+        if (theta < alpha) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
     }
-    else
-    {
-        delta = theta - alpha;
-        turnLeft = false;
+    else if (dx <= sx && dy >= sy) {
+        alpha = 180 - alpha * (180 / PI);
+        if (theta < alpha) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
     }
-}
-else if (dx &lt;= sx &amp;&amp; dy &lt;= sy)
-{ // Destination in 3rd quadrant
-    alpha = -(180 - alpha * (180 / PI));
-    if (theta &lt; alpha)
-    {
-        delta = alpha - theta;
-        turnLeft = true;
-    }
-    else
-    {
-        delta = theta - alpha;
-        turnLeft = false;
-    }
-}
-else if (dx &lt;= sx &amp;&amp; dy &gt;= sy)
-{ // Destination in 4th quadrant
-    alpha = 180 - alpha * (180 / PI);
-    if (theta &lt; alpha)
-    {
-        delta = alpha - theta;
-        turnLeft = true;
-    }
-    else
-    {
-        delta = theta - alpha;
-        turnLeft = false;
-    }
-}
 
-needsTurning = delta &gt; 0.0;
+    needsTurning = delta > 0.0;
 
-if (needsTurning &amp;&amp; turnLeft)
-{
-    ort = ort * 180 / PI + delta;
-}
-else if (needsTurning &amp;&amp; !turnLeft)
-{
-    ort = ort * 180 / PI - delta;
-}
+    // Update orientation
+    if (needsTurning && turnLeft) ort = ort + delta;
+    else if (needsTurning && !turnLeft) ort = ort - delta;
 }
 
 point curr, dest;
+
 void plan_traj() {
-int i, j, next_inters = -1;
-int neigh[5] = {-1,-1,-1,-1,-1};
-int    k = 0;
-double dist, min_dist;
-bool visited[N_I] = {false,false,false,false,false,false,false,false,false}; // Layout 1
-// bool visited[N_I] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};  // Layout 2
-bool close;
-curr[0] = robPositionX[id-1]; curr[1] = robPositionY[id-1];
-dest[0] = location_X[robot_loc_target[id-1]]; dest[1] = location_Y[robot_loc_target[id-1]];
-// init trajectory
-for (i = 0; i &lt; N_P; i++)
-{
-    traj[i][0] = 0.0;
-    traj[i][1] = 0.0;
-}
-i = 0;
-curr_traj = 0;
+    int i, j, next_inters = -1;
+    int neigh[5] = {-1,-1,-1,-1,-1};
+    int k = 0;
+    double dist, min_dist;
+    bool visited[N_I] = {false,false,false,false,false,false,false,false,false}; // Layout 1
+    //bool visited[N_I] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};  // Layout 2
+    bool close;
 
-// builds trajectory by finding a path among adjacent areas
-// (the existence of an intersection point means two areas are adjacent to each other)
-// until the destination area is reached
-close = same_area(curr[0], curr[1], dest[0], dest[1]);
-while (!close)
-{
-    for (j = 0; j &lt; N_I &amp;&amp; k&lt;3; j++)
-    {
-        // find all int. pts which are a neighbor of curr. point
-        // there are max. 3 in the long left hall
-        if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) &amp;&amp; !visited[j])
-        {
-            neigh[k] = j;
-            k++;
-        }
+    curr[0] = robPositionX[id-1];
+    curr[1] = robPositionY[id-1];
+    dest[0] = location_X[robot_loc_target[id-1]];
+    dest[1] = location_Y[robot_loc_target[id-1]];
+
+    // Reset trajectory
+    for (i = 0; i < N_P; i++) {
+        traj[i][0] = 0.0;
+        traj[i][1] = 0.0;
     }
-    if(neigh[0]==-1) close = true;
-    else {
-    // next int. point to add to traj. is the closest to destination
-    min_dist = pt_dist(INTERSECTIONS[neigh[0]][0], dest[0], INTERSECTIONS[neigh[0]][1], dest[1]);
-    next_inters = neigh[0];
-    for (j = 1; j &lt; 5 &amp;&amp; neigh[j] != -1; j++)
-    {
-        dist = pt_dist(INTERSECTIONS[neigh[j]][0], dest[0], INTERSECTIONS[neigh[j]][1], dest[1]);
-        if (dist &lt; min_dist)
-        {
-            min_dist = dist;
-            next_inters = neigh[j];
-        }
-    }
-    // if trajectory is full, or no next point has been found,
-    // something has gone wrong, but I cannot raise an exception
-    if (i == N_P - 1 || next_inters == -1)
-        return;
-    // next inters point is set as visited,
-    visited[next_inters] = true;
-    // added to the trajectory,
-    traj[i][0] = INTERSECTIONS[next_inters][0];
-    traj[i][1] = INTERSECTIONS[next_inters][1];
-    i++;
-    // and set as current point
-    curr[0] = INTERSECTIONS[next_inters][0];
-    curr[1] = INTERSECTIONS[next_inters][1];
-    // reset
-    next_inters = -1;
-    k = 0;
-    for(j=0; j&lt;5;j++) neigh[j] = -1;
+    i = 0;
+    curr_traj = 0;
+
+    // Build path through adjacent intersections
     close = same_area(curr[0], curr[1], dest[0], dest[1]);
+    while (!close) {
+        for (j = 0; j < N_I && k < 3; j++) {
+            if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) && !visited[j]) {
+                neigh[k] = j;
+                k++;
+            }
+        }
+        if (neigh[0] == -1) {
+            close = true;
+        } else {
+            min_dist = pt_dist(INTERSECTIONS[neigh[0]][0], dest[0], INTERSECTIONS[neigh[0]][1], dest[1]);
+            next_inters = neigh[0];
+            for (j = 1; j < 5 && neigh[j] != -1; j++) {
+                dist = pt_dist(INTERSECTIONS[neigh[j]][0], dest[0], INTERSECTIONS[neigh[j]][1], dest[1]);
+                if (dist < min_dist) {
+                    min_dist = dist;
+                    next_inters = neigh[j];
+                }
+            }
+            if (i == N_P - 1 || next_inters == -1) return;
+            
+            visited[next_inters] = true;
+            traj[i][0] = INTERSECTIONS[next_inters][0];
+            traj[i][1] = INTERSECTIONS[next_inters][1];
+            curr[0] = INTERSECTIONS[next_inters][0];
+            curr[1] = INTERSECTIONS[next_inters][1];
+            
+            i++;
+            next_inters = -1;
+            k = 0;
+            for(j=0; j<5; j++) neigh[j] = -1;
+            close = same_area(curr[0], curr[1], dest[0], dest[1]);
+        }
     }
-}
-// destination point is always part of the trajectory
-traj[i][0] = dest[0];
-traj[i][1] = dest[1];
+    // Add final destination
+    traj[i][0] = dest[0];
+    traj[i][1] = dest[1];
 
-//sets initial orientation
-change_orientation(robPositionX[id-1], robPositionY[id-1], traj[0][0], traj[0][1]);
+    change_orientation(robPositionX[id-1], robPositionY[id-1], traj[0][0], traj[0][1]);
 }
 
 void update_pos(double coeff) {
-robPositionX[id-1] = robPositionX[id-1] + coeff*Tpoll*cos(ort*PI/180);
-robPositionY[id-1] = robPositionY[id-1] + coeff*Tpoll*sin(ort*PI/180);
+    double nextX = robPositionX[id-1] + coeff*Tpoll*cos(ort*PI/180);
+    double nextY = robPositionY[id-1] + coeff*Tpoll*sin(ort*PI/180);
+
+    // Update position only if valid
+    if (isValidPosition(nextX, nextY)) {
+        robPositionX[id-1] = nextX;
+        robPositionY[id-1] = nextY;
+    }
 }
 
 void initRobot() {
-t = 0;
-V = 0;
+    t = 0;
+    V = 0;
 
-robPositionX[id-1] = r_startX[id-1];
-robPositionY[id-1] = r_startY[id-1];
+    // Initialize position at assigned intersection
+    robPositionX[id-1] = INTERSECTIONS[start_nodes[id-1]][0];
+    robPositionY[id-1] = INTERSECTIONS[start_nodes[id-1]][1];
 
-robPositionX[id-1] = robPositionX[id-1];
-robPositionY[id-1] = robPositionY[id-1];
-
-tUpd=0;
-v_max = fint(_v_max);
-a_max = fint(_a_max);
+    tUpd = 0;
+    v_max = fint(_v_max);
+    a_max = fint(_a_max);
 }
 
 void varsUpdate(double coeff) {
-tUpd = 0;
+    double final_X;
+    double final_Y;
 
-if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0))
-    return;
+    tUpd = 0;
+    final_X = location_X[robot_loc_target[id-1]];
+    final_Y = location_Y[robot_loc_target[id-1]];
+    
+    // Stop logic if destination is reached
+    if (robPositionX[id-1] == final_X && robPositionY[id-1] == final_Y) {
+        return;
+    }
 
-if (pt_dist(robPositionX[id-1], traj[curr_traj][0], robPositionY[id-1], traj[curr_traj][1]) &lt; v_max*1.1) {
-    curr_traj++;
-    if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0))
-        plan_traj();
-    change_orientation(robPositionX[id-1], robPositionY[id-1], traj[curr_traj][0], traj[curr_traj][1]);
-}
+    if (curr_traj >= N_P || (traj[curr_traj][0]==0.0 && traj[curr_traj][1]==0.0)) return;
 
-update_pos(coeff);
+    // Waypoint management
+    if (pt_dist(robPositionX[id-1], traj[curr_traj][0], robPositionY[id-1], traj[curr_traj][1]) < v_max*1.1) {
+        // Snap to exact coordinates to prevent drift
+        robPositionX[id-1] = traj[curr_traj][0];
+        robPositionY[id-1] = traj[curr_traj][1];
+
+        curr_traj++;
+        
+        if (curr_traj >= N_P || (traj[curr_traj][0]==0.0 && traj[curr_traj][1]==0.0)) {
+            plan_traj();
+        } else {
+            change_orientation(robPositionX[id-1], robPositionY[id-1], traj[curr_traj][0], traj[curr_traj][1]);
+        }
+    } else {
+        update_pos(coeff);
+    }
 }
 </declaration>
     <location id="id90" x="-629" y="-348">
@@ -853,216 +829,194 @@ int a_max;
 
 bool needsTurning = false;
 void change_orientation(double sx, double sy, double dx, double dy) {
-double cos_alpha, alpha, theta, delta;
-double AC, AB;
-bool turnLeft;
+    double cos_alpha, alpha, theta, delta;
+    double AC, AB;
+    bool turnLeft;
 
-AC = pt_dist(sx, dx, sy, sy);
-AB = pt_dist(sx, dx, sy, dy);
+    AC = pt_dist(sx, dx, sy, sy);
+    AB = pt_dist(sx, dx, sy, dy);
 
-if (AB == 0)
-{
-    return;
-}
+    // Avoid division by zero if start and destination are the same
+    if (AB == 0) {
+        return;
+    }
 
-cos_alpha = AC / AB;
-// angle between destination and hor. line
-alpha = acos(cos_alpha);
-// angle between robot axis and hor. line
-theta = ort * 180 / PI;
-// how much the robot should rotate [deg]
-delta = 0.0;
-turnLeft = false;
+    cos_alpha = AC / AB;
+    alpha = acos(cos_alpha); // Result is in radians
+    
+    // Corrected: ort is already in degrees, just copy it to theta
+    theta = ort;
+    
+    delta = 0.0;
+    turnLeft = false;
 
-if (dx &gt;= sx &amp;&amp; dy &gt;= sy)
-{ // Destination in 1st quadrant
-    alpha = alpha * (180 / PI);
-    if (alpha &gt; theta)
-    {
-        delta = alpha - theta;
-        turnLeft = true;
+    // Calculate the target angle based on the quadrant
+    if (dx >= sx && dy >= sy) { // 1st Quadrant
+        alpha = alpha * (180 / PI);
+        if (alpha > theta) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
     }
-    else
-    {
-        delta = theta - alpha;
-        turnLeft = false;
+    else if (dx >= sx && dy <= sy) { // 2nd Quadrant
+        alpha = -alpha * (180 / PI);
+        if (theta < alpha) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
     }
-}
-else if (dx &gt;= sx &amp;&amp; dy &lt;= sy)
-{ // Destination in 2nd quadrant
-    alpha = -alpha * (180 / PI);
-    if (theta &lt; alpha)
-    {
-        delta = alpha - theta;
-        turnLeft = true;
+    else if (dx <= sx && dy <= sy) { // 3rd Quadrant
+        alpha = -(180 - alpha * (180 / PI));
+        if (theta < alpha) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
     }
-    else
-    {
-        delta = theta - alpha;
-        turnLeft = false;
+    else if (dx <= sx && dy >= sy) { // 4th Quadrant
+        alpha = 180 - alpha * (180 / PI);
+        if (theta < alpha) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
     }
-}
-else if (dx &lt;= sx &amp;&amp; dy &lt;= sy)
-{ // Destination in 3rd quadrant
-    alpha = -(180 - alpha * (180 / PI));
-    if (theta &lt; alpha)
-    {
-        delta = alpha - theta;
-        turnLeft = true;
-    }
-    else
-    {
-        delta = theta - alpha;
-        turnLeft = false;
-    }
-}
-else if (dx &lt;= sx &amp;&amp; dy &gt;= sy)
-{ // Destination in 4th quadrant
-    alpha = 180 - alpha * (180 / PI);
-    if (theta &lt; alpha)
-    {
-        delta = alpha - theta;
-        turnLeft = true;
-    }
-    else
-    {
-        delta = theta - alpha;
-        turnLeft = false;
-    }
-}
 
-needsTurning = delta &gt; 0.0;
+    needsTurning = delta > 0.0;
 
-if (needsTurning &amp;&amp; turnLeft)
-{
-    ort = ort * 180 / PI + delta;
-}
-else if (needsTurning &amp;&amp; !turnLeft)
-{
-    ort = ort * 180 / PI - delta;
-}
+    // Update orientation strictly in degrees
+    if (needsTurning && turnLeft) {
+        ort = ort + delta;
+    }
+    else if (needsTurning && !turnLeft) {
+        ort = ort - delta;
+    }
 }
 
 point curr, dest;
+
 void plan_traj() {
+    int i, j, next_inters = -1;
+    int neigh[5] = {-1,-1,-1,-1,-1};
+    int k = 0;
+    double dist, min_dist;
+    bool visited[N_I] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
+    bool close;
 
-int i, j, next_inters = -1;
-int neigh[5] = {-1,-1,-1,-1,-1};
-int    k = 0;
-double dist, min_dist;
-bool visited[N_I] = {false,false,false,false,false,false,false,false,false}; // Layout 1
-// bool visited[N_I] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};  // Layout 2
-bool close;
-curr[0] = robPositionX[id-1]; curr[1] = robPositionY[id-1];
-// follow the robot (having the id)
-if (human_to_be_followed[id-1]==0 &amp;&amp; robot_to_be_followed[id-1]!=0 &amp;&amp; robot_to_be_followed[id-1]!=id){
-    dest[0] = robPositionX[robot_to_be_followed[id-1]-1]; dest[1] = robPositionX[robot_to_be_followed[id-1]-1];
-}
-// follow the human (having the id)
-if (human_to_be_followed[id-1]!=0 &amp;&amp; robot_to_be_followed[id-1]==0){
-    dest[0] = humanPositionX[human_to_be_followed[id-1]-1]; dest[1] = humanPositionY[human_to_be_followed[id-1]    -1]; } // follow a human
-// init trajectory
-for (i = 0; i &lt; N_P; i++)
-{
-    traj[i][0] = 0.0;
-    traj[i][1] = 0.0;
-}
-i = 0;
-curr_traj = 0;
+    curr[0] = robPositionX[id-1];
+    curr[1] = robPositionY[id-1];
 
-// builds trajectory by finding a path among adjacent areas
-// (the existence of an intersection point means two areas are adjacent to each other)
-// until the destination area is reached
-close = same_area(curr[0], curr[1], dest[0], dest[1]);
-while (!close)
-{
-    for (j = 0; j &lt; N_I &amp;&amp; k&lt;3; j++)
-    {
-        // find all int. pts which are a neighbor of curr. point
-        // there are max. 3 in the long left hall
-        if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) &amp;&amp; !visited[j])
-        {
-            neigh[k] = j;
-            k++;
-        }
+    // Follow Logic (Keep original target selection)
+    if (human_to_be_followed[id-1] == 0 && robot_to_be_followed[id-1] != 0 && robot_to_be_followed[id-1] != id) {
+        dest[0] = robPositionX[robot_to_be_followed[id-1]-1];
+        dest[1] = robPositionY[robot_to_be_followed[id-1]-1]; // Fixed Y coordinate index
     }
-    if(neigh[0]==-1) close = true;
-    else {
-    // next int. point to add to traj. is the closest to destination
-    min_dist = pt_dist(INTERSECTIONS[neigh[0]][0], dest[0], INTERSECTIONS[neigh[0]][1], dest[1]);
-    next_inters = neigh[0];
-    for (j = 1; j &lt; 5 &amp;&amp; neigh[j] != -1; j++)
-    {
-        dist = pt_dist(INTERSECTIONS[neigh[j]][0], dest[0], INTERSECTIONS[neigh[j]][1], dest[1]);
-        if (dist &lt; min_dist)
-        {
-            min_dist = dist;
-            next_inters = neigh[j];
-        }
+    if (human_to_be_followed[id-1] != 0 && robot_to_be_followed[id-1] == 0) {
+        dest[0] = humanPositionX[human_to_be_followed[id-1]-1];
+        dest[1] = humanPositionY[human_to_be_followed[id-1]-1];
     }
-    // if trajectory is full, or no next point has been found,
-    // something has gone wrong, but I cannot raise an exception
-    if (i == N_P - 1 || next_inters == -1)
-        return;
-    // next inters point is set as visited,
-    visited[next_inters] = true;
-    // added to the trajectory,
-    traj[i][0] = INTERSECTIONS[next_inters][0];
-    traj[i][1] = INTERSECTIONS[next_inters][1];
-    i++;
-    // and set as current point
-    curr[0] = INTERSECTIONS[next_inters][0];
-    curr[1] = INTERSECTIONS[next_inters][1];
-    // reset
-    next_inters = -1;
-    k = 0;
-    for(j=0; j&lt;5;j++) neigh[j] = -1;
+
+    // Reset trajectory
+    for (i = 0; i < N_P; i++) {
+        traj[i][0] = 0.0;
+        traj[i][1] = 0.0;
+    }
+    i = 0;
+    curr_traj = 0;
+
+    // Build path among adjacent areas
     close = same_area(curr[0], curr[1], dest[0], dest[1]);
-    }
-}
-// destination point is always part of the trajectory
-traj[i][0] = dest[0];
-traj[i][1] = dest[1];
+    while (!close) {
+        for (j = 0; j < N_I && k < 3; j++) {
+            if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) && !visited[j]) {
+                neigh[k] = j;
+                k++;
+            }
+        }
+        if (neigh[0] == -1) {
+            close = true;
+        } else {
+            min_dist = pt_dist(INTERSECTIONS[neigh[0]][0], dest[0], INTERSECTIONS[neigh[0]][1], dest[1]);
+            next_inters = neigh[0];
+            for (j = 1; j < 5 && neigh[j] != -1; j++) {
+                dist = pt_dist(INTERSECTIONS[neigh[j]][0], dest[0], INTERSECTIONS[neigh[j]][1], dest[1]);
+                if (dist < min_dist) {
+                    min_dist = dist;
+                    next_inters = neigh[j];
+                }
+            }
+            if (i == N_P - 1 || next_inters == -1) return;
 
-//sets initial orientation
-change_orientation(robPositionX[id-1], robPositionY[id-1], traj[0][0], traj[0][1]);
+            visited[next_inters] = true;
+            traj[i][0] = INTERSECTIONS[next_inters][0];
+            traj[i][1] = INTERSECTIONS[next_inters][1];
+            curr[0] = INTERSECTIONS[next_inters][0];
+            curr[1] = INTERSECTIONS[next_inters][1];
+            
+            i++;
+            next_inters = -1;
+            k = 0;
+            for(j=0; j<5; j++) neigh[j] = -1;
+            close = same_area(curr[0], curr[1], dest[0], dest[1]);
+        }
+    }
+    traj[i][0] = dest[0];
+    traj[i][1] = dest[1];
+
+    change_orientation(robPositionX[id-1], robPositionY[id-1], traj[0][0], traj[0][1]);
 }
 
 void update_pos(double coeff) {
-robPositionX[id-1] = robPositionX[id-1] + coeff*Tpoll*cos(ort*PI/180);
-robPositionY[id-1] = robPositionY[id-1] + coeff*Tpoll*sin(ort*PI/180);
+    double nextX = robPositionX[id-1] + coeff*Tpoll*cos(ort*PI/180);
+    double nextY = robPositionY[id-1] + coeff*Tpoll*sin(ort*PI/180);
+
+    // Collision avoidance with layout boundaries
+    if (isValidPosition(nextX, nextY)) {
+        robPositionX[id-1] = nextX;
+        robPositionY[id-1] = nextY;
+    }
 }
 
 void initRobot() {
-t = 0;
-V = 0;
+    t = 0;
+    V = 0;
 
-robPositionX[id-1] = r_startX[id-1];
-robPositionY[id-1] = r_startY[id-1];
+    // Fetch the correct X and Y coordinates from the INTERSECTIONS array
+    // using the start_nodes index for each specific robot
+    robPositionX[id-1] = INTERSECTIONS[start_nodes[id-1]][0];
+    robPositionY[id-1] = INTERSECTIONS[start_nodes[id-1]][1];
 
-robPositionX[id-1] = robPositionX[id-1];
-robPositionY[id-1] = robPositionY[id-1];
-
-
-tUpd=0;
-v_max = fint(_v_max);
-a_max = fint(_a_max);
+    tUpd = 0;
+    v_max = fint(_v_max);
+    a_max = fint(_a_max);
 }
 
 void varsUpdate(double coeff) {
-tUpd = 0;
+    double final_X;
+    double final_Y;
 
-if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0))
-    return;
+    tUpd = 0;
+    
+    // Arrival check to avoid Zeno behavior
+    // Re-calculating current target position
+    if (human_to_be_followed[id-1] == 0 && robot_to_be_followed[id-1] != 0) {
+        final_X = robPositionX[robot_to_be_followed[id-1]-1];
+        final_Y = robPositionY[robot_to_be_followed[id-1]-1];
+    } else {
+        final_X = humanPositionX[human_to_be_followed[id-1]-1];
+        final_Y = humanPositionY[human_to_be_followed[id-1]-1];
+    }
+    
+    if (robPositionX[id-1] == final_X && robPositionY[id-1] == final_Y) {
+        return;
+    }
 
-if (pt_dist(robPositionX[id-1], traj[curr_traj][0], robPositionY[id-1], traj[curr_traj][1]) &lt; v_max*1.1) {
-    curr_traj++;
-    if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0))
-        plan_traj();
-    change_orientation(robPositionX[id-1], robPositionY[id-1], traj[curr_traj][0], traj[curr_traj][1]);
-}
+    if (curr_traj >= N_P || (traj[curr_traj][0]==0.0 && traj[curr_traj][1]==0.0)) return;
 
-update_pos(coeff);
+    // Waypoint management with Snap
+    if (pt_dist(robPositionX[id-1], traj[curr_traj][0], robPositionY[id-1], traj[curr_traj][1]) < v_max*1.1) {
+        robPositionX[id-1] = traj[curr_traj][0];
+        robPositionY[id-1] = traj[curr_traj][1];
+        curr_traj++;
+        
+        if (curr_traj >= N_P || (traj[curr_traj][0]==0.0 && traj[curr_traj][1]==0.0)) {
+            plan_traj();
+        } else {
+            change_orientation(robPositionX[id-1], robPositionY[id-1], traj[curr_traj][0], traj[curr_traj][1]);
+        }
+    } else {
+        update_pos(coeff);
+    }
 }
 </declaration>
     <location id="id119" x="-620" y="-348">

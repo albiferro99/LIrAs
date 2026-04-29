@@ -3,7 +3,7 @@
     <parameter>int id, double _v_max, double _a_max</parameter>
     <declaration>
 clock V, Th, tUpd;
-
+double turn_limit;
 trajectory traj = {{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0}};
 
 double ort = 0.0;
@@ -16,209 +16,175 @@ int v_max;
 int a_max;
 
 bool needsTurning = false;
+
 void change_orientation(double sx, double sy, double dx, double dy) {
-double cos_alpha, alpha, theta, delta;
-double AC, AB;
-bool turnLeft;
+    double cos_alpha, alpha, theta, delta;
+    double AC, AB;
+    bool turnLeft;
 
-AC = pt_dist(sx, dx, sy, sy);
-AB = pt_dist(sx, dx, sy, dy);
+    AC = pt_dist(sx, dx, sy, sy);
+    AB = pt_dist(sx, dx, sy, dy);
 
-if (AB == 0)
-{
-    return;
-}
+    if (AB == 0) return;
 
-cos_alpha = AC / AB;
-// angle between destination and hor. line
-alpha = acos(cos_alpha);
-// angle between robot axis and hor. line
-theta = ort * 180 / PI;
-// how much the robot should rotate [deg]
-delta = 0.0;
-turnLeft = false;
+    cos_alpha = AC / AB;
+    alpha = acos(cos_alpha); // Result in radians
+    theta = ort; // Current orientation in degrees
+    
+    delta = 0.0;
+    turnLeft = false;
 
-if (dx &gt;= sx &amp;&amp; dy &gt;= sy)
-{ // Destination in 1st quadrant
-    alpha = alpha * (180 / PI);
-    if (alpha &gt; theta)
-    {
-        delta = alpha - theta;
-        turnLeft = true;
+    // Calculate target angle and rotation delta based on quadrant
+    if (dx &gt;= sx &amp;&amp; dy &gt;= sy) {
+        alpha = alpha * (180 / PI);
+        if (alpha &gt; theta) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
     }
-    else
-    {
-        delta = theta - alpha;
-        turnLeft = false;
+    else if (dx &gt;= sx &amp;&amp; dy &lt;= sy) {
+        alpha = -alpha * (180 / PI);
+        if (theta &lt; alpha) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
     }
-}
-else if (dx &gt;= sx &amp;&amp; dy &lt;= sy)
-{ // Destination in 2nd quadrant
-    alpha = -alpha * (180 / PI);
-    if (theta &lt; alpha)
-    {
-        delta = alpha - theta;
-        turnLeft = true;
+    else if (dx &lt;= sx &amp;&amp; dy &lt;= sy) {
+        alpha = -(180 - alpha * (180 / PI));
+        if (theta &lt; alpha) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
     }
-    else
-    {
-        delta = theta - alpha;
-        turnLeft = false;
+    else if (dx &lt;= sx &amp;&amp; dy &gt;= sy) {
+        alpha = 180 - alpha * (180 / PI);
+        if (theta &lt; alpha) { delta = alpha - theta; turnLeft = true; }
+        else { delta = theta - alpha; turnLeft = false; }
     }
-}
-else if (dx &lt;= sx &amp;&amp; dy &lt;= sy)
-{ // Destination in 3rd quadrant
-    alpha = -(180 - alpha * (180 / PI));
-    if (theta &lt; alpha)
-    {
-        delta = alpha - theta;
-        turnLeft = true;
-    }
-    else
-    {
-        delta = theta - alpha;
-        turnLeft = false;
-    }
-}
-else if (dx &lt;= sx &amp;&amp; dy &gt;= sy)
-{ // Destination in 4th quadrant
-    alpha = 180 - alpha * (180 / PI);
-    if (theta &lt; alpha)
-    {
-        delta = alpha - theta;
-        turnLeft = true;
-    }
-    else
-    {
-        delta = theta - alpha;
-        turnLeft = false;
-    }
-}
 
-needsTurning = delta &gt; 0.0;
+    needsTurning = delta &gt; 0.0;
 
-if (needsTurning &amp;&amp; turnLeft)
-{
-    ort = ort * 180 / PI + delta;
-}
-else if (needsTurning &amp;&amp; !turnLeft)
-{
-    ort = ort * 180 / PI - delta;
-}
+    // Update orientation
+    if (needsTurning &amp;&amp; turnLeft) ort = ort + delta;
+    else if (needsTurning &amp;&amp; !turnLeft) ort = ort - delta;
 }
 
 point curr, dest;
+
 void plan_traj() {
-int i, j, next_inters = -1;
-int neigh[5] = {-1,-1,-1,-1,-1};
-int    k = 0;
-double dist, min_dist;
-bool visited[N_I] = {false,false,false,false,false,false,false,false,false}; // Layout 1
-// bool visited[N_I] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};  // Layout 2
-bool close;
-curr[0] = robPositionX[id-1]; curr[1] = robPositionY[id-1];
-dest[0] = location_X[robot_loc_target[id-1]]; dest[1] = location_Y[robot_loc_target[id-1]];
-// init trajectory
-for (i = 0; i &lt; N_P; i++)
-{
-    traj[i][0] = 0.0;
-    traj[i][1] = 0.0;
-}
-i = 0;
-curr_traj = 0;
+    int i, j, next_inters = -1;
+    int neigh[5] = {-1,-1,-1,-1,-1};
+    int k = 0;
+    double dist, min_dist;
+    bool visited[N_I] = {false,false,false,false,false,false,false,false,false}; // Layout 1
+    // bool visited[N_I] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};  // Layout 2
+    bool close;
 
-// builds trajectory by finding a path among adjacent areas
-// (the existence of an intersection point means two areas are adjacent to each other)
-// until the destination area is reached
-close = same_area(curr[0], curr[1], dest[0], dest[1]);
-while (!close)
-{
-    for (j = 0; j &lt; N_I &amp;&amp; k&lt;3; j++)
-    {
-        // find all int. pts which are a neighbor of curr. point
-        // there are max. 3 in the long left hall
-        if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) &amp;&amp; !visited[j])
-        {
-            neigh[k] = j;
-            k++;
-        }
+    curr[0] = robPositionX[id-1];
+    curr[1] = robPositionY[id-1];
+    dest[0] = location_X[robot_loc_target[id-1]];
+    dest[1] = location_Y[robot_loc_target[id-1]];
+
+    // Reset trajectory
+    for (i = 0; i &lt; N_P; i++) {
+        traj[i][0] = 0.0;
+        traj[i][1] = 0.0;
     }
-    if(neigh[0]==-1) close = true;
-    else {
-    // next int. point to add to traj. is the closest to destination
-    min_dist = pt_dist(INTERSECTIONS[neigh[0]][0], dest[0], INTERSECTIONS[neigh[0]][1], dest[1]);
-    next_inters = neigh[0];
-    for (j = 1; j &lt; 5 &amp;&amp; neigh[j] != -1; j++)
-    {
-        dist = pt_dist(INTERSECTIONS[neigh[j]][0], dest[0], INTERSECTIONS[neigh[j]][1], dest[1]);
-        if (dist &lt; min_dist)
-        {
-            min_dist = dist;
-            next_inters = neigh[j];
-        }
-    }
-    // if trajectory is full, or no next point has been found,
-    // something has gone wrong, but I cannot raise an exception
-    if (i == N_P - 1 || next_inters == -1)
-        return;
-    // next inters point is set as visited,
-    visited[next_inters] = true;
-    // added to the trajectory,
-    traj[i][0] = INTERSECTIONS[next_inters][0];
-    traj[i][1] = INTERSECTIONS[next_inters][1];
-    i++;
-    // and set as current point
-    curr[0] = INTERSECTIONS[next_inters][0];
-    curr[1] = INTERSECTIONS[next_inters][1];
-    // reset
-    next_inters = -1;
-    k = 0;
-    for(j=0; j&lt;5;j++) neigh[j] = -1;
+    i = 0;
+    curr_traj = 0;
+
+    // Build path through adjacent intersections
     close = same_area(curr[0], curr[1], dest[0], dest[1]);
+    while (!close) {
+        for (j = 0; j &lt; N_I &amp;&amp; k &lt; 3; j++) {
+            if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) &amp;&amp; !visited[j]) {
+                neigh[k] = j;
+                k++;
+            }
+        }
+        if (neigh[0] == -1) {
+            close = true;
+        } else {
+            min_dist = pt_dist(INTERSECTIONS[neigh[0]][0], dest[0], INTERSECTIONS[neigh[0]][1], dest[1]);
+            next_inters = neigh[0];
+            for (j = 1; j &lt; 5 &amp;&amp; neigh[j] != -1; j++) {
+                dist = pt_dist(INTERSECTIONS[neigh[j]][0], dest[0], INTERSECTIONS[neigh[j]][1], dest[1]);
+                if (dist &lt; min_dist) {
+                    min_dist = dist;
+                    next_inters = neigh[j];
+                }
+            }
+            if (i == N_P - 1 || next_inters == -1) return;
+            
+            visited[next_inters] = true;
+            traj[i][0] = INTERSECTIONS[next_inters][0];
+            traj[i][1] = INTERSECTIONS[next_inters][1];
+            curr[0] = INTERSECTIONS[next_inters][0];
+            curr[1] = INTERSECTIONS[next_inters][1];
+            
+            i++;
+            next_inters = -1;
+            k = 0;
+            for(j=0; j&lt;5; j++) neigh[j] = -1;
+            close = same_area(curr[0], curr[1], dest[0], dest[1]);
+        }
     }
-}
-// destination point is always part of the trajectory
-traj[i][0] = dest[0];
-traj[i][1] = dest[1];
+    // Add final destination
+    traj[i][0] = dest[0];
+    traj[i][1] = dest[1];
 
-//sets initial orientation
-change_orientation(robPositionX[id-1], robPositionY[id-1], traj[0][0], traj[0][1]);
+    change_orientation(robPositionX[id-1], robPositionY[id-1], traj[0][0], traj[0][1]);
 }
 
 void update_pos(double coeff) {
-robPositionX[id-1] = robPositionX[id-1] + coeff*Tpoll*cos(ort*PI/180);
-robPositionY[id-1] = robPositionY[id-1] + coeff*Tpoll*sin(ort*PI/180);
+    double nextX = robPositionX[id-1] + coeff*Tpoll*cos(ort*PI/180);
+    double nextY = robPositionY[id-1] + coeff*Tpoll*sin(ort*PI/180);
+
+    // Update position only if valid
+    if (isValidPosition(nextX, nextY)) {
+        robPositionX[id-1] = nextX;
+        robPositionY[id-1] = nextY;
+    }
 }
 
 void initRobot() {
-t = 0;
-V = 0;
+    t = 0;
+    V = 0;
 
-robPositionX[id-1] = r_startX[id-1];
-robPositionY[id-1] = r_startY[id-1];
+    // Initialize position at assigned intersection
+    robPositionX[id-1] = INTERSECTIONS[R_start_nodes[id-1]][0];
+    robPositionY[id-1] = INTERSECTIONS[R_start_nodes[id-1]][1];
 
-robPositionX[id-1] = robPositionX[id-1];
-robPositionY[id-1] = robPositionY[id-1];
-
-tUpd=0;
-v_max = fint(_v_max);
-a_max = fint(_a_max);
+    tUpd = 0;
+    v_max = fint(_v_max);
+    a_max = fint(_a_max);
 }
 
 void varsUpdate(double coeff) {
-tUpd = 0;
+    double final_X;
+    double final_Y;
 
-if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0))
-    return;
+    tUpd = 0;
+    final_X = location_X[robot_loc_target[id-1]];
+    final_Y = location_Y[robot_loc_target[id-1]];
+    
+    // Stop logic if destination is reached
+    if (robPositionX[id-1] == final_X &amp;&amp; robPositionY[id-1] == final_Y) {
+        return;
+    }
 
-if (pt_dist(robPositionX[id-1], traj[curr_traj][0], robPositionY[id-1], traj[curr_traj][1]) &lt; v_max*1.1) {
-    curr_traj++;
-    if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0))
-        plan_traj();
-    change_orientation(robPositionX[id-1], robPositionY[id-1], traj[curr_traj][0], traj[curr_traj][1]);
-}
+    if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0)) return;
 
-update_pos(coeff);
+    // Waypoint management
+    if (pt_dist(robPositionX[id-1], traj[curr_traj][0], robPositionY[id-1], traj[curr_traj][1]) &lt; v_max*1.1) {
+        // Snap to exact coordinates to prevent drift
+        robPositionX[id-1] = traj[curr_traj][0];
+        robPositionY[id-1] = traj[curr_traj][1];
+
+        curr_traj++;
+        
+        if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0)) {
+            plan_traj();
+        } else {
+            change_orientation(robPositionX[id-1], robPositionY[id-1], traj[curr_traj][0], traj[curr_traj][1]);
+        }
+    } else {
+        update_pos(coeff);
+    }
 }
 </declaration>
     <location id="id90" x="-629" y="-348">
@@ -250,7 +216,7 @@ tUpd&lt;=Tpoll</label>
     <location id="id95" x="204" y="-246">
         <name x="221" y="-272">turning</name>
         <label kind="invariant" x="221" y="-255">V'==0 &amp;&amp;
-Th&lt;=fabs(ort*PI/180)</label>
+Th&lt;=turn_limit</label>
     </location>
     <location id="id96" x="42" y="-246">
         <committed/>
@@ -321,7 +287,7 @@ varsUpdate(a_max*t)</label>
     <transition id="id109">
         <source ref="id95"/>
         <target ref="id93"/>
-        <label kind="guard" x="-42" y="-374">Th&gt;=fabs(ort*PI/180)</label>
+        <label kind="guard" x="-42" y="-374">Th&gt;=turn_limit</label>
         <label kind="assignment" x="-42" y="-348">tUpd = 0, Th = 0,
 needsTurning = false</label>
         <nail x="204" y="-348"/>
@@ -331,7 +297,7 @@ needsTurning = false</label>
         <source ref="id96"/>
         <target ref="id95"/>
         <label kind="guard" x="68" y="-263">needsTurning</label>
-        <label kind="assignment" x="102" y="-246">Th=0</label>
+        <label kind="assignment" x="102" y="-246">Th=0, turn_limit = fabs(ort * PI / 180)</label>
     </transition>
     <transition id="id111">
         <source ref="id93"/>
