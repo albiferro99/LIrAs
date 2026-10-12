@@ -1,0 +1,7 @@
+Task,n,Mean,SD,Median,Q1,Q3,Mean % of max,At ceiling %
+Task 1 — understanding,20,3.8,0.5231483637805969,4.0,4.0,4.0,95.0,85.0
+Task 2 — explanation,20,2.05,0.6668859288553504,2.5,2.0,2.5,81.99999999999999,55.00000000000001
+Task 3A — identify debugging errors,20,2.8,0.41039134083406165,3.0,3.0,3.0,93.33333333333333,80.0
+Task 3B — correct debugging errors,20,1.8,0.37696851746252596,2.0,1.875,2.0,90.0,75.0
+Task 4.1 — write basic pattern,20,2.55,0.8094832659757316,3.0,2.375,3.0,84.99999999999999,70.0
+Task 4.2 — write intermediate pattern,20,2.1,0.8207826816681233,2.5,2.375,2.5,84.0,75.0

@@ -1,0 +1,388 @@
+bench_agents_128
+agents:
+robots: Robot1 , Robot2 , Robot3 , Robot4 , Robot5 , Robot6 , Robot7 , Robot8 , Robot9 , Robot10 , Robot11 , Robot12 , Robot13 , Robot14 , Robot15 , Robot16 , Robot17 , Robot18 , Robot19 , Robot20 , Robot21 , Robot22 , Robot23 , Robot24 , Robot25 , Robot26 , Robot27 , Robot28 , Robot29 , Robot30 , Robot31 , Robot32 , Robot33 , Robot34 , Robot35 , Robot36 , Robot37 , Robot38 , Robot39 , Robot40 , Robot41 , Robot42 , Robot43 , Robot44 , Robot45 , Robot46 , Robot47 , Robot48 , Robot49 , Robot50 , Robot51 , Robot52 , Robot53 , Robot54 , Robot55 , Robot56 , Robot57 , Robot58 , Robot59 , Robot60 , Robot61 , Robot62 , Robot63 , Robot64 , Robot65 , Robot66 , Robot67 , Robot68 , Robot69 , Robot70 , Robot71 , Robot72 , Robot73 , Robot74 , Robot75 , Robot76 , Robot77 , Robot78 , Robot79 , Robot80 , Robot81 , Robot82 , Robot83 , Robot84 , Robot85 , Robot86 , Robot87 , Robot88 , Robot89 , Robot90 , Robot91 , Robot92 , Robot93 , Robot94 , Robot95 , Robot96 , Robot97 , Robot98 , Robot99 , Robot100 , Robot101 , Robot102 , Robot103 , Robot104 , Robot105 , Robot106 , Robot107 , Robot108 , Robot109 , Robot110 , Robot111 , Robot112 , Robot113 , Robot114 , Robot115 , Robot116 , Robot117 , Robot118 , Robot119 , Robot120 , Robot121 , Robot122 , Robot123 , Robot124 , Robot125 , Robot126 , Robot127 , Robot128
+resources: coffee
+
+Robot1:
+1: pick coffee
+
+Robot2:
+1: pick coffee
+
+Robot3:
+1: pick coffee
+
+Robot4:
+1: pick coffee
+
+Robot5:
+1: pick coffee
+
+Robot6:
+1: pick coffee
+
+Robot7:
+1: pick coffee
+
+Robot8:
+1: pick coffee
+
+Robot9:
+1: pick coffee
+
+Robot10:
+1: pick coffee
+
+Robot11:
+1: pick coffee
+
+Robot12:
+1: pick coffee
+
+Robot13:
+1: pick coffee
+
+Robot14:
+1: pick coffee
+
+Robot15:
+1: pick coffee
+
+Robot16:
+1: pick coffee
+
+Robot17:
+1: pick coffee
+
+Robot18:
+1: pick coffee
+
+Robot19:
+1: pick coffee
+
+Robot20:
+1: pick coffee
+
+Robot21:
+1: pick coffee
+
+Robot22:
+1: pick coffee
+
+Robot23:
+1: pick coffee
+
+Robot24:
+1: pick coffee
+
+Robot25:
+1: pick coffee
+
+Robot26:
+1: pick coffee
+
+Robot27:
+1: pick coffee
+
+Robot28:
+1: pick coffee
+
+Robot29:
+1: pick coffee
+
+Robot30:
+1: pick coffee
+
+Robot31:
+1: pick coffee
+
+Robot32:
+1: pick coffee
+
+Robot33:
+1: pick coffee
+
+Robot34:
+1: pick coffee
+
+Robot35:
+1: pick coffee
+
+Robot36:
+1: pick coffee
+
+Robot37:
+1: pick coffee
+
+Robot38:
+1: pick coffee
+
+Robot39:
+1: pick coffee
+
+Robot40:
+1: pick coffee
+
+Robot41:
+1: pick coffee
+
+Robot42:
+1: pick coffee
+
+Robot43:
+1: pick coffee
+
+Robot44:
+1: pick coffee
+
+Robot45:
+1: pick coffee
+
+Robot46:
+1: pick coffee
+
+Robot47:
+1: pick coffee
+
+Robot48:
+1: pick coffee
+
+Robot49:
+1: pick coffee
+
+Robot50:
+1: pick coffee
+
+Robot51:
+1: pick coffee
+
+Robot52:
+1: pick coffee
+
+Robot53:
+1: pick coffee
+
+Robot54:
+1: pick coffee
+
+Robot55:
+1: pick coffee
+
+Robot56:
+1: pick coffee
+
+Robot57:
+1: pick coffee
+
+Robot58:
+1: pick coffee
+
+Robot59:
+1: pick coffee
+
+Robot60:
+1: pick coffee
+
+Robot61:
+1: pick coffee
+
+Robot62:
+1: pick coffee
+
+Robot63:
+1: pick coffee
+
+Robot64:
+1: pick coffee
+
+Robot65:
+1: pick coffee
+
+Robot66:
+1: pick coffee
+
+Robot67:
+1: pick coffee
+
+Robot68:
+1: pick coffee
+
+Robot69:
+1: pick coffee
+
+Robot70:
+1: pick coffee
+
+Robot71:
+1: pick coffee
+
+Robot72:
+1: pick coffee
+
+Robot73:
+1: pick coffee
+
+Robot74:
+1: pick coffee
+
+Robot75:
+1: pick coffee
+
+Robot76:
+1: pick coffee
+
+Robot77:
+1: pick coffee
+
+Robot78:
+1: pick coffee
+
+Robot79:
+1: pick coffee
+
+Robot80:
+1: pick coffee
+
+Robot81:
+1: pick coffee
+
+Robot82:
+1: pick coffee
+
+Robot83:
+1: pick coffee
+
+Robot84:
+1: pick coffee
+
+Robot85:
+1: pick coffee
+
+Robot86:
+1: pick coffee
+
+Robot87:
+1: pick coffee
+
+Robot88:
+1: pick coffee
+
+Robot89:
+1: pick coffee
+
+Robot90:
+1: pick coffee
+
+Robot91:
+1: pick coffee
+
+Robot92:
+1: pick coffee
+
+Robot93:
+1: pick coffee
+
+Robot94:
+1: pick coffee
+
+Robot95:
+1: pick coffee
+
+Robot96:
+1: pick coffee
+
+Robot97:
+1: pick coffee
+
+Robot98:
+1: pick coffee
+
+Robot99:
+1: pick coffee
+
+Robot100:
+1: pick coffee
+
+Robot101:
+1: pick coffee
+
+Robot102:
+1: pick coffee
+
+Robot103:
+1: pick coffee
+
+Robot104:
+1: pick coffee
+
+Robot105:
+1: pick coffee
+
+Robot106:
+1: pick coffee
+
+Robot107:
+1: pick coffee
+
+Robot108:
+1: pick coffee
+
+Robot109:
+1: pick coffee
+
+Robot110:
+1: pick coffee
+
+Robot111:
+1: pick coffee
+
+Robot112:
+1: pick coffee
+
+Robot113:
+1: pick coffee
+
+Robot114:
+1: pick coffee
+
+Robot115:
+1: pick coffee
+
+Robot116:
+1: pick coffee
+
+Robot117:
+1: pick coffee
+
+Robot118:
+1: pick coffee
+
+Robot119:
+1: pick coffee
+
+Robot120:
+1: pick coffee
+
+Robot121:
+1: pick coffee
+
+Robot122:
+1: pick coffee
+
+Robot123:
+1: pick coffee
+
+Robot124:
+1: pick coffee
+
+Robot125:
+1: pick coffee
+
+Robot126:
+1: pick coffee
+
+Robot127:
+1: pick coffee
+
+Robot128:
+1: pick coffee

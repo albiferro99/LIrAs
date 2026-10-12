@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
 <nta>
-	<declaration>/**
+    <declaration>/**
 *** GLOBAL DECLARATIONS
 */
 
@@ -104,7 +104,7 @@ double humanPositionY[1] = {0.0};
 // Robot initialization
 double batteryCharge[N_R] = {100.0, 100.0};
 // The robots will start from the first N_R intersections
-const int start_nodes[N_R] = {0, 1}
+const int R_start_nodes[N_R] = {0, 1};
 double robPositionX[N_R] = {0.0, 0.0};
 double robPositionY[N_R] = {0.0, 0.0};
 
@@ -138,9 +138,6 @@ int robot_res_to_deposit[N_R];
 /**
 *** VARIABLES
 **/
-
-// Human starting position
-// No Human declared
 
 const int MAX_BUFF_SIZE = 10;
 
@@ -183,34 +180,30 @@ const point INTERSECTIONS[N_I] = {{92.5, 163.5},{92.5, 761.2},{1452.0, 761.2},{1
 
 //const point INTERSECTIONS[N_I] = {{400.0, 100.0}, {600.0, 3900.0}, {600.0, 100.0}, {1300.0, 100.0}, {1300.0, 3900.0}, {2000.0, 100.0}, {2000.0, 3900.0}, {2700.0, 100.0}, {2700.0, 3900.0}, {3400.0, 100.0}, {3400.0, 3900.0}, {4100.0, 100.0}, {4100.0, 3900.0}, {4800.0, 100.0}, {4800.0, 3900.0}, {5500.0, 100.0}, {5500.0, 3900.0}, {6400.0, 3900.0}, {6200.0, 3900.0}, {6200.0, 100.0}};
 
-// END LAYOUT 2
-
+// used in all the actions
 bool same_area(double sx, double sy, double dx, double dy) {
     int i;
     bool x_s_in, y_s_in, x_d_in, y_d_in;
     double x_min, x_max, y_min, y_max;
 
-    for (i = 0; i < N_A; i++)
+    for (i = 0; i &lt; N_A; i++)
     {
-        // Trova il VERO minimo e massimo confrontando gli angoli opposti (Punto 0 e Punto 2)
-        x_min = FLOOR[i][0][0] < FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
-        x_max = FLOOR[i][0][0] > FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
-        y_min = FLOOR[i][0][1] < FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
-        y_max = FLOOR[i][0][1] > FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
+        x_min = FLOOR[i][0][0] &lt; FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
+        x_max = FLOOR[i][0][0] &gt; FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
+        y_min = FLOOR[i][0][1] &lt; FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
+        y_max = FLOOR[i][0][1] &gt; FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
 
-        // Aggiungo una piccola tolleranza (1.0) anche qui per evitare problemi di routing sui bordi
-        x_s_in = (sx >= x_min - 1.0) && (sx <= x_max + 1.0);
-        y_s_in = (sy >= y_min - 1.0) && (sy <= y_max + 1.0);
-        x_d_in = (dx >= x_min - 1.0) && (dx <= x_max + 1.0);
-        y_d_in = (dy >= y_min - 1.0) && (dy <= y_max + 1.0);
+        x_s_in = (sx &gt;= x_min - 1.0) &amp;&amp; (sx &lt;= x_max + 1.0);
+        y_s_in = (sy &gt;= y_min - 1.0) &amp;&amp; (sy &lt;= y_max + 1.0);
+        x_d_in = (dx &gt;= x_min - 1.0) &amp;&amp; (dx &lt;= x_max + 1.0);
+        y_d_in = (dy &gt;= y_min - 1.0) &amp;&amp; (dy &lt;= y_max + 1.0);
 
-        if ((x_s_in && y_s_in) && (x_d_in && y_d_in)) // start and dest in same area
-            return true;
+        if ((x_s_in &amp;&amp; y_s_in) &amp;&amp; (x_d_in &amp;&amp; y_d_in)) // start and dest in same area
+        return true;
     }
     return false;
 }
 
-// used in all the actions
 double pt_dist(double x1, double x2, double y1, double y2) {
     double xdifference = x2-x1;
     double ydifference = y2-y1;
@@ -218,37 +211,34 @@ double pt_dist(double x1, double x2, double y1, double y2) {
 }
 
 /**
- * Checks if the given coordinates (x, y) are inside ANY of the valid floor areas.
- * Returns true if the position is valid, false if it is in a forbidden area.
- */
+* Checks if the given coordinates (x, y) are inside ANY of the valid floor areas.
+* Returns true if the position is valid, false if it is in a forbidden area.
+*/
 const double EPSILON = 1.0;
 
 bool isValidPosition(double x, double y) {
     int i;
     double x_min, x_max, y_min, y_max;
-    
-    for (i = 0; i < N_A; i++) {
-        // Stesso calcolo antiproiettile per il rilevamento collisioni
-        x_min = FLOOR[i][0][0] < FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
-        x_max = FLOOR[i][0][0] > FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
-        y_min = FLOOR[i][0][1] < FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
-        y_max = FLOOR[i][0][1] > FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
-        
-        // Epsilon (+- 1.0) e >= per permettere la passeggiata sui confini
-        if (x >= x_min - 1.0 && x <= x_max + 1.0 && y >= y_min - 1.0 && y <= y_max + 1.0) {
-            return true;
+
+    for (i = 0; i &lt; N_A; i++) {
+        x_min = FLOOR[i][0][0] &lt; FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
+        x_max = FLOOR[i][0][0] &gt; FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
+        y_min = FLOOR[i][0][1] &lt; FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
+        y_max = FLOOR[i][0][1] &gt; FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
+
+        if (x &gt;= x_min - 1.0 &amp;&amp; x &lt;= x_max + 1.0 &amp;&amp; y &gt;= y_min - 1.0 &amp;&amp; y &lt;= y_max + 1.0) {
+            
         }
     }
     return false;
 }
 
-
-
-
+    </declaration>
 	<template>
 		<name>Factory_Pipeline_orchestrator</name>
 		<parameter>int p</parameter>
 		<declaration>// Place local declarations here.
+clock end_c;
 		</declaration>
 <location id="id0" x="0" y="0">
 	<name x="-17" y="-34">Init</name>
@@ -275,64 +265,74 @@ bool isValidPosition(double x, double y) {
 	<name x="3483" y="-34">sub_seq_s7</name>
 </location>
 <location id="id8" x="4000" y="0">
-	<name x="3983" y="-34">end</name>
+	<name x="3983" y="-34">pre_end</name>
+	<label kind="invariant" x="3990" y="17">end_c &lt;= 2</label>
+</location>
+<location id="id9" x="4500" y="0">
+	<name x="4483" y="-34">end</name>
 </location>
 		<init ref="id0"/>
-<transition id="id9">
+<transition id="id10">
 	<source ref="id0"/>
 	<target ref="id1"/>
 	<label kind="guard" x="18" y="-34">robot1_stat==true and robot2_stat==true and p==currP</label>
 	<label kind="synchronisation" x="18" y="-17">s1!</label>
 	<label kind="assignment" x="18" y="0">robot1_stat=false, robot2_stat=false</label>
 </transition>
-<transition id="id10">
+<transition id="id11">
 	<source ref="id1"/>
 	<target ref="id2"/>
 	<label kind="guard" x="518" y="-34">robot1_stat==true and robot2_stat==true</label>
 	<label kind="synchronisation" x="518" y="-17">s2!</label>
 	<label kind="assignment" x="518" y="0">robot1_stat=false, robot2_stat=false</label>
 </transition>
-<transition id="id11">
+<transition id="id12">
 	<source ref="id2"/>
 	<target ref="id3"/>
 	<label kind="guard" x="1018" y="-34">robot1_stat==true and robot2_stat==true</label>
 	<label kind="synchronisation" x="1018" y="-17">s3!</label>
 	<label kind="assignment" x="1018" y="0">robot1_stat=false, robot2_stat=false</label>
 </transition>
-<transition id="id12">
+<transition id="id13">
 	<source ref="id3"/>
 	<target ref="id4"/>
 	<label kind="guard" x="1518" y="-34">robot1_stat==true and robot2_stat==true</label>
 	<label kind="synchronisation" x="1518" y="-17">s4!</label>
 	<label kind="assignment" x="1518" y="0">robot1_stat=false, robot2_stat=false</label>
 </transition>
-<transition id="id13">
+<transition id="id14">
 	<source ref="id4"/>
 	<target ref="id5"/>
 	<label kind="guard" x="2018" y="-34">robot1_stat==true and robot2_stat==true</label>
 	<label kind="synchronisation" x="2018" y="-17">s5!</label>
 	<label kind="assignment" x="2018" y="0">robot1_stat=false, robot2_stat=false</label>
 </transition>
-<transition id="id14">
+<transition id="id15">
 	<source ref="id5"/>
 	<target ref="id6"/>
 	<label kind="guard" x="2518" y="-34">robot1_stat==true and robot2_stat==true</label>
 	<label kind="synchronisation" x="2518" y="-17">s6!</label>
 	<label kind="assignment" x="2518" y="0">robot1_stat=false, robot2_stat=false</label>
 </transition>
-<transition id="id15">
+<transition id="id16">
 	<source ref="id6"/>
 	<target ref="id7"/>
 	<label kind="guard" x="3018" y="-34">robot1_stat==true and robot2_stat==true</label>
 	<label kind="synchronisation" x="3018" y="-17">s7!</label>
 	<label kind="assignment" x="3018" y="0">robot1_stat=false, robot2_stat=false</label>
 </transition>
-<transition id="id16">
+<transition id="id17">
 	<source ref="id7"/>
 	<target ref="id8"/>
 	<label kind="guard" x="3518" y="-34">robot1_stat==true and robot2_stat==true</label>
 	<label kind="synchronisation" x="3518" y="-17">e!</label>
-	<label kind="assignment" x="3518" y="0">currP=currP+1</label>
+	<label kind="assignment" x="3518" y="0">end_c=0</label>
+</transition>
+<transition id="id18">
+	<source ref="id8"/>
+	<target ref="id9"/>
+	<label kind="guard" x="4018" y="-34">end_c &gt;= 2</label>
+	<label kind="assignment" x="4018" y="0">currP=currP+1</label>
 </transition>
 	</template>
 
@@ -1120,7 +1120,7 @@ clock t;
     <parameter>int id, double _v_max, double _a_max</parameter>
     <declaration>
 clock V, Th, tUpd;
-
+double turn_limit;
 trajectory traj = {{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0}};
 
 double ort = 0.0;
@@ -1152,32 +1152,32 @@ void change_orientation(double sx, double sy, double dx, double dy) {
     turnLeft = false;
 
     // Calculate target angle and rotation delta based on quadrant
-    if (dx >= sx && dy >= sy) {
+    if (dx &gt;= sx &amp;&amp; dy &gt;= sy) {
         alpha = alpha * (180 / PI);
-        if (alpha > theta) { delta = alpha - theta; turnLeft = true; }
+        if (alpha &gt; theta) { delta = alpha - theta; turnLeft = true; }
         else { delta = theta - alpha; turnLeft = false; }
     }
-    else if (dx >= sx && dy <= sy) {
+    else if (dx &gt;= sx &amp;&amp; dy &lt;= sy) {
         alpha = -alpha * (180 / PI);
-        if (theta < alpha) { delta = alpha - theta; turnLeft = true; }
+        if (theta &lt; alpha) { delta = alpha - theta; turnLeft = true; }
         else { delta = theta - alpha; turnLeft = false; }
     }
-    else if (dx <= sx && dy <= sy) {
+    else if (dx &lt;= sx &amp;&amp; dy &lt;= sy) {
         alpha = -(180 - alpha * (180 / PI));
-        if (theta < alpha) { delta = alpha - theta; turnLeft = true; }
+        if (theta &lt; alpha) { delta = alpha - theta; turnLeft = true; }
         else { delta = theta - alpha; turnLeft = false; }
     }
-    else if (dx <= sx && dy >= sy) {
+    else if (dx &lt;= sx &amp;&amp; dy &gt;= sy) {
         alpha = 180 - alpha * (180 / PI);
-        if (theta < alpha) { delta = alpha - theta; turnLeft = true; }
+        if (theta &lt; alpha) { delta = alpha - theta; turnLeft = true; }
         else { delta = theta - alpha; turnLeft = false; }
     }
 
-    needsTurning = delta > 0.0;
+    needsTurning = delta &gt; 0.0;
 
     // Update orientation
-    if (needsTurning && turnLeft) ort = ort + delta;
-    else if (needsTurning && !turnLeft) ort = ort - delta;
+    if (needsTurning &amp;&amp; turnLeft) ort = ort + delta;
+    else if (needsTurning &amp;&amp; !turnLeft) ort = ort - delta;
 }
 
 point curr, dest;
@@ -1188,7 +1188,7 @@ void plan_traj() {
     int k = 0;
     double dist, min_dist;
     bool visited[N_I] = {false,false,false,false,false,false,false,false,false}; // Layout 1
-    //bool visited[N_I] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};  // Layout 2
+    // bool visited[N_I] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};  // Layout 2
     bool close;
 
     curr[0] = robPositionX[id-1];
@@ -1197,7 +1197,7 @@ void plan_traj() {
     dest[1] = location_Y[robot_loc_target[id-1]];
 
     // Reset trajectory
-    for (i = 0; i < N_P; i++) {
+    for (i = 0; i &lt; N_P; i++) {
         traj[i][0] = 0.0;
         traj[i][1] = 0.0;
     }
@@ -1207,8 +1207,8 @@ void plan_traj() {
     // Build path through adjacent intersections
     close = same_area(curr[0], curr[1], dest[0], dest[1]);
     while (!close) {
-        for (j = 0; j < N_I && k < 3; j++) {
-            if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) && !visited[j]) {
+        for (j = 0; j &lt; N_I &amp;&amp; k &lt; 3; j++) {
+            if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) &amp;&amp; !visited[j]) {
                 neigh[k] = j;
                 k++;
             }
@@ -1218,9 +1218,9 @@ void plan_traj() {
         } else {
             min_dist = pt_dist(INTERSECTIONS[neigh[0]][0], dest[0], INTERSECTIONS[neigh[0]][1], dest[1]);
             next_inters = neigh[0];
-            for (j = 1; j < 5 && neigh[j] != -1; j++) {
+            for (j = 1; j &lt; 5 &amp;&amp; neigh[j] != -1; j++) {
                 dist = pt_dist(INTERSECTIONS[neigh[j]][0], dest[0], INTERSECTIONS[neigh[j]][1], dest[1]);
-                if (dist < min_dist) {
+                if (dist &lt; min_dist) {
                     min_dist = dist;
                     next_inters = neigh[j];
                 }
@@ -1236,7 +1236,7 @@ void plan_traj() {
             i++;
             next_inters = -1;
             k = 0;
-            for(j=0; j<5; j++) neigh[j] = -1;
+            for(j=0; j&lt;5; j++) neigh[j] = -1;
             close = same_area(curr[0], curr[1], dest[0], dest[1]);
         }
     }
@@ -1263,8 +1263,8 @@ void initRobot() {
     V = 0;
 
     // Initialize position at assigned intersection
-    robPositionX[id-1] = INTERSECTIONS[start_nodes[id-1]][0];
-    robPositionY[id-1] = INTERSECTIONS[start_nodes[id-1]][1];
+    robPositionX[id-1] = INTERSECTIONS[R_start_nodes[id-1]][0];
+    robPositionY[id-1] = INTERSECTIONS[R_start_nodes[id-1]][1];
 
     tUpd = 0;
     v_max = fint(_v_max);
@@ -1280,21 +1280,21 @@ void varsUpdate(double coeff) {
     final_Y = location_Y[robot_loc_target[id-1]];
     
     // Stop logic if destination is reached
-    if (robPositionX[id-1] == final_X && robPositionY[id-1] == final_Y) {
+    if (robPositionX[id-1] == final_X &amp;&amp; robPositionY[id-1] == final_Y) {
         return;
     }
 
-    if (curr_traj >= N_P || (traj[curr_traj][0]==0.0 && traj[curr_traj][1]==0.0)) return;
+    if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0)) return;
 
     // Waypoint management
-    if (pt_dist(robPositionX[id-1], traj[curr_traj][0], robPositionY[id-1], traj[curr_traj][1]) < v_max*1.1) {
+    if (pt_dist(robPositionX[id-1], traj[curr_traj][0], robPositionY[id-1], traj[curr_traj][1]) &lt; v_max*1.1) {
         // Snap to exact coordinates to prevent drift
         robPositionX[id-1] = traj[curr_traj][0];
         robPositionY[id-1] = traj[curr_traj][1];
 
         curr_traj++;
         
-        if (curr_traj >= N_P || (traj[curr_traj][0]==0.0 && traj[curr_traj][1]==0.0)) {
+        if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0)) {
             plan_traj();
         } else {
             change_orientation(robPositionX[id-1], robPositionY[id-1], traj[curr_traj][0], traj[curr_traj][1]);
@@ -1333,7 +1333,7 @@ tUpd&lt;=Tpoll</label>
     <location id="id95" x="204" y="-246">
         <name x="221" y="-272">turning</name>
         <label kind="invariant" x="221" y="-255">V'==0 &amp;&amp;
-Th&lt;=fabs(ort*PI/180)</label>
+Th&lt;=turn_limit</label>
     </location>
     <location id="id96" x="42" y="-246">
         <committed/>
@@ -1404,7 +1404,7 @@ varsUpdate(a_max*t)</label>
     <transition id="id109">
         <source ref="id95"/>
         <target ref="id93"/>
-        <label kind="guard" x="-42" y="-374">Th&gt;=fabs(ort*PI/180)</label>
+        <label kind="guard" x="-42" y="-374">Th&gt;=turn_limit</label>
         <label kind="assignment" x="-42" y="-348">tUpd = 0, Th = 0,
 needsTurning = false</label>
         <nail x="204" y="-348"/>
@@ -1414,7 +1414,7 @@ needsTurning = false</label>
         <source ref="id96"/>
         <target ref="id95"/>
         <label kind="guard" x="68" y="-263">needsTurning</label>
-        <label kind="assignment" x="102" y="-246">Th=0</label>
+        <label kind="assignment" x="102" y="-246">Th=0, turn_limit = fabs(ort * PI / 180)</label>
     </transition>
     <transition id="id111">
         <source ref="id93"/>
@@ -1479,7 +1479,7 @@ plan_traj()</label>
     <parameter>int id, double _v_max, double _a_max</parameter>
     <declaration>
 clock V, Th, tUpd;
-
+double turn_limit;
 trajectory traj = {{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0},{0.0, 0.0}};
 
 double ort = 0.0;
@@ -1515,34 +1515,34 @@ void change_orientation(double sx, double sy, double dx, double dy) {
     turnLeft = false;
 
     // Calculate the target angle based on the quadrant
-    if (dx >= sx && dy >= sy) { // 1st Quadrant
+    if (dx &gt;= sx &amp;&amp; dy &gt;= sy) { // 1st Quadrant
         alpha = alpha * (180 / PI);
-        if (alpha > theta) { delta = alpha - theta; turnLeft = true; }
+        if (alpha &gt; theta) { delta = alpha - theta; turnLeft = true; }
         else { delta = theta - alpha; turnLeft = false; }
     }
-    else if (dx >= sx && dy <= sy) { // 2nd Quadrant
+    else if (dx &gt;= sx &amp;&amp; dy &lt;= sy) { // 2nd Quadrant
         alpha = -alpha * (180 / PI);
-        if (theta < alpha) { delta = alpha - theta; turnLeft = true; }
+        if (theta &lt; alpha) { delta = alpha - theta; turnLeft = true; }
         else { delta = theta - alpha; turnLeft = false; }
     }
-    else if (dx <= sx && dy <= sy) { // 3rd Quadrant
+    else if (dx &lt;= sx &amp;&amp; dy &lt;= sy) { // 3rd Quadrant
         alpha = -(180 - alpha * (180 / PI));
-        if (theta < alpha) { delta = alpha - theta; turnLeft = true; }
+        if (theta &lt; alpha) { delta = alpha - theta; turnLeft = true; }
         else { delta = theta - alpha; turnLeft = false; }
     }
-    else if (dx <= sx && dy >= sy) { // 4th Quadrant
+    else if (dx &lt;= sx &amp;&amp; dy &gt;= sy) { // 4th Quadrant
         alpha = 180 - alpha * (180 / PI);
-        if (theta < alpha) { delta = alpha - theta; turnLeft = true; }
+        if (theta &lt; alpha) { delta = alpha - theta; turnLeft = true; }
         else { delta = theta - alpha; turnLeft = false; }
     }
 
-    needsTurning = delta > 0.0;
+    needsTurning = delta &gt; 0.0;
 
     // Update orientation strictly in degrees
-    if (needsTurning && turnLeft) {
+    if (needsTurning &amp;&amp; turnLeft) {
         ort = ort + delta;
     }
-    else if (needsTurning && !turnLeft) {
+    else if (needsTurning &amp;&amp; !turnLeft) {
         ort = ort - delta;
     }
 }
@@ -1554,24 +1554,25 @@ void plan_traj() {
     int neigh[5] = {-1,-1,-1,-1,-1};
     int k = 0;
     double dist, min_dist;
-    bool visited[N_I] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
+    bool visited[N_I] = {false,false,false,false,false,false,false,false,false}; // Layout 1
+    // bool visited[N_I] = {false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};  // Layout 2
     bool close;
 
     curr[0] = robPositionX[id-1];
     curr[1] = robPositionY[id-1];
 
     // Follow Logic (Keep original target selection)
-    if (human_to_be_followed[id-1] == 0 && robot_to_be_followed[id-1] != 0 && robot_to_be_followed[id-1] != id) {
+    if (human_to_be_followed[id-1] == 0 &amp;&amp; robot_to_be_followed[id-1] != 0 &amp;&amp; robot_to_be_followed[id-1] != id) {
         dest[0] = robPositionX[robot_to_be_followed[id-1]-1];
         dest[1] = robPositionY[robot_to_be_followed[id-1]-1]; // Fixed Y coordinate index
     }
-    if (human_to_be_followed[id-1] != 0 && robot_to_be_followed[id-1] == 0) {
+    if (human_to_be_followed[id-1] != 0 &amp;&amp; robot_to_be_followed[id-1] == 0) {
         dest[0] = humanPositionX[human_to_be_followed[id-1]-1];
         dest[1] = humanPositionY[human_to_be_followed[id-1]-1];
     }
 
     // Reset trajectory
-    for (i = 0; i < N_P; i++) {
+    for (i = 0; i &lt; N_P; i++) {
         traj[i][0] = 0.0;
         traj[i][1] = 0.0;
     }
@@ -1581,8 +1582,8 @@ void plan_traj() {
     // Build path among adjacent areas
     close = same_area(curr[0], curr[1], dest[0], dest[1]);
     while (!close) {
-        for (j = 0; j < N_I && k < 3; j++) {
-            if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) && !visited[j]) {
+        for (j = 0; j &lt; N_I &amp;&amp; k &lt; 3; j++) {
+            if (same_area(curr[0], curr[1], INTERSECTIONS[j][0], INTERSECTIONS[j][1]) &amp;&amp; !visited[j]) {
                 neigh[k] = j;
                 k++;
             }
@@ -1592,9 +1593,9 @@ void plan_traj() {
         } else {
             min_dist = pt_dist(INTERSECTIONS[neigh[0]][0], dest[0], INTERSECTIONS[neigh[0]][1], dest[1]);
             next_inters = neigh[0];
-            for (j = 1; j < 5 && neigh[j] != -1; j++) {
+            for (j = 1; j &lt; 5 &amp;&amp; neigh[j] != -1; j++) {
                 dist = pt_dist(INTERSECTIONS[neigh[j]][0], dest[0], INTERSECTIONS[neigh[j]][1], dest[1]);
-                if (dist < min_dist) {
+                if (dist &lt; min_dist) {
                     min_dist = dist;
                     next_inters = neigh[j];
                 }
@@ -1610,7 +1611,7 @@ void plan_traj() {
             i++;
             next_inters = -1;
             k = 0;
-            for(j=0; j<5; j++) neigh[j] = -1;
+            for(j=0; j&lt;5; j++) neigh[j] = -1;
             close = same_area(curr[0], curr[1], dest[0], dest[1]);
         }
     }
@@ -1637,8 +1638,8 @@ void initRobot() {
 
     // Fetch the correct X and Y coordinates from the INTERSECTIONS array
     // using the start_nodes index for each specific robot
-    robPositionX[id-1] = INTERSECTIONS[start_nodes[id-1]][0];
-    robPositionY[id-1] = INTERSECTIONS[start_nodes[id-1]][1];
+    robPositionX[id-1] = INTERSECTIONS[R_start_nodes[id-1]][0];
+    robPositionY[id-1] = INTERSECTIONS[R_start_nodes[id-1]][1];
 
     tUpd = 0;
     v_max = fint(_v_max);
@@ -1653,7 +1654,7 @@ void varsUpdate(double coeff) {
     
     // Arrival check to avoid Zeno behavior
     // Re-calculating current target position
-    if (human_to_be_followed[id-1] == 0 && robot_to_be_followed[id-1] != 0) {
+    if (human_to_be_followed[id-1] == 0 &amp;&amp; robot_to_be_followed[id-1] != 0) {
         final_X = robPositionX[robot_to_be_followed[id-1]-1];
         final_Y = robPositionY[robot_to_be_followed[id-1]-1];
     } else {
@@ -1661,19 +1662,19 @@ void varsUpdate(double coeff) {
         final_Y = humanPositionY[human_to_be_followed[id-1]-1];
     }
     
-    if (robPositionX[id-1] == final_X && robPositionY[id-1] == final_Y) {
+    if (robPositionX[id-1] == final_X &amp;&amp; robPositionY[id-1] == final_Y) {
         return;
     }
 
-    if (curr_traj >= N_P || (traj[curr_traj][0]==0.0 && traj[curr_traj][1]==0.0)) return;
+    if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0)) return;
 
     // Waypoint management with Snap
-    if (pt_dist(robPositionX[id-1], traj[curr_traj][0], robPositionY[id-1], traj[curr_traj][1]) < v_max*1.1) {
+    if (pt_dist(robPositionX[id-1], traj[curr_traj][0], robPositionY[id-1], traj[curr_traj][1]) &lt; v_max*1.1) {
         robPositionX[id-1] = traj[curr_traj][0];
         robPositionY[id-1] = traj[curr_traj][1];
         curr_traj++;
         
-        if (curr_traj >= N_P || (traj[curr_traj][0]==0.0 && traj[curr_traj][1]==0.0)) {
+        if (curr_traj &gt;= N_P || (traj[curr_traj][0]==0.0 &amp;&amp; traj[curr_traj][1]==0.0)) {
             plan_traj();
         } else {
             change_orientation(robPositionX[id-1], robPositionY[id-1], traj[curr_traj][0], traj[curr_traj][1]);
@@ -1712,7 +1713,7 @@ tUpd&lt;=Tpoll</label>
     <location id="id124" x="212" y="-246">
         <name x="229" y="-272">turning</name>
         <label kind="invariant" x="229" y="-255">V'==0 &amp;&amp;
-Th&lt;=fabs(ort*PI/180)</label>
+Th&lt;=turn_limit</label>
     </location>
     <location id="id125" x="51" y="-246">
         <committed/>
@@ -1784,7 +1785,7 @@ plan_traj()</label>
     <transition id="id138">
         <source ref="id124"/>
         <target ref="id122"/>
-        <label kind="guard" x="-42" y="-374">Th&gt;=fabs(ort*PI/180)</label>
+        <label kind="guard" x="-42" y="-374">Th&gt;=turn_limit</label>
         <label kind="assignment" x="-42" y="-348">tUpd = 0, Th = 0,
 needsTurning = false,
 plan_traj()</label>
@@ -1795,7 +1796,7 @@ plan_traj()</label>
         <source ref="id125"/>
         <target ref="id124"/>
         <label kind="guard" x="85" y="-263">needsTurning</label>
-        <label kind="assignment" x="111" y="-246">Th=0</label>
+        <label kind="assignment" x="111" y="-246">Th=0, turn_limit = fabs(ort * PI / 180)</label>
     </transition>
     <transition id="id140">
         <source ref="id122"/>
@@ -1970,7 +1971,7 @@ robot_inventory[id-1][robot_res_to_deposit[id-1]] &gt; 0</label>
     </transition>
 </template>
 
-</declaration>
+
 	<system>
 // Mission Definition
 

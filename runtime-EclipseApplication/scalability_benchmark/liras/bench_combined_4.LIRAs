@@ -1,0 +1,28 @@
+bench_combined_4
+agents:
+robots: Robot1 , Robot2 , Robot3 , Robot4
+resources: coffee
+
+Robot1:
+1: pick coffee
+2: pick coffee
+3: pick coffee
+4: pick coffee
+
+Robot2:
+1: pick coffee
+2: pick coffee
+3: pick coffee
+4: pick coffee
+
+Robot3:
+1: pick coffee
+2: pick coffee
+3: pick coffee
+4: pick coffee
+
+Robot4:
+1: pick coffee
+2: pick coffee
+3: pick coffee
+4: pick coffee

@@ -1,0 +1,1198 @@
+Blind ID,Cohort,Timestamp,Role,Background area,Programming experience,Exp: Textual DSLs,Exp: Modeling notations,Exp: Uppaal/automata,Exp: Formal methods,Exp: Robotics/MAS/HRI,LIrAs familiarity,English technical reading,Mental effort,LIrAs: Syntax,LIrAs: Scenario -> specification,LIrAs: Synchronization,LIrAs: Continuations,LIrAs: Conditional constructs,LIrAs: Skip/restart,LIrAs: Confidence,Most difficult aspect,Tutorial: Clarity,Tutorial: Actions/predicates/parameters,Tutorial: Examples,Tutorial: Sufficient information,Open feedback,T1.1,T1.2,T1.3,T1.4,T1 total,Err 1,Err 2,Err 3,T3A total,T2 response,T2 total,T2 notes,T3B response,T3B total,T3B notes,T4.1 response,T4.1 total,T4.1 notes,T4.2 response,T4.2 total,T4.2 notes,T3 total,Writing total,Overall raw,T1 total pct,T2 total pct,T3A total pct,T3B total pct,T3 total pct,T4.1 total pct,T4.2 total pct,Writing total pct,Overall raw pct,T4.2 attempted,Programming experience ord,LIrAs familiarity ord,English reading ord,Mental effort ord,Exp: Textual DSLs ord,Exp: Modeling notations ord,Exp: Uppaal/automata ord,Exp: Formal methods ord,Exp: Robotics/MAS/HRI ord,Prior technical experience index,Formal/modeling experience index,LIrAs: Syntax ord,LIrAs: Scenario -> specification ord,LIrAs: Synchronization ord,LIrAs: Continuations ord,LIrAs: Conditional constructs ord,LIrAs: Skip/restart ord,LIrAs: Confidence ord,Tutorial: Clarity ord,Tutorial: Actions/predicates/parameters ord,Tutorial: Examples ord,Tutorial: Sufficient information ord
+S001,Known,2026-09-16 01:45:19.980,Industry practitioner,Computer Science or Software Engineering,More than 3,Extensive,Moderate,None,Basic,Basic,I had heard of LIrAs but had not read documentation or used it.,Proficient: Can understand virtually everything heard or read with ease,Moderate — I needed sustained attention and occasionally had to reconsider some rules or examples.,Agree,Agree,Neither agree nor disagree,Strongly agree,Agree,Agree,Strongly agree,Sub-sequences and synchronization,Agree,Strongly agree,Strongly agree,Strongly agree,"I didn't like having to renumber and check every step of every agent when adding a new one in the middle of others, in more complex scenarios I imagine it being possibly error prone.
+Maybe naming the steps could help, but I don't have a simple solution in mind.",1,1,1,1,4,1,1,1,3,"While the robot goes to the kitchen, loads the meal tray and goes to table 1, the waiter goes to table 1 and prepares it.
+Once that is done the waiter serves the meal tray and only then (because of the check on trayServed) the robot moves to the kitchen",2.5,,"*****************************************
+
+Collaborative_Package_Placement
+
+agents:
+   robots: Robot
+   drones: Drone
+locations: storageArea, loadingBay
+resources: package
+
+Robot:
+   1: moveTo storageArea
+   2: pick package
+   3: moveTo loadingBay
+   4: place package
+
+Drone:
+   1-3: takeOff
+          moveTo loadingBay
+          inspect loadingBay until placementAreaClear(loadingBay)
+   4: hover Robot
+       skip if obstacleDetected
+       assistPlace package
+       restart if assistanceFailed
+
+failure emergencyStopActive
+
+*****************************************",2.0,,"*****************************************
+
+Guided_Object_Transport
+
+agents:
+   robots: Robot
+   humans: Human
+locations: bedroom, kitchen
+resources: object
+
+Robot:
+   1: moveTo bedroom
+   2: pick object
+   3: follow Human (kitchen)
+
+Human:
+   1: moveTo bedroom
+   3: moveTo kitchen
+
+failure emergencyStopActive
+
+*****************************************",3.0,,"*****************************************
+
+EV_Charging_Assistance
+
+agents:
+   robots: Robot
+   humans: Operator
+locations: storageArea, chargingStation
+resources: chargingCable
+
+Robot:
+   1: moveTo chargingStation
+   2: scanChargingPort until portLocated
+   3: openPortCover
+   4: holdPortCover
+
+Operator:
+   1-2: moveTo storageArea
+      collect chargingCable
+      moveTo chargingStation
+   4: connect chargingCable
+
+
+*****************************************",2.5,,5.0,5.5,17.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,True,3,1.0,3,3,4,3,0,1,1,1.8,2.0,4,4,3,5,4,4,5,4,5,5,5
+S002,Known,2026-09-15 14:55:09.176,PhD student,Computer Science or Software Engineering,More than 3,Basic,Moderate,Limited,Moderate,Extensive,I had never heard of LIrAs.,Proficient: Can understand virtually everything heard or read with ease,"Low — I needed some attention, but using LIrAs was generally straightforward.",Strongly agree,Strongly agree,Agree,Strongly agree,Strongly agree,Agree,Agree,No aspect was particularly difficult,Strongly agree,Strongly agree,Strongly agree,Strongly agree,,1,1,1,1,4,1,1,1,3,"While the waiter prepare the table, the robot takes the meal tray and carries it to the table. Here they synchronize, the waiter takes the tray and serve it while the robot waits, when the meal is served the robot returns to the kitchen",1.5,,"*****************************************
+
+Collaborative_Package_Placement
+
+agents:
+   robots: Robot
+   drones: Drone
+locations: storageArea, loadingBay
+resources: package
+
+Robot:
+   1: moveTo storageArea
+   2: pick package
+   3: moveTo loadingBay
+   4: place package
+
+Drone:
+   1-3: takeOff
+          moveTo loadingBay
+          inspect loadingBay until placementAreaClear(loadingBay)
+   4: hover Robot
+       skip if obstacleDetected
+       assistPlace package
+       restart if assistanceFailed
+
+failure emergencyStopActive
+
+*****************************************",2.0,,"*****************************************
+
+Guided_Object_Transport
+
+agents:
+   robots: Robot
+   humans: Human
+locations: bedroom, kitchen
+resources: object
+
+Robot:
+   1: moveTo bedroom
+   2: pick object
+   3: follow human (kitchen)
+
+Human:
+   1: moveTo bedroom
+   3: moveTo kitchen
+
+failure emergencyStopActive
+
+*****************************************",3.0,,"*****************************************
+
+Guided_Object_Transport
+
+agents:
+   robots: Robot
+   humans: Operator
+locations: storageArea, chargingStation
+resources: chargingCable
+
+Robot:
+   1-3: moveTo chargingStation
+           scanChargingPort until portLocated
+   4: openPortCover
+   5: holdPortCover
+
+Operator:
+   1: moveTo storageArea
+   2: collect chargingCable
+   3: moveTo chargingStation
+   5: connect chargingCable
+
+*****************************************",2.5,,5.0,5.5,16.0,100.0,60.0,100.0,100.0,100.0,100.0,100.0,100.0,94.11764705882354,True,3,0.0,3,2,1,3,2,3,4,2.6,2.25,5,5,4,5,5,4,4,5,5,5,5
+S003,Prolific,2026-09-28 16:43:41.142,Industry practitioner,Computer Science or Software Engineering,More than 3,Moderate,Limited,None,None,None,I had never heard of LIrAs.,Native speaker,Moderate — I needed sustained attention and occasionally had to reconsider some rules or examples.,Agree,Disagree,Agree,Strongly agree,Strongly agree,Disagree,Agree,Sub-sequences and synchronization,Agree,Agree,Strongly agree,Agree,Its hard to write it from scratch because its too loose.,1,1,0,0,2,0,1,1,2,Basically The waiter would be pereparing the table and Robot will sync with the waiter and in collaboration they will execute 1-2. Then Waiter will serve the mealTray and robot will move to the kitchen,0.5,,"agents:
+   robots: Robot
+   drones: Drone
+locations: storageArea, loadingBay
+resources: package
+
+Robot:
+   1-3 moveTo storageArea
+         pick package
+         moveTo loadingBay
+   4: place package
+
+Drone:
+   1-3: takeOff
+          moveTo loadingBay
+          inspect loadingBay until placementAreaClear(loadingBay)
+   4: hover Robot
+       skip if obstacleDetected
+       assistPlace package
+       restart if assistanceFailed
+
+failure emergencyStopActive",2.0,,"*********************************
+Guided_Object_Transport
+
+agent type: ""Human""
+agent type: ""Robot""
+
+location: ""bedroom""
+location: ""kitchen""
+
+resource: ""object""
+
+emergencyStopActive
+
+
+----
+Human
+1-2  moveTo(bedroom)
+
+Robot
+1-2. moveTo(bedroom)
+    pick object
+3. moveTo(kitchen)
+
+if emergencyStopActive then stop
+
+*********************************",1.0,,Ran out of time,0.0,Not Answer,4.0,1.0,7.5,50.0,20.0,66.66666666666667,100.0,80.0,33.333333333333336,0.0,18.181818181818183,44.11764705882353,False,3,0.0,4,3,3,2,0,0,0,1.0,1.25,4,2,4,5,5,2,4,4,4,5,4
+S004,Known,2026-09-18 12:57:56.430,Industry practitioner,Computer Science or Software Engineering,More than 3,Moderate,Moderate,Extensive,Extensive,Basic,I had heard of LIrAs but had not read documentation or used it.,Proficient: Can understand virtually everything heard or read with ease,Moderate — I needed sustained attention and occasionally had to reconsider some rules or examples.,Strongly agree,Strongly agree,Strongly agree,Agree,Neither agree nor disagree,Neither agree nor disagree,Agree,Conditional constructs (if/else and until),Strongly agree,Strongly agree,Strongly agree,Strongly agree,"if/else is unintuitive, it follows different rules than the typical code construct. Perhaps I'd change its name",1,1,1,1,4,1,0,1,2,"The robot and waiter each execute actions 1 and 2 independently of each other, synchronizing after 2: if robot has moved to the table it waits for waiter to prepare it, and viceversa. The waiter then serves the tray while the robot waits. After the waiter is finished, the robot moves to the kitchen.",2.0,,"Collaborative_Package_Placement
+
+agents:
+   robots: Robot
+   drones: Drone
+locations: storageArea, loadingBay
+resources: package
+
+Robot:
+   1-3: moveTo storageArea
+           pick package
+           moveTo loadingBay
+   4: place package
+
+Drone:
+   1-3: takeOff
+          moveTo loadingBay
+          inspect loadingBay until placementAreaClear(loadingBay)
+   4: hover Robot
+       assistPlace package
+       skip if obstacleDetected
+       restart if assistanceFailed
+
+failure emergencyStopActive",1.5,,"agents:
+   robots: Robot
+   humans: Human
+locations: bedroom, kitchen
+resources: object
+
+Robot:
+   1: moveTo bedroom
+   2: pick object
+   3: follow Human (kitchen)
+
+Human:
+   1: moveTo bedroom
+   3: moveTo kitchen
+
+failure emergencyStopActive",3.0,,"agents:
+   robots: Robot
+   humans: Operator
+locations: storageArea, chargingStation
+resources: chargingCable
+
+Robot:
+   1: moveTo chargingStation
+   2: scanChargingPort until portLocated
+   3: openPortCover
+   4: holdPortCover
+
+Operator:
+   1-2: moveTo storageArea
+        collect chargingCable
+        moveTo chargingStation
+   4: connect chargingCable",2.5,,3.5,5.5,15.0,100.0,80.0,66.66666666666667,75.0,70.0,100.0,100.0,100.0,88.23529411764706,True,3,1.0,3,3,3,3,4,4,1,3.0,3.5,5,5,5,4,3,3,4,5,5,5,5
+S005,Known,2026-09-16 11:09:33.103,Other role,Computer Science or Software Engineering,More than 3,None,None,None,None,Limited,I had never heard of LIrAs.,Intermediate: Can understand the main points of standard input on familiar matters,Moderate — I needed sustained attention and occasionally had to reconsider some rules or examples.,Agree,Agree,Strongly agree,Strongly agree,Agree,Neither agree nor disagree,Agree,Sub-sequence control constructs (skip and restart),Strongly agree,Strongly agree,Strongly agree,Strongly agree,,1,1,1,1,4,0,1,1,2,Both robot and waiter starts their tasks in parallel. Robot stay at table until waiter serve meal. Then robot moves back to kitchen,0.5,,"Collaborative_Package_Placement
+
+agents:
+   robots: Robot
+   drones: Drone
+locations: storageArea, loadingBay
+resources: package
+
+Robot:
+   1-2-3 moveTo storageArea
+             pick package
+             moveTo loadingBay
+   4: place package
+
+Drone:
+   1-2: takeOff
+          moveTo loadingBay
+          inspect loadingBay until placementAreaClear(loadingBay)
+   4: hover Robot
+       skip if obstacleDetected
+       assistPlace package
+       restart if assistanceFailed
+
+failure emergencyStopActive",1.0,,"*****************************************
+
+agents:
+    robots: Robot
+    humans: Human
+locations: bedroom, kitchen
+resources: object
+
+Robot:
+    1: moveTo bedroom
+    2: pick object
+    4: follow human
+
+Human:
+    1: moveTo bedroom
+    3: moveTo kitchen
+
+failure emergencyStopActive
+
+*****************************************",2.5,,"*****************************************
+
+agents:
+    robots: Robot
+    humans: Operator
+locations: storageArea, chargingStation
+resources: chargingCable
+
+Robot:
+    1: moveTo chargingStation
+    2: scanChargingPort until portLocated
+    3: openPortCover
+    4: holdPortCover
+
+Operator:
+    1-2: moveTo storageArea
+       collect chargingCable
+       moveTo chargingStation
+    4: connect chargingCable
+
+
+failure emergencyStopActive
+
+*****************************************",2.5,,3.0,5.0,12.5,100.0,20.0,66.66666666666667,50.0,60.0,83.33333333333333,100.0,90.9090909090909,73.52941176470588,True,3,0.0,1,3,0,0,0,0,2,0.4,0.0,4,4,5,5,4,3,4,5,5,5,5
+S006,Prolific,2026-09-28 16:48:16.877,Bachelor’s or  Master’s student,Computer Science or Software Engineering,More than 3,Moderate,Moderate,Limited,Moderate,Moderate,I had heard of LIrAs but had not read documentation or used it.,Proficient: Can understand virtually everything heard or read with ease,High — I often had to reason carefully or revisit the provided material to complete the tasks.,Agree,Neither agree nor disagree,Neither agree nor disagree,Disagree,Agree,Agree,Disagree,Sub-sequences and synchronization,Agree,Agree,Agree,Agree,Clearer way to understand sequences,1,1,1,1,4,1,1,1,3,"The robot first moves to the kitchen and loads the meal tray. In the meantime, the waiter moves to table1 and prepares it. If the waiter is still preparing the table, the robot must wait. The robot stops the sequence if the meal tray is not served by the waiter.",1.0,,"Collaborative_Package_Placement
+
+agents:
+   robots: Robot
+   drones: Drone
+locations: storageArea, loadingBay
+resources: package
+
+Robot:
+   1: moveTo storageArea
+   2: pick package
+   3: moveTo loadingBay
+   4: place package
+
+Drone:
+   1-3: takeOff
+        moveTo loadingBay
+        inspect loadingBay until placementAreaClear(loadingBay)
+   4: hover Robot
+      skip if obstacleDetected
+      assistPlace package
+      restart if assistanceFailed
+
+failure emergencyStopActive",2.0,,"Guided_Object_Transport
+
+agents:
+   humans: Human
+   robots: Robot
+locations: bedroom, kitchen
+resources: object
+
+Human:
+   1: moveTo bedroom
+   3: moveTo kitchen
+
+Robot:
+   1: moveTo bedroom
+   2: pick object
+   3: follow Human (kitchen)
+
+failure emergencyStopActive",3.0,,"EV_Charging_Assistance
+
+agents:
+   robots: Robot
+   humans: Operator
+locations: storageArea, chargingStation
+resources: chargingCable
+
+Robot:
+   1: moveTo chargingStation
+   2: scanChargingPort until portLocated
+   3: openPortCover
+   4: holdPortCover
+
+Operator:
+   1-2: moveTo storageArea
+        collect chargingCable
+        moveTo chargingStation
+   4: connect chargingCable",2.5,,5.0,5.5,15.5,100.0,40.0,100.0,100.0,100.0,100.0,100.0,100.0,91.17647058823529,True,3,1.0,3,4,3,3,2,3,3,2.8,2.75,4,3,3,2,4,4,2,4,4,4,4
+S007,Known,2026-09-20 08:19:42.183,Other role,Other technical/scientific field,More than 3,None,Basic,None,None,Basic,I had never heard of LIrAs.,Intermediate: Can understand the main points of standard input on familiar matters,"Low — I needed some attention, but using LIrAs was generally straightforward.",Agree,Strongly agree,Strongly agree,Agree,Strongly agree,Agree,Agree,Conditional constructs (if/else and until),Agree,Agree,Agree,Agree,,0,1,1,1,3,0,1,1,2,"Robot moves to kitchen, picks up the meal and moves to table 1. At the same time, Waiter moves to table 1 and prepare it. They are independent. At sub sequence 3, robot and waiter are at table 1: waiter serves the meal, while robot stays still. When the meal is served, robot moves to kitchen.",2.5,,"Collaborative_Package_Placement
+
+agents:
+   robots: Robot
+   drones: Drone
+locations: storageArea, loadingBay
+resources: package
+
+Robot:
+   1-2-3: moveTo storageArea
+              pick package
+              moveTo loadingBay
+   4: place package
+
+Drone:
+   1-2: takeOff
+          moveTo loadingBay
+          inspect loadingBay until placementAreaClear(loadingBay)
+   4: hover Robot
+       skip if obstacleDetected
+       assistPlace package       
+       restart if assistanceFailed
+
+failure emergencyStopActive",1.0,,"Guided_Object_Transport
+
+agents:
+   humans: Human
+   robots: Robot
+locations: bedroom, kitchen
+resources: object
+
+Human:
+   1: moveTo bedroom   
+   3: moveTo kitchen
+
+Robot:
+   1: moveTo bedroom
+   2: pick object
+   3: follow Human (kitchen)
+
+failure emergencyStopActive",3.0,,"EV_Charging_Assistance
+
+agents:
+   humans: Operator
+   robots: Robot
+locations: storageArea, chargingStation
+resources: chargingCable
+
+Operator:
+   1: moveTo storageArea
+       collect chargingCable
+       moveTo chargingStation
+   3: connect chargingCable
+
+Robot:
+   1: moveTo chargingStation
+       scanChargingPort until portLocated
+   2: openPortCover
+   3: holdPortCover",2.5,,3.0,5.5,14.0,75.0,100.0,66.66666666666667,50.0,60.0,100.0,100.0,100.0,82.3529411764706,True,3,0.0,1,2,0,1,0,0,1,0.4,0.25,4,5,5,4,5,4,4,4,4,4,4
+S008,Prolific,2026-09-28 17:40:47.012,Industry practitioner,Computer Science or Software Engineering,Less than 1 year,Basic,Limited,Basic,Basic,Limited,I had never heard of LIrAs.,Advanced: Can use language flexibly and effectively for complex purposes,High — I often had to reason carefully or revisit the provided material to complete the tasks.,Neither agree nor disagree,Agree,Disagree,Neither agree nor disagree,Strongly agree,Strongly agree,Strongly agree,Conditional constructs (if/else and until),Agree,Neither agree nor disagree,Agree,Agree,Having atleast 2 examples for each concept would be more useful.,1,1,1,1,4,1,1,1,3,"Both Robot and Waiter will complete sub-sequences 1 and 2 without waiting for each other. While Waiter is doing sub-sequence 3, Robot will stop its sub-sequence 3. Once Waiter completes its sub-sequence 3, Robot will continue its sub-sequence 3.",2.5,,"Collaborative_Package_Placement
+
+agents:
+   robots: Robot
+   drones: Drone
+locations: storageArea, loadingBay
+resources: package
+
+Robot:
+   1: moveTo storageArea
+   2: pick package
+   3: moveTo loadingBay
+   4: place package
+
+Drone:
+   1-3: takeOff
+          moveTo loadingBay
+          inspect loadingBay until placementAreaClear(loadingBay)
+   4: hover Robot
+       skip if obstacleDetected
+       assistPlace package
+restart if assistanceFailed
+
+failure emergencyStopActive",2.0,,"Guided_Object_Transport
+
+agents:
+    mobile_robots: Robot
+    humans: Human
+locations: bedroon, kitchen
+resources: object",0.5,,"Guided_Object_Transport
+
+agents:
+    mobile_robots: Robot
+    humans: Human
+locations: bedroon, kitchen
+resources: object
+
+Robot:
+    1: moveTo bedroon
+       load object
+    3: moveTo kitchen if system-wide emergency else stop
+
+Waiter:
+    1: moveTo bedroom
+    2:  moveTo kitchen",0.0,This is the answer to the preavious question,5.0,0.5,12.0,100.0,100.0,100.0,100.0,100.0,16.666666666666668,0.0,9.090909090909092,70.58823529411765,False,1,0.0,2,4,1,2,1,1,2,1.4,1.25,3,4,2,3,5,5,5,4,3,4,4
+S009,Known,2026-09-18 15:57:11.460,Academic researcher,Other technical/scientific field,1–3 years,None,Limited,Limited,Limited,None,I had never heard of LIrAs.,Proficient: Can understand virtually everything heard or read with ease,"Low — I needed some attention, but using LIrAs was generally straightforward.",Strongly agree,Strongly agree,Strongly agree,Strongly agree,Strongly agree,Strongly agree,Strongly agree,No aspect was particularly difficult,Strongly agree,Strongly agree,Strongly agree,Strongly agree,Everything is clear and simple. My only comment is I would include actions and predicates into the declarations.,1,1,1,1,4,1,1,1,3,"At the same time the robot starts moving to kitchen and the waiter to table1. Without another synchronization,  the robot reaches the kitchen, loads mealTray and moves to table1, while the waiter reaches table 1 and prepares it. The first to complete these tasks waits for the other and they synchronize again before starting sequence 3.",2.0,,"Collaborative_Package_Placement
+
+agents:
+   robots: Robot
+   drones: Drone
+locations: storageArea, loadingBay
+resources: package
+
+Robot:
+   1: moveTo storageArea
+   2: pick package
+   3: moveTo loadingBay
+   4: place package
+
+Drone:
+   1-3: takeOff
+          moveTo loadingBay
+          inspect loadingBay until placementAreaClear(loadingBay)
+   4: hover Robot
+       skip if obstacleDetected
+       assistPlace package
+       restart if assistanceFailed
+
+failure emergencyStopActive",2.0,,"Guided_Object_Transport
+
+agents:
+   robots: Robot
+   humans: Human
+locations: bedroom, kitchen
+resources: object
+
+Robot:
+   1: moveTo bedroom
+   2: pick object
+   3: follow Human(kitchen)
+   
+Human:
+   1: moveTo bedroom
+   2: 
+   3: moveTo kitchen
+
+failure emergencyStopActive",3.0,,"EV_Charging_Assistance
+
+agents:
+   robots: Robot
+   humans: Operator
+locations: storageArea, chargingStation
+resources: chargingCable
+
+Robot:
+   1: moveTo chargingStation
+   2: scanChargingPort until portLocated
+   3: openPortCover
+   4: holdPortCover
+ 
+Operator:
+   1-2: moveTo storageArea
+          collect chargingCable
+          moveTo chargingStation
+   3: 
+   4: connect chargingCable
+
+failure emergencyStopActive",2.5,,5.0,5.5,16.5,100.0,80.0,100.0,100.0,100.0,100.0,100.0,100.0,97.05882352941177,True,2,0.0,3,2,0,2,2,2,0,1.2,1.5,5,5,5,5,5,5,5,5,5,5,5
+S010,Prolific,2026-09-28 17:40:14.621,Industry practitioner,Computer Science or Software Engineering,More than 3,Moderate,Extensive,Moderate,Extensive,Moderate,I had heard of LIrAs but had not read documentation or used it.,Proficient: Can understand virtually everything heard or read with ease,High — I often had to reason carefully or revisit the provided material to complete the tasks.,Agree,Strongly agree,Agree,Agree,Strongly agree,Neither agree nor disagree,Agree,Sub-sequences and synchronization,Agree,Strongly agree,Strongly agree,Agree,"Make it more clear when agents have to wait for each other and when they can work independently.
+Make things like continuations, if/else, skip and restart a bit easier to understand because the syntax can be confusing at first.
+Add more simple examples for common situations like parallel actions, waiting, retries and early termination. Otherwise all in all it is easy to understand",1,1,1,1,4,1,1,1,3,"The Robot first goes to the kitchen and loads the meal tray, while the Waiter moves to table1 and gets it prepared. Then they sync at sub-sequence 3, where the Waiter serves the tray and the Robot waits at table1 until the tray has been served, after which it goes back to the kitchen. Once both finish their actions, the pattern ends.",2.0,,"Collaborative_Package_Placement
+
+agents:
+    robots: Robot
+    drones: Drone
+
+locations: storageArea, loadingBay
+
+resources: package
+
+Robot:
+    1: moveTo storageArea
+    2: pick package
+    3: moveTo loadingBay
+    4: place package
+
+Drone:
+    1-3: takeOff
+        moveTo loadingBay
+        inspect loadingBay until placementAreaClear(loadingBay)
+    4: hover Robot
+        skip if obstacleDetected
+        assistPlace package
+        restart if assistanceFailed
+
+failure emergencyStopActive",2.0,,"Guided_Object_Transport
+
+agents:
+    humans: Human
+    robots: Robot
+
+locations: bedroom, kitchen
+
+resources: object
+
+Human:
+    1: moveTo bedroom
+    2:
+    3: moveTo kitchen
+
+Robot:
+    1: moveTo bedroom
+    2: pick object
+    3: follow Human kitchen
+
+failure emergencyStopActive",3.0,,"V_Charging_Assistance
+
+agents:
+    robots: Robot
+    humans: Operator
+
+locations: storageArea, chargingStation
+
+resources: chargingCable
+
+Robot:
+    1: moveTo chargingStation
+    2: scanChargingPort until portLocated
+    3: openPortCover
+    4: holdPortCover
+
+Operator:
+    1-2: moveTo storageArea
+        collect chargingCable
+        moveTo chargingStation
+    3:
+    4: connect chargingCable",2.5,,5.0,5.5,16.5,100.0,80.0,100.0,100.0,100.0,100.0,100.0,100.0,97.05882352941177,True,3,1.0,3,4,3,4,3,4,3,3.4,3.5,4,5,4,4,5,3,4,4,5,5,4
+S011,Known,2026-09-17 15:20:29.509,PhD student,Computer Science or Software Engineering,More than 3,Moderate,Extensive,Basic,Basic,Limited,I had heard of LIrAs but had not read documentation or used it.,Proficient: Can understand virtually everything heard or read with ease,Moderate — I needed sustained attention and occasionally had to reconsider some rules or examples.,Strongly agree,Neither agree nor disagree,Agree,Agree,Neither agree nor disagree,Strongly agree,Neither agree nor disagree,Sub-sequences and synchronization,Agree,Strongly agree,Strongly agree,Strongly agree,"There seemed to be multiple ways to define sequences because one sequence can hold multiple actions, but one can also define sequence continuations and individual sequences for that.",1,1,1,1,4,1,1,1,3,"While the robot is moving to the kitchen, loading the meal try and then moving to the table, the waiter moves to the table and prepares it.
+When the robot serves the tray on the table, he moves back to the kitchen; otherwise, he stops at the table. Meanwhile, the waiter serves the meal from the tray.",2.0,,"Robot:
+   1: moveTo storageArea
+   2: pick package
+   3: moveTo loadingBay
+   4: place package
+
+Drone:
+   1-3: takeOff
+          moveTo loadingBay
+          inspect loadingBay until placementAreaClear(loadingBay)
+   4: hover Robot
+       skip if obstacleDetected
+       assistPlace package
+       restart if assistanceFailed
+
+failure emergencyStopActive",2.0,,"*****************************************
+Guided_Object_Transport
+agents:
+  humans: Human
+  robots: Robot
+locations: bedroom, kitchen
+resources: object
+
+Human:
+  1. moveTo bedroom
+  3. moveTo kitchen
+
+Robot:
+  1. moveTo bedroom  
+  2. pick object
+  3. follow Human(kitchen)
+ 
+failure emergencyStopActive
+
+*****************************************",3.0,,"*****************************************
+EV_Charging_Assistance
+
+agents:
+   robots: Robot
+   humans: Operator
+locations: storageArea, chargingStation
+resources: chargingCable
+
+Robot:
+  1. moveTo chargingStation
+      scanChargingPort until portLocated
+  2. openPortCover
+  3. holdPortCover
+
+
+Operator:
+  1. moveTo storageArea
+      collect chargingCable
+      moveTo CharingStation
+  3. connect chargingCable
+*****************************************",2.5,,5.0,5.5,16.5,100.0,80.0,100.0,100.0,100.0,100.0,100.0,100.0,97.05882352941177,True,3,1.0,3,3,3,4,1,1,2,2.2,2.25,5,3,4,4,3,5,3,4,5,5,5
+S012,Prolific,2026-09-28 17:15:59.346,Industry practitioner,"Robotics, Automation, Control, or Human–Robot Interaction",More than 3,None,Limited,Moderate,Basic,None,I had heard of LIrAs but had not read documentation or used it.,Native speaker,High — I often had to reason carefully or revisit the provided material to complete the tasks.,Agree,Agree,Agree,Neither agree nor disagree,Agree,Neither agree nor disagree,Agree,Continuations,Agree,Agree,Strongly agree,Agree,"Better syntax for continautions- range numbers like 1-2 get confusing when tracking multiple steps -- explicit KW like 'background' or 'async' would make independent actions easier to spot
+
+Clearer scope for skip and restart- its easy to forget that skip or restart only effects one agent's current step instead of the whole team. Adding an explicit target (ie restart self or skip step) would avoid confusion",1,1,1,1,4,1,1,1,3,"Robot goes to the kicthen to pickup the meal tray while the waiter heads straight to table 1 to get ready for service. they meet up and sync at table 1, where the waiter serves from the meal tray. at this same time, Robot holds its position and stops --w aits until the tray is fullly served before it goes back to the kitchen",2.5,,"Collaborative_Package_Placement
+
+agents:
+robots: Robot
+drones: Drone
+locations: storageArea, loadingBay
+resources: package
+
+Robot:
+1: moveTo storageArea
+2: pick package
+3: moveTo loadingBay
+4: place package
+
+Drone:
+1-3: takeOff
+moveTo loadingBay
+inspect loadingBay until placementAreaClear(loadingBay)
+4: hover Robot
+skip if obstcalDetected
+assistPlace package
+restrt if assistanceFailed
+
+failure emergencyStopActive",2.0,,"Guided_Object_Transport
+
+agents:
+humans: Human
+robots: Robot
+locations: bedroom, kitchen
+resources: object
+
+Human:
+1: moveTo bedroom
+2: moveTo kitchen
+
+Robot:
+1: moveTo bedroom
+2: pick object
+3: follow Human (kitchen)
+
+failure emergencyStopActive",2.0,,"EV_Charging_Assistance
+
+agents:
+robots: Robot
+humans: Operator
+locations: storageArea, chargingStation
+resources: chargingCable
+
+Robot:
+1: moveTo chargingStation
+2: scanChargingPort until portLocated()
+3: openPortCover
+4: holdPortCover",1.0,Missing the Operator sequence,5.0,3.0,14.5,100.0,100.0,100.0,100.0,100.0,66.66666666666667,40.0,54.54545454545455,85.29411764705883,True,3,1.0,4,4,0,2,3,1,0,1.2,1.5,4,4,4,3,4,3,4,4,4,5,4
+S013,Prolific,2026-09-28 17:48:16.765,Industry practitioner,Computer Science or Software Engineering,More than 3,Basic,Basic,None,None,Basic,I had never heard of LIrAs.,Advanced: Can use language flexibly and effectively for complex purposes,High — I often had to reason carefully or revisit the provided material to complete the tasks.,Agree,Agree,Agree,Neither agree nor disagree,Agree,Agree,Neither agree nor disagree,Continuations,Strongly agree,Agree,Strongly agree,Agree,provide more complex visual examples for multi agent continuations,0,1,1,1,3,1,1,1,3,"The robot go to the kitchen, takes a meal tray and delivers it to table1, coordinating with the waiter who arrives there to prepare the table for service. Upon arrival, the robot holds its position until waiter completes serving all items from the tray, which trigger the 'MealTray' condition to become True. Once this serving action finishes, the robot break its waiting status and travels back to the kitchen.",2.5,,"Collaborative_Package_Placement
+
+agents:
+   robots: Robot
+   drones: Drone
+locations: storageArea, loadingBay
+resources: package
+
+Robot:
+   1: moveTo storageArea
+   2: pick package
+   3: moveTo loadingBay
+   4: place package
+
+Drone:
+   1-3: takeOff
+          moveTo loadingBay
+          inspect loadingBay until placementAreaClear(loadingBay)
+   4: hover Robot
+       skip if obstacleDetected
+       assistPlace package
+       restart if assistanceFailed
+
+failure emergencyStopActive",2.0,,"Guided_Object_Transport
+
+agent:
+     humans: Human
+     robots: Robot
+location: bedroom, kitchen
+resource: object
+
+
+Human:
+     1: moveTo bedroom
+     3: moveTo kitchen 
+
+Robot:
+     1: moveTo bedroom
+     2: pick object
+     3: follow Human kitchen
+
+failure emergencyStopActive",3.0,,"EV_Charging_Assistance
+
+agents:
+     robots: Robot
+     humans: Operator
+locations: storageArea, chargingStation
+resources: chargingCable
+
+
+Robot:
+     1: moveTO chargingStation
+     2: scanChargingPort until portLocated
+     3: openPortCover
+     4: holdPortCover
+
+Operator:
+     1-3: moveTo storageArea
+            collect chargingCable
+            moveTo chargingStation
+     4: connect cargingCable",2.5,,5.0,5.5,16.0,75.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,94.11764705882354,True,3,0.0,2,4,1,1,0,0,1,0.6,0.5,4,4,4,3,4,4,3,5,4,5,4
+S014,Known,2026-09-07 18:28:11.687,Academic researcher,Computer Science or Software Engineering,More than 3,Limited,Moderate,None,None,None,I had read or seen material about LIrAs but had not used it.,Proficient: Can understand virtually everything heard or read with ease,Moderate — I needed sustained attention and occasionally had to reconsider some rules or examples.,Strongly agree,Strongly agree,Strongly agree,Strongly agree,Agree,Agree,Neither agree nor disagree,No aspect was particularly difficult,Strongly agree,Strongly agree,Strongly agree,Strongly agree,More structured indentation or parentheses,1,1,1,1,4,1,1,1,3,"The robot picks up the meal tray from the kitchen and brings it to table 1 while the waiter moves to table 1 and prepares it. At this point, the waiter serves the meal tray. After that, the robot moves back to kitchen.",2.5,,"Collaborative_Package_Placement
+
+agents:
+   robots: Robot
+   drones: Drone
+locations: storageArea, loadingBay
+resources: package
+
+Robot:
+   1: moveTo storageArea
+   2: pick package
+   3: moveTo loadingBay
+   4: place package
+
+Drone:
+   1-3: takeOff
+          moveTo loadingBay
+          inspect loadingBay until placementAreaClear(loadingBay)
+   4: hover Robot
+       skip if obstacleDetected
+       assistPlace package
+       restart if assistanceFailed
+
+failure emergencyStopActive",2.0,,"Guided_Object_Transport
+
+agents:
+   robots: Robot
+   humans: Human
+locations: bedroom, kitchen
+resources: object
+
+Robot:
+   1: moveTo bedroom
+   2: pick object
+   3: follow Human (kitchen)
+
+Human:
+   1: moveTo bedroom
+   3: moveTo kitchen
+
+failure emergencyStopActive",3.0,,"EV_Charging_Assistance
+
+agents:
+   robots: Robot
+   humans: Operator
+locations: storageArea, chargingStation
+resources: chargingCable
+
+Robot:
+   1-3: moveTo chargingStation
+	    scanChargingPort until portLocated
+   4: openPortCover
+   5: holdPortCover
+
+Operator:
+   1: moveTo storageArea
+   2: collect chargingCable
+   3: moveTo chargingStation
+   5: connect chargingCable",2.5,,5.0,5.5,17.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,True,3,2.0,3,3,2,3,0,0,0,1.0,1.25,5,5,5,5,4,4,3,5,5,5,5
+S015,Prolific,2026-09-28 17:14:43.459,Bachelor’s or  Master’s student,Computer Science or Software Engineering,Less than 1 year,Limited,Limited,Limited,Basic,Basic,I had heard of LIrAs but had not read documentation or used it.,Advanced: Can use language flexibly and effectively for complex purposes,Moderate — I needed sustained attention and occasionally had to reconsider some rules or examples.,Neither agree nor disagree,Neither agree nor disagree,Neither agree nor disagree,Neither agree nor disagree,Neither agree nor disagree,Neither agree nor disagree,Disagree,Continuations,Neither agree nor disagree,Neither agree nor disagree,Neither agree nor disagree,Agree,"-Keep the list of actions and predicates while writi ng the pattern so that i don't go back
+
+-More examples of continuation like 1-2 to show when agents don't have to wait for each other",1,1,1,1,4,1,1,1,3,The Robot and Waiter work in parallel. The Waiter use a 1-2 continuation to move to table 1 and prepare it so there is no sychronization at the 1/2 boundary but both the agents must sychronize at the end of sub-sequences 2 before entering 3. In sub-sequences 3 waiter serves the mealTray while the Robot waits at table1 and the robot only returns to the kitchen if trayServed becomes true otherwise it terminates with stop at table1,2.0,,"Collaboration_Package_Placement
+agents: 
+robots:Robot
+drones:Drone.locationd:storageArea, loadingBay
+resources:package
+
+Robot:
+1.MoveTo storageArea
+2.Pick package
+3.moveTo loadingBay
+4.place package 
+
+Drone
+1-3:takeOff
+moveTo loadingBay
+inspect loadingBay until placementAreaClear
+4:hover Robot 
+skip if obstacleDetected
+assistedPlace package
+restart if assistanceFailed 
+failure emergencyStopActive",2.0,,"Guided_Object_Transport
+agents:
+humans:  Human
+robots:   Robot
+locations:  bedroom, kitchen
+resources : object
+
+Human:
+1. moveTo bedroom
+3. moveTo kitchen
+
+Robot:
+1. moveTo bedroom",1.0,,"Electric_Vehicle_Charging
+agents:
+  humans:  Operator 
+  robots   Robots 
+Locations:   storageArea,  chargingStation 
+resources:  chargingCable 
+
+Operator:
+  1-2:  moveTo  storageArea
+         collect chargingCable 
+         moveTo chargingStation 
+4:  connects  chargingCable
+
+Robot:
+1-2:  moveTo chargingStation
+        scanChargingPort until chargingportlocated
+3:  openPortCover
+4:  holdPortCover
+
+failure  emergencyStopActive",2.5,,5.0,3.5,14.5,100.0,80.0,100.0,100.0,100.0,33.333333333333336,100.0,63.63636363636363,85.29411764705883,True,1,1.0,2,3,2,2,2,1,1,1.6,1.75,3,3,3,3,3,3,2,3,3,3,4
+S016,Prolific,2026-09-28 17:02:32.534,Other role,Other technical/scientific field,More than 3,None,Basic,None,None,None,I had never heard of LIrAs.,Native speaker,Moderate — I needed sustained attention and occasionally had to reconsider some rules or examples.,Agree,Agree,Agree,Agree,Agree,Agree,Neither agree nor disagree,Success and failure conditions,Agree,Agree,Agree,Neither agree nor disagree,"I think LiRAs as is are about as elegant and simple as they can be made.  I wish I could offer some valuable feedback, but if I had to design something like this, I can't see that I'd make it any different",1,1,1,1,4,1,1,1,3,"The waiter goes to Table1 and prepares it.  While it's doing this, the robot moves to the kitchen, loads a meal tray, and then takes it to table 1.   Once both of these are complete, the waiter serves the meal while the robot waits for the waiter to serve the meal.  After the meal's served, the moves back to the kitchen",2.5,,"*****************************************
+
+Collaborative_Package_Placement
+
+agents:
+   robots: Robot
+   drones: Drone
+locations: storageArea, loadingBay
+resources: package
+
+Robot:
+   1: moveTo storageArea
+   2: pick package
+   3: moveTo loadingBay
+   4: place package
+
+Drone:
+   1-3: takeOff
+          moveTo loadingBay
+          inspect loadingBay until placementAreaClear(loadingBay)
+   4: hover Robot
+       skip if obstacleDetected
+       assistPlace package
+       restart if assistanceFailed
+
+failure emergencyStopActive
+
+*****************************************",2.0,,"Guided_Object_Transport
+agents:
+     humans: Human
+     robots: Robot
+     locations: bedroom, kitchen
+     resources: object
+
+Robot:
+    1:  moveTo bedroom
+         pick Package
+    2:  follow Human
+
+Human:
+    1: moveTo bedroom
+    2: moveTo kitchen
+
+failure emergencyStopActive",2.0,,"EV_Charging_Assistance
+
+agents:
+    robots: Robot
+    humans: Operator
+    locations: storageArea, chargingStation
+    resources: chargingCable
+
+Robot:
+   1:  moveTo chargingStation
+        scanChargingPort until portLocated
+   2:  openPortCover
+   3:  holdPortCover 
+Operator:
+   1-2:   moveTo storageArea
+         collect chargingCable
+         moveTo chargingStation
+   3:   connect chargingCable",2.0,,5.0,4.0,15.5,100.0,100.0,100.0,100.0,100.0,66.66666666666667,80.0,72.72727272727273,91.17647058823529,True,3,0.0,4,3,0,1,0,0,0,0.2,0.25,4,4,4,4,4,4,3,4,4,4,3
+S017,Known,2026-09-22 09:33:26.128,PhD student,"Robotics, Automation, Control, or Human–Robot Interaction",1–3 years,None,Limited,Basic,None,Limited,I had never heard of LIrAs.,Proficient: Can understand virtually everything heard or read with ease,Moderate — I needed sustained attention and occasionally had to reconsider some rules or examples.,Agree,Agree,Agree,Agree,Agree,Agree,Agree,Continuations,Agree,Agree,Strongly agree,Strongly agree,,1,1,1,1,4,1,1,1,3,"While the waiter moves and prepare table 1, the robot enters the kitchen, load the meal Tray and subsequently reaches table1.
+The two agents synchronize before starting each own subsequence 3: the robot will stay at the table until the waiter has emptied the tray, the waiter empties the tray, the robot will go back to the kitchen once the tray is empty",2.5,,"Collaborative_Package_Placement
+
+agents:
+   robots: Robot
+   drones: Drone
+locations: storageArea, loadingBay
+resources: package
+
+Robot:
+   1: moveTo storageArea
+   2: pick package
+   3: moveTo loadingBay
+   4: place package
+
+Drone:
+   1-3: takeOff
+          moveTo loadingBay
+          inspect loadingBay until placementAreaClear(loadingBay)
+   4: hover Robot
+       assistPlace package
+       skip if obstacleDetected
+       restart if assistanceFailed
+
+failure emergencyStopActive",1.5,,"Guided_Object_Transport
+agents:
+   robots: Robot
+   humans: Human
+locations: bedroom, kitchen
+resources: object
+
+Robot:
+   1: moveTo bedroom
+   2: pick object
+   3: follow Human(kitchen)
+Human:
+   1: moveTo bedroom
+   2:
+   3: moveTo kitchen
+
+failure emergencyStopActive",3.0,,"EV_Charging_Assistance
+agents:
+   robots: Robot
+   humans: Operator
+locations: storageArea, chargingStation
+resources: chargingCable
+
+Robot:
+   1: moveTo chargingStation
+   2: scanChargingPort until portLocated
+   3: openPortCover
+   4: holdPortCover
+Human:
+   1-2: moveTo storageArea
+           collect chargingCable
+           moveTo chargingStation
+   3:
+   4: connect chargingCable",2.5,,4.5,5.5,16.5,100.0,100.0,100.0,75.0,90.0,100.0,100.0,100.0,97.05882352941177,True,2,0.0,3,3,0,2,1,0,2,1.0,0.75,4,4,4,4,4,4,4,4,4,5,5
+S018,Known,2026-09-18 18:52:46.466,Academic researcher,Computer Science or Software Engineering,More than 3,Limited,Moderate,Limited,Moderate,Limited,I had never heard of LIrAs.,Proficient: Can understand virtually everything heard or read with ease,Moderate — I needed sustained attention and occasionally had to reconsider some rules or examples.,Strongly agree,Strongly agree,Strongly agree,Strongly agree,Agree,Agree,Strongly agree,No aspect was particularly difficult,Strongly agree,Strongly agree,Strongly agree,Strongly agree,,1,1,1,1,4,1,1,1,3,"While the Waiter moves to the table and prepares it the Robot goes into the kitchen, loads the tray and goes to the table (these two sets of actions are independent). Once both agents are at the table the Robot waits for the Waiter to finish serving the tray and then goes back to the kitchen.",2.5,,"Collaborative_Package_Placement
+
+agents:
+   robots: Robot
+   drones: Drone
+locations: storageArea, loadingBay
+resources: package
+
+Robot:
+   1: moveTo storageArea
+   2: pick package
+   3: moveTo loadingBay
+   4: place package
+
+Drone:
+   1-3: takeOff
+          moveTo loadingBay
+          inspect loadingBay until placementAreaClear(loadingBay)
+   4: hover Robot
+skip if obstacleDetected
+       assistPlace package
+       restart if assistanceFailed
+
+failure emergencyStopActive",2.0,,"Table_Service
+
+agents:
+    robots: Robot
+    humans: Human
+locations: bedroom, kitchen
+resources: object
+
+Robot:
+    1: moveTo bedroom
+    2: pick object
+    3: follow Human kitchen
+
+Waiter:
+    1: moveTo bedroom
+    3: moveTo kitchen
+
+failure emergencyStopActive",3.0,,"EV_Charging_Assistance
+
+agents:
+    robots: Robot
+    humans: Operator
+locations: chargingStation, storageArea
+resources: chargingCable
+
+Robot:
+    1: moveTo chargingStation
+    2: scanChargingPort until portLocated
+    3: openPortCover
+4: holdPortCover
+
+Operator:
+    1-2: moveTo storageArea
+collect chargingCable
+moveTo chargingStation
+    4: connect chargingCable
+
+failure emergencyStopActive",2.5,,5.0,5.5,17.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,True,3,0.0,3,3,2,3,2,3,2,2.4,2.5,5,5,5,5,4,4,5,5,5,5,5
+S019,Prolific,2026-09-28 16:51:37.714,Other role,Other technical/scientific field,Less than 1 year,None,Basic,None,Basic,Basic,I had never heard of LIrAs.,Proficient: Can understand virtually everything heard or read with ease,Moderate — I needed sustained attention and occasionally had to reconsider some rules or examples.,Agree,Neither agree nor disagree,Agree,Agree,Agree,Agree,Neither agree nor disagree,Continuations,Agree,Agree,Strongly agree,Agree,"More examples showing continuations in complex scenarios
+A quick reference cheat sheet summarizing all constructs in one place",1,1,1,1,4,1,1,1,3,"The Robot heads to the kitchen to pick up the meal tray and bring it to the table, while at the same time the Waiter moves to the table and gets it ready for service. They coordinate so that both finish their respective tasks before moving on to sub sequence 3, where the Waiter serves the meal and the Robot waits at the table until serving is done. Once the tray is fully served, the Robot heads back to the kitchen, wrapping up the whole pattern.",2.5,,"Collaborative_Package_Placement
+
+agents:
+   robots: Robot
+   drones: Drone
+locations: storageArea, loadingBay
+resources: package
+
+Robot:
+   1: moveTo storageArea
+   2: pick package
+   3: moveTo loadingBay
+   4: place package
+
+Drone:
+   1-3: takeOff
+          moveTo loadingBay
+          inspect loadingBay until placementAreaClear(loadingBay)
+   4: hover Robot
+       skip if obstacleDetected
+       assistPlace package
+       restart if assistanceFailed
+
+failure emergencyStopActive",2.0,,"Guided_Object_Transport
+
+agents:
+   humans: Human
+   robots: Robot
+locations: bedroom, kitchen
+resources: object
+
+Human:
+   1: moveTo bedroom
+   3: moveTo kitchen
+
+Robot:
+   1: moveTo bedroom
+   2: pick object
+   3: follow Human (kitchen)
+
+failure emergencyStopActive",3.0,,"EV_Charging_Assistance
+
+agents:
+   robots: Robot
+   humans: Operator
+locations: storageArea, chargingStation
+resources: chargingCable
+
+Robot:
+   1: moveTo chargingStation
+   2: scanChargingPort until portLocated
+   3: openPortCover
+   4: holdPortCover
+
+Operator:
+   1-2: moveTo storageArea
+          collect chargingCable
+          moveTo chargingStation
+   4: connect chargingCable",2.5,,5.0,5.5,17.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,100.0,True,1,0.0,3,3,0,1,0,1,1,0.6,0.5,4,3,4,4,4,4,3,4,4,5,4
+S020,Prolific,2026-09-28 17:08:21.372,Bachelor’s or  Master’s student,Other field,No programming experience,None,None,None,None,Limited,I had never heard of LIrAs.,Proficient: Can understand virtually everything heard or read with ease,High — I often had to reason carefully or revisit the provided material to complete the tasks.,Agree,Neither agree nor disagree,Strongly agree,Agree,Agree,Neither agree nor disagree,Neither agree nor disagree,Success and failure conditions,Neither agree nor disagree,Agree,Agree,Agree,"Maybe readability. I guess this is familiar to coders, but for non-coders, some words can be difficult to interpret when they all use the same font and size",1,1,1,1,4,1,1,1,3,"While the robot goes to the kitchen,loads the meal and goes to the table, the waiter moves to the table and prepares it. Then if the server has served the meal, the robot moves to the kitchen",2.5,,"Robot:
+
+1 moveTo storageArea
+2 pick package
+3 moveTo loadingBay
+4 place package
+
+Drone:
+
+1-3 takeOff
+      moveTo loadingBay
+      inspect loadingBay until placementAreaClear(loadingBay)
+4 hover Robot
+  skip if obstacleDetected
+  restart if assistanceFailed",1.0,,"agents:
+
+humans: Human
+robots: Robot
+
+locations: bedroom, kitchen
+
+resources: object
+
+human:
+
+1: moveTo bedroom
+3: moveTo kitchen
+
+Robot:
+
+1: moveTo bedroom
+2: pick object
+3: follow Human (kitchen)",3.0,,"agents:
+
+robots: Robot
+
+humans: Operator
+
+locations: storageArea, chargingStation
+
+resources: chargingCable
+
+Robot:
+
+1: moveTo chargingStation
+
+2: scanChargingPort until portLocated
+
+3: openPortCover
+
+4: holdPortCover
+
+*Operator:*
+
+1-2: moveTo storageArea
+
+
+      collect chargingCable
+ 
+
+3: moveTo chargingStation
+
+4: connect chargingCable",1.5,,4.0,4.5,15.0,100.0,100.0,100.0,50.0,80.0,100.0,60.0,81.81818181818181,88.23529411764706,True,0,0.0,3,4,0,0,0,0,2,0.4,0.0,4,3,5,4,4,3,3,3,4,4,4

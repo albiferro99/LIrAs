@@ -1,0 +1,28 @@
+bench_agents_8
+agents:
+robots: Robot1 , Robot2 , Robot3 , Robot4 , Robot5 , Robot6 , Robot7 , Robot8
+resources: coffee
+
+Robot1:
+1: pick coffee
+
+Robot2:
+1: pick coffee
+
+Robot3:
+1: pick coffee
+
+Robot4:
+1: pick coffee
+
+Robot5:
+1: pick coffee
+
+Robot6:
+1: pick coffee
+
+Robot7:
+1: pick coffee
+
+Robot8:
+1: pick coffee

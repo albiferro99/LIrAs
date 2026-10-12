@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
 <nta>
-	<declaration>/**
+    <declaration>/**
 *** GLOBAL DECLARATIONS
 */
 
@@ -103,7 +103,7 @@ double humanPositionY[1] = {0.0};
 // Robot initialization
 double batteryCharge[N_R] = {100.0};
 // The robots will start from the first N_R intersections
-const int start_nodes[N_R] = {0};
+const int R_start_nodes[N_R] = {0};
 double robPositionX[N_R] = {0.0};
 double robPositionY[N_R] = {0.0};
 
@@ -137,9 +137,6 @@ int robot_res_to_deposit[N_R];
 /**
 *** VARIABLES
 **/
-
-// Human starting position
-// No Human declared
 
 const int MAX_BUFF_SIZE = 10;
 
@@ -201,7 +198,7 @@ bool same_area(double sx, double sy, double dx, double dy) {
         y_d_in = (dy &gt;= y_min - 1.0) &amp;&amp; (dy &lt;= y_max + 1.0);
 
         if ((x_s_in &amp;&amp; y_s_in) &amp;&amp; (x_d_in &amp;&amp; y_d_in)) // start and dest in same area
-            return true;
+        return true;
     }
     return false;
 }
@@ -213,21 +210,21 @@ double pt_dist(double x1, double x2, double y1, double y2) {
 }
 
 /**
- * Checks if the given coordinates (x, y) are inside ANY of the valid floor areas.
- * Returns true if the position is valid, false if it is in a forbidden area.
- */
+* Checks if the given coordinates (x, y) are inside ANY of the valid floor areas.
+* Returns true if the position is valid, false if it is in a forbidden area.
+*/
 const double EPSILON = 1.0;
 
 bool isValidPosition(double x, double y) {
     int i;
     double x_min, x_max, y_min, y_max;
-    
+
     for (i = 0; i &lt; N_A; i++) {
         x_min = FLOOR[i][0][0] &lt; FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
         x_max = FLOOR[i][0][0] &gt; FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
         y_min = FLOOR[i][0][1] &lt; FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
         y_max = FLOOR[i][0][1] &gt; FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
-        
+
         if (x &gt;= x_min - 1.0 &amp;&amp; x &lt;= x_max + 1.0 &amp;&amp; y &gt;= y_min - 1.0 &amp;&amp; y &lt;= y_max + 1.0) {
             return true;
         }
@@ -235,11 +232,12 @@ bool isValidPosition(double x, double y) {
     return false;
 }
 
-
+    </declaration>
 	<template>
 		<name>Coffee_Delivery_orchestrator</name>
 		<parameter>int p</parameter>
 		<declaration>// Place local declarations here.
+clock end_c;
 		</declaration>
 <location id="id0" x="0" y="0">
 	<name x="-17" y="-34">Init</name>
@@ -248,22 +246,32 @@ bool isValidPosition(double x, double y) {
 	<name x="483" y="-34">sub_seq_s1</name>
 </location>
 <location id="id2" x="1000" y="0">
-	<name x="983" y="-34">end</name>
+	<name x="983" y="-34">pre_end</name>
+	<label kind="invariant" x="990" y="17">end_c &lt;= 2</label>
+</location>
+<location id="id3" x="1500" y="0">
+	<name x="1483" y="-34">end</name>
 </location>
 		<init ref="id0"/>
-<transition id="id3">
+<transition id="id4">
 	<source ref="id0"/>
 	<target ref="id1"/>
 	<label kind="guard" x="18" y="-34">robot_stat==true and p==currP</label>
 	<label kind="synchronisation" x="18" y="-17">s1!</label>
 	<label kind="assignment" x="18" y="0">robot_stat=false</label>
 </transition>
-<transition id="id4">
+<transition id="id5">
 	<source ref="id1"/>
 	<target ref="id2"/>
 	<label kind="guard" x="518" y="-34">robot_stat==true</label>
 	<label kind="synchronisation" x="518" y="-17">e!</label>
-	<label kind="assignment" x="518" y="0">currP=currP+1</label>
+	<label kind="assignment" x="518" y="0">end_c=0</label>
+</transition>
+<transition id="id6">
+	<source ref="id2"/>
+	<target ref="id3"/>
+	<label kind="guard" x="1018" y="-34">end_c &gt;= 2</label>
+	<label kind="assignment" x="1018" y="0">currP=currP+1</label>
 </transition>
 	</template>
 
@@ -617,8 +625,8 @@ void initRobot() {
     V = 0;
 
     // Initialize position at assigned intersection
-    robPositionX[id-1] = INTERSECTIONS[start_nodes[id-1]][0];
-    robPositionY[id-1] = INTERSECTIONS[start_nodes[id-1]][1];
+    robPositionX[id-1] = INTERSECTIONS[R_start_nodes[id-1]][0];
+    robPositionY[id-1] = INTERSECTIONS[R_start_nodes[id-1]][1];
 
     tUpd = 0;
     v_max = fint(_v_max);
@@ -992,8 +1000,8 @@ void initRobot() {
 
     // Fetch the correct X and Y coordinates from the INTERSECTIONS array
     // using the start_nodes index for each specific robot
-    robPositionX[id-1] = INTERSECTIONS[start_nodes[id-1]][0];
-    robPositionY[id-1] = INTERSECTIONS[start_nodes[id-1]][1];
+    robPositionX[id-1] = INTERSECTIONS[R_start_nodes[id-1]][0];
+    robPositionY[id-1] = INTERSECTIONS[R_start_nodes[id-1]][1];
 
     tUpd = 0;
     v_max = fint(_v_max);
@@ -1325,7 +1333,7 @@ robot_inventory[id-1][robot_res_to_deposit[id-1]] &gt; 0</label>
     </transition>
 </template>
 
-</declaration>
+
 	<system>
 // Mission Definition
 

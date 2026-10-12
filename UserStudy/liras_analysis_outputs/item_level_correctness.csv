@@ -1,0 +1,8 @@
+Item,All correct %,Known correct %,Prolific correct %,Fisher p,Odds ratio,q (BH)
+T1.1 — continuation behavior,90.0,90.0,90.0,1.0,1.0,1.0
+T1.2 — until behavior,100.0,100.0,100.0,1.0,,1.0
+T1.3 — coordinated inspection,95.0,100.0,90.0,1.0,inf,1.0
+T1.4 — restart scope,95.0,100.0,90.0,1.0,inf,1.0
+T3A.1 — continuation error,85.0,80.0,90.0,1.0,0.4444444444444444,1.0
+T3A.2 — skip position,95.0,90.0,100.0,1.0,0.0,1.0
+T3A.3 — restart predicate,100.0,100.0,100.0,1.0,,1.0

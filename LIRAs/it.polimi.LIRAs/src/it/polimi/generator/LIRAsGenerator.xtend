@@ -474,7 +474,7 @@ double resources_Y[«resources.size»] = {«resources.map[name + "[1]"].join(", 
 		builder.append("\t<template>\n")
 		builder.append(String.format("\t\t<name>%s_orchestrator</name>\n", patternName))
 		builder.append("\t\t<parameter>int p</parameter>\n")
-		builder.append("\t\t<declaration>// Place local declarations here.\n\t\t</declaration>\n")
+		builder.append("\t\t<declaration>// Place local declarations here.\nclock end_c;\n\t\t</declaration>\n")
 
 		// Calculate maximum subsequence value
 		val maxIndexHelper = model.sequence
@@ -494,15 +494,28 @@ double resources_Y[«resources.size»] = {«resources.map[name + "[1]"].join(", 
 		builder.append(genLoc(locId, 0*xOffset, yOffset, locName, invariant, rate_of_exp, urgent, committed))
 		locId++
 			
-		// Subsequence Locations and End Location
-		for (i : 1 .. maxIndexHelper + 1) {
-			locName = if (i <= maxIndexHelper) String.format("sub_seq_s%d", i) else "end"
-			invariant = null
-			rate_of_exp = null
-			urgent = false
-			committed = false
-			builder.append(genLoc(locId, i * xOffset, yOffset, locName, invariant, rate_of_exp, urgent, committed))
-			locId++
+		// Subsequence Locations, pre_end and end Location
+		for (i : 1 .. maxIndexHelper + 2) {
+		    locName = if (i <= maxIndexHelper) {
+		        String.format("sub_seq_s%d", i)
+		    } else if (i == maxIndexHelper + 1) {
+		        "pre_end"
+		    } else {
+		        "end"
+		    }
+		
+		    invariant = if (i == maxIndexHelper + 1) {
+		        "end_c &lt;= 2"
+		    } else {
+		        null
+		    }
+		
+		    rate_of_exp = null
+		    urgent = false
+		    committed = false
+		
+		    builder.append(genLoc(locId, i * xOffset, yOffset, locName, invariant, rate_of_exp, urgent, committed))
+		    locId++
 		}
 
 		// Define the initial state of the automa
@@ -545,7 +558,7 @@ double resources_Y[«resources.size»] = {«resources.map[name + "[1]"].join(", 
 			
 			// Build updates
 			val updateStr = agentsToSync.map[it + "_stat=false"].join(", ")
-
+			
 			// Add the standard transition (guards and update build above)
 			source = i
 			target = i + 1
@@ -557,10 +570,10 @@ double resources_Y[«resources.size»] = {«resources.map[name + "[1]"].join(", 
 			builder.append(genTran(locId, source, target, select, guardStr, sync, updateStr, controllable, xOffset, yOffset, nailX, nailY))
 			locId++
 			
-			// Handle the final transition to 'end' location
+			// Handle the transition to 'pre_end' location
 			if (i == maxIndexHelper - 1) {
 				val finalGuards = model.sequence.map[agent.name.toLowerCase() + "_stat==true"].join(" and ")
-				val finalUpdate = "currP=currP+1"
+				val finalUpdate = "end_c=0"
 				
 				source = i + 1 
 				target = i + 2
@@ -570,9 +583,24 @@ double resources_Y[«resources.size»] = {«resources.map[name + "[1]"].join(", 
 				nailX = 0
 				nailY = 0
 				builder.append(genTran(locId, source, target, select, finalGuards, sync, finalUpdate, controllable, xOffset, yOffset, nailX, nailY))
-				locId++
+				locId++	
 			}
 		}
+		
+		// Transition from pre_end to end
+		source = maxIndexHelper + 1
+		target = maxIndexHelper + 2
+		select = null
+		sync = null
+		controllable = true
+		nailX = 0
+		nailY = 0
+		
+		val endGuard = "end_c &gt;= 2"
+		val endUpdate = "currP=currP+1"
+		
+		builder.append(genTran(locId, source, target, select, endGuard, sync, endUpdate, controllable, xOffset, yOffset, nailX, nailY))
+		locId++
 
 		builder.append("\t</template>\n")
 		return builder.toString()

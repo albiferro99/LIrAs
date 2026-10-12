@@ -13,6 +13,7 @@ resources:
     texturized_materials,
     lasered_materials
     
+    
 Robot1:
 	1: moveTo warehouse
 	pick raw_materials

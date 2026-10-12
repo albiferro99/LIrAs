@@ -1,6 +1,6 @@
 # LIrAs
 
-LIrAs is a Domain-Specific Language (DSL) for specifying interaction patterns among multi-agent systems. It automatically translates these specifications into SHA (Symbolic Hybrid Automata) models and enables SMC (Statistical Model Checking) verification.
+LIrAs is a Domain-Specific Language (DSL) for specifying interaction patterns among multi-agent systems. It automatically translates these specifications into SHA (Stochastic Hybrid Automata) models and enables SMC (Statistical Model Checking) verification.
 
 ## Requirements
 
@@ -41,6 +41,18 @@ Before getting started, ensure you have the following tools installed:
 ## Examples
 
 Example specifications in the robotic domain can be found in the `runtime/` folder to help you get started with defining your own patterns.
+
+## User Study
+
+The `UserStudy/` directory contains the materials and results of the task-based user study reported in RQ4:
+
+- **`LIrAs User Study.pdf`** - Complete study questionnaire.
+- **`LIrAs User Study (Known Response).xlsx`** and **`LIrAs User Study - Prolific (Risposte).xlsx`** - Participant responses from the directly recruited and Prolific cohorts.
+- **`LIrAs_User_Study_Scoring.xlsx`** - Scoring workbook. The **`Rubrics` worksheet** contains the reference answers and evaluation criteria used to score the study tasks. The **`README` worksheet** explains the scoring procedure; other sheets contain automatic and manual scoring results.
+- **`LIrAs_User_Study_Analysis.ipynb`** - Statistical analysis notebook.
+- **`liras_analysis_outputs/`** - Generated figures and analysis results.
+
+In the scoring workbook, T1 and T3A are assessed against predefined reference answers; T2, T3B, T4.1, and T4.2 are assessed using criterion-based rubrics. All reference answers and criteria can be found in **`UserStudy/LIrAs_User_Study_Scoring.xlsx` → `Rubrics`**.
 
 ## License
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
 <nta>
-	<declaration>/**
+    <declaration>/**
 *** GLOBAL DECLARATIONS
 */
 
@@ -169,7 +169,7 @@ bool same_area(double sx, double sy, double dx, double dy) {
         y_d_in = (dy &gt;= y_min - 1.0) &amp;&amp; (dy &lt;= y_max + 1.0);
 
         if ((x_s_in &amp;&amp; y_s_in) &amp;&amp; (x_d_in &amp;&amp; y_d_in)) // start and dest in same area
-            return true;
+        return true;
     }
     return false;
 }
@@ -181,21 +181,21 @@ double pt_dist(double x1, double x2, double y1, double y2) {
 }
 
 /**
- * Checks if the given coordinates (x, y) are inside ANY of the valid floor areas.
- * Returns true if the position is valid, false if it is in a forbidden area.
- */
+* Checks if the given coordinates (x, y) are inside ANY of the valid floor areas.
+* Returns true if the position is valid, false if it is in a forbidden area.
+*/
 const double EPSILON = 1.0;
 
 bool isValidPosition(double x, double y) {
     int i;
     double x_min, x_max, y_min, y_max;
-    
+
     for (i = 0; i &lt; N_A; i++) {
         x_min = FLOOR[i][0][0] &lt; FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
         x_max = FLOOR[i][0][0] &gt; FLOOR[i][2][0] ? FLOOR[i][0][0] : FLOOR[i][2][0];
         y_min = FLOOR[i][0][1] &lt; FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
         y_max = FLOOR[i][0][1] &gt; FLOOR[i][2][1] ? FLOOR[i][0][1] : FLOOR[i][2][1];
-        
+
         if (x &gt;= x_min - 1.0 &amp;&amp; x &lt;= x_max + 1.0 &amp;&amp; y &gt;= y_min - 1.0 &amp;&amp; y &lt;= y_max + 1.0) {
             return true;
         }
@@ -203,11 +203,11 @@ bool isValidPosition(double x, double y) {
     return false;
 }
 
-
+    </declaration>
 // **pattern_orchestrator**
 // **sequence_orchestrator**
 // **actions_templates**
-</declaration>
+
 	<system>
 // Mission Definition
 

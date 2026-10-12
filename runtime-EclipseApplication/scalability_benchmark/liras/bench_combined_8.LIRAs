@@ -1,0 +1,84 @@
+bench_combined_8
+agents:
+robots: Robot1 , Robot2 , Robot3 , Robot4 , Robot5 , Robot6 , Robot7 , Robot8
+resources: coffee
+
+Robot1:
+1: pick coffee
+2: pick coffee
+3: pick coffee
+4: pick coffee
+5: pick coffee
+6: pick coffee
+7: pick coffee
+8: pick coffee
+
+Robot2:
+1: pick coffee
+2: pick coffee
+3: pick coffee
+4: pick coffee
+5: pick coffee
+6: pick coffee
+7: pick coffee
+8: pick coffee
+
+Robot3:
+1: pick coffee
+2: pick coffee
+3: pick coffee
+4: pick coffee
+5: pick coffee
+6: pick coffee
+7: pick coffee
+8: pick coffee
+
+Robot4:
+1: pick coffee
+2: pick coffee
+3: pick coffee
+4: pick coffee
+5: pick coffee
+6: pick coffee
+7: pick coffee
+8: pick coffee
+
+Robot5:
+1: pick coffee
+2: pick coffee
+3: pick coffee
+4: pick coffee
+5: pick coffee
+6: pick coffee
+7: pick coffee
+8: pick coffee
+
+Robot6:
+1: pick coffee
+2: pick coffee
+3: pick coffee
+4: pick coffee
+5: pick coffee
+6: pick coffee
+7: pick coffee
+8: pick coffee
+
+Robot7:
+1: pick coffee
+2: pick coffee
+3: pick coffee
+4: pick coffee
+5: pick coffee
+6: pick coffee
+7: pick coffee
+8: pick coffee
+
+Robot8:
+1: pick coffee
+2: pick coffee
+3: pick coffee
+4: pick coffee
+5: pick coffee
+6: pick coffee
+7: pick coffee
+8: pick coffee

@@ -657,7 +657,7 @@ public class LIRAsGenerator extends AbstractGenerator {
     builder.append("\t<template>\n");
     builder.append(String.format("\t\t<name>%s_orchestrator</name>\n", patternName));
     builder.append("\t\t<parameter>int p</parameter>\n");
-    builder.append("\t\t<declaration>// Place local declarations here.\n\t\t</declaration>\n");
+    builder.append("\t\t<declaration>// Place local declarations here.\nclock end_c;\n\t\t</declaration>\n");
     Integer _elvis = null;
     final Function1<Sequence, EList<SubSequence>> _function = (Sequence it) -> {
       return it.getSubSequence();
@@ -680,7 +680,7 @@ public class LIRAsGenerator extends AbstractGenerator {
     committed = false;
     builder.append(this.genLoc(locId, (0 * xOffset), yOffset, locName, invariant, rate_of_exp, urgent, committed));
     locId++;
-    IntegerRange _upTo = new IntegerRange(1, ((maxIndexHelper).intValue() + 1));
+    IntegerRange _upTo = new IntegerRange(1, ((maxIndexHelper).intValue() + 2));
     for (final Integer i : _upTo) {
       {
         String _xifexpression = null;
@@ -688,10 +688,22 @@ public class LIRAsGenerator extends AbstractGenerator {
         if (_lessEqualsThan) {
           _xifexpression = String.format("sub_seq_s%d", i);
         } else {
-          _xifexpression = "end";
+          String _xifexpression_1 = null;
+          if (((i).intValue() == ((maxIndexHelper).intValue() + 1))) {
+            _xifexpression_1 = "pre_end";
+          } else {
+            _xifexpression_1 = "end";
+          }
+          _xifexpression = _xifexpression_1;
         }
         locName = _xifexpression;
-        invariant = null;
+        String _xifexpression_2 = null;
+        if (((i).intValue() == ((maxIndexHelper).intValue() + 1))) {
+          _xifexpression_2 = "end_c &lt;= 2";
+        } else {
+          _xifexpression_2 = null;
+        }
+        invariant = _xifexpression_2;
         rate_of_exp = null;
         urgent = false;
         committed = false;
@@ -752,7 +764,7 @@ public class LIRAsGenerator extends AbstractGenerator {
             return (_lowerCase + "_stat==true");
           };
           final String finalGuards = IterableExtensions.join(ListExtensions.<Sequence, String>map(model.getSequence(), _function_3), " and ");
-          final String finalUpdate = "currP=currP+1";
+          final String finalUpdate = "end_c=0";
           source = ((i_1).intValue() + 1);
           target = ((i_1).intValue() + 2);
           select = null;
@@ -765,6 +777,17 @@ public class LIRAsGenerator extends AbstractGenerator {
         }
       }
     }
+    source = ((maxIndexHelper).intValue() + 1);
+    target = ((maxIndexHelper).intValue() + 2);
+    select = null;
+    sync = null;
+    controllable = true;
+    nailX = 0;
+    nailY = 0;
+    final String endGuard = "end_c &gt;= 2";
+    final String endUpdate = "currP=currP+1";
+    builder.append(this.genTran(locId, source, target, select, endGuard, sync, endUpdate, controllable, xOffset, yOffset, nailX, nailY));
+    locId++;
     builder.append("\t</template>\n");
     return builder.toString();
   }

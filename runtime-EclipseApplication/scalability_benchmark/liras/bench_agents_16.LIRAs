@@ -1,0 +1,52 @@
+bench_agents_16
+agents:
+robots: Robot1 , Robot2 , Robot3 , Robot4 , Robot5 , Robot6 , Robot7 , Robot8 , Robot9 , Robot10 , Robot11 , Robot12 , Robot13 , Robot14 , Robot15 , Robot16
+resources: coffee
+
+Robot1:
+1: pick coffee
+
+Robot2:
+1: pick coffee
+
+Robot3:
+1: pick coffee
+
+Robot4:
+1: pick coffee
+
+Robot5:
+1: pick coffee
+
+Robot6:
+1: pick coffee
+
+Robot7:
+1: pick coffee
+
+Robot8:
+1: pick coffee
+
+Robot9:
+1: pick coffee
+
+Robot10:
+1: pick coffee
+
+Robot11:
+1: pick coffee
+
+Robot12:
+1: pick coffee
+
+Robot13:
+1: pick coffee
+
+Robot14:
+1: pick coffee
+
+Robot15:
+1: pick coffee
+
+Robot16:
+1: pick coffee

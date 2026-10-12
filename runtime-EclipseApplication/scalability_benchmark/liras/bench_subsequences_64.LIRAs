@@ -1,0 +1,72 @@
+bench_subsequences_64
+agents:
+robots: Robot1 , Robot2
+resources: coffee
+
+Robot1:
+1: pick coffee
+2: pick coffee
+3: pick coffee
+4: pick coffee
+5: pick coffee
+6: pick coffee
+7: pick coffee
+8: pick coffee
+9: pick coffee
+10: pick coffee
+11: pick coffee
+12: pick coffee
+13: pick coffee
+14: pick coffee
+15: pick coffee
+16: pick coffee
+17: pick coffee
+18: pick coffee
+19: pick coffee
+20: pick coffee
+21: pick coffee
+22: pick coffee
+23: pick coffee
+24: pick coffee
+25: pick coffee
+26: pick coffee
+27: pick coffee
+28: pick coffee
+29: pick coffee
+30: pick coffee
+31: pick coffee
+32: pick coffee
+
+Robot2:
+1: pick coffee
+2: pick coffee
+3: pick coffee
+4: pick coffee
+5: pick coffee
+6: pick coffee
+7: pick coffee
+8: pick coffee
+9: pick coffee
+10: pick coffee
+11: pick coffee
+12: pick coffee
+13: pick coffee
+14: pick coffee
+15: pick coffee
+16: pick coffee
+17: pick coffee
+18: pick coffee
+19: pick coffee
+20: pick coffee
+21: pick coffee
+22: pick coffee
+23: pick coffee
+24: pick coffee
+25: pick coffee
+26: pick coffee
+27: pick coffee
+28: pick coffee
+29: pick coffee
+30: pick coffee
+31: pick coffee
+32: pick coffee

@@ -1,11 +1,11 @@
 user_guided_transport
 
 agents:
-	humans: Human, Filippo
+	humans: Human
 	robots: Robot
 
 locations: bedroom, kitchen
-resources: object, coffee
+resources: object
 
 Human:
 	1: moveTo bedroom if position(Robot, bedroom) else stop

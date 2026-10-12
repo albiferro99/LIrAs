@@ -1,0 +1,24 @@
+Blind ID,Cohort,Open feedback
+S001,Known,"I didn't like having to renumber and check every step of every agent when adding a new one in the middle of others, in more complex scenarios I imagine it being possibly error prone.
+Maybe naming the steps could help, but I don't have a simple solution in mind."
+S003,Prolific,Its hard to write it from scratch because its too loose.
+S004,Known,"if/else is unintuitive, it follows different rules than the typical code construct. Perhaps I'd change its name"
+S006,Prolific,Clearer way to understand sequences
+S008,Prolific,Having atleast 2 examples for each concept would be more useful.
+S009,Known,Everything is clear and simple. My only comment is I would include actions and predicates into the declarations.
+S010,Prolific,"Make it more clear when agents have to wait for each other and when they can work independently.
+Make things like continuations, if/else, skip and restart a bit easier to understand because the syntax can be confusing at first.
+Add more simple examples for common situations like parallel actions, waiting, retries and early termination. Otherwise all in all it is easy to understand"
+S011,Known,"There seemed to be multiple ways to define sequences because one sequence can hold multiple actions, but one can also define sequence continuations and individual sequences for that."
+S012,Prolific,"Better syntax for continautions- range numbers like 1-2 get confusing when tracking multiple steps -- explicit KW like 'background' or 'async' would make independent actions easier to spot
+
+Clearer scope for skip and restart- its easy to forget that skip or restart only effects one agent's current step instead of the whole team. Adding an explicit target (ie restart self or skip step) would avoid confusion"
+S013,Prolific,provide more complex visual examples for multi agent continuations
+S014,Known,More structured indentation or parentheses
+S015,Prolific,"-Keep the list of actions and predicates while writi ng the pattern so that i don't go back
+
+-More examples of continuation like 1-2 to show when agents don't have to wait for each other"
+S016,Prolific,"I think LiRAs as is are about as elegant and simple as they can be made.  I wish I could offer some valuable feedback, but if I had to design something like this, I can't see that I'd make it any different"
+S019,Prolific,"More examples showing continuations in complex scenarios
+A quick reference cheat sheet summarizing all constructs in one place"
+S020,Prolific,"Maybe readability. I guess this is familiar to coders, but for non-coders, some words can be difficult to interpret when they all use the same font and size"
