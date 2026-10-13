@@ -46,9 +46,7 @@ Example specifications in the robotic domain can be found in the `runtime/` fold
 
 The `UserStudy/` directory contains the materials and results of the task-based user study reported in RQ4:
 
-- **`LIrAs User Study.pdf`** - Complete study questionnaire.
-- **`LIrAs User Study (Known Response).xlsx`** and **`LIrAs User Study - Prolific (Risposte).xlsx`** - Participant responses from the directly recruited and Prolific cohorts.
-- **`LIrAs_User_Study_Scoring.xlsx`** - Scoring workbook. The **`Rubrics` worksheet** contains the reference answers and evaluation criteria used to score the study tasks. The **`README` worksheet** explains the scoring procedure; other sheets contain automatic and manual scoring results.
+- **`LIrAs_User_Study_Rubric.xlsx`** - The **`Rubrics` worksheet** contains the reference answers and evaluation criteria used to score the study tasks. The **`README` worksheet** explains the scoring procedure.
 - **`LIrAs_User_Study_Analysis.ipynb`** - Statistical analysis notebook.
 - **`liras_analysis_outputs/`** - Generated figures and analysis results.
 
